@@ -21,7 +21,7 @@
                 displayMath: [['$$', '$$']]
             },
             startup: {
-                typeset: false // We will trigger this manually when questions load
+                typeset: false 
             }
         };
     </script>
@@ -185,6 +185,10 @@
             color: white; padding: 30px 15px 12px; font-weight: 600; font-size: 1.1rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
+
+        /* Section Tabs Styling */
+        #section-tabs::-webkit-scrollbar { height: 6px; }
+        #section-tabs::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -352,6 +356,7 @@
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openStudentSec('student-sec-groups')"><h3>📝 Take a Mock Test</h3><p>Browse categories and start tests</p></div>
                     <div class="menu-btn" onclick="openStudentSec('student-sec-attempts')"><h3>📜 My Attempt History</h3><p>Review your past scores</p></div>
+                    <div class="menu-btn" onclick="openStudentSec('student-sec-leaderboards')"><h3>🏆 Leaderboard</h3><p>Check your rank globally</p></div>
                     <div class="menu-btn" onclick="openStudentSec('student-sec-password')"><h3>🔑 Change Password</h3><p>Update your account security</p></div>
                 </div>
             </div>
@@ -359,6 +364,23 @@
             <div id="student-sec-groups" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>Select a Test Category</h2></div><div class="grid-list" id="student-group-list"></div></div>
             <div id="student-sec-tests-list" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-sec-groups')">← Back to Categories</button><h2 id="current-group-title">Available Tests</h2></div><div class="grid-list" id="student-test-list"></div></div>
             <div id="student-sec-attempts" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>My Attempt History</h2></div><div class="grid-list" id="student-attempts-list"></div></div>
+            
+            <div id="student-sec-leaderboards" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <h2>Test Leaderboards</h2>
+                </div>
+                <div class="action-box">
+                    <div class="input-group">
+                        <label>Select Test to View Rankings</label>
+                        <select id="leaderboard-test-select" onchange="fetchLeaderboard(this.value)">
+                            <option value="">Loading tests...</option>
+                        </select>
+                    </div>
+                    <div id="leaderboard-results" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+
             <div id="student-sec-password" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>Change My Password</h2></div><div class="action-box" style="max-width: 500px;"><div class="input-group"><label>New Password</label><input type="password" id="new-student-pass" placeholder="Minimum 6 characters"></div><button class="btn-primary" onclick="updateStudentPassword()">Update Password</button></div></div>
         </div>
 
@@ -375,6 +397,8 @@
                 </div>
             </div>
             
+            <div id="section-tabs" style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color);"></div>
+
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                 <span id="question-tracker" style="font-weight: 600; color: var(--primary);">Question 1 of 30</span>
                 <button class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleLanguage()">🌐 Switch Lang (Eng/Hin)</button>
@@ -408,6 +432,11 @@
                             <div style="display: flex; justify-content: space-between;"><span>⚪ Skipped:</span> <strong id="res-left" style="color: var(--text-muted);">0</strong></div>
                         </div>
                     </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); text-align: left; max-width: 800px; margin: 20px auto 0;">
+                    <h3 style="border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">📊 Sectional Performance</h3>
+                    <div id="res-sectional" style="font-size: 1rem; line-height: 1.8; margin-top: 10px;"></div>
                 </div>
                 
                 <div style="margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
@@ -503,13 +532,22 @@
         const db = firebase.firestore();
         const storage = firebase.storage(); 
 
-        // --- ADDED PDF.js WORKER CONFIGURATION ---
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         let currentUserRole = null;
         let currentTest = null;
         let testTimer = null;
         let timeRemaining = 0;
+        let activeTestId = null; 
+
+        // --- NEW: ANTI-REFRESH PROTECTION ---
+        let isTestActive = false;
+        window.addEventListener('beforeunload', function (e) {
+            if (isTestActive) {
+                e.preventDefault();
+                e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.';
+            }
+        });
 
         // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
         const MAX_FAILED_ATTEMPTS = 5;
@@ -652,7 +690,7 @@
 
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
 
-        // --- ADMIN EDITOR LOGIC (MODIFIED FOR DEVICE UPLOAD) ---
+        // --- ADMIN EDITOR LOGIC ---
         let editingTestId = null, editingQuestions = [];
         async function openTestEditor(testId) { editingTestId = testId; const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return; const test = doc.data(); document.getElementById('editor-test-title').innerText = `Editing: ${test.title}`; editingQuestions = test.questions || []; renderEditorQuestions(); openAdminSec('admin-sec-test-editor'); }
         
@@ -668,6 +706,11 @@
                         <button class="btn-danger" style="width:auto; padding: 6px 12px; font-size: 0.85rem;" onclick="deleteQuestion(${i})">🗑 Delete</button>
                     </div>
                     
+                    <div class="input-group">
+                        <label>Subject / Section Name</label>
+                        <input type="text" onchange="updateQ(${i},'subject',this.value)" value="${q.subject||'General'}" placeholder="e.g., Mathematics, General Awareness">
+                    </div>
+
                     <label style="font-weight: bold; font-size: 0.9rem;">Attach Image to Question (Optional)</label>
                     <div class="input-group" style="display: flex; gap: 10px; margin-bottom: 5px;">
                         <input type="text" id="q-img-url-${i}" value="${q.imageUrl||''}" onchange="updateQ(${i},'imageUrl',this.value)" placeholder="Image URL" style="flex: 1;">
@@ -713,22 +756,18 @@
         function updateQ(i,f,v) { editingQuestions[i][f] = v; } 
         function updateOpt(i,l,oi,v) { if(l==='Eng'){if(!editingQuestions[i].optionsEng)editingQuestions[i].optionsEng=[];editingQuestions[i].optionsEng[oi]=v;}else{if(!editingQuestions[i].optionsHin)editingQuestions[i].optionsHin=[];editingQuestions[i].optionsHin[oi]=v;} } 
         function deleteQuestion(i) { if(confirm("Remove this question?")) {editingQuestions.splice(i,1);renderEditorQuestions();} } 
-        function addManualQuestion() { editingQuestions.push({questionEng:"",questionHin:"",imageUrl:"",optionsEng:["","","",""],optionsHin:["","","",""],correctIndex:0, explanationEng:"", explanationHin:""}); renderEditorQuestions(); } 
+        function addManualQuestion() { editingQuestions.push({subject:"General", questionEng:"",questionHin:"",imageUrl:"",optionsEng:["","","",""],optionsHin:["","","",""],correctIndex:0, explanationEng:"", explanationHin:""}); renderEditorQuestions(); } 
         async function saveTestQuestions() { try { await db.collection("tests").doc(editingTestId).update({questions:editingQuestions}); alert("Questions Saved!"); openAdminSec('admin-sec-tests'); } catch(e){alert("Error: "+e);} }
         
-        // Function to handle Image Uploads for specific questions
         async function uploadQuestionImage(index, inputElement) {
             const file = inputElement.files[0];
             if(!file) return;
-            
             const statusText = document.getElementById(`q-img-status-${index}`);
             statusText.innerText = "⏳ Uploading image to database...";
-            
             try {
                 const storageRef = storage.ref(`questions/${Date.now()}_${file.name}`);
                 await storageRef.put(file);
                 const downloadUrl = await storageRef.getDownloadURL();
-                
                 editingQuestions[index].imageUrl = downloadUrl;
                 document.getElementById(`q-img-url-${index}`).value = downloadUrl;
                 statusText.innerText = "✅ Upload successful!";
@@ -744,7 +783,6 @@
         
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
         
-        // --- MODIFIED: Banner Upload supports File & URL ---
         async function addBanner() {
             const g = document.getElementById('banner-group-select');
             const fileInput = document.getElementById('banner-file-upload');
@@ -757,41 +795,25 @@
             const btn = document.getElementById('btn-publish-banner');
             btn.disabled = true;
             btn.innerText = "⏳ Publishing Banner... Please wait";
-
-            let finalImageUrl = urlInput; // default to text URL
-
+            let finalImageUrl = urlInput; 
             try {
-                // If the user actually uploaded a file, prioritize the file and upload it to Firebase Storage
                 if(file) {
                     const storageRef = storage.ref(`banners/${Date.now()}_${file.name}`);
                     await storageRef.put(file);
                     finalImageUrl = await storageRef.getDownloadURL();
                 }
-
                 await db.collection("banners").add({
-                    groupId: g.value,
-                    groupName: g.options[g.selectedIndex].text,
-                    imageUrl: finalImageUrl,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    groupId: g.value, groupName: g.options[g.selectedIndex].text,
+                    imageUrl: finalImageUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
                 document.getElementById('banner-image-url').value = '';
                 document.getElementById('banner-file-upload').value = '';
                 alert("Banner successfully published!");
-
-            } catch (error) {
-                alert("Error publishing banner: " + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Publish Banner to Student Dashboard";
-            }
+            } catch (error) { alert("Error publishing banner: " + error.message); } 
+            finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
         }
 
-        async function deleteBanner(id) {
-            if(confirm("Are you sure you want to remove this banner from the student dashboard?")) {
-                await db.collection("banners").doc(id).delete();
-            }
-        }
+        async function deleteBanner(id) { if(confirm("Are you sure you want to remove this banner from the student dashboard?")) { await db.collection("banners").doc(id).delete(); } }
 
         function loadAdminData() { 
             db.collection("groups").onSnapshot(s=>{ 
@@ -803,7 +825,6 @@
                     sel.forEach(x=>x.innerHTML+=`<option value="${d.id}">${g.name}</option>`); 
                 }); 
             }); 
-
             db.collection("banners").onSnapshot(s => {
                 let l = document.getElementById('admin-banner-list');
                 if(!l) return;
@@ -821,7 +842,6 @@
                     </div>`;
                 });
             });
-            
             db.collection("tests").onSnapshot(s=>{ 
                 let c=document.getElementById('test-list-container'); 
                 c.innerHTML=''; 
@@ -838,7 +858,6 @@
                     </div>`; 
                 }); 
             }); 
-            
             db.collection("attempts").orderBy("timestamp","desc").limit(30).onSnapshot(s=>{ 
                 let c=document.getElementById('admin-attempts-list'); 
                 c.innerHTML=''; 
@@ -855,10 +874,11 @@
             }
         }
         
-        // --- STUDENT LOAD & BANNER LOGIC ---
+        // --- STUDENT LOAD & LOGIC ---
         function loadStudentData() {
             loadGroupsForStudents();
             loadStudentAttempts();
+            loadLeaderboardTests(); // Populate leaderboard dropdown
             
             db.collection("banners").onSnapshot(s => {
                 let c = document.getElementById('student-banners');
@@ -880,6 +900,53 @@
         function viewGroupTests(gid, gn) { document.getElementById('current-group-title').innerText=gn; db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ let c=document.getElementById('student-test-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No tests found.</p>'; s.forEach(d=>{ let t=d.data(); c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px;">📝 ${t.title}</h4><button class="btn-primary" onclick="startTest('${d.id}')">Start Attempt 🚀</button></div>`; }); }); openStudentSec('student-sec-tests-list'); }
         function loadStudentAttempts() { if(!auth.currentUser)return; db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ let c=document.getElementById('student-attempts-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><h4 style="margin-bottom:10px">${a.testTitle}</h4><div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold;">Score: ${a.score}/${a.totalMarks}</div></div>`; }); }); }
         
+        // --- NEW: LEADERBOARD LOGIC ---
+        function loadLeaderboardTests() {
+            db.collection("tests").onSnapshot(s => {
+                let sel = document.getElementById('leaderboard-test-select');
+                if(!sel) return;
+                sel.innerHTML = '<option value="">Select a test to view rankings...</option>';
+                s.forEach(d => {
+                    sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`;
+                });
+            });
+        }
+
+        async function fetchLeaderboard(tid) {
+            const res = document.getElementById('leaderboard-results');
+            if(!tid) { res.innerHTML = ''; return; }
+            res.innerHTML = '<p>Loading rankings...</p>';
+            try {
+                // Fetch attempts locally instead of complex Firebase indices
+                const snapshot = await db.collection("attempts").where("testId", "==", tid).get();
+                if(snapshot.empty) { res.innerHTML = '<p style="color:var(--text-muted); padding:20px;">No attempts for this test yet. Be the first!</p>'; return; }
+                
+                let attempts = [];
+                snapshot.forEach(doc => attempts.push(doc.data()));
+                
+                // Sort by highest score first
+                attempts.sort((a, b) => b.score - a.score);
+                
+                let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
+                attempts.forEach((att, idx) => {
+                    let isMe = (auth.currentUser && att.userId === auth.currentUser.uid);
+                    let rowStyle = isMe ? 'background: #e0e7ff; border-color: var(--primary);' : 'background: #f8fafc; border-color: var(--border-color);';
+                    let phoneStr = att.userIdEmail.split('@')[0];
+                    // Partially mask the phone number for privacy
+                    let maskedPhone = phoneStr.length > 4 ? phoneStr.substring(0, 2) + '******' + phoneStr.substring(phoneStr.length - 2) : phoneStr;
+                    
+                    html += `<div style="display:flex; justify-content:space-between; padding:15px; border:1px solid; border-radius:8px; ${rowStyle}">
+                        <div style="font-weight:bold;"><span style="color:var(--primary); margin-right:15px; font-size:1.1rem;">#${idx+1}</span> ${isMe ? 'You ('+phoneStr+')' : 'Student: '+maskedPhone}</div>
+                        <div style="font-weight:bold; color:var(--success);">Score: ${att.score}</div>
+                    </div>`;
+                });
+                html += '</div>';
+                res.innerHTML = html;
+            } catch(e) {
+                res.innerHTML = '<p style="color:red;">Error loading leaderboard data.</p>';
+            }
+        }
+
         async function openEditModal(tid) { 
             const d = await db.collection("tests").doc(tid).get(); 
             const t = d.data(); 
@@ -890,9 +957,7 @@
             document.getElementById('edit-negative').value = t.negativeMarks || 0; 
             document.getElementById('edit-modal').style.display='flex'; 
         } 
-        
         function closeEditModal() { document.getElementById('edit-modal').style.display='none'; } 
-        
         async function saveTestEdit() { 
             await db.collection("tests").doc(document.getElementById('edit-test-id').value).update({
                 title: document.getElementById('edit-title').value, 
@@ -903,195 +968,110 @@
             closeEditModal(); 
         }
         
-        // --- ADDED SAFER JSON REGEX PARSING ---
         async function fetchFromGemini(p,s) { 
             const k=getApiKey(); 
             if(!k){s.innerText="❌ Key!"; return null;} 
             try{ 
                 let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}); 
                 let d=await r.json(); 
-                
                 let rawText = d.candidates[0].content.parts[0].text;
-                // Use RegEx to strictly capture everything between [ and ], ignoring stray markdown
                 let jsonMatch = rawText.match(/\[[\s\S]*\]/); 
-                
-                if(jsonMatch) {
-                    return JSON.parse(jsonMatch[0]);
-                } else {
-                    console.error("AI returned text but no JSON array found.");
-                    return null;
-                }
-            }catch(e){
-                console.error(e);
-                s.innerText="❌ JSON Parsing Error. Please try again."; 
-                return null;
-            } 
+                if(jsonMatch) { return JSON.parse(jsonMatch[0]); } else { return null; }
+            }catch(e){ s.innerText="❌ JSON Parsing Error. Please try again."; return null; } 
         }
         
         async function generateAITest() { 
             const topic = document.getElementById('ai-topic').value;
             const g = document.getElementById('ai-test-group'); 
-            
             if(!topic || !g.value) return alert("Select a target group and enter a topic!"); 
             
             let s = document.getElementById('ai-status'); 
-            
             const targetQuestions = 50; 
             const batchSize = 25; 
             const totalBatches = Math.ceil(targetQuestions / batchSize);
-            
             let allQuestions = [];
+            
             s.innerText = `⏳ Starting generation of ${targetQuestions} questions...`;
-
             for (let i = 0; i < totalBatches; i++) {
                 s.innerText = `⏳ Generating Batch ${i + 1} of ${totalBatches}... (Generated: ${allQuestions.length} Qs)`;
                 
                 let prompt = `Generate exactly ${batchSize} multiple choice questions about the topic: "${topic}". 
-                IMPORTANT: This is batch ${i + 1} of ${totalBatches}. Ensure these questions are completely unique and cover different sub-topics or difficulty levels compared to previous batches.
+                IMPORTANT: Ensure these questions cover different sub-topics.
                 
-                CRITICAL EXTRACTION AND TRANSLATION RULES:
-                1. TECHNICAL & MATHEMATICAL CONTENT:
-                   - Carefully preserve all mathematical formulas, fractions, and electrical symbols (e.g., Ω, μF, Φ, V, A).
-                   - Do NOT translate standard acronyms (e.g., AC, DC, MCB, NEC) or universally recognized SI units into Hindi. Keep them in English script even in the Hindi fields.
-                   - For equations, use standard plain text formatting or LaTeX.
-                   - For complex mathematical formulas, fractions, or advanced electrical equations, output them in standard LaTeX format. Enclose inline equations within \\\\( and \\\\), and standalone block equations within $$ and $$.
-                2. GENERAL SUBJECTS (Math, Science, GK, etc.):
-                   - You MUST provide both English and Hindi translations.
-                3. EXCEPTION: If the topic is an "English Subject/Grammar" topic, do NOT translate the questions or options to Hindi. Put the English text in BOTH the Eng and Hin fields.
-                4. EXCEPTION: If the topic is a "Hindi Subject/Grammar" topic, do NOT translate the questions or options to English. Put the Hindi text in BOTH the Eng and Hin fields.
+                CRITICAL EXTRACTION RULES:
+                1. TECHNICAL & MATHEMATICAL: Use LaTeX format (\\\\( and \\\\) for inline, $$ for block) for complex equations.
+                2. SUBJECT TAG: Categorize each question and provide a "subject" string (e.g., Mathematics, General Science, Reasoning, History).
+                3. BILINGUAL: Output Eng and Hin for General subjects. Do NOT translate pure Language subjects (like English Grammar).
                 
                 Output MUST be a pure JSON array only. 
-                Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान).`;
+                Format exactly: subject, questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng, explanationHin.`;
                 
                 let q = await fetchFromGemini(prompt, s); 
-                
-                if(q && Array.isArray(q)){ 
-                    allQuestions = allQuestions.concat(q);
-                } else {
-                    console.log("Batch " + (i+1) + " failed or returned invalid format.");
-                }
+                if(q && Array.isArray(q)){ allQuestions = allQuestions.concat(q); } 
             }
 
             if(allQuestions.length > 0) { 
-                if(allQuestions.length > targetQuestions) {
-                    allQuestions = allQuestions.slice(0, targetQuestions);
-                }
-
+                if(allQuestions.length > targetQuestions) allQuestions = allQuestions.slice(0, targetQuestions);
                 await db.collection("tests").add({
-                    title: `Topic: ${topic}`,
-                    groupId: g.value,
-                    groupName: g.options[g.selectedIndex].text,
-                    questions: allQuestions,
-                    duration: allQuestions.length * 60, 
-                    marksPerQuestion: 2,
-                    negativeMarks: 0, 
+                    title: `Topic: ${topic}`, groupId: g.value, groupName: g.options[g.selectedIndex].text,
+                    questions: allQuestions, duration: allQuestions.length * 60, marksPerQuestion: 2, negativeMarks: 0, 
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 }); 
-                
                 s.innerText = `✅ Success! Saved ${allQuestions.length} Questions.`; 
                 document.getElementById('ai-topic').value = ''; 
-            } else {
-                s.innerText = "❌ AI could not generate questions. Please try a different topic.";
-            }
+            } else { s.innerText = "❌ AI could not generate questions."; }
         }
 
         async function processPDF() {
             const f = document.getElementById('pdf-upload').files[0];
             const g = document.getElementById('pdf-test-group');
             const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
-            
             if(!f || !g.value) return alert("Please select a group and a PDF file.");
 
-            let s = document.getElementById('pdf-status');
-            s.innerText = "⏳ Reading PDF...";
+            let s = document.getElementById('pdf-status'); s.innerText = "⏳ Reading PDF...";
             const fr = new FileReader();
 
             fr.onload = async function() {
                 try {
                     const pd = await pdfjsLib.getDocument(new Uint8Array(this.result)).promise;
                     let txt = "";
-                    for(let i = 1; i <= pd.numPages; i++){
-                        txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
-                    }
+                    for(let i = 1; i <= pd.numPages; i++){ txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " "; }
+                    if (txt.trim().length === 0) { s.innerText = "❌ The PDF contains no readable text."; return; }
 
-                    // --- ADDED SAFEGUARD: PREVENT BLANK UPLOADS ---
-                    if (txt.trim().length === 0) {
-                        s.innerText = "❌ The PDF contains no readable text. It appears to be an image-only scan. Please upload a standard text-based PDF.";
-                        return;
-                    }
-
-                    s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
-
+                    s.innerText = "⏳ AI is processing...";
                     const chunkSize = 15000;
                     let allQuestions = [];
                     let chunks = [];
-
-                    for(let i = 0; i < txt.length; i += chunkSize) {
-                        chunks.push(txt.substring(i, i + chunkSize));
-                    }
+                    for(let i = 0; i < txt.length; i += chunkSize) { chunks.push(txt.substring(i, i + chunkSize)); }
 
                     for(let i = 0; i < chunks.length; i++) {
                         s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
+                        let prompt = `You are an expert bilingual test creator. Extract ALL multiple-choice questions from the provided text segment. Context: "${subjectContext}".
 
-                        let prompt = `You are an expert bilingual test creator for competitive and technical exams. Extract ALL valid multiple-choice questions from the provided text segment. 
-                        Context/Hint for this PDF: "${subjectContext}".
-
-                        CRITICAL EXTRACTION AND TRANSLATION RULES:
-                        1. TECHNICAL & MATHEMATICAL CONTENT:
-                           - Carefully preserve all mathematical formulas, fractions, and electrical symbols (e.g., Ω, μF, Φ, V, A).
-                           - Do NOT translate standard acronyms (e.g., AC, DC, MCB, NEC) or universally recognized SI units into Hindi. Keep them in English script even in the Hindi fields.
-                           - For complex mathematical formulas, fractions, or advanced electrical equations, output them in standard LaTeX format. Enclose inline equations within \\\\( and \\\\), and standalone block equations within $$ and $$.
-                        2. GENERAL SUBJECTS (Science, GK, Math, etc.): 
-                           - You MUST provide the question, options, and explanation in BOTH English and Hindi. 
-                           - If the source is only in English, translate it to Hindi for the 'Hin' fields. 
-                           - If the source is only in Hindi, translate it to English for the 'Eng' fields.
-                        3. LANGUAGE SUBJECTS (English Grammar or Hindi Vyakaran): 
-                           - DO NOT translate. Output the exact same source text for BOTH the English and Hindi JSON fields.
-
-                        Output format MUST be a pure, strictly valid JSON array of objects. Do not include markdown formatting like \`\`\`json.
-                        Required JSON Object Structure:
-                        [
-                          {
-                            "questionEng": "English text (or Hindi text if Hindi subject)",
-                            "questionHin": "Hindi text (or English text if English subject)",
-                            "optionsEng": ["Op1", "Op2", "Op3", "Op4"],
-                            "optionsHin": ["Op1", "Op2", "Op3", "Op4"],
-                            "correctIndex": 0, // integer 0 to 3 indicating correct option
-                            "explanationEng": "Detailed English explanation",
-                            "explanationHin": "Detailed Hindi explanation"
-                          }
-                        ]
-
-                        Text Segment to Process:
-                        ${chunks[i]}`;
+                        RULES:
+                        1. SUBJECT TAG: You MUST categorize each question accurately into a broad "subject" (e.g., Mathematics, General Awareness, Reasoning, Technical, English). 
+                        2. LaTeX: Use standard LaTeX for complex math/electrical equations (\\\\( and \\\\) or $$).
+                        3. BILINGUAL: Ensure 'Hin' and 'Eng' fields are filled correctly depending on the subject.
+                        
+                        Output pure JSON array: 
+                        [{ "subject": "Name of section", "questionEng": "...", "questionHin": "...", "optionsEng": [...], "optionsHin": [...], "correctIndex": 0, "explanationEng": "...", "explanationHin": "..." }]
+                        
+                        Text: ${chunks[i]}`;
 
                         let q = await fetchFromGemini(prompt, s);
-                        if(q && Array.isArray(q)) {
-                            allQuestions = allQuestions.concat(q);
-                        }
+                        if(q && Array.isArray(q)) { allQuestions = allQuestions.concat(q); }
                     }
 
                     if(allQuestions.length > 0) {
                         await db.collection("tests").add({
-                            title: `PDF: ${f.name}`,
-                            groupId: g.value,
-                            groupName: g.options[g.selectedIndex].text,
-                            questions: allQuestions,
-                            duration: allQuestions.length * 60, 
-                            marksPerQuestion: 2,
-                            negativeMarks: 0, 
+                            title: `PDF: ${f.name}`, groupId: g.value, groupName: g.options[g.selectedIndex].text,
+                            questions: allQuestions, duration: allQuestions.length * 60, marksPerQuestion: 2, negativeMarks: 0, 
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
-                        s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
-                        document.getElementById('pdf-subject').value = ''; // Clear input on success
-                    } else {
-                        s.innerText = "❌ AI could not extract questions. The JSON format returned was unreadable.";
-                    }
-
-                } catch (e) {
-                    console.error(e);
-                    s.innerText = "❌ Error processing PDF file format.";
-                }
+                        s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions.`;
+                        document.getElementById('pdf-subject').value = ''; 
+                    } else { s.innerText = "❌ AI could not extract questions."; }
+                } catch (e) { s.innerText = "❌ Error processing PDF file format."; }
             };
             fr.readAsArrayBuffer(f);
         }
@@ -1103,6 +1083,7 @@
             const doc = await db.collection("tests").doc(testId).get();
             if (!doc.exists) return;
             currentTest = doc.data(); 
+            activeTestId = testId; 
             testQuestions = currentTest.questions || [];
             testMarks = currentTest.marksPerQuestion || 2;
             testNegativeMarks = currentTest.negativeMarks || 0; 
@@ -1111,10 +1092,21 @@
             questionStates = new Array(testQuestions.length).fill('unanswered');
             currentQuestionIndex = 0;
             timeRemaining = currentTest.duration || 1800;
-            
             document.getElementById('test-title').innerText = currentTest.title;
             
+            // Generate Sectional Tabs
+            const subjectSet = new Set(testQuestions.map(q => q.subject || 'General'));
+            let subjects = Array.from(subjectSet);
+            let tabsHtml = '';
+            subjects.forEach(sub => {
+                let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub);
+                let safeId = sub.replace(/[^a-zA-Z0-9]/g, '-');
+                tabsHtml += `<button id="tab-${safeId}" class="btn-outline section-tab-btn" style="white-space:nowrap; padding:6px 15px;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`;
+            });
+            document.getElementById('section-tabs').innerHTML = tabsHtml;
+
             navigate('view-test'); 
+            isTestActive = true; // Lock the browser refresh
             renderPalette();
             renderCurrentQuestion(); 
             startTimer();
@@ -1149,16 +1141,19 @@
             const oldBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(oldBtn) oldBtn.classList.remove('active');
             currentQuestionIndex = index; renderCurrentQuestion();
             const newBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(newBtn) newBtn.classList.add('active');
-            
             const panel = document.getElementById('side-palette');
-            if(panel.classList.contains('open')) {
-                togglePalette();
-            }
+            if(panel.classList.contains('open')) { togglePalette(); }
         }
 
         function renderCurrentQuestion() {
             const container = document.getElementById('question-container');
             const q = testQuestions[currentQuestionIndex]; if(!q) return;
+
+            // Highlight Active Section Tab
+            document.querySelectorAll('.section-tab-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--primary)'; });
+            const activeSub = (q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-');
+            const activeTab = document.getElementById(`tab-${activeSub}`);
+            if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
 
             document.getElementById('question-tracker').innerText = `Question ${currentQuestionIndex + 1} of ${testQuestions.length}`;
             const qText = currentLanguage === 'Eng' ? q.questionEng : q.questionHin;
@@ -1181,10 +1176,7 @@
             if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } 
             else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
 
-            // --- ADDED: Tell MathJax to render any equations on the new question ---
-            if (window.MathJax) {
-                MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
-            }
+            if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
         }
 
         function setAnswer(optIndex) {
@@ -1217,7 +1209,7 @@
 
         function showExitModal() { document.getElementById('exit-modal').style.display = 'flex'; }
         function hideExitModal() { document.getElementById('exit-modal').style.display = 'none'; }
-        function confirmPause() { clearInterval(testTimer); hideExitModal(); navigate('view-student'); }
+        function confirmPause() { isTestActive = false; clearInterval(testTimer); hideExitModal(); navigate('view-student'); }
 
         function showSubmitSummary() {
             hideExitModal(); 
@@ -1236,24 +1228,32 @@
         function hideSubmitSummary() { document.getElementById('summary-modal').style.display = 'none'; }
 
         function finalSubmitTest() {
-            hideSubmitSummary(); clearInterval(testTimer);
+            hideSubmitSummary(); 
+            clearInterval(testTimer);
+            isTestActive = false; // Remove browser block
+
             let correct = 0, wrong = 0, left = 0;
+            let sectionStats = {}; // To store analytics per subject
             
             testQuestions.forEach((q, i) => { 
-                if (userAnswers[i] === null) left++; 
-                else if (userAnswers[i] === q.correctIndex) correct++; 
-                else wrong++; 
+                let sub = q.subject || 'General';
+                if (!sectionStats[sub]) sectionStats[sub] = { total: 0, correct: 0, wrong: 0, left: 0 };
+                sectionStats[sub].total++;
+
+                if (userAnswers[i] === null) { left++; sectionStats[sub].left++; }
+                else if (userAnswers[i] === q.correctIndex) { correct++; sectionStats[sub].correct++; }
+                else { wrong++; sectionStats[sub].wrong++; }
             });
 
             let finalScore = (correct * testMarks) - (wrong * testNegativeMarks);
             finalScore = Math.round(finalScore * 100) / 100; 
-            
             const totalMaxMarks = testQuestions.length * testMarks;
 
             if(auth.currentUser) {
+                // Ensure activeTestId is saved so the leaderboard can find it
                 db.collection("attempts").add({
                     userId: auth.currentUser.uid, userIdEmail: auth.currentUser.email,
-                    testTitle: currentTest.title, score: finalScore, totalMarks: totalMaxMarks,
+                    testId: activeTestId, testTitle: currentTest.title, score: finalScore, totalMarks: totalMaxMarks,
                     correct: correct, wrong: wrong, left: left, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
             }
@@ -1262,6 +1262,28 @@
             document.getElementById('res-correct').innerText = correct;
             document.getElementById('res-wrong').innerText = wrong;
             document.getElementById('res-left').innerText = left;
+
+            // Generate Sectional Analytics Breakdown
+            let secHtml = '';
+            for (let sub in sectionStats) {
+                let st = sectionStats[sub];
+                let attempted = st.total - st.left;
+                let accuracy = attempted > 0 ? Math.round((st.correct / attempted) * 100) : 0;
+                let scoreColor = accuracy >= 75 ? 'var(--success)' : (accuracy >= 40 ? 'var(--warning)' : 'var(--danger)');
+                
+                secHtml += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-color);">
+                    <div>
+                        <strong style="display:block; color:var(--text-main);">${sub}</strong>
+                        <span style="font-size: 0.85rem; color:var(--text-muted);">${st.correct} Correct, ${st.wrong} Wrong, ${st.left} Skipped</span>
+                    </div>
+                    <div style="font-weight: 700; color: ${scoreColor}; font-size: 1.1rem;">
+                        ${accuracy}% Acc.
+                    </div>
+                </div>`;
+            }
+            document.getElementById('res-sectional').innerHTML = secHtml;
+
             navigate('view-results');
         }
 
@@ -1291,18 +1313,9 @@
                 let optionsHTML = '';
                 if(opts) {
                     opts.forEach((opt, optIndex) => {
-                        let optClass = '';
-                        let label = '';
-                        
-                        if (optIndex === q.correctIndex) {
-                            optClass = 'opt-correct';
-                            label = '✅ ';
-                        } 
-                        else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) {
-                            optClass = 'opt-wrong';
-                            label = '❌ (Your Answer) ';
-                        }
-
+                        let optClass = ''; let label = '';
+                        if (optIndex === q.correctIndex) { optClass = 'opt-correct'; label = '✅ '; } 
+                        else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) { optClass = 'opt-wrong'; label = '❌ (Your Answer) '; }
                         optionsHTML += `<div class="options" style="margin: 0;"><label class="${optClass}" style="cursor: default;">${label}${opt}</label></div>`;
                     });
                 }
@@ -1315,8 +1328,11 @@
 
                 container.innerHTML += `
                     <div class="question-card" style="min-height: auto; border-top: 4px solid ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#cbd5e1' : 'var(--danger)')};">
-                        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 10px; color: ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#64748b' : 'var(--danger)')};">
-                            ${userAnswers[i] === q.correctIndex ? 'Correctly Answered' : (userAnswers[i] === null ? 'Not Answered' : 'Incorrectly Answered')}
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 10px;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#64748b' : 'var(--danger)')};">
+                                ${userAnswers[i] === q.correctIndex ? 'Correctly Answered' : (userAnswers[i] === null ? 'Not Answered' : 'Incorrectly Answered')}
+                            </span>
+                            <span style="background:#f1f5f9; padding:2px 8px; border-radius:12px; font-size:0.75rem; color:#475569; font-weight:bold;">${q.subject || 'General'}</span>
                         </div>
                         <h4 style="font-size: 1.15rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${i + 1}.</span> ${qText || 'Language translation missing'}</h4>
                         ${imgHTML}
@@ -1325,10 +1341,7 @@
                     </div>`;
             });
 
-            // --- ADDED: Tell MathJax to render all explanations on the review screen ---
-            if (window.MathJax) {
-                MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
-            }
+            if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
         }
 
         // --- AUTO-LOGIN ---
