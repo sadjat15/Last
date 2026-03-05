@@ -245,7 +245,29 @@
             </div>
             <div id="admin-sec-groups" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Test Groups</h2></div><div class="action-box"><div class="input-group"><input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests"></div><button class="btn-primary" onclick="addGroup()">Add New Group</button><div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div></div></div>
             <div id="admin-sec-ai" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Create AI Test</h2></div><div class="action-box"><div class="input-group"><label>Select Target Group</label><select class="group-select" id="ai-test-group"><option value="">Loading...</option></select></div><div class="input-group"><label>Topic Name</label><input type="text" id="ai-topic" placeholder="e.g., General Science"></div><button class="btn-primary" onclick="generateAITest()">Generate 30 Questions via AI</button><p id="ai-status" class="status-text"></p></div></div>
-            <div id="admin-sec-pdf" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Upload PDF Test</h2></div><div class="action-box"><div class="input-group"><label>Select Target Group</label><select class="group-select" id="pdf-test-group"><option value="">Loading...</option></select></div><div class="input-group"><label>Select PDF File</label><input type="file" id="pdf-upload" accept=".pdf"></div><button class="btn-primary" onclick="processPDF()">Extract Text & Generate Test</button><p id="pdf-status" class="status-text"></p></div></div>
+            <div id="admin-sec-pdf" class="sub-sec">
+    <div class="sec-header">
+        <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+        <h2>Upload PDF Test</h2>
+    </div>
+    <div class="action-box">
+        <div class="input-group">
+            <label>Select Target Group</label>
+            <select class="group-select" id="pdf-test-group"><option value="">Loading...</option></select>
+        </div>
+        <div class="input-group">
+            <label>PDF Subject/Context (Helps AI format better)</label>
+            <input type="text" id="pdf-subject" placeholder="e.g., Mixed GK & Math, or English Grammar">
+        </div>
+        <div class="input-group">
+            <label>Select PDF File</label>
+            <input type="file" id="pdf-upload" accept=".pdf">
+        </div>
+        <button class="btn-primary" onclick="processPDF()">Extract Text & Generate Test</button>
+        <p id="pdf-status" class="status-text"></p>
+    </div>
+</div>
+
             <div id="admin-sec-tests" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Active Tests</h2></div><div id="test-list-container" class="grid-list"></div></div>
             <div id="admin-sec-test-editor" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button><h2 id="editor-test-title">Editing Test Questions</h2></div><div class="action-box" style="background: transparent; border: none; box-shadow: none; padding: 0;"><div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"><button class="btn-primary" style="flex: 1;" onclick="addManualQuestion()">➕ Add Blank Question</button><button class="btn-primary" style="flex: 1; background: #8b5cf6;" onclick="openQuestionBank()">📚 Import from Question Bank</button><button class="btn-primary" style="flex: 1; background: var(--success);" onclick="saveTestQuestions()">💾 Save All Changes</button></div><div id="editor-questions-list"></div></div></div>
             <div id="admin-sec-attempts" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Live Student Attempts</h2></div><div id="admin-attempts-list" class="grid-list"></div></div>
@@ -710,75 +732,93 @@
         }
 
         async function processPDF() {
-            const f = document.getElementById('pdf-upload').files[0];
-            const g = document.getElementById('pdf-test-group');
-            
-            if(!f || !g.value) return alert("Please select a group and a PDF file.");
+    const f = document.getElementById('pdf-upload').files[0];
+    const g = document.getElementById('pdf-test-group');
+    const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
+    
+    if(!f || !g.value) return alert("Please select a group and a PDF file.");
 
-            let s = document.getElementById('pdf-status');
-            s.innerText = "⏳ Reading PDF...";
-            const fr = new FileReader();
+    let s = document.getElementById('pdf-status');
+    s.innerText = "⏳ Reading PDF...";
+    const fr = new FileReader();
 
-            fr.onload = async function() {
-                try {
-                    const pd = await pdfjsLib.getDocument(new Uint8Array(this.result)).promise;
-                    let txt = "";
-                    for(let i = 1; i <= pd.numPages; i++){
-                        txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
-                    }
+    fr.onload = async function() {
+        try {
+            const pd = await pdfjsLib.getDocument(new Uint8Array(this.result)).promise;
+            let txt = "";
+            for(let i = 1; i <= pd.numPages; i++){
+                txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
+            }
 
-                    s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
+            s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
 
-                    const chunkSize = 15000;
-                    let allQuestions = [];
-                    let chunks = [];
+            const chunkSize = 15000;
+            let allQuestions = [];
+            let chunks = [];
 
-                    for(let i = 0; i < txt.length; i += chunkSize) {
-                        chunks.push(txt.substring(i, i + chunkSize));
-                    }
+            for(let i = 0; i < txt.length; i += chunkSize) {
+                chunks.push(txt.substring(i, i + chunkSize));
+            }
 
-                    for(let i = 0; i < chunks.length; i++) {
-                        s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
+            for(let i = 0; i < chunks.length; i++) {
+                s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
 
-                        let prompt = `Extract ALL valid multiple-choice questions from this text segment. 
-                        IMPORTANT LANGUAGE RULES:
-                        1. For general subjects (Math, Science, GK, etc.), you MUST provide both English and Hindi translations.
-                        2. EXCEPTION: If the question is an "English Subject/Grammar" question, do NOT translate it to Hindi. Put the English text in BOTH the Eng and Hin fields.
-                        3. EXCEPTION: If the question is a "Hindi Subject/Grammar" question, do NOT translate it to English. Put the Hindi text in BOTH the Eng and Hin fields.
-                        
-                        Output MUST be a pure JSON array only. 
-                        Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान).
-                        Text: ${chunks[i]}`;
+                // HIGHLY STRICT AI PROMPT FOR BILINGUAL HANDLING
+                let prompt = `You are an expert test creator. Extract ALL valid multiple-choice questions from the provided text segment. 
+                Context/Subject of this PDF: "${subjectContext}".
 
-                        let q = await fetchFromGemini(prompt, s);
-                        if(q && Array.isArray(q)) {
-                            allQuestions = allQuestions.concat(q);
-                        }
-                    }
+                CRITICAL LANGUAGE AND TRANSLATION RULES:
+                1. By default, you MUST provide every question, option, and explanation in BOTH English and Hindi. Translate accurately.
+                2. EXCEPTION 1 (English Subject): If a question is testing "English Language", "English Grammar", or "English Comprehension", DO NOT translate it into Hindi. Fill both the English and Hindi JSON fields with the exact same English text.
+                3. EXCEPTION 2 (Hindi Subject): If a question is testing "Hindi Language" or "Hindi Grammar" (हिंदी व्याकरण), DO NOT translate it into English. Fill both the English and Hindi JSON fields with the exact same Hindi text.
 
-                    if(allQuestions.length > 0) {
-                        await db.collection("tests").add({
-                            title: `PDF: ${f.name}`,
-                            groupId: g.value,
-                            groupName: g.options[g.selectedIndex].text,
-                            questions: allQuestions,
-                            duration: allQuestions.length * 60, 
-                            marksPerQuestion: 2,
-                            negativeMarks: 0, 
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
-                    } else {
-                        s.innerText = "❌ AI could not extract questions. Try a different PDF.";
-                    }
+                Output format MUST be a pure, strictly valid JSON array of objects. Do not include markdown formatting like \`\`\`json.
+                Required JSON Object Structure:
+                [
+                  {
+                    "questionEng": "English question text",
+                    "questionHin": "Hindi translation (or same as Eng if English subject)",
+                    "optionsEng": ["Op1", "Op2", "Op3", "Op4"],
+                    "optionsHin": ["Op1", "Op2", "Op3", "Op4"],
+                    "correctIndex": 0, // integer 0 to 3 indicating correct option
+                    "explanationEng": "Detailed English explanation",
+                    "explanationHin": "Detailed Hindi explanation"
+                  }
+                ]
 
-                } catch (e) {
-                    console.error(e);
-                    s.innerText = "❌ Error processing PDF file format.";
+                Text Segment to Process:
+                ${chunks[i]}`;
+
+                let q = await fetchFromGemini(prompt, s);
+                if(q && Array.isArray(q)) {
+                    allQuestions = allQuestions.concat(q);
                 }
-            };
-            fr.readAsArrayBuffer(f);
+            }
+
+            if(allQuestions.length > 0) {
+                await db.collection("tests").add({
+                    title: `PDF: ${f.name}`,
+                    groupId: g.value,
+                    groupName: g.options[g.selectedIndex].text,
+                    questions: allQuestions,
+                    duration: allQuestions.length * 60, 
+                    marksPerQuestion: 2,
+                    negativeMarks: 0, 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
+                document.getElementById('pdf-subject').value = ''; // Clear input on success
+            } else {
+                s.innerText = "❌ AI could not extract questions. Ensure the PDF contains text, not just scanned images.";
+            }
+
+        } catch (e) {
+            console.error(e);
+            s.innerText = "❌ Error processing PDF file format.";
         }
+    };
+    fr.readAsArrayBuffer(f);
+}
 
 
         // --- MODIFIED: TEST ENGINE & SCORE CALCULATION ---
