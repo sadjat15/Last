@@ -21,7 +21,7 @@
                 displayMath: [['$$', '$$']]
             },
             startup: {
-                typeset: false 
+                typeset: false // We will trigger this manually when questions load
             }
         };
     </script>
@@ -968,16 +968,40 @@
             closeEditModal(); 
         }
         
-        async function fetchFromGemini(p,s) { 
-            const k=getApiKey(); 
-            if(!k){s.innerText="❌ Key!"; return null;} 
-            try{ 
-                let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}); 
-                let d=await r.json(); 
+        // --- FIXED: ENFORCED JSON OUTPUT & VALID MODEL VERSION ---
+        async function fetchFromGemini(p, s) { 
+            const k = getApiKey(); 
+            if(!k) { s.innerText = "❌ No API Key found!"; return null; } 
+            
+            try { 
+                // Changed to gemini-1.5-flash (stable) and added responseMimeType
+                let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: p }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json" // Guarantees pure JSON return
+                        }
+                    })
+                }); 
+                
+                if (!r.ok) {
+                    let err = await r.json();
+                    s.innerText = "❌ API Error: " + (err.error?.message || "Unknown error");
+                    return null;
+                }
+
+                let d = await r.json(); 
                 let rawText = d.candidates[0].content.parts[0].text;
-                let jsonMatch = rawText.match(/\[[\s\S]*\]/); 
-                if(jsonMatch) { return JSON.parse(jsonMatch[0]); } else { return null; }
-            }catch(e){ s.innerText="❌ JSON Parsing Error. Please try again."; return null; } 
+                
+                // Because responseMimeType is active, we don't need regex. It is pure JSON.
+                return JSON.parse(rawText);
+            } catch(e) { 
+                console.error(e);
+                s.innerText = "❌ JSON Parsing Error. The AI struggled to format the text."; 
+                return null; 
+            } 
         }
         
         async function generateAITest() { 
@@ -995,16 +1019,28 @@
             for (let i = 0; i < totalBatches; i++) {
                 s.innerText = `⏳ Generating Batch ${i + 1} of ${totalBatches}... (Generated: ${allQuestions.length} Qs)`;
                 
+                // FIXED PROMPT: Enforces Strict JSON Template
                 let prompt = `Generate exactly ${batchSize} multiple choice questions about the topic: "${topic}". 
-                IMPORTANT: Ensure these questions cover different sub-topics.
+                Ensure these questions cover different sub-topics.
                 
                 CRITICAL EXTRACTION RULES:
                 1. TECHNICAL & MATHEMATICAL: Use LaTeX format (\\\\( and \\\\) for inline, $$ for block) for complex equations.
                 2. SUBJECT TAG: Categorize each question and provide a "subject" string (e.g., Mathematics, General Science, Reasoning, History).
                 3. BILINGUAL: Output Eng and Hin for General subjects. Do NOT translate pure Language subjects (like English Grammar).
                 
-                Output MUST be a pure JSON array only. 
-                Format exactly: subject, questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng, explanationHin.`;
+                You MUST output ONLY a valid JSON array of objects. Each object MUST exactly match this structure:
+                [
+                  {
+                    "subject": "Mathematics",
+                    "questionEng": "Sample English Question",
+                    "questionHin": "नमूना हिंदी प्रश्न",
+                    "optionsEng": ["Option A", "Option B", "Option C", "Option D"],
+                    "optionsHin": ["विकल्प ए", "विकल्प बी", "विकल्प सी", "विकल्प डी"],
+                    "correctIndex": 0,
+                    "explanationEng": "Explanation here",
+                    "explanationHin": "यहाँ व्याख्या"
+                  }
+                ]`;
                 
                 let q = await fetchFromGemini(prompt, s); 
                 if(q && Array.isArray(q)){ allQuestions = allQuestions.concat(q); } 
@@ -1019,7 +1055,7 @@
                 }); 
                 s.innerText = `✅ Success! Saved ${allQuestions.length} Questions.`; 
                 document.getElementById('ai-topic').value = ''; 
-            } else { s.innerText = "❌ AI could not generate questions."; }
+            } else { s.innerText = "❌ AI could not generate questions. Please review the API settings or try another topic."; }
         }
 
         async function processPDF() {
@@ -1046,17 +1082,30 @@
 
                     for(let i = 0; i < chunks.length; i++) {
                         s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
-                        let prompt = `You are an expert bilingual test creator. Extract ALL multiple-choice questions from the provided text segment. Context: "${subjectContext}".
+                        
+                        // FIXED PROMPT: Enforces Strict JSON Template
+                        let prompt = `You are an expert bilingual test creator for competitive and technical exams. Extract ALL multiple-choice questions from the provided text segment. Context: "${subjectContext}".
 
                         RULES:
                         1. SUBJECT TAG: You MUST categorize each question accurately into a broad "subject" (e.g., Mathematics, General Awareness, Reasoning, Technical, English). 
                         2. LaTeX: Use standard LaTeX for complex math/electrical equations (\\\\( and \\\\) or $$).
                         3. BILINGUAL: Ensure 'Hin' and 'Eng' fields are filled correctly depending on the subject.
                         
-                        Output pure JSON array: 
-                        [{ "subject": "Name of section", "questionEng": "...", "questionHin": "...", "optionsEng": [...], "optionsHin": [...], "correctIndex": 0, "explanationEng": "...", "explanationHin": "..." }]
+                        You MUST output ONLY a valid JSON array of objects. Each object MUST exactly match this structure:
+                        [
+                          {
+                            "subject": "Mathematics",
+                            "questionEng": "Sample English Question",
+                            "questionHin": "नमूना हिंदी प्रश्न",
+                            "optionsEng": ["Option A", "Option B", "Option C", "Option D"],
+                            "optionsHin": ["विकल्प ए", "विकल्प बी", "विकल्प सी", "विकल्प डी"],
+                            "correctIndex": 0,
+                            "explanationEng": "Explanation here",
+                            "explanationHin": "यहाँ व्याख्या"
+                          }
+                        ]
                         
-                        Text: ${chunks[i]}`;
+                        Text Segment: ${chunks[i]}`;
 
                         let q = await fetchFromGemini(prompt, s);
                         if(q && Array.isArray(q)) { allQuestions = allQuestions.concat(q); }
@@ -1070,7 +1119,7 @@
                         });
                         s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions.`;
                         document.getElementById('pdf-subject').value = ''; 
-                    } else { s.innerText = "❌ AI could not extract questions."; }
+                    } else { s.innerText = "❌ AI could not extract questions. The JSON format returned was unreadable."; }
                 } catch (e) { s.innerText = "❌ Error processing PDF file format."; }
             };
             fr.readAsArrayBuffer(f);
