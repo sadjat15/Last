@@ -488,7 +488,10 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const storage = firebase.storage(); // ADDED: Initialize Storage
+        const storage = firebase.storage(); 
+
+        // --- ADDED PDF.js WORKER CONFIGURATION ---
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         let currentUserRole = null;
         let currentTest = null;
@@ -887,7 +890,30 @@
             closeEditModal(); 
         }
         
-        async function fetchFromGemini(p,s) { const k=getApiKey(); if(!k){s.innerText="❌ Key!"; return null;} try{ let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}); let d=await r.json(); return JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json/g,'').replace(/```/g,'').trim()); }catch(e){s.innerText="❌ "+e; return null;} }
+        // --- ADDED SAFER JSON REGEX PARSING ---
+        async function fetchFromGemini(p,s) { 
+            const k=getApiKey(); 
+            if(!k){s.innerText="❌ Key!"; return null;} 
+            try{ 
+                let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}); 
+                let d=await r.json(); 
+                
+                let rawText = d.candidates[0].content.parts[0].text;
+                // Use RegEx to strictly capture everything between [ and ], ignoring stray markdown
+                let jsonMatch = rawText.match(/\[[\s\S]*\]/); 
+                
+                if(jsonMatch) {
+                    return JSON.parse(jsonMatch[0]);
+                } else {
+                    console.error("AI returned text but no JSON array found.");
+                    return null;
+                }
+            }catch(e){
+                console.error(e);
+                s.innerText="❌ JSON Parsing Error. Please try again."; 
+                return null;
+            } 
+        }
         
         async function generateAITest() { 
             const topic = document.getElementById('ai-topic').value;
@@ -969,6 +995,12 @@
                         txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
                     }
 
+                    // --- ADDED SAFEGUARD: PREVENT BLANK UPLOADS ---
+                    if (txt.trim().length === 0) {
+                        s.innerText = "❌ The PDF contains no readable text. It appears to be an image-only scan. Please upload a standard text-based PDF.";
+                        return;
+                    }
+
                     s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
 
                     const chunkSize = 15000;
@@ -1035,7 +1067,7 @@
                         s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
                         document.getElementById('pdf-subject').value = ''; // Clear input on success
                     } else {
-                        s.innerText = "❌ AI could not extract questions. Ensure the PDF contains text, not just scanned images.";
+                        s.innerText = "❌ AI could not extract questions. The JSON format returned was unreadable.";
                     }
 
                 } catch (e) {
