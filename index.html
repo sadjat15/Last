@@ -121,7 +121,7 @@
 
     <div class="container">
         
-        <div id="view-login" class="view active">
+                <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
@@ -148,7 +148,7 @@
                 </div>
                 <button id="login-submit-btn" class="btn-primary" onclick="login()" style="margin-top: 10px;">Sign In</button>
                 <div style="text-align: center; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">New Student? <a href="#" onclick="toggleAuthForm('register')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create Account</a></p>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">New Student? <a href="javascript:void(0);" onclick="toggleAuthForm('register')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create Account</a></p>
                 </div>
             </div>
 
@@ -168,11 +168,12 @@
                     </div>
                     <button class="btn-primary" onclick="registerStudent()" style="margin-top: 15px; padding: 14px; font-size: 1.1rem; border-radius: 12px;">Create Account</button>
                     <div style="text-align: center; margin-top: 25px;">
-                        <p style="color: var(--text-muted); font-size: 0.95rem;">Already have an account? <a href="#" onclick="toggleAuthForm('login')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login here</a></p>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Already have an account? <a href="javascript:void(0);" onclick="toggleAuthForm('login')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login here</a></p>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <div id="view-admin" class="view">
             <div id="admin-main-menu" class="sub-sec active">
