@@ -86,7 +86,16 @@
         .btn-primary:disabled { background: var(--text-muted); cursor: not-allowed; }
         .btn-danger { background: var(--danger); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%;}
         .btn-success { background: var(--success); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+        .btn-outline:hover { background: #e0e7ff; }
+
+        /* Modern Register Portal */
+        .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
+        .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
+
+        /* Question Editor UI */
+        .question-edit-card { border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 20px; border-radius: 12px; background: white; box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         /* Modal */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
@@ -130,8 +139,8 @@
                     </select>
                 </div>
                 <div class="input-group">
-                    <label id="login-id-label">Student ID/Phone OR Admin ID</label>
-                    <input type="text" id="login-email" placeholder="Enter ID or Phone Number">
+                    <label id="login-id-label">Phone Number / Admin ID</label>
+                    <input type="text" id="login-email" placeholder="Enter Phone Number">
                 </div>
                 <div class="input-group">
                     <label>Password</label>
@@ -145,22 +154,24 @@
         </div>
 
         <div id="view-register" class="view">
-            <div class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h2 style="font-size: 1.8rem; color: var(--primary);">Create Account</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Register using any Phone Number or ID</p>
+            <div class="modern-card" style="max-width: 450px; margin: 60px auto;">
+                <div class="modern-header">
+                    <h2 style="font-size: 2rem; margin-bottom: 5px;">Join KD JAAT</h2>
+                    <p style="opacity: 0.9; font-size: 0.95rem;">Create your student account to take mock tests</p>
                 </div>
-                <div class="input-group">
-                    <label>Student ID or Phone Number</label>
-                    <input type="text" id="reg-phone" placeholder="No OTP required">
-                </div>
-                <div class="input-group">
-                    <label>Create Password</label>
-                    <input type="password" id="reg-password" placeholder="Minimum 6 characters">
-                </div>
-                <button class="btn-primary" onclick="registerStudent()" style="margin-top: 10px;">Create Account</button>
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="btn-outline" onclick="goBack()" style="border:none; color: var(--text-muted);">← Back to Login</button>
+                <div style="padding: 30px;">
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="reg-phone" placeholder="Enter your 10-digit phone number">
+                    </div>
+                    <div class="input-group">
+                        <label>Create Password</label>
+                        <input type="password" id="reg-password" placeholder="Minimum 6 characters">
+                    </div>
+                    <button class="btn-primary" onclick="registerStudent()" style="margin-top: 15px; padding: 14px; font-size: 1.1rem; border-radius: 12px;">Create Account</button>
+                    <div style="text-align: center; margin-top: 25px;">
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Already have an account? <a href="#" onclick="navigate('view-login')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login here</a></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -213,6 +224,21 @@
                 <div id="test-list-container" class="grid-list"></div>
             </div>
 
+            <div id="admin-sec-test-editor" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
+                    <h2 id="editor-test-title">Editing Test Questions</h2>
+                </div>
+                <div class="action-box" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn-primary" style="flex: 1;" onclick="addManualQuestion()">➕ Add Blank Question</button>
+                        <button class="btn-primary" style="flex: 1; background: #8b5cf6;" onclick="openQuestionBank()">📚 Import from Question Bank</button>
+                        <button class="btn-primary" style="flex: 1; background: var(--success);" onclick="saveTestQuestions()">💾 Save All Changes</button>
+                    </div>
+                    <div id="editor-questions-list"></div>
+                </div>
+            </div>
+
             <div id="admin-sec-attempts" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Live Student Attempts</h2></div>
                 <div id="admin-attempts-list" class="grid-list"></div>
@@ -249,17 +275,17 @@
 
             <div id="student-sec-groups" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Select a Test Category</h2></div>
-                <div class="grid" id="student-group-list"></div>
+                <div class="grid-list" id="student-group-list"></div>
             </div>
 
             <div id="student-sec-tests-list" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Categories</button><h2 id="current-group-title">Available Tests</h2></div>
-                <div class="grid" id="student-test-list"></div>
+                <div class="grid-list" id="student-test-list"></div>
             </div>
 
             <div id="student-sec-attempts" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>My Attempt History</h2></div>
-                <div class="grid" id="student-attempts-list"></div>
+                <div class="grid-list" id="student-attempts-list"></div>
             </div>
 
             <div id="student-sec-password" class="sub-sec">
@@ -287,7 +313,7 @@
         <div id="view-results" class="view">
             <div class="action-box" style="text-align: center; padding: 40px 20px;">
                 <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 30px;">Test Completed! 🎉</h2>
-                <div class="grid" style="max-width: 800px; margin: 0 auto;">
+                <div class="grid-list" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div style="background: #f0fdf4; border: 2px solid #bbf7d0; padding: 20px; border-radius: var(--radius);">
                         <h3 style="color: #166534; margin: 0;">Total Score</h3>
                         <p id="res-score" style="font-size: 3rem; font-weight: 700; color: var(--success); margin: 10px 0;"></p>
@@ -312,14 +338,27 @@
             <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Test Settings</h2>
             <input type="hidden" id="edit-test-id">
             <div class="input-group"><label>Test Title</label><input type="text" id="edit-title"></div>
-            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 15px; gap: 10px;">
+            <div class="form-grid" style="margin-bottom: 15px;">
                 <div class="input-group" style="margin: 0;"><label>Timer (Minutes)</label><input type="number" id="edit-timer"></div>
                 <div class="input-group" style="margin: 0;"><label>Marks per Question</label><input type="number" id="edit-marks"></div>
             </div>
-            <div class="input-group"><label>Questions Data (JSON Format)</label><textarea id="edit-questions" rows="8" style="font-family: monospace; font-size: 0.85rem;"></textarea></div>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="closeEditModal()" class="btn-outline">Cancel</button>
-                <button onclick="saveTestEdit()" class="btn-success">Save Changes</button>
+                <button onclick="closeEditModal()" class="btn-outline" style="flex:1;">Cancel</button>
+                <button onclick="saveTestEdit()" class="btn-success" style="flex:1;">Save Setup</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="qbank-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px;">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Import Questions</h2>
+            <p style="margin-bottom: 15px; color: var(--text-muted);">Select previously uploaded questions from other tests.</p>
+            <div id="qbank-list" style="max-height: 50vh; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;">
+                Loading past questions...
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closeQuestionBank()" class="btn-outline" style="flex:1;">Cancel</button>
+                <button onclick="importSelectedQuestions()" class="btn-success" style="flex:1;">Import Selected Questions</button>
             </div>
         </div>
     </div>
@@ -400,7 +439,7 @@
 
         window.onload = checkDeviceLockout;
 
-        // --- HARDWARE BACK BUTTON & BROWSER HISTORY LOGIC ---
+        // --- NAVIGATION ---
         function navigate(viewId, pushState = true) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -413,7 +452,6 @@
                 if(viewId === 'view-admin') openAdminSec('admin-main-menu', false);
                 if(viewId === 'view-student') openStudentSec('student-main-menu', false);
             }
-
             if (viewId === 'view-login') checkDeviceLockout();
         }
 
@@ -432,11 +470,8 @@
         window.onpopstate = function(event) {
             if (event.state) {
                 navigate(event.state.view, false);
-                if (event.state.view === 'view-admin') {
-                    openAdminSec(event.state.sec || 'admin-main-menu', false);
-                } else if (event.state.view === 'view-student') {
-                    openStudentSec(event.state.sec || 'student-main-menu', false);
-                }
+                if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false);
+                else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false);
             } else {
                 navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false);
             }
@@ -461,12 +496,8 @@
             if(!newId || !newPass) return alert("Please fill both fields.");
             if(newPass.length < 6) return alert("Password must be at least 6 characters.");
 
-            try {
-                await db.collection('adminSettings').doc('credentials').set({ id: newId, pass: newPass });
-            } catch(e) {
-                localStorage.setItem('adminCustomId', newId);
-                localStorage.setItem('adminCustomPass', newPass);
-            }
+            try { await db.collection('adminSettings').doc('credentials').set({ id: newId, pass: newPass }); } 
+            catch(e) { localStorage.setItem('adminCustomId', newId); localStorage.setItem('adminCustomPass', newPass); }
             alert("Admin Credentials Updated! Please log in again.");
             logout();
         }
@@ -493,7 +524,7 @@
             const phoneId = document.getElementById('reg-phone').value.trim();
             const pass = document.getElementById('reg-password').value;
             
-            if(phoneId.length < 4) return alert("Please enter a valid ID or Phone number.");
+            if(phoneId.length < 4) return alert("Please enter a valid Phone number.");
             if(pass.length < 6) return alert("Password must be at least 6 characters.");
 
             const pseudoEmail = formatIDAsEmail(phoneId);
@@ -506,7 +537,7 @@
                     loadGroupsForStudents();
                     loadStudentAttempts();
                 })
-                .catch(e => alert("Error: ID might already be registered."));
+                .catch(e => alert("Registration Error: Phone number might already be registered."));
         }
 
         async function login() {
@@ -518,43 +549,166 @@
 
             if (role === 'admin') {
                 let validId = 'admin'; let validPass = 'Sachin@123';
-
                 if(localStorage.getItem('adminCustomId')) {
                     validId = localStorage.getItem('adminCustomId');
                     validPass = localStorage.getItem('adminCustomPass');
                 }
-
                 try {
                     const doc = await db.collection('adminSettings').doc('credentials').get();
                     if(doc.exists) { validId = doc.data().id; validPass = doc.data().pass; }
                 } catch(e) {}
 
                 if (idInput === validId && pass === validPass) {
-                    clearLockoutOnSuccess();
-                    currentUserRole = 'admin';
-                    navigate('view-admin');
-                    loadAdminData();
-                    if(getApiKey()) document.getElementById('admin-api-key').value = getApiKey();
-                } else {
-                    recordFailedAttempt();
-                }
-                
+                    clearLockoutOnSuccess(); currentUserRole = 'admin'; navigate('view-admin');
+                    loadAdminData(); if(getApiKey()) document.getElementById('admin-api-key').value = getApiKey();
+                } else { recordFailedAttempt(); }
             } else {
                 const pseudoEmail = formatIDAsEmail(idInput);
-                auth.signInWithEmailAndPassword(pseudoEmail, pass)
-                    .then(() => {
-                        clearLockoutOnSuccess();
-                        currentUserRole = 'student';
-                        navigate('view-student');
-                        loadGroupsForStudents();
-                        loadStudentAttempts();
-                    }).catch(e => {
-                        recordFailedAttempt();
-                    });
+                auth.signInWithEmailAndPassword(pseudoEmail, pass).then(() => {
+                    clearLockoutOnSuccess(); currentUserRole = 'student'; navigate('view-student');
+                    loadGroupsForStudents(); loadStudentAttempts();
+                }).catch(e => { recordFailedAttempt(); });
             }
         }
 
         function logout() { auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
+
+        // --- ADMIN TEST QUESTION EDITOR LOGIC ---
+        let editingTestId = null;
+        let editingQuestions = [];
+
+        async function openTestEditor(testId) {
+            editingTestId = testId;
+            const doc = await db.collection("tests").doc(testId).get();
+            if(!doc.exists) return;
+            const test = doc.data();
+            document.getElementById('editor-test-title').innerText = `Editing: ${test.title}`;
+            editingQuestions = test.questions || [];
+            renderEditorQuestions();
+            openAdminSec('admin-sec-test-editor');
+        }
+
+        function renderEditorQuestions() {
+            const container = document.getElementById('editor-questions-list');
+            container.innerHTML = '';
+            
+            if(editingQuestions.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:gray; padding: 20px;">No questions in this test. Add one manually or import from the bank.</p>';
+            }
+
+            editingQuestions.forEach((q, index) => {
+                container.innerHTML += `
+                <div class="question-edit-card">
+                    <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+                        <strong style="font-size: 1.1rem; color: var(--primary);">Question ${index + 1}</strong>
+                        <button class="btn-danger" style="width:auto; padding: 6px 12px; font-size: 0.85rem;" onclick="deleteQuestion(${index})">🗑 Delete</button>
+                    </div>
+                    <div class="input-group"><label>English Question</label><textarea rows="2" onchange="updateQ(${index}, 'questionEng', this.value)">${q.questionEng || ''}</textarea></div>
+                    <div class="input-group"><label>Hindi Question</label><textarea rows="2" onchange="updateQ(${index}, 'questionHin', this.value)">${q.questionHin || ''}</textarea></div>
+                    
+                    <label style="font-weight: bold; font-size: 0.9rem; margin-top: 10px; display: block; color: #475569;">Options</label>
+                    <div class="form-grid">
+                        <div class="input-group"><input placeholder="Option 1 (Eng)" value="${q.optionsEng?.[0]||''}" onchange="updateOpt(${index}, 'Eng', 0, this.value)"></div>
+                        <div class="input-group"><input placeholder="Option 1 (Hin)" value="${q.optionsHin?.[0]||''}" onchange="updateOpt(${index}, 'Hin', 0, this.value)"></div>
+                        
+                        <div class="input-group"><input placeholder="Option 2 (Eng)" value="${q.optionsEng?.[1]||''}" onchange="updateOpt(${index}, 'Eng', 1, this.value)"></div>
+                        <div class="input-group"><input placeholder="Option 2 (Hin)" value="${q.optionsHin?.[1]||''}" onchange="updateOpt(${index}, 'Hin', 1, this.value)"></div>
+                        
+                        <div class="input-group"><input placeholder="Option 3 (Eng)" value="${q.optionsEng?.[2]||''}" onchange="updateOpt(${index}, 'Eng', 2, this.value)"></div>
+                        <div class="input-group"><input placeholder="Option 3 (Hin)" value="${q.optionsHin?.[2]||''}" onchange="updateOpt(${index}, 'Hin', 2, this.value)"></div>
+                        
+                        <div class="input-group"><input placeholder="Option 4 (Eng)" value="${q.optionsEng?.[3]||''}" onchange="updateOpt(${index}, 'Eng', 3, this.value)"></div>
+                        <div class="input-group"><input placeholder="Option 4 (Hin)" value="${q.optionsHin?.[3]||''}" onchange="updateOpt(${index}, 'Hin', 3, this.value)"></div>
+                    </div>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label>Correct Answer (Index 0-3)</label>
+                        <select onchange="updateQ(${index}, 'correctIndex', parseInt(this.value))">
+                            <option value="0" ${q.correctIndex===0?'selected':''}>Option 1</option>
+                            <option value="1" ${q.correctIndex===1?'selected':''}>Option 2</option>
+                            <option value="2" ${q.correctIndex===2?'selected':''}>Option 3</option>
+                            <option value="3" ${q.correctIndex===3?'selected':''}>Option 4</option>
+                        </select>
+                    </div>
+                </div>`;
+            });
+        }
+        
+        function updateQ(idx, field, val) { editingQuestions[idx][field] = val; }
+        function updateOpt(idx, lang, optIdx, val) { 
+            if(lang==='Eng') { if(!editingQuestions[idx].optionsEng) editingQuestions[idx].optionsEng=[]; editingQuestions[idx].optionsEng[optIdx] = val; }
+            else { if(!editingQuestions[idx].optionsHin) editingQuestions[idx].optionsHin=[]; editingQuestions[idx].optionsHin[optIdx] = val; }
+        }
+        function deleteQuestion(idx) { 
+            if(confirm("Remove this question?")) { editingQuestions.splice(idx, 1); renderEditorQuestions(); }
+        }
+        
+        function addManualQuestion() {
+            editingQuestions.push({
+                questionEng: "", questionHin: "",
+                optionsEng: ["", "", "", ""], optionsHin: ["", "", "", ""],
+                correctIndex: 0
+            });
+            renderEditorQuestions();
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        async function saveTestQuestions() {
+            try {
+                await db.collection("tests").doc(editingTestId).update({ questions: editingQuestions });
+                alert("Questions updated successfully!");
+                openAdminSec('admin-sec-tests');
+            } catch(e) { alert("Error saving questions: " + e.message); }
+        }
+
+        // --- QUESTION BANK MODAL LOGIC ---
+        async function openQuestionBank() {
+            document.getElementById('qbank-modal').style.display = 'flex';
+            const statusBox = document.getElementById('qbank-list');
+            statusBox.innerHTML = "Fetching previous tests...";
+            
+            const snapshot = await db.collection("tests").get();
+            let html = '';
+            
+            snapshot.forEach(doc => {
+                if(doc.id === editingTestId) return; // Skip currently opened test
+                const test = doc.data();
+                if(test.questions && test.questions.length > 0) {
+                    html += `
+                    <div style="margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+                        <div style="background: #f1f5f9; padding: 10px; font-weight: bold; font-size: 0.95rem;">${test.title} (${test.groupName || 'Uncategorized'})</div>
+                        <div style="padding: 10px;">`;
+                    
+                    test.questions.forEach((q) => {
+                        const qStr = encodeURIComponent(JSON.stringify(q));
+                        html += `
+                        <label style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; padding: 8px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer;">
+                            <input type="checkbox" class="qbank-checkbox" value="${qStr}" style="margin-top: 4px; transform: scale(1.2);">
+                            <span style="font-size: 0.9rem;">${q.questionEng || q.questionHin || 'Untitled Question'}</span>
+                        </label>`;
+                    });
+                    html += `</div></div>`;
+                }
+            });
+            
+            statusBox.innerHTML = html || "<p>No previous questions found in database.</p>";
+        }
+        
+        function importSelectedQuestions() {
+            const checkboxes = document.querySelectorAll('.qbank-checkbox:checked');
+            let count = 0;
+            checkboxes.forEach(cb => {
+                const q = JSON.parse(decodeURIComponent(cb.value));
+                editingQuestions.push(q);
+                count++;
+            });
+            closeQuestionBank();
+            renderEditorQuestions();
+            alert(`${count} questions imported! Remember to click 'Save All Changes' to keep them.`);
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function closeQuestionBank() { document.getElementById('qbank-modal').style.display = 'none'; }
+
 
         // --- GROUPS & LOAD ADMIN DATA ---
         function addGroup() {
@@ -587,8 +741,11 @@
                         <div class="action-box" style="margin-bottom: 0;">
                             <span style="font-size: 0.8rem; color: var(--primary); font-weight: bold;">${test.groupName || 'Uncategorized'}</span>
                             <h4 style="margin: 5px 0;">${test.title}</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">⏱ ${testDuration} mins | 📝 ${test.questions?.length || 0} Qs</p>
-                            <button class="btn-outline" onclick="openEditModal('${doc.id}')" style="width: 100%;">Edit Setup</button>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">⏱ ${testDuration} mins | 📝 ${test.questions?.length || 0} Qs</p>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-outline" onclick="openEditModal('${doc.id}')" style="flex: 1; padding: 8px;">⚙️ Settings</button>
+                                <button class="btn-primary" onclick="openTestEditor('${doc.id}')" style="flex: 1; padding: 8px;">📝 Edit Questions</button>
+                            </div>
                         </div>`;
                 });
             });
@@ -685,7 +842,7 @@
             });
         }
 
-        // --- ADMIN EDIT MODAL ---
+        // --- ADMIN EDIT MODAL (FOR SETTINGS) ---
         async function openEditModal(testId) {
             const doc = await db.collection("tests").doc(testId).get();
             if(!doc.exists) return;
@@ -695,7 +852,6 @@
             document.getElementById('edit-title').value = test.title;
             document.getElementById('edit-timer').value = test.duration ? (test.duration / 60) : 30;
             document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
-            document.getElementById('edit-questions').value = JSON.stringify(test.questions, null, 2);
             
             document.getElementById('edit-modal').style.display = 'flex';
         }
@@ -707,25 +863,20 @@
             const title = document.getElementById('edit-title').value;
             const timerMins = parseInt(document.getElementById('edit-timer').value);
             const marks = parseFloat(document.getElementById('edit-marks').value);
-            let questions;
-
-            try { questions = JSON.parse(document.getElementById('edit-questions').value); } 
-            catch(e) { return alert("Invalid JSON format in Questions box!"); }
 
             await db.collection("tests").doc(testId).update({
-                title: title, duration: timerMins * 60, marksPerQuestion: marks, questions: questions
+                title: title, duration: timerMins * 60, marksPerQuestion: marks
             });
 
             closeEditModal();
-            alert("Test updated successfully!");
+            alert("Test settings updated successfully!");
         }
 
-        // --- AI GENERATION UPDATED TO GEMINI 2.5 FLASH ---
+        // --- AI GENERATION ---
         async function fetchFromGemini(prompt, statusEl) {
             const apiKey = getApiKey();
             if(!apiKey) { statusEl.innerText = "❌ Missing API Key."; return null; }
             try {
-                // Endpoint updated to the latest Gemini 2.5 Flash
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -803,7 +954,7 @@
             const doc = await db.collection("tests").doc(testId).get();
             if (!doc.exists) return;
             currentTest = doc.data(); 
-            testQuestions = currentTest.questions;
+            testQuestions = currentTest.questions || [];
             testMarks = currentTest.marksPerQuestion || 2;
             userAnswers = new Array(testQuestions.length).fill(null);
             timeRemaining = currentTest.duration || 1800;
@@ -819,11 +970,13 @@
                 const qText = currentLanguage === 'Eng' ? q.questionEng : q.questionHin;
                 const opts = currentLanguage === 'Eng' ? q.optionsEng : q.optionsHin;
                 let optionsHTML = '';
-                opts.forEach((opt, optIndex) => {
-                    const isChecked = userAnswers[index] === optIndex ? 'checked' : '';
-                    optionsHTML += `<label><input type="radio" name="q${index}" value="${optIndex}" ${isChecked} onchange="userAnswers[${index}] = ${optIndex}"> ${opt}</label>`;
-                });
-                container.innerHTML += `<div class="question-card"><h4><span style="color: var(--primary);">Q${index + 1}.</span> ${qText}</h4><div class="options">${optionsHTML}</div></div>`;
+                if(opts) {
+                    opts.forEach((opt, optIndex) => {
+                        const isChecked = userAnswers[index] === optIndex ? 'checked' : '';
+                        optionsHTML += `<label><input type="radio" name="q${index}" value="${optIndex}" ${isChecked} onchange="userAnswers[${index}] = ${optIndex}"> ${opt}</label>`;
+                    });
+                }
+                container.innerHTML += `<div class="question-card"><h4><span style="color: var(--primary);">Q${index + 1}.</span> ${qText || 'Question missing language translation'}</h4><div class="options">${optionsHTML}</div></div>`;
             });
         }
 
@@ -872,9 +1025,7 @@
         }
 
         // Initialize state on page load
-        if(!window.history.state) {
-            window.history.replaceState({ view: 'view-login' }, "", "#view-login");
-        }
+        if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); }
         navigate('view-login', false);
 
     </script>
