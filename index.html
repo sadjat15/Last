@@ -121,7 +121,7 @@
 
     <div class="container">
         
-                <div id="view-login" class="view active">
+        <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
@@ -555,7 +555,16 @@
                     loadGroupsForStudents();
                     loadStudentAttempts();
                 })
-                .catch(e => alert("Registration Error: Phone number might already be registered."));
+                .catch(e => {
+                    console.error("Firebase Auth Error:", e);
+                    if (e.code === 'auth/email-already-in-use') {
+                        alert("This phone number is already registered. Please log in.");
+                    } else if (e.code === 'auth/operation-not-allowed') {
+                        alert("Error: Email/Password authentication is not enabled in your Firebase Console. Please enable it in the Authentication settings.");
+                    } else {
+                        alert("Registration Error: " + e.message);
+                    }
+                });
         }
 
         async function login() {
