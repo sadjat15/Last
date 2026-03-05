@@ -14,6 +14,19 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$']]
+            },
+            startup: {
+                typeset: false // We will trigger this manually when questions load
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         :root {
             --primary: #4f46e5;
@@ -936,10 +949,16 @@
                 let prompt = `Generate exactly ${batchSize} multiple choice questions about the topic: "${topic}". 
                 IMPORTANT: This is batch ${i + 1} of ${totalBatches}. Ensure these questions are completely unique and cover different sub-topics or difficulty levels compared to previous batches.
                 
-                IMPORTANT LANGUAGE RULES:
-                1. For general subjects (Math, Science, GK, etc.), you MUST provide both English and Hindi translations.
-                2. EXCEPTION: If the topic is an "English Subject/Grammar" topic, do NOT translate the questions or options to Hindi. Put the English text in BOTH the Eng and Hin fields.
-                3. EXCEPTION: If the topic is a "Hindi Subject/Grammar" topic, do NOT translate the questions or options to English. Put the Hindi text in BOTH the Eng and Hin fields.
+                CRITICAL EXTRACTION AND TRANSLATION RULES:
+                1. TECHNICAL & MATHEMATICAL CONTENT:
+                   - Carefully preserve all mathematical formulas, fractions, and electrical symbols (e.g., Ω, μF, Φ, V, A).
+                   - Do NOT translate standard acronyms (e.g., AC, DC, MCB, NEC) or universally recognized SI units into Hindi. Keep them in English script even in the Hindi fields.
+                   - For equations, use standard plain text formatting or LaTeX.
+                   - For complex mathematical formulas, fractions, or advanced electrical equations, output them in standard LaTeX format. Enclose inline equations within \\\\( and \\\\), and standalone block equations within $$ and $$.
+                2. GENERAL SUBJECTS (Math, Science, GK, etc.):
+                   - You MUST provide both English and Hindi translations.
+                3. EXCEPTION: If the topic is an "English Subject/Grammar" topic, do NOT translate the questions or options to Hindi. Put the English text in BOTH the Eng and Hin fields.
+                4. EXCEPTION: If the topic is a "Hindi Subject/Grammar" topic, do NOT translate the questions or options to English. Put the Hindi text in BOTH the Eng and Hin fields.
                 
                 Output MUST be a pure JSON array only. 
                 Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान).`;
@@ -1014,21 +1033,20 @@
                     for(let i = 0; i < chunks.length; i++) {
                         s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
 
-                        let prompt = `You are an expert bilingual test creator. Extract ALL valid multiple-choice questions from the provided text segment. 
+                        let prompt = `You are an expert bilingual test creator for competitive and technical exams. Extract ALL valid multiple-choice questions from the provided text segment. 
                         Context/Hint for this PDF: "${subjectContext}".
 
-                        CRITICAL AUTO-DETECTION AND TRANSLATION RULES:
-                        You must auto-detect the subject of EVERY SINGLE question individually and apply the following rules:
-                        1. GENERAL SUBJECTS (Math, Science, GK, History, Geography, Reasoning, etc.): 
+                        CRITICAL EXTRACTION AND TRANSLATION RULES:
+                        1. TECHNICAL & MATHEMATICAL CONTENT:
+                           - Carefully preserve all mathematical formulas, fractions, and electrical symbols (e.g., Ω, μF, Φ, V, A).
+                           - Do NOT translate standard acronyms (e.g., AC, DC, MCB, NEC) or universally recognized SI units into Hindi. Keep them in English script even in the Hindi fields.
+                           - For complex mathematical formulas, fractions, or advanced electrical equations, output them in standard LaTeX format. Enclose inline equations within \\\\( and \\\\), and standalone block equations within $$ and $$.
+                        2. GENERAL SUBJECTS (Science, GK, Math, etc.): 
                            - You MUST provide the question, options, and explanation in BOTH English and Hindi. 
                            - If the source is only in English, translate it to Hindi for the 'Hin' fields. 
                            - If the source is only in Hindi, translate it to English for the 'Eng' fields.
-                        2. ENGLISH LANGUAGE SUBJECT (English Grammar, Vocabulary, Comprehension, Idioms, etc.): 
-                           - DO NOT translate to Hindi. 
-                           - Output the exact same English text for BOTH the English and Hindi JSON fields.
-                        3. HINDI LANGUAGE SUBJECT (हिंदी व्याकरण, गद्यांश, मुहावरे, etc.): 
-                           - DO NOT translate to English. 
-                           - Output the exact same Hindi text for BOTH the English and Hindi JSON fields.
+                        3. LANGUAGE SUBJECTS (English Grammar or Hindi Vyakaran): 
+                           - DO NOT translate. Output the exact same source text for BOTH the English and Hindi JSON fields.
 
                         Output format MUST be a pure, strictly valid JSON array of objects. Do not include markdown formatting like \`\`\`json.
                         Required JSON Object Structure:
@@ -1162,6 +1180,11 @@
             const nextBtn = document.getElementById('btn-next');
             if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } 
             else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
+
+            // --- ADDED: Tell MathJax to render any equations on the new question ---
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
+            }
         }
 
         function setAnswer(optIndex) {
@@ -1301,6 +1324,11 @@
                         ${expHTML}
                     </div>`;
             });
+
+            // --- ADDED: Tell MathJax to render all explanations on the review screen ---
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
+            }
         }
 
         // --- AUTO-LOGIN ---
