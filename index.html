@@ -336,7 +336,34 @@
 
     </div>
 
-    <div id="edit-modal" class="modal-overlay"><div class="modal"><h2 style="margin-bottom: 20px; color: var(--primary);">Edit Test Settings</h2><input type="hidden" id="edit-test-id"><div class="input-group"><label>Test Title</label><input type="text" id="edit-title"></div><div class="form-grid" style="margin-bottom: 15px;"><div class="input-group" style="margin: 0;"><label>Timer (Minutes)</label><input type="number" id="edit-timer"></div><div class="input-group" style="margin: 0;"><label>Marks per Question</label><input type="number" id="edit-marks"></div></div><div style="display: flex; gap: 10px; margin-top: 20px;"><button onclick="closeEditModal()" class="btn-outline" style="flex:1;">Cancel</button><button onclick="saveTestEdit()" class="btn-success" style="flex:1;">Save Setup</button></div></div></div>
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Test Settings</h2>
+            <input type="hidden" id="edit-test-id">
+            <div class="input-group">
+                <label>Test Title</label>
+                <input type="text" id="edit-title">
+            </div>
+            <div class="form-grid" style="margin-bottom: 15px;">
+                <div class="input-group" style="margin: 0;">
+                    <label>Timer (Minutes)</label>
+                    <input type="number" id="edit-timer">
+                </div>
+                <div class="input-group" style="margin: 0;">
+                    <label>Marks per Question</label>
+                    <input type="number" id="edit-marks" step="0.5">
+                </div>
+                <div class="input-group" style="margin: 0;">
+                    <label>Negative Marks (per wrong answer)</label>
+                    <input type="number" id="edit-negative" step="0.25" placeholder="e.g. 0.25">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closeEditModal()" class="btn-outline" style="flex:1;">Cancel</button>
+                <button onclick="saveTestEdit()" class="btn-success" style="flex:1;">Save Setup</button>
+            </div>
+        </div>
+    </div>
     
     <div id="qbank-modal" class="modal-overlay"><div class="modal" style="max-width: 800px;"><h2 style="margin-bottom: 20px; color: var(--primary);">Import Questions</h2><p style="margin-bottom: 15px; color: var(--text-muted);">Select previously uploaded questions from other tests.</p><div id="qbank-list" style="max-height: 50vh; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;">Loading past questions...</div><div style="display: flex; gap: 10px;"><button onclick="closeQuestionBank()" class="btn-outline" style="flex:1;">Cancel</button><button onclick="importSelectedQuestions()" class="btn-success" style="flex:1;">Import Selected Questions</button></div></div></div>
 
@@ -528,7 +555,7 @@
 
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
 
-        // --- ADMIN EDITOR LOGIC (UPGRADED WITH EXPLANATIONS) ---
+        // --- ADMIN EDITOR LOGIC ---
         let editingTestId = null, editingQuestions = [];
         async function openTestEditor(testId) { editingTestId = testId; const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return; const test = doc.data(); document.getElementById('editor-test-title').innerText = `Editing: ${test.title}`; editingQuestions = test.questions || []; renderEditorQuestions(); openAdminSec('admin-sec-test-editor'); }
         
@@ -595,12 +622,33 @@
         function viewGroupTests(gid, gn) { document.getElementById('current-group-title').innerText=gn; db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ let c=document.getElementById('student-test-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No tests found.</p>'; s.forEach(d=>{ let t=d.data(); c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px;">📝 ${t.title}</h4><button class="btn-primary" onclick="startTest('${d.id}')">Start Attempt 🚀</button></div>`; }); }); openStudentSec('student-sec-tests-list'); }
         function loadStudentAttempts() { if(!auth.currentUser)return; db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ let c=document.getElementById('student-attempts-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><h4 style="margin-bottom:10px">${a.testTitle}</h4><div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold;">Score: ${a.score}/${a.totalMarks}</div></div>`; }); }); }
         
-        async function openEditModal(tid) { const d=await db.collection("tests").doc(tid).get(); const t=d.data(); document.getElementById('edit-test-id').value=tid; document.getElementById('edit-title').value=t.title; document.getElementById('edit-timer').value=t.duration?t.duration/60:30; document.getElementById('edit-marks').value=t.marksPerQuestion||2; document.getElementById('edit-modal').style.display='flex'; } function closeEditModal() { document.getElementById('edit-modal').style.display='none'; } async function saveTestEdit() { await db.collection("tests").doc(document.getElementById('edit-test-id').value).update({title:document.getElementById('edit-title').value, duration:parseInt(document.getElementById('edit-timer').value)*60, marksPerQuestion:parseFloat(document.getElementById('edit-marks').value)}); closeEditModal(); }
+        // --- MODIFIED: Loading and Saving Negative Marks in Admin settings ---
+        async function openEditModal(tid) { 
+            const d = await db.collection("tests").doc(tid).get(); 
+            const t = d.data(); 
+            document.getElementById('edit-test-id').value = tid; 
+            document.getElementById('edit-title').value = t.title; 
+            document.getElementById('edit-timer').value = t.duration ? t.duration / 60 : 30; 
+            document.getElementById('edit-marks').value = t.marksPerQuestion || 2; 
+            document.getElementById('edit-negative').value = t.negativeMarks || 0; // Load negative marks
+            document.getElementById('edit-modal').style.display='flex'; 
+        } 
+        
+        function closeEditModal() { document.getElementById('edit-modal').style.display='none'; } 
+        
+        async function saveTestEdit() { 
+            await db.collection("tests").doc(document.getElementById('edit-test-id').value).update({
+                title: document.getElementById('edit-title').value, 
+                duration: parseInt(document.getElementById('edit-timer').value) * 60, 
+                marksPerQuestion: parseFloat(document.getElementById('edit-marks').value),
+                negativeMarks: parseFloat(document.getElementById('edit-negative').value) || 0 // Save negative marks
+            }); 
+            closeEditModal(); 
+        }
         
         async function fetchFromGemini(p,s) { const k=getApiKey(); if(!k){s.innerText="❌ Key!"; return null;} try{ let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}); let d=await r.json(); return JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json/g,'').replace(/```/g,'').trim()); }catch(e){s.innerText="❌ "+e; return null;} }
         
-        // --- AI Prompts Updated to require explanations ---
-                        async function generateAITest() { 
+        async function generateAITest() { 
             const topic = document.getElementById('ai-topic').value;
             const g = document.getElementById('ai-test-group'); 
             
@@ -608,8 +656,7 @@
             
             let s = document.getElementById('ai-status'); 
             
-            // --- SET YOUR TARGET NUMBER OF QUESTIONS HERE ---
-            const targetQuestions = 50; // Change this to 100 or 200 as needed!
+            const targetQuestions = 50; 
             const batchSize = 25; 
             const totalBatches = Math.ceil(targetQuestions / batchSize);
             
@@ -619,7 +666,6 @@
             for (let i = 0; i < totalBatches; i++) {
                 s.innerText = `⏳ Generating Batch ${i + 1} of ${totalBatches}... (Generated: ${allQuestions.length} Qs)`;
                 
-                // SMART AI PROMPT: Handles translation exceptions for language topics
                 let prompt = `Generate exactly ${batchSize} multiple choice questions about the topic: "${topic}". 
                 IMPORTANT: This is batch ${i + 1} of ${totalBatches}. Ensure these questions are completely unique and cover different sub-topics or difficulty levels compared to previous batches.
                 
@@ -641,7 +687,6 @@
             }
 
             if(allQuestions.length > 0) { 
-                // Ensure we don't exceed the exact target number
                 if(allQuestions.length > targetQuestions) {
                     allQuestions = allQuestions.slice(0, targetQuestions);
                 }
@@ -651,20 +696,20 @@
                     groupId: g.value,
                     groupName: g.options[g.selectedIndex].text,
                     questions: allQuestions,
-                    duration: allQuestions.length * 60, // Auto-set timer: 1 minute per question generated
+                    duration: allQuestions.length * 60, 
                     marksPerQuestion: 2,
-                    negativeMarks: 0, // Defaults to 0, admin can edit later in settings
+                    negativeMarks: 0, 
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 }); 
                 
                 s.innerText = `✅ Success! Saved ${allQuestions.length} Questions.`; 
-                document.getElementById('ai-topic').value = ''; // Clear the input field
+                document.getElementById('ai-topic').value = ''; 
             } else {
                 s.innerText = "❌ AI could not generate questions. Please try a different topic.";
             }
         }
 
-                     async function processPDF() {
+        async function processPDF() {
             const f = document.getElementById('pdf-upload').files[0];
             const g = document.getElementById('pdf-test-group');
             
@@ -684,7 +729,6 @@
 
                     s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
 
-                    // Split the PDF text into chunks to bypass AI output token limits
                     const chunkSize = 15000;
                     let allQuestions = [];
                     let chunks = [];
@@ -693,11 +737,9 @@
                         chunks.push(txt.substring(i, i + chunkSize));
                     }
 
-                    // Process ALL chunks from the PDF (No maximum limit)
                     for(let i = 0; i < chunks.length; i++) {
                         s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
 
-                        // SMART AI PROMPT: Handles translation exceptions for language subjects
                         let prompt = `Extract ALL valid multiple-choice questions from this text segment. 
                         IMPORTANT LANGUAGE RULES:
                         1. For general subjects (Math, Science, GK, etc.), you MUST provide both English and Hindi translations.
@@ -720,9 +762,9 @@
                             groupId: g.value,
                             groupName: g.options[g.selectedIndex].text,
                             questions: allQuestions,
-                            duration: allQuestions.length * 60, // Auto-set timer: 1 minute per question
+                            duration: allQuestions.length * 60, 
                             marksPerQuestion: 2,
-                            negativeMarks: 0, // Defaults to 0, admin can edit later
+                            negativeMarks: 0, 
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
                         s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
@@ -739,9 +781,9 @@
         }
 
 
-        // --- TEST ENGINE ---
+        // --- MODIFIED: TEST ENGINE & SCORE CALCULATION ---
         let testQuestions = [], userAnswers = [], questionStates = []; 
-        let currentLanguage = 'Eng', testMarks = 2, currentQuestionIndex = 0; 
+        let currentLanguage = 'Eng', testMarks = 2, testNegativeMarks = 0, currentQuestionIndex = 0; 
 
         async function startTest(testId) {
             const doc = await db.collection("tests").doc(testId).get();
@@ -749,6 +791,7 @@
             currentTest = doc.data(); 
             testQuestions = currentTest.questions || [];
             testMarks = currentTest.marksPerQuestion || 2;
+            testNegativeMarks = currentTest.negativeMarks || 0; // Load penalty marks
             
             userAnswers = new Array(testQuestions.length).fill(null);
             questionStates = new Array(testQuestions.length).fill('unanswered');
@@ -870,12 +913,21 @@
         }
         function hideSubmitSummary() { document.getElementById('summary-modal').style.display = 'none'; }
 
+        // --- MODIFIED: Final Submit handles Negative Marking Calculation ---
         function finalSubmitTest() {
             hideSubmitSummary(); clearInterval(testTimer);
             let correct = 0, wrong = 0, left = 0;
-            testQuestions.forEach((q, i) => { if (userAnswers[i] === null) left++; else if (userAnswers[i] === q.correctIndex) correct++; else wrong++; });
+            
+            testQuestions.forEach((q, i) => { 
+                if (userAnswers[i] === null) left++; 
+                else if (userAnswers[i] === q.correctIndex) correct++; 
+                else wrong++; 
+            });
 
-            const finalScore = correct * testMarks;
+            // Calculate positive marks and subtract penalty for wrong answers
+            let finalScore = (correct * testMarks) - (wrong * testNegativeMarks);
+            finalScore = Math.round(finalScore * 100) / 100; // Round off decimals nicely (e.g. 15.25)
+            
             const totalMaxMarks = testQuestions.length * testMarks;
 
             if(auth.currentUser) {
@@ -893,11 +945,11 @@
             navigate('view-results');
         }
 
-        // --- NEW: EXPLANATION / REVIEW LOGIC ---
+        // --- EXPLANATION / REVIEW LOGIC ---
         let reviewLanguage = 'Eng';
         
         function showReviewScreen() {
-            reviewLanguage = currentLanguage; // Start review in the language they took the test
+            reviewLanguage = currentLanguage; 
             renderReviewContent();
             navigate('view-review', false);
             window.scrollTo(0, 0);
@@ -923,12 +975,10 @@
                         let optClass = '';
                         let label = '';
                         
-                        // Highlight Correct Answer
                         if (optIndex === q.correctIndex) {
                             optClass = 'opt-correct';
                             label = '✅ ';
                         } 
-                        // Highlight User's Wrong Answer
                         else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) {
                             optClass = 'opt-wrong';
                             label = '❌ (Your Answer) ';
@@ -938,14 +988,12 @@
                     });
                 }
                 
-                // Construct Explanation Box
                 let expHTML = exp && exp.trim() !== '' 
                     ? `<div class="explanation-box"><strong>💡 Solution / Explanation:</strong><br>${exp}</div>` 
                     : `<div class="explanation-box" style="color: var(--text-muted);"><em>No explanation provided for this question.</em></div>`;
                 
                 let imgHTML = q.imageUrl ? `<img src="${q.imageUrl}" style="max-width: 100%; border-radius: 8px; margin-bottom: 15px;">` : '';
 
-                // Build the full card
                 container.innerHTML += `
                     <div class="question-card" style="min-height: auto; border-top: 4px solid ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#cbd5e1' : 'var(--danger)')};">
                         <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 10px; color: ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#64748b' : 'var(--danger)')};">
