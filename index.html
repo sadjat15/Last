@@ -601,7 +601,74 @@
         
         // --- AI Prompts Updated to require explanations ---
         async function generateAITest() { const t=document.getElementById('ai-topic').value, g=document.getElementById('ai-test-group'); if(!t||!g.value)return; let s=document.getElementById('ai-status'); s.innerText="⏳ Generating with Explanations..."; let q=await fetchFromGemini(`JSON array 30 MCQs "${t}". Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान)`, s); if(q){ await db.collection("tests").add({title:`Topic: ${t}`,groupId:g.value,questions:q,duration:1800,marksPerQuestion:2}); s.innerText="✅ Test Saved!"; } }
-        async function processPDF() { const f=document.getElementById('pdf-upload').files[0], g=document.getElementById('pdf-test-group'); if(!f||!g.value)return; let s=document.getElementById('pdf-status'); s.innerText="⏳ Reading PDF..."; const fr=new FileReader(); fr.onload=async function(){ try{ const pd=await pdfjsLib.getDocument(new Uint8Array(this.result)).promise; let txt=""; for(let i=1;i<=pd.numPages;i++){txt+=(await (await pd.getPage(i)).getTextContent()).items.map(x=>x.str).join(" ");} s.innerText="⏳ AI Extracting with Explanations..."; let q=await fetchFromGemini(`JSON array 30 MCQs from text. Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान). Text: ${txt.substring(0,15000)}`,s); if(q){ await db.collection("tests").add({title:`PDF: ${f.name}`,groupId:g.value,questions:q,duration:1800,marksPerQuestion:2}); s.innerText="✅ PDF Saved!"; } }catch(e){s.innerText="❌ Error processing PDF.";} }; fr.readAsArrayBuffer(f); }
+             async function processPDF() {
+            const f = document.getElementById('pdf-upload').files[0];
+            const g = document.getElementById('pdf-test-group');
+            
+            if(!f || !g.value) return alert("Please select a group and a PDF file.");
+
+            let s = document.getElementById('pdf-status');
+            s.innerText = "⏳ Reading PDF...";
+            const fr = new FileReader();
+
+            fr.onload = async function() {
+                try {
+                    const pd = await pdfjsLib.getDocument(new Uint8Array(this.result)).promise;
+                    let txt = "";
+                    for(let i = 1; i <= pd.numPages; i++){
+                        txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
+                    }
+
+                    s.innerText = "⏳ AI is processing... (This may take a few minutes for 50+ questions)";
+
+                    // Split the PDF text into chunks to bypass AI output token limits
+                    const chunkSize = 15000;
+                    let allQuestions = [];
+                    let chunks = [];
+
+                    for(let i = 0; i < txt.length; i += chunkSize) {
+                        chunks.push(txt.substring(i, i + chunkSize));
+                    }
+
+                    // Loop through chunks until we hit 200 questions or run out of text
+                    for(let i = 0; i < chunks.length; i++) {
+                        if (allQuestions.length >= 200) break;
+
+                        s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
+
+                        // Ask AI to generate up to 25 questions per chunk
+                        let prompt = `Extract up to 25 MCQs from this text. JSON array only. Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान). Text: ${chunks[i]}`;
+
+                        let q = await fetchFromGemini(prompt, s);
+                        if(q && Array.isArray(q)) {
+                            allQuestions = allQuestions.concat(q);
+                        }
+                    }
+
+                    if(allQuestions.length > 0) {
+                        // Enforce the 200 question maximum cap
+                        if(allQuestions.length > 200) allQuestions = allQuestions.slice(0, 200);
+
+                        await db.collection("tests").add({
+                            title: `PDF: ${f.name}`,
+                            groupId: g.value,
+                            questions: allQuestions,
+                            duration: allQuestions.length * 60, // Auto-set timer: 1 minute per question
+                            marksPerQuestion: 2,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        s.innerText = `✅ Success! Saved ${allQuestions.length} Questions.`;
+                    } else {
+                        s.innerText = "❌ AI could not extract questions. Try a different PDF.";
+                    }
+
+                } catch (e) {
+                    console.error(e);
+                    s.innerText = "❌ Error processing PDF file format.";
+                }
+            };
+            fr.readAsArrayBuffer(f);
+        }
 
 
         // --- TEST ENGINE ---
