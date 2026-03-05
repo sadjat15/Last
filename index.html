@@ -968,38 +968,56 @@
             closeEditModal(); 
         }
         
-        // --- FIXED: ENFORCED JSON OUTPUT & VALID MODEL VERSION ---
+        // --- FIXED: HIGHLY ROBUST AI PARSER ---
         async function fetchFromGemini(p, s) { 
             const k = getApiKey(); 
-            if(!k) { s.innerText = "❌ No API Key found!"; return null; } 
+            if(!k) { s.innerText = "❌ No API Key found! Check API Settings."; return null; } 
             
             try { 
-                // Changed to gemini-1.5-flash (stable) and added responseMimeType
                 let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: p }] }],
-                        generationConfig: {
-                            responseMimeType: "application/json" // Guarantees pure JSON return
-                        }
+                        generationConfig: { temperature: 0.2 } // Lower temp forces more rigid formatting
                     })
                 }); 
                 
                 if (!r.ok) {
                     let err = await r.json();
-                    s.innerText = "❌ API Error: " + (err.error?.message || "Unknown error");
+                    console.error("Gemini API Error:", err);
+                    s.innerText = "❌ API Error: " + (err.error?.message || "Check your API key limits.");
                     return null;
                 }
 
                 let d = await r.json(); 
                 let rawText = d.candidates[0].content.parts[0].text;
                 
-                // Because responseMimeType is active, we don't need regex. It is pure JSON.
-                return JSON.parse(rawText);
+                // 1. Strip markdown wrappers (```json and ```)
+                let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+
+                // 2. Safely extract Array with Regex (Ignores conversational text outside brackets)
+                let arrayMatch = cleanText.match(/\[[\s\S]*\]/);
+                if (arrayMatch) {
+                    return JSON.parse(arrayMatch[0]);
+                }
+
+                // 3. Fallback: Check if AI wrongly wrapped it in an object like { "questions": [...] }
+                let objMatch = cleanText.match(/\{[\s\S]*\}/);
+                if (objMatch) {
+                    let parsedObj = JSON.parse(objMatch[0]);
+                    if (parsedObj && Array.isArray(parsedObj.questions)) {
+                        return parsedObj.questions;
+                    }
+                    return parsedObj;
+                }
+
+                // 4. Last resort pure JSON parse
+                return JSON.parse(cleanText);
+
             } catch(e) { 
-                console.error(e);
-                s.innerText = "❌ JSON Parsing Error. The AI struggled to format the text."; 
+                console.error("JSON Error. The AI generated invalid code:", e);
+                s.innerText = "❌ AI Formatting Error. The AI response got cut off."; 
                 return null; 
             } 
         }
@@ -1010,25 +1028,35 @@
             if(!topic || !g.value) return alert("Select a target group and enter a topic!"); 
             
             let s = document.getElementById('ai-status'); 
-            const targetQuestions = 50; 
-            const batchSize = 25; 
+            
+            // Generate 30 questions in chunks of 10 to completely avoid token cut-offs
+            const targetQuestions = 30; 
+            const batchSize = 10; 
             const totalBatches = Math.ceil(targetQuestions / batchSize);
             let allQuestions = [];
             
             s.innerText = `⏳ Starting generation of ${targetQuestions} questions...`;
+            
             for (let i = 0; i < totalBatches; i++) {
+                // Mandatory 2-second cooldown between batches to prevent HTTP 429 Too Many Requests
+                if (i > 0) {
+                    s.innerText = `⏳ Waiting 2 seconds to prevent API limits...`;
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+
                 s.innerText = `⏳ Generating Batch ${i + 1} of ${totalBatches}... (Generated: ${allQuestions.length} Qs)`;
                 
-                // FIXED PROMPT: Enforces Strict JSON Template
+                // Explicit format enforcement inside prompt
                 let prompt = `Generate exactly ${batchSize} multiple choice questions about the topic: "${topic}". 
                 Ensure these questions cover different sub-topics.
                 
-                CRITICAL EXTRACTION RULES:
-                1. TECHNICAL & MATHEMATICAL: Use LaTeX format (\\\\( and \\\\) for inline, $$ for block) for complex equations.
-                2. SUBJECT TAG: Categorize each question and provide a "subject" string (e.g., Mathematics, General Science, Reasoning, History).
-                3. BILINGUAL: Output Eng and Hin for General subjects. Do NOT translate pure Language subjects (like English Grammar).
+                CRITICAL RULES:
+                1. TECHNICAL: Use LaTeX format (\\\\( and \\\\) for inline, $$ for block) for complex math equations.
+                2. SUBJECT TAG: Give a broad category string (e.g., Mathematics, General Science, Reasoning, History).
+                3. BILINGUAL: English and Hindi text.
                 
-                You MUST output ONLY a valid JSON array of objects. Each object MUST exactly match this structure:
+                Output MUST be a pure JSON array starting with [ and ending with ]. DO NOT wrap it in any other object.
+                Exact Format:
                 [
                   {
                     "subject": "Mathematics",
@@ -1043,7 +1071,11 @@
                 ]`;
                 
                 let q = await fetchFromGemini(prompt, s); 
-                if(q && Array.isArray(q)){ allQuestions = allQuestions.concat(q); } 
+                if (q && Array.isArray(q)) { 
+                    allQuestions = allQuestions.concat(q); 
+                } else {
+                    console.error("Batch " + (i+1) + " failed. AI did not return a valid array.");
+                }
             }
 
             if(allQuestions.length > 0) { 
@@ -1055,7 +1087,9 @@
                 }); 
                 s.innerText = `✅ Success! Saved ${allQuestions.length} Questions.`; 
                 document.getElementById('ai-topic').value = ''; 
-            } else { s.innerText = "❌ AI could not generate questions. Please review the API settings or try another topic."; }
+            } else { 
+                s.innerText = "❌ AI could not generate questions. Check API limits or try a different topic."; 
+            }
         }
 
         async function processPDF() {
@@ -1081,9 +1115,14 @@
                     for(let i = 0; i < txt.length; i += chunkSize) { chunks.push(txt.substring(i, i + chunkSize)); }
 
                     for(let i = 0; i < chunks.length; i++) {
+                        // Rate limit protection
+                        if (i > 0) {
+                            s.innerText = `⏳ Cooling down API for 2 seconds...`;
+                            await new Promise(res => setTimeout(res, 2000));
+                        }
+
                         s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
                         
-                        // FIXED PROMPT: Enforces Strict JSON Template
                         let prompt = `You are an expert bilingual test creator for competitive and technical exams. Extract ALL multiple-choice questions from the provided text segment. Context: "${subjectContext}".
 
                         RULES:
@@ -1091,7 +1130,8 @@
                         2. LaTeX: Use standard LaTeX for complex math/electrical equations (\\\\( and \\\\) or $$).
                         3. BILINGUAL: Ensure 'Hin' and 'Eng' fields are filled correctly depending on the subject.
                         
-                        You MUST output ONLY a valid JSON array of objects. Each object MUST exactly match this structure:
+                        Output MUST be a pure JSON array starting with [ and ending with ]. DO NOT wrap it in any other object.
+                        Exact Format:
                         [
                           {
                             "subject": "Mathematics",
