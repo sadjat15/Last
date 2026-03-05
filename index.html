@@ -600,7 +600,63 @@
         async function fetchFromGemini(p,s) { const k=getApiKey(); if(!k){s.innerText="❌ Key!"; return null;} try{ let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}); let d=await r.json(); return JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json/g,'').replace(/```/g,'').trim()); }catch(e){s.innerText="❌ "+e; return null;} }
         
         // --- AI Prompts Updated to require explanations ---
-        async function generateAITest() { const t=document.getElementById('ai-topic').value, g=document.getElementById('ai-test-group'); if(!t||!g.value)return; let s=document.getElementById('ai-status'); s.innerText="⏳ Generating with Explanations..."; let q=await fetchFromGemini(`JSON array 30 MCQs "${t}". Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान)`, s); if(q){ await db.collection("tests").add({title:`Topic: ${t}`,groupId:g.value,questions:q,duration:1800,marksPerQuestion:2}); s.innerText="✅ Test Saved!"; } }
+                async function generateAITest() { 
+            const topic = document.getElementById('ai-topic').value;
+            const g = document.getElementById('ai-test-group'); 
+            
+            if(!topic || !g.value) return alert("Select a target group and enter a topic!"); 
+            
+            let s = document.getElementById('ai-status'); 
+            
+            // --- SET YOUR TARGET NUMBER OF QUESTIONS HERE ---
+            const targetQuestions = 50; // Change this to 100 or 200 as needed!
+            const batchSize = 25; 
+            const totalBatches = Math.ceil(targetQuestions / batchSize);
+            
+            let allQuestions = [];
+            s.innerText = `⏳ Starting generation of ${targetQuestions} questions...`;
+
+            for (let i = 0; i < totalBatches; i++) {
+                s.innerText = `⏳ Generating Batch ${i + 1} of ${totalBatches}... (Generated: ${allQuestions.length} Qs)`;
+                
+                // We tell the AI which batch it is on so it doesn't repeat the same questions
+                let prompt = `Generate exactly ${batchSize} multiple choice questions about "${topic}". 
+                IMPORTANT: This is batch ${i + 1} of ${totalBatches}. Ensure these questions are completely unique and cover different sub-topics or difficulty levels compared to standard introductory questions.
+                Output MUST be a pure JSON array only. 
+                Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान).`;
+                
+                let q = await fetchFromGemini(prompt, s); 
+                
+                if(q && Array.isArray(q)){ 
+                    allQuestions = allQuestions.concat(q);
+                } else {
+                    console.log("Batch " + (i+1) + " failed or returned invalid format.");
+                }
+            }
+
+            if(allQuestions.length > 0) { 
+                // Ensure we don't exceed the exact target number
+                if(allQuestions.length > targetQuestions) {
+                    allQuestions = allQuestions.slice(0, targetQuestions);
+                }
+
+                await db.collection("tests").add({
+                    title: `Topic: ${topic}`,
+                    groupId: g.value,
+                    groupName: g.options[g.selectedIndex].text,
+                    questions: allQuestions,
+                    duration: allQuestions.length * 60, // Auto-set timer: 1 minute per question generated
+                    marksPerQuestion: 2,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }); 
+                
+                s.innerText = `✅ Success! Saved ${allQuestions.length} Questions.`; 
+                document.getElementById('ai-topic').value = ''; // Clear the input field
+            } else {
+                s.innerText = "❌ AI could not generate questions. Please try a different topic.";
+            }
+        }
+
              async function processPDF() {
             const f = document.getElementById('pdf-upload').files[0];
             const g = document.getElementById('pdf-test-group');
