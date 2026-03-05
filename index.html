@@ -181,7 +181,7 @@
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-ai')"><h3>🤖 Create AI Test</h3><p>Generate tests using Gemini 2.5</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-ai')"><h3>🤖 Create AI Test</h3><p>Generate tests using Gemini</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-pdf')"><h3>📄 Upload PDF Test</h3><p>Extract tests directly from PDFs</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Edit timer, marks, and questions</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
@@ -191,7 +191,7 @@
             </div>
 
             <div id="admin-sec-groups" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Manage Test Groups</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Test Groups</h2></div>
                 <div class="action-box">
                     <div class="input-group"><input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests"></div>
                     <button class="btn-primary" onclick="addGroup()">Add New Group</button>
@@ -200,7 +200,7 @@
             </div>
 
             <div id="admin-sec-ai" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Create AI Test</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Create AI Test</h2></div>
                 <div class="action-box">
                     <div class="input-group"><label>Select Target Group</label><select class="group-select" id="ai-test-group"><option value="">Loading...</option></select></div>
                     <div class="input-group"><label>Topic Name</label><input type="text" id="ai-topic" placeholder="e.g., General Science"></div>
@@ -210,7 +210,7 @@
             </div>
 
             <div id="admin-sec-pdf" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Upload PDF Test</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Upload PDF Test</h2></div>
                 <div class="action-box">
                     <div class="input-group"><label>Select Target Group</label><select class="group-select" id="pdf-test-group"><option value="">Loading...</option></select></div>
                     <div class="input-group"><label>Select PDF File</label><input type="file" id="pdf-upload" accept=".pdf"></div>
@@ -220,7 +220,7 @@
             </div>
 
             <div id="admin-sec-tests" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Manage Active Tests</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Active Tests</h2></div>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
 
@@ -240,12 +240,12 @@
             </div>
 
             <div id="admin-sec-attempts" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Live Student Attempts</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Live Student Attempts</h2></div>
                 <div id="admin-attempts-list" class="grid-list"></div>
             </div>
 
             <div id="admin-sec-settings" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Gemini API Configuration</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Gemini API Configuration</h2></div>
                 <div class="action-box">
                     <div class="input-group"><input type="password" id="admin-api-key" placeholder="Paste AIzaSy... here"></div>
                     <button class="btn-primary" onclick="saveApiKey()" style="background: #f59e0b;">Save API Key Securely</button>
@@ -254,7 +254,7 @@
             </div>
 
             <div id="admin-sec-creds" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Change Admin Credentials</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Change Admin Credentials</h2></div>
                 <div class="action-box" style="border-left: 4px solid var(--danger);">
                     <div class="input-group"><label>New Admin ID / Username</label><input type="text" id="new-admin-id" placeholder="Enter new admin ID"></div>
                     <div class="input-group"><label>New Admin Password</label><input type="password" id="new-admin-pass" placeholder="Minimum 6 characters"></div>
@@ -274,22 +274,22 @@
             </div>
 
             <div id="student-sec-groups" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Select a Test Category</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>Select a Test Category</h2></div>
                 <div class="grid-list" id="student-group-list"></div>
             </div>
 
             <div id="student-sec-tests-list" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Categories</button><h2 id="current-group-title">Available Tests</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-sec-groups')">← Back to Categories</button><h2 id="current-group-title">Available Tests</h2></div>
                 <div class="grid-list" id="student-test-list"></div>
             </div>
 
             <div id="student-sec-attempts" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>My Attempt History</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>My Attempt History</h2></div>
                 <div class="grid-list" id="student-attempts-list"></div>
             </div>
 
             <div id="student-sec-password" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="goBack()">← Back to Menu</button><h2>Change My Password</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>Change My Password</h2></div>
                 <div class="action-box" style="max-width: 500px;">
                     <div class="input-group"><label>New Password</label><input type="password" id="new-student-pass" placeholder="Minimum 6 characters"></div>
                     <button class="btn-primary" onclick="updateStudentPassword()">Update Password</button>
@@ -477,8 +477,7 @@
             }
         };
 
-        function goBack() { window.history.back(); }
-
+        // Removed the problematic generic goBack() function. All back buttons now use openAdminSec / openStudentSec
 
         // --- API KEY ---
         function getApiKey() { return localStorage.getItem('geminiApiKey'); }
@@ -511,7 +510,7 @@
                 user.updatePassword(newPass).then(() => {
                     alert("Password updated successfully!");
                     document.getElementById('new-student-pass').value = '';
-                    goBack();
+                    openStudentSec('student-main-menu');
                 }).catch(e => {
                     if(e.code === 'auth/requires-recent-login') alert("For security, please logout and log back in to change your password.");
                     else alert(e.message);
@@ -530,7 +529,15 @@
             const pseudoEmail = formatIDAsEmail(phoneId);
 
             auth.createUserWithEmailAndPassword(pseudoEmail, pass)
-                .then(() => {
+                .then((userCred) => {
+                    // STORE USER ID AND PASSWORD IN FIRESTORE SO ADMIN CAN SEE THEM
+                    db.collection("users").doc(userCred.user.uid).set({
+                        phone: phoneId,
+                        password: pass, // Storing as requested by user
+                        role: 'student',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
                     alert("Account Created successfully! You are now logged in.");
                     currentUserRole = 'student';
                     navigate('view-student');
@@ -548,7 +555,7 @@
             const pass = document.getElementById('login-password').value;
 
             if (role === 'admin') {
-                let validId = 'admin'; let validPass = 'Sachin@123';
+                let validId = 'admin'; let validPass = 'Sachin@123'; // Base admin creds
                 if(localStorage.getItem('adminCustomId')) {
                     validId = localStorage.getItem('adminCustomId');
                     validPass = localStorage.getItem('adminCustomPass');
@@ -603,6 +610,12 @@
                         <strong style="font-size: 1.1rem; color: var(--primary);">Question ${index + 1}</strong>
                         <button class="btn-danger" style="width:auto; padding: 6px 12px; font-size: 0.85rem;" onclick="deleteQuestion(${index})">🗑 Delete</button>
                     </div>
+                    
+                    <div class="input-group">
+                        <label>Image URL (Optional - paste image link here)</label>
+                        <input type="text" placeholder="https://example.com/image.jpg" value="${q.imageUrl || ''}" onchange="updateQ(${index}, 'imageUrl', this.value)">
+                    </div>
+
                     <div class="input-group"><label>English Question</label><textarea rows="2" onchange="updateQ(${index}, 'questionEng', this.value)">${q.questionEng || ''}</textarea></div>
                     <div class="input-group"><label>Hindi Question</label><textarea rows="2" onchange="updateQ(${index}, 'questionHin', this.value)">${q.questionHin || ''}</textarea></div>
                     
@@ -644,7 +657,7 @@
         
         function addManualQuestion() {
             editingQuestions.push({
-                questionEng: "", questionHin: "",
+                questionEng: "", questionHin: "", imageUrl: "", // Added Image URL field
                 optionsEng: ["", "", "", ""], optionsHin: ["", "", "", ""],
                 correctIndex: 0
             });
@@ -976,7 +989,14 @@
                         optionsHTML += `<label><input type="radio" name="q${index}" value="${optIndex}" ${isChecked} onchange="userAnswers[${index}] = ${optIndex}"> ${opt}</label>`;
                     });
                 }
-                container.innerHTML += `<div class="question-card"><h4><span style="color: var(--primary);">Q${index + 1}.</span> ${qText || 'Question missing language translation'}</h4><div class="options">${optionsHTML}</div></div>`;
+
+                // Render image if an image URL was provided
+                let imgHTML = '';
+                if(q.imageUrl && q.imageUrl.trim() !== '') {
+                    imgHTML = `<img src="${q.imageUrl}" alt="Question Image" style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color);">`;
+                }
+
+                container.innerHTML += `<div class="question-card"><h4><span style="color: var(--primary);">Q${index + 1}.</span> ${qText || 'Question missing language translation'}</h4>${imgHTML}<div class="options">${optionsHTML}</div></div>`;
             });
         }
 
