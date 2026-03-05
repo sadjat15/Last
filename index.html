@@ -600,7 +600,7 @@
         async function fetchFromGemini(p,s) { const k=getApiKey(); if(!k){s.innerText="❌ Key!"; return null;} try{ let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})}); let d=await r.json(); return JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json/g,'').replace(/```/g,'').trim()); }catch(e){s.innerText="❌ "+e; return null;} }
         
         // --- AI Prompts Updated to require explanations ---
-                async function generateAITest() { 
+                        async function generateAITest() { 
             const topic = document.getElementById('ai-topic').value;
             const g = document.getElementById('ai-test-group'); 
             
@@ -619,9 +619,15 @@
             for (let i = 0; i < totalBatches; i++) {
                 s.innerText = `⏳ Generating Batch ${i + 1} of ${totalBatches}... (Generated: ${allQuestions.length} Qs)`;
                 
-                // We tell the AI which batch it is on so it doesn't repeat the same questions
-                let prompt = `Generate exactly ${batchSize} multiple choice questions about "${topic}". 
-                IMPORTANT: This is batch ${i + 1} of ${totalBatches}. Ensure these questions are completely unique and cover different sub-topics or difficulty levels compared to standard introductory questions.
+                // SMART AI PROMPT: Handles translation exceptions for language topics
+                let prompt = `Generate exactly ${batchSize} multiple choice questions about the topic: "${topic}". 
+                IMPORTANT: This is batch ${i + 1} of ${totalBatches}. Ensure these questions are completely unique and cover different sub-topics or difficulty levels compared to previous batches.
+                
+                IMPORTANT LANGUAGE RULES:
+                1. For general subjects (Math, Science, GK, etc.), you MUST provide both English and Hindi translations.
+                2. EXCEPTION: If the topic is an "English Subject/Grammar" topic, do NOT translate the questions or options to Hindi. Put the English text in BOTH the Eng and Hin fields.
+                3. EXCEPTION: If the topic is a "Hindi Subject/Grammar" topic, do NOT translate the questions or options to English. Put the Hindi text in BOTH the Eng and Hin fields.
+                
                 Output MUST be a pure JSON array only. 
                 Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान).`;
                 
@@ -647,6 +653,7 @@
                     questions: allQuestions,
                     duration: allQuestions.length * 60, // Auto-set timer: 1 minute per question generated
                     marksPerQuestion: 2,
+                    negativeMarks: 0, // Defaults to 0, admin can edit later in settings
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 }); 
                 
@@ -657,7 +664,7 @@
             }
         }
 
-             async function processPDF() {
+                     async function processPDF() {
             const f = document.getElementById('pdf-upload').files[0];
             const g = document.getElementById('pdf-test-group');
             
@@ -675,7 +682,7 @@
                         txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
                     }
 
-                    s.innerText = "⏳ AI is processing... (This may take a few minutes for 50+ questions)";
+                    s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
 
                     // Split the PDF text into chunks to bypass AI output token limits
                     const chunkSize = 15000;
@@ -686,14 +693,20 @@
                         chunks.push(txt.substring(i, i + chunkSize));
                     }
 
-                    // Loop through chunks until we hit 200 questions or run out of text
+                    // Process ALL chunks from the PDF (No maximum limit)
                     for(let i = 0; i < chunks.length; i++) {
-                        if (allQuestions.length >= 200) break;
-
                         s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
 
-                        // Ask AI to generate up to 25 questions per chunk
-                        let prompt = `Extract up to 25 MCQs from this text. JSON array only. Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान). Text: ${chunks[i]}`;
+                        // SMART AI PROMPT: Handles translation exceptions for language subjects
+                        let prompt = `Extract ALL valid multiple-choice questions from this text segment. 
+                        IMPORTANT LANGUAGE RULES:
+                        1. For general subjects (Math, Science, GK, etc.), you MUST provide both English and Hindi translations.
+                        2. EXCEPTION: If the question is an "English Subject/Grammar" question, do NOT translate it to Hindi. Put the English text in BOTH the Eng and Hin fields.
+                        3. EXCEPTION: If the question is a "Hindi Subject/Grammar" question, do NOT translate it to English. Put the Hindi text in BOTH the Eng and Hin fields.
+                        
+                        Output MUST be a pure JSON array only. 
+                        Format exactly: questionEng, questionHin, optionsEng(4), optionsHin(4), correctIndex(0-3), explanationEng (detailed solution), explanationHin (विस्तृत समाधान).
+                        Text: ${chunks[i]}`;
 
                         let q = await fetchFromGemini(prompt, s);
                         if(q && Array.isArray(q)) {
@@ -702,18 +715,17 @@
                     }
 
                     if(allQuestions.length > 0) {
-                        // Enforce the 200 question maximum cap
-                        if(allQuestions.length > 200) allQuestions = allQuestions.slice(0, 200);
-
                         await db.collection("tests").add({
                             title: `PDF: ${f.name}`,
                             groupId: g.value,
+                            groupName: g.options[g.selectedIndex].text,
                             questions: allQuestions,
                             duration: allQuestions.length * 60, // Auto-set timer: 1 minute per question
                             marksPerQuestion: 2,
+                            negativeMarks: 0, // Defaults to 0, admin can edit later
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
-                        s.innerText = `✅ Success! Saved ${allQuestions.length} Questions.`;
+                        s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
                     } else {
                         s.innerText = "❌ AI could not extract questions. Try a different PDF.";
                     }
