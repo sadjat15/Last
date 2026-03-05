@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
@@ -81,6 +82,7 @@
             width: 100%; padding: 12px; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 1rem; background: #f8fafc; transition: 0.2s;
         }
+        .input-group input[type="file"] { background: white; padding: 8px; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         
         .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 500; transition: 0.2s; width: 100%; }
@@ -148,6 +150,28 @@
 
         .status-text { margin-top: 10px; font-size: 0.9rem; font-weight: 500; text-align: center; }
         .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+
+        /* --- Banner Carousel Styles --- */
+        .banner-container {
+            display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px;
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        }
+        .banner-container::-webkit-scrollbar { height: 8px; }
+        .banner-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        .promo-banner {
+            min-width: 280px; width: 100%; max-width: 500px; height: 160px; border-radius: 12px;
+            background-color: #cbd5e1; background-size: cover; background-position: center;
+            box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            position: relative; overflow: hidden; display: flex; align-items: flex-end;
+            border: 1px solid var(--border-color); flex-shrink: 0; scroll-snap-align: start;
+        }
+        .promo-banner:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .promo-banner-title {
+            width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            color: white; padding: 30px 15px 12px; font-weight: 600; font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
@@ -166,8 +190,7 @@
             <h3 style="font-size: 1.2rem;">Question Palette</h3>
             <button onclick="togglePalette()" style="background:none; border:none; color:white; font-size:1.8rem; cursor:pointer; line-height: 1;">&times;</button>
         </div>
-        <div class="palette-grid" id="palette-grid">
-            </div>
+        <div class="palette-grid" id="palette-grid"></div>
         <div class="palette-legend">
             <div class="legend-item"><div class="legend-dot" style="background: white; border: 1px solid #cbd5e1;"></div> Not Answered</div>
             <div class="legend-item"><div class="legend-dot" style="background: var(--success);"></div> Answered</div>
@@ -235,38 +258,70 @@
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Manage Banners</h3><p>Promote tests on student dashboard</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-ai')"><h3>🤖 Create AI Test</h3><p>Generate tests using Gemini</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-pdf')"><h3>📄 Upload PDF Test</h3><p>Extract tests directly from PDFs</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Edit timer, marks, and questions</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Edit timer, marks, delete tests</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-settings')"><h3>⚙️ API Settings</h3><p>Update Google Gemini API Key</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
+            
             <div id="admin-sec-groups" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Test Groups</h2></div><div class="action-box"><div class="input-group"><input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests"></div><button class="btn-primary" onclick="addGroup()">Add New Group</button><div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div></div></div>
+            
+            <div id="admin-sec-banners" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Manage Promo Banners</h2>
+                </div>
+                <div class="action-box">
+                    <div class="input-group">
+                        <label>Select Test Group to Promote</label>
+                        <select class="group-select" id="banner-group-select"><option value="">Loading...</option></select>
+                    </div>
+                    
+                    <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                        <label>Upload Banner Image (From Device Storage)</label>
+                        <input type="file" id="banner-file-upload" accept="image/*">
+                        
+                        <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
+                        
+                        <label>Paste Image URL</label>
+                        <input type="text" id="banner-image-url" placeholder="https://example.com/your-image.jpg">
+                    </div>
+
+                    <button class="btn-primary" id="btn-publish-banner" onclick="addBanner()">Publish Banner to Student Dashboard</button>
+                    
+                    <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Banners</h3>
+                    <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+            </div>
+
             <div id="admin-sec-ai" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Create AI Test</h2></div><div class="action-box"><div class="input-group"><label>Select Target Group</label><select class="group-select" id="ai-test-group"><option value="">Loading...</option></select></div><div class="input-group"><label>Topic Name</label><input type="text" id="ai-topic" placeholder="e.g., General Science"></div><button class="btn-primary" onclick="generateAITest()">Generate 30 Questions via AI</button><p id="ai-status" class="status-text"></p></div></div>
+            
             <div id="admin-sec-pdf" class="sub-sec">
-    <div class="sec-header">
-        <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-        <h2>Upload PDF Test</h2>
-    </div>
-    <div class="action-box">
-        <div class="input-group">
-            <label>Select Target Group</label>
-            <select class="group-select" id="pdf-test-group"><option value="">Loading...</option></select>
-        </div>
-        <div class="input-group">
-            <label>PDF Subject/Context (Helps AI format better)</label>
-            <input type="text" id="pdf-subject" placeholder="e.g., Mixed GK & Math, or English Grammar">
-        </div>
-        <div class="input-group">
-            <label>Select PDF File</label>
-            <input type="file" id="pdf-upload" accept=".pdf">
-        </div>
-        <button class="btn-primary" onclick="processPDF()">Extract Text & Generate Test</button>
-        <p id="pdf-status" class="status-text"></p>
-    </div>
-</div>
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Upload PDF Test</h2>
+                </div>
+                <div class="action-box">
+                    <div class="input-group">
+                        <label>Select Target Group</label>
+                        <select class="group-select" id="pdf-test-group"><option value="">Loading...</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label>PDF Subject/Context (Optional but recommended)</label>
+                        <input type="text" id="pdf-subject" placeholder="e.g., Mixed GK & Math, or English Grammar">
+                    </div>
+                    <div class="input-group">
+                        <label>Select PDF File</label>
+                        <input type="file" id="pdf-upload" accept=".pdf">
+                    </div>
+                    <button class="btn-primary" onclick="processPDF()">Extract Text & Generate Test</button>
+                    <p id="pdf-status" class="status-text"></p>
+                </div>
+            </div>
 
             <div id="admin-sec-tests" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Active Tests</h2></div><div id="test-list-container" class="grid-list"></div></div>
             <div id="admin-sec-test-editor" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button><h2 id="editor-test-title">Editing Test Questions</h2></div><div class="action-box" style="background: transparent; border: none; box-shadow: none; padding: 0;"><div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"><button class="btn-primary" style="flex: 1;" onclick="addManualQuestion()">➕ Add Blank Question</button><button class="btn-primary" style="flex: 1; background: #8b5cf6;" onclick="openQuestionBank()">📚 Import from Question Bank</button><button class="btn-primary" style="flex: 1; background: var(--success);" onclick="saveTestQuestions()">💾 Save All Changes</button></div><div id="editor-questions-list"></div></div></div>
@@ -277,7 +332,10 @@
 
         <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
-                <h2 style="margin-bottom: 20px;">Student Dashboard</h2>
+                <h2 style="margin-bottom: 15px;">Student Dashboard</h2>
+                
+                <div id="student-banners" class="banner-container"></div>
+
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openStudentSec('student-sec-groups')"><h3>📝 Take a Mock Test</h3><p>Browse categories and start tests</p></div>
                     <div class="menu-btn" onclick="openStudentSec('student-sec-attempts')"><h3>📜 My Attempt History</h3><p>Review your past scores</p></div>
@@ -298,8 +356,9 @@
                     <h2 id="test-title" style="margin: 0; color: var(--primary); font-size: 1.2rem; display: none;">Test</h2>
                 </div>
                 <div style="font-size: 1.2rem; font-weight: 700; color: var(--danger); background: #fee2e2; padding: 6px 12px; border-radius: 8px;">⏱ <span id="timer">00:00</span></div>
-                <div>
-                    <button class="btn-outline" style="border-color: #94a3b8; color: #475569;" onclick="showExitModal()">⬅ Back / Pause</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-outline" style="border-color: #94a3b8; color: #475569;" onclick="confirmPause()">⏸ Pause</button>
+                    <button class="btn-success" style="padding: 6px 12px; font-weight: bold;" onclick="showSubmitSummary()">✅ Submit</button>
                 </div>
             </div>
             
@@ -391,11 +450,10 @@
 
     <div id="exit-modal" class="modal-overlay">
         <div class="modal" style="max-width: 450px; text-align: center;">
-            <h2 style="margin-bottom: 10px; color: var(--text-main);">Pause or Submit?</h2>
-            <p style="color: var(--text-muted); margin-bottom: 25px;">You are attempting to leave the test. What would you like to do?</p>
+            <h2 style="margin-bottom: 10px; color: var(--text-main);">Pause Test?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Are you sure you want to pause and exit the test?</p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <button onclick="confirmPause()" class="btn-warning" style="font-size: 1.1rem; padding: 14px;">⏸ Pause Test & Exit</button>
-                <button onclick="showSubmitSummary()" class="btn-success" style="font-size: 1.1rem; padding: 14px;">✅ Submit Test Final</button>
                 <button onclick="hideExitModal()" class="btn-outline" style="margin-top: 10px; border: none; color: var(--text-muted);">Cancel, return to test</button>
             </div>
         </div>
@@ -430,6 +488,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const storage = firebase.storage(); // ADDED: Initialize Storage
 
         let currentUserRole = null;
         let currentTest = null;
@@ -550,7 +609,7 @@
             auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
                 .then((userCred) => {
                     db.collection("users").doc(userCred.user.uid).set({ phone: phoneId, password: pass, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    currentUserRole = 'student'; navigate('view-student'); loadGroupsForStudents(); loadStudentAttempts();
+                    currentUserRole = 'student'; navigate('view-student'); loadStudentData();
                 }).catch(e => { alert("Error: " + e.message); });
         }
 
@@ -570,14 +629,14 @@
                 } else { recordFailedAttempt(); }
             } else {
                 auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass).then(() => { 
-                    clearLockoutOnSuccess(); currentUserRole = 'student'; navigate('view-student'); loadGroupsForStudents(); loadStudentAttempts(); 
+                    clearLockoutOnSuccess(); currentUserRole = 'student'; navigate('view-student'); loadStudentData();
                 }).catch(e => { recordFailedAttempt(); });
             }
         }
 
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
 
-        // --- ADMIN EDITOR LOGIC ---
+        // --- ADMIN EDITOR LOGIC (MODIFIED FOR DEVICE UPLOAD) ---
         let editingTestId = null, editingQuestions = [];
         async function openTestEditor(testId) { editingTestId = testId; const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return; const test = doc.data(); document.getElementById('editor-test-title').innerText = `Editing: ${test.title}`; editingQuestions = test.questions || []; renderEditorQuestions(); openAdminSec('admin-sec-test-editor'); }
         
@@ -592,7 +651,15 @@
                         <strong style="font-size: 1.1rem; color: var(--primary);">Question ${i+1}</strong>
                         <button class="btn-danger" style="width:auto; padding: 6px 12px; font-size: 0.85rem;" onclick="deleteQuestion(${i})">🗑 Delete</button>
                     </div>
-                    <div class="input-group"><input value="${q.imageUrl||''}" onchange="updateQ(${i},'imageUrl',this.value)" placeholder="Image URL (Optional)"></div>
+                    
+                    <label style="font-weight: bold; font-size: 0.9rem;">Attach Image to Question (Optional)</label>
+                    <div class="input-group" style="display: flex; gap: 10px; margin-bottom: 5px;">
+                        <input type="text" id="q-img-url-${i}" value="${q.imageUrl||''}" onchange="updateQ(${i},'imageUrl',this.value)" placeholder="Image URL" style="flex: 1;">
+                        <div style="display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:0 10px;">
+                            <input type="file" accept="image/*" onchange="uploadQuestionImage(${i}, this)" style="border:none; padding:5px 0;">
+                        </div>
+                    </div>
+                    <p id="q-img-status-${i}" style="font-size:0.8rem; color:var(--success); margin-bottom:15px;"></p>
                     
                     <div class="input-group"><label>Question (Eng)</label><textarea onchange="updateQ(${i},'questionEng',this.value)">${q.questionEng||''}</textarea></div>
                     <div class="input-group"><label>Question (Hin)</label><textarea onchange="updateQ(${i},'questionHin',this.value)">${q.questionHin||''}</textarea></div>
@@ -633,18 +700,170 @@
         function addManualQuestion() { editingQuestions.push({questionEng:"",questionHin:"",imageUrl:"",optionsEng:["","","",""],optionsHin:["","","",""],correctIndex:0, explanationEng:"", explanationHin:""}); renderEditorQuestions(); } 
         async function saveTestQuestions() { try { await db.collection("tests").doc(editingTestId).update({questions:editingQuestions}); alert("Questions Saved!"); openAdminSec('admin-sec-tests'); } catch(e){alert("Error: "+e);} }
         
+        // Function to handle Image Uploads for specific questions
+        async function uploadQuestionImage(index, inputElement) {
+            const file = inputElement.files[0];
+            if(!file) return;
+            
+            const statusText = document.getElementById(`q-img-status-${index}`);
+            statusText.innerText = "⏳ Uploading image to database...";
+            
+            try {
+                const storageRef = storage.ref(`questions/${Date.now()}_${file.name}`);
+                await storageRef.put(file);
+                const downloadUrl = await storageRef.getDownloadURL();
+                
+                editingQuestions[index].imageUrl = downloadUrl;
+                document.getElementById(`q-img-url-${index}`).value = downloadUrl;
+                statusText.innerText = "✅ Upload successful!";
+            } catch (error) {
+                statusText.innerText = "❌ Upload failed: " + error.message;
+                statusText.style.color = "var(--danger)";
+            }
+        }
+
         async function openQuestionBank() { document.getElementById('qbank-modal').style.display='flex'; const b=document.getElementById('qbank-list'); b.innerHTML="Fetching..."; const s = await db.collection("tests").get(); let h=''; s.forEach(d=>{ if(d.id===editingTestId)return; const t=d.data(); if(t.questions&&t.questions.length>0){ h+=`<div style="margin-bottom:10px; border:1px solid #e2e8f0; padding:10px; border-radius:8px;"><b>${t.title}</b><br>`; t.questions.forEach(q=>{ h+=`<label style="display:flex; gap:10px; margin-top:5px;"><input type="checkbox" class="qb-cb" value="${encodeURIComponent(JSON.stringify(q))}"> ${q.questionEng||'Q'}</label>`; }); h+='</div>'; } }); b.innerHTML=h||"No previous questions found."; } 
         function importSelectedQuestions() { document.querySelectorAll('.qb-cb:checked').forEach(c=>editingQuestions.push(JSON.parse(decodeURIComponent(c.value)))); closeQuestionBank(); renderEditorQuestions(); } 
         function closeQuestionBank() { document.getElementById('qbank-modal').style.display='none'; }
         
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
-        function loadAdminData() { db.collection("groups").onSnapshot(s=>{ let l=document.getElementById('admin-group-list'), sel=document.querySelectorAll('.group-select'); l.innerHTML=''; sel.forEach(x=>x.innerHTML='<option value="">Select...</option>'); s.forEach(d=>{ let g=d.data(); l.innerHTML+=`<div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px;">📁 ${g.name}</div>`; sel.forEach(x=>x.innerHTML+=`<option value="${d.id}">${g.name}</option>`); }); }); db.collection("tests").onSnapshot(s=>{ let c=document.getElementById('test-list-container'); c.innerHTML=''; s.forEach(d=>{ let t=d.data(); c.innerHTML+=`<div class="action-box"><h4 style="margin-bottom:10px;">${t.title}</h4><div style="display:flex; gap:10px;"><button class="btn-outline" style="flex:1" onclick="openEditModal('${d.id}')">⚙️ Settings</button> <button class="btn-primary" style="flex:1" onclick="openTestEditor('${d.id}')">📝 Qs</button></div></div>`; }); }); db.collection("attempts").orderBy("timestamp","desc").limit(30).onSnapshot(s=>{ let c=document.getElementById('admin-attempts-list'); c.innerHTML=''; s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; }); }); }
         
+        // --- MODIFIED: Banner Upload supports File & URL ---
+        async function addBanner() {
+            const g = document.getElementById('banner-group-select');
+            const fileInput = document.getElementById('banner-file-upload');
+            const urlInput = document.getElementById('banner-image-url').value.trim();
+            const file = fileInput.files[0];
+            
+            if(!g.value) return alert("Please select a test group to promote.");
+            if(!file && !urlInput) return alert("You must either upload an image file or paste an image URL.");
+            
+            const btn = document.getElementById('btn-publish-banner');
+            btn.disabled = true;
+            btn.innerText = "⏳ Publishing Banner... Please wait";
+
+            let finalImageUrl = urlInput; // default to text URL
+
+            try {
+                // If the user actually uploaded a file, prioritize the file and upload it to Firebase Storage
+                if(file) {
+                    const storageRef = storage.ref(`banners/${Date.now()}_${file.name}`);
+                    await storageRef.put(file);
+                    finalImageUrl = await storageRef.getDownloadURL();
+                }
+
+                await db.collection("banners").add({
+                    groupId: g.value,
+                    groupName: g.options[g.selectedIndex].text,
+                    imageUrl: finalImageUrl,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                document.getElementById('banner-image-url').value = '';
+                document.getElementById('banner-file-upload').value = '';
+                alert("Banner successfully published!");
+
+            } catch (error) {
+                alert("Error publishing banner: " + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Publish Banner to Student Dashboard";
+            }
+        }
+
+        async function deleteBanner(id) {
+            if(confirm("Are you sure you want to remove this banner from the student dashboard?")) {
+                await db.collection("banners").doc(id).delete();
+            }
+        }
+
+        function loadAdminData() { 
+            db.collection("groups").onSnapshot(s=>{ 
+                let l=document.getElementById('admin-group-list'), sel=document.querySelectorAll('.group-select'); 
+                l.innerHTML=''; sel.forEach(x=>x.innerHTML='<option value="">Select...</option>'); 
+                s.forEach(d=>{ 
+                    let g=d.data(); 
+                    l.innerHTML+=`<div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px;">📁 ${g.name}</div>`; 
+                    sel.forEach(x=>x.innerHTML+=`<option value="${d.id}">${g.name}</option>`); 
+                }); 
+            }); 
+
+            db.collection("banners").onSnapshot(s => {
+                let l = document.getElementById('admin-banner-list');
+                if(!l) return;
+                l.innerHTML = '';
+                if(s.empty) l.innerHTML = '<p style="color: gray;">No active banners.</p>';
+                s.forEach(d => {
+                    let b = d.data();
+                    l.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+                        <div style="display:flex; align-items:center; gap:15px;">
+                            <img src="${b.imageUrl}" style="width:60px; height:40px; object-fit:cover; border-radius:4px; border: 1px solid #cbd5e1;">
+                            <span style="font-weight: 500;">Promoting: ${b.groupName}</span>
+                        </div>
+                        <button class="btn-danger" style="width:auto; padding:5px 12px; font-size: 0.9rem;" onclick="deleteBanner('${d.id}')">🗑 Remove</button>
+                    </div>`;
+                });
+            });
+            
+            db.collection("tests").onSnapshot(s=>{ 
+                let c=document.getElementById('test-list-container'); 
+                c.innerHTML=''; 
+                s.forEach(d=>{ 
+                    let t=d.data(); 
+                    c.innerHTML+=`
+                    <div class="action-box">
+                        <h4 style="margin-bottom:10px;">${t.title}</h4>
+                        <div style="display:flex; gap:10px; flex-wrap: wrap;">
+                            <button class="btn-outline" style="flex:1; min-width: 80px;" onclick="openEditModal('${d.id}')">⚙️ Settings</button> 
+                            <button class="btn-primary" style="flex:1; min-width: 80px;" onclick="openTestEditor('${d.id}')">📝 Qs</button>
+                            <button class="btn-danger" style="flex:1; min-width: 80px;" onclick="deleteTest('${d.id}')">🗑 Delete</button>
+                        </div>
+                    </div>`; 
+                }); 
+            }); 
+            
+            db.collection("attempts").orderBy("timestamp","desc").limit(30).onSnapshot(s=>{ 
+                let c=document.getElementById('admin-attempts-list'); 
+                c.innerHTML=''; 
+                s.forEach(d=>{ 
+                    let a=d.data(); 
+                    c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; 
+                }); 
+            }); 
+        }
+
+        async function deleteTest(tid) {
+            if(confirm("Are you sure you want to completely delete this test? This action cannot be undone.")) {
+                try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); }
+            }
+        }
+        
+        // --- STUDENT LOAD & BANNER LOGIC ---
+        function loadStudentData() {
+            loadGroupsForStudents();
+            loadStudentAttempts();
+            
+            db.collection("banners").onSnapshot(s => {
+                let c = document.getElementById('student-banners');
+                if(!c) return;
+                c.innerHTML = '';
+                if(s.empty) { c.style.display = 'none'; return; }
+                c.style.display = 'flex';
+                s.forEach(d => {
+                    let b = d.data();
+                    c.innerHTML += `
+                    <div class="promo-banner" style="background-image: url('${b.imageUrl}')" onclick="viewGroupTests('${b.groupId}','${b.groupName}')">
+                        <div class="promo-banner-title">${b.groupName}</div>
+                    </div>`;
+                });
+            });
+        }
+
         function loadGroupsForStudents() { db.collection("groups").onSnapshot(s=>{ let c=document.getElementById('student-group-list'); c.innerHTML=''; s.forEach(d=>{ c.innerHTML+=`<div class="menu-btn" onclick="viewGroupTests('${d.id}','${d.data().name}')"><h3 style="font-size:2rem; margin:0;">📁</h3><h3>${d.data().name}</h3></div>`; }); }); }
         function viewGroupTests(gid, gn) { document.getElementById('current-group-title').innerText=gn; db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ let c=document.getElementById('student-test-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No tests found.</p>'; s.forEach(d=>{ let t=d.data(); c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px;">📝 ${t.title}</h4><button class="btn-primary" onclick="startTest('${d.id}')">Start Attempt 🚀</button></div>`; }); }); openStudentSec('student-sec-tests-list'); }
         function loadStudentAttempts() { if(!auth.currentUser)return; db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ let c=document.getElementById('student-attempts-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><h4 style="margin-bottom:10px">${a.testTitle}</h4><div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold;">Score: ${a.score}/${a.totalMarks}</div></div>`; }); }); }
         
-        // --- MODIFIED: Loading and Saving Negative Marks in Admin settings ---
         async function openEditModal(tid) { 
             const d = await db.collection("tests").doc(tid).get(); 
             const t = d.data(); 
@@ -652,7 +871,7 @@
             document.getElementById('edit-title').value = t.title; 
             document.getElementById('edit-timer').value = t.duration ? t.duration / 60 : 30; 
             document.getElementById('edit-marks').value = t.marksPerQuestion || 2; 
-            document.getElementById('edit-negative').value = t.negativeMarks || 0; // Load negative marks
+            document.getElementById('edit-negative').value = t.negativeMarks || 0; 
             document.getElementById('edit-modal').style.display='flex'; 
         } 
         
@@ -663,7 +882,7 @@
                 title: document.getElementById('edit-title').value, 
                 duration: parseInt(document.getElementById('edit-timer').value) * 60, 
                 marksPerQuestion: parseFloat(document.getElementById('edit-marks').value),
-                negativeMarks: parseFloat(document.getElementById('edit-negative').value) || 0 // Save negative marks
+                negativeMarks: parseFloat(document.getElementById('edit-negative').value) || 0 
             }); 
             closeEditModal(); 
         }
@@ -732,96 +951,101 @@
         }
 
         async function processPDF() {
-    const f = document.getElementById('pdf-upload').files[0];
-    const g = document.getElementById('pdf-test-group');
-    const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
-    
-    if(!f || !g.value) return alert("Please select a group and a PDF file.");
+            const f = document.getElementById('pdf-upload').files[0];
+            const g = document.getElementById('pdf-test-group');
+            const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
+            
+            if(!f || !g.value) return alert("Please select a group and a PDF file.");
 
-    let s = document.getElementById('pdf-status');
-    s.innerText = "⏳ Reading PDF...";
-    const fr = new FileReader();
+            let s = document.getElementById('pdf-status');
+            s.innerText = "⏳ Reading PDF...";
+            const fr = new FileReader();
 
-    fr.onload = async function() {
-        try {
-            const pd = await pdfjsLib.getDocument(new Uint8Array(this.result)).promise;
-            let txt = "";
-            for(let i = 1; i <= pd.numPages; i++){
-                txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
-            }
+            fr.onload = async function() {
+                try {
+                    const pd = await pdfjsLib.getDocument(new Uint8Array(this.result)).promise;
+                    let txt = "";
+                    for(let i = 1; i <= pd.numPages; i++){
+                        txt += (await (await pd.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") + " ";
+                    }
 
-            s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
+                    s.innerText = "⏳ AI is processing... (This may take a while for large PDFs)";
 
-            const chunkSize = 15000;
-            let allQuestions = [];
-            let chunks = [];
+                    const chunkSize = 15000;
+                    let allQuestions = [];
+                    let chunks = [];
 
-            for(let i = 0; i < txt.length; i += chunkSize) {
-                chunks.push(txt.substring(i, i + chunkSize));
-            }
+                    for(let i = 0; i < txt.length; i += chunkSize) {
+                        chunks.push(txt.substring(i, i + chunkSize));
+                    }
 
-            for(let i = 0; i < chunks.length; i++) {
-                s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
+                    for(let i = 0; i < chunks.length; i++) {
+                        s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Found: ${allQuestions.length} Qs)`;
 
-                // HIGHLY STRICT AI PROMPT FOR BILINGUAL HANDLING
-                let prompt = `You are an expert test creator. Extract ALL valid multiple-choice questions from the provided text segment. 
-                Context/Subject of this PDF: "${subjectContext}".
+                        let prompt = `You are an expert bilingual test creator. Extract ALL valid multiple-choice questions from the provided text segment. 
+                        Context/Hint for this PDF: "${subjectContext}".
 
-                CRITICAL LANGUAGE AND TRANSLATION RULES:
-                1. By default, you MUST provide every question, option, and explanation in BOTH English and Hindi. Translate accurately.
-                2. EXCEPTION 1 (English Subject): If a question is testing "English Language", "English Grammar", or "English Comprehension", DO NOT translate it into Hindi. Fill both the English and Hindi JSON fields with the exact same English text.
-                3. EXCEPTION 2 (Hindi Subject): If a question is testing "Hindi Language" or "Hindi Grammar" (हिंदी व्याकरण), DO NOT translate it into English. Fill both the English and Hindi JSON fields with the exact same Hindi text.
+                        CRITICAL AUTO-DETECTION AND TRANSLATION RULES:
+                        You must auto-detect the subject of EVERY SINGLE question individually and apply the following rules:
+                        1. GENERAL SUBJECTS (Math, Science, GK, History, Geography, Reasoning, etc.): 
+                           - You MUST provide the question, options, and explanation in BOTH English and Hindi. 
+                           - If the source is only in English, translate it to Hindi for the 'Hin' fields. 
+                           - If the source is only in Hindi, translate it to English for the 'Eng' fields.
+                        2. ENGLISH LANGUAGE SUBJECT (English Grammar, Vocabulary, Comprehension, Idioms, etc.): 
+                           - DO NOT translate to Hindi. 
+                           - Output the exact same English text for BOTH the English and Hindi JSON fields.
+                        3. HINDI LANGUAGE SUBJECT (हिंदी व्याकरण, गद्यांश, मुहावरे, etc.): 
+                           - DO NOT translate to English. 
+                           - Output the exact same Hindi text for BOTH the English and Hindi JSON fields.
 
-                Output format MUST be a pure, strictly valid JSON array of objects. Do not include markdown formatting like \`\`\`json.
-                Required JSON Object Structure:
-                [
-                  {
-                    "questionEng": "English question text",
-                    "questionHin": "Hindi translation (or same as Eng if English subject)",
-                    "optionsEng": ["Op1", "Op2", "Op3", "Op4"],
-                    "optionsHin": ["Op1", "Op2", "Op3", "Op4"],
-                    "correctIndex": 0, // integer 0 to 3 indicating correct option
-                    "explanationEng": "Detailed English explanation",
-                    "explanationHin": "Detailed Hindi explanation"
-                  }
-                ]
+                        Output format MUST be a pure, strictly valid JSON array of objects. Do not include markdown formatting like \`\`\`json.
+                        Required JSON Object Structure:
+                        [
+                          {
+                            "questionEng": "English text (or Hindi text if Hindi subject)",
+                            "questionHin": "Hindi text (or English text if English subject)",
+                            "optionsEng": ["Op1", "Op2", "Op3", "Op4"],
+                            "optionsHin": ["Op1", "Op2", "Op3", "Op4"],
+                            "correctIndex": 0, // integer 0 to 3 indicating correct option
+                            "explanationEng": "Detailed English explanation",
+                            "explanationHin": "Detailed Hindi explanation"
+                          }
+                        ]
 
-                Text Segment to Process:
-                ${chunks[i]}`;
+                        Text Segment to Process:
+                        ${chunks[i]}`;
 
-                let q = await fetchFromGemini(prompt, s);
-                if(q && Array.isArray(q)) {
-                    allQuestions = allQuestions.concat(q);
+                        let q = await fetchFromGemini(prompt, s);
+                        if(q && Array.isArray(q)) {
+                            allQuestions = allQuestions.concat(q);
+                        }
+                    }
+
+                    if(allQuestions.length > 0) {
+                        await db.collection("tests").add({
+                            title: `PDF: ${f.name}`,
+                            groupId: g.value,
+                            groupName: g.options[g.selectedIndex].text,
+                            questions: allQuestions,
+                            duration: allQuestions.length * 60, 
+                            marksPerQuestion: 2,
+                            negativeMarks: 0, 
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
+                        document.getElementById('pdf-subject').value = ''; // Clear input on success
+                    } else {
+                        s.innerText = "❌ AI could not extract questions. Ensure the PDF contains text, not just scanned images.";
+                    }
+
+                } catch (e) {
+                    console.error(e);
+                    s.innerText = "❌ Error processing PDF file format.";
                 }
-            }
-
-            if(allQuestions.length > 0) {
-                await db.collection("tests").add({
-                    title: `PDF: ${f.name}`,
-                    groupId: g.value,
-                    groupName: g.options[g.selectedIndex].text,
-                    questions: allQuestions,
-                    duration: allQuestions.length * 60, 
-                    marksPerQuestion: 2,
-                    negativeMarks: 0, 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                s.innerText = `✅ Success! Saved ALL ${allQuestions.length} Questions from the PDF.`;
-                document.getElementById('pdf-subject').value = ''; // Clear input on success
-            } else {
-                s.innerText = "❌ AI could not extract questions. Ensure the PDF contains text, not just scanned images.";
-            }
-
-        } catch (e) {
-            console.error(e);
-            s.innerText = "❌ Error processing PDF file format.";
+            };
+            fr.readAsArrayBuffer(f);
         }
-    };
-    fr.readAsArrayBuffer(f);
-}
 
-
-        // --- MODIFIED: TEST ENGINE & SCORE CALCULATION ---
         let testQuestions = [], userAnswers = [], questionStates = []; 
         let currentLanguage = 'Eng', testMarks = 2, testNegativeMarks = 0, currentQuestionIndex = 0; 
 
@@ -831,7 +1055,7 @@
             currentTest = doc.data(); 
             testQuestions = currentTest.questions || [];
             testMarks = currentTest.marksPerQuestion || 2;
-            testNegativeMarks = currentTest.negativeMarks || 0; // Load penalty marks
+            testNegativeMarks = currentTest.negativeMarks || 0; 
             
             userAnswers = new Array(testQuestions.length).fill(null);
             questionStates = new Array(testQuestions.length).fill('unanswered');
@@ -846,13 +1070,13 @@
             startTimer();
         }
 
-        // Palette & Grid Logic
         function togglePalette() {
             const panel = document.getElementById('side-palette');
             const overlay = document.getElementById('side-overlay');
             if(panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } 
             else { panel.classList.add('open'); overlay.style.display = 'block'; }
         }
+
         function renderPalette() {
             const grid = document.getElementById('palette-grid'); grid.innerHTML = '';
             for(let i = 0; i < testQuestions.length; i++) {
@@ -863,20 +1087,25 @@
                 grid.innerHTML += `<button class="q-btn ${statusClass} ${isActive}" id="p-btn-${i}" onclick="jumpToQuestion(${i})">${i + 1}</button>`;
             }
         }
+
         function updatePaletteButton(index) {
             const btn = document.getElementById(`p-btn-${index}`); if(!btn) return;
             btn.className = `q-btn ${index === currentQuestionIndex ? 'active' : ''}`;
             if(questionStates[index] === 'answered') btn.classList.add('answered');
             if(questionStates[index] === 'marked') btn.classList.add('marked');
         }
+
         function jumpToQuestion(index) {
             const oldBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(oldBtn) oldBtn.classList.remove('active');
             currentQuestionIndex = index; renderCurrentQuestion();
             const newBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(newBtn) newBtn.classList.add('active');
-            if(window.innerWidth < 768) togglePalette(); 
+            
+            const panel = document.getElementById('side-palette');
+            if(panel.classList.contains('open')) {
+                togglePalette();
+            }
         }
 
-        // Render Active Question
         function renderCurrentQuestion() {
             const container = document.getElementById('question-container');
             const q = testQuestions[currentQuestionIndex]; if(!q) return;
@@ -899,11 +1128,10 @@
 
             document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
             const nextBtn = document.getElementById('btn-next');
-            if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Submit Test ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } 
+            if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } 
             else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
         }
 
-        // Test Controls
         function setAnswer(optIndex) {
             userAnswers[currentQuestionIndex] = optIndex;
             if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'answered';
@@ -923,7 +1151,6 @@
         function nextQuestion() { if(currentQuestionIndex < testQuestions.length - 1) jumpToQuestion(currentQuestionIndex + 1); else showSubmitSummary(); }
         function toggleLanguage() { currentLanguage = currentLanguage === 'Eng' ? 'Hin' : 'Eng'; renderCurrentQuestion(); }
 
-        // Timer & Submission Flow
         function startTimer() {
             clearInterval(testTimer);
             testTimer = setInterval(() => {
@@ -953,7 +1180,6 @@
         }
         function hideSubmitSummary() { document.getElementById('summary-modal').style.display = 'none'; }
 
-        // --- MODIFIED: Final Submit handles Negative Marking Calculation ---
         function finalSubmitTest() {
             hideSubmitSummary(); clearInterval(testTimer);
             let correct = 0, wrong = 0, left = 0;
@@ -964,9 +1190,8 @@
                 else wrong++; 
             });
 
-            // Calculate positive marks and subtract penalty for wrong answers
             let finalScore = (correct * testMarks) - (wrong * testNegativeMarks);
-            finalScore = Math.round(finalScore * 100) / 100; // Round off decimals nicely (e.g. 15.25)
+            finalScore = Math.round(finalScore * 100) / 100; 
             
             const totalMaxMarks = testQuestions.length * testMarks;
 
@@ -985,7 +1210,6 @@
             navigate('view-results');
         }
 
-        // --- EXPLANATION / REVIEW LOGIC ---
         let reviewLanguage = 'Eng';
         
         function showReviewScreen() {
@@ -1047,7 +1271,6 @@
             });
         }
 
-
         // --- AUTO-LOGIN ---
         firebase.auth().onAuthStateChanged((user) => {
             if (localStorage.getItem('adminSession') === 'active') {
@@ -1055,7 +1278,7 @@
                 loadAdminData(); if(getApiKey()) document.getElementById('admin-api-key').value = getApiKey();
             } else if (user) {
                 currentUserRole = 'student'; navigate('view-student', false);
-                loadGroupsForStudents(); loadStudentAttempts();
+                loadStudentData();
             } else {
                 currentUserRole = null;
                 if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); }
