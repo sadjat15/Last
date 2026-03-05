@@ -122,7 +122,7 @@
     <div class="container">
         
         <div id="view-login" class="view active">
-            <div class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
+            <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
                 </div>
@@ -148,13 +148,11 @@
                 </div>
                 <button id="login-submit-btn" class="btn-primary" onclick="login()" style="margin-top: 10px;">Sign In</button>
                 <div style="text-align: center; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">New Student? <a href="#" onclick="navigate('view-register')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create Account</a></p>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">New Student? <a href="#" onclick="toggleAuthForm('register')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create Account</a></p>
                 </div>
             </div>
-        </div>
 
-        <div id="view-register" class="view">
-            <div class="modern-card" style="max-width: 450px; margin: 60px auto;">
+            <div id="register-form" class="modern-card" style="max-width: 450px; margin: 60px auto; display: none;">
                 <div class="modern-header">
                     <h2 style="font-size: 2rem; margin-bottom: 5px;">Join KD JAAT</h2>
                     <p style="opacity: 0.9; font-size: 0.95rem;">Create your student account to take mock tests</p>
@@ -170,7 +168,7 @@
                     </div>
                     <button class="btn-primary" onclick="registerStudent()" style="margin-top: 15px; padding: 14px; font-size: 1.1rem; border-radius: 12px;">Create Account</button>
                     <div style="text-align: center; margin-top: 25px;">
-                        <p style="color: var(--text-muted); font-size: 0.95rem;">Already have an account? <a href="#" onclick="navigate('view-login')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login here</a></p>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Already have an account? <a href="#" onclick="toggleAuthForm('login')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login here</a></p>
                     </div>
                 </div>
             </div>
@@ -438,13 +436,24 @@
         }
 
         window.onload = checkDeviceLockout;
+        
+        // --- NEW: TOGGLE LOGIN/REGISTER UI ---
+        function toggleAuthForm(type) {
+            if(type === 'register') {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('register-form').style.display = 'block';
+            } else {
+                document.getElementById('register-form').style.display = 'none';
+                document.getElementById('login-form').style.display = 'block';
+            }
+        }
 
         // --- NAVIGATION ---
         function navigate(viewId, pushState = true) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
             
-            const showNav = (viewId === 'view-login' || viewId === 'view-register') ? 'none' : 'block';
+            const showNav = (viewId === 'view-login') ? 'none' : 'block';
             document.getElementById('logout-btn').style.display = showNav;
 
             if (pushState) {
@@ -452,7 +461,11 @@
                 if(viewId === 'view-admin') openAdminSec('admin-main-menu', false);
                 if(viewId === 'view-student') openStudentSec('student-main-menu', false);
             }
-            if (viewId === 'view-login') checkDeviceLockout();
+            
+            if (viewId === 'view-login') {
+                checkDeviceLockout();
+                toggleAuthForm('login'); // Make sure login shows instead of register when arriving here
+            }
         }
 
         function openAdminSec(secId, pushState = true) {
@@ -476,8 +489,6 @@
                 navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false);
             }
         };
-
-        // Removed the problematic generic goBack() function. All back buttons now use openAdminSec / openStudentSec
 
         // --- API KEY ---
         function getApiKey() { return localStorage.getItem('geminiApiKey'); }
@@ -530,10 +541,9 @@
 
             auth.createUserWithEmailAndPassword(pseudoEmail, pass)
                 .then((userCred) => {
-                    // STORE USER ID AND PASSWORD IN FIRESTORE SO ADMIN CAN SEE THEM
                     db.collection("users").doc(userCred.user.uid).set({
                         phone: phoneId,
-                        password: pass, // Storing as requested by user
+                        password: pass,
                         role: 'student',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
@@ -555,7 +565,7 @@
             const pass = document.getElementById('login-password').value;
 
             if (role === 'admin') {
-                let validId = 'admin'; let validPass = 'Sachin@123'; // Base admin creds
+                let validId = 'admin'; let validPass = 'Sachin@123';
                 if(localStorage.getItem('adminCustomId')) {
                     validId = localStorage.getItem('adminCustomId');
                     validPass = localStorage.getItem('adminCustomPass');
@@ -657,7 +667,7 @@
         
         function addManualQuestion() {
             editingQuestions.push({
-                questionEng: "", questionHin: "", imageUrl: "", // Added Image URL field
+                questionEng: "", questionHin: "", imageUrl: "",
                 optionsEng: ["", "", "", ""], optionsHin: ["", "", "", ""],
                 correctIndex: 0
             });
