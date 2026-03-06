@@ -365,7 +365,7 @@
                         <input type="file" id="pdf-upload" accept=".pdf, image/jpeg, image/png, image/webp">
                         <small style="color:var(--text-muted);">Max size: 15MB. AI will analyze the file visually to extract questions.</small>
                     </div>
-                    <button class="btn-primary" onclick="processPDF()" id="pdf-extract-btn">Extract Questions with AI</button>
+                    <button class="btn-primary" onclick="processPDF()" id="pdf-extract-btn">Extract Questions with Powerful AI Engine</button>
                     <p id="pdf-status" class="status-text"></p>
                 </div>
             </div>
@@ -389,12 +389,13 @@
                         <input type="password" id="admin-api-key" placeholder="Paste AIzaSy... here">
                     </div>
                     <div class="input-group">
-                        <label>AI Model Version</label>
+                        <label>AI Model Version (Affects Speed)</label>
                         <select id="admin-ai-model">
-                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Fast & Stable)</option>
-                            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Latest Stable)</option>
-                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Advanced / Beta)</option>
+                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Super Fast, Good for simple text)</option>
+                            <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash (Recommended: Fast & Powerful OCR)</option>
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Most Advanced / Beta)</option>
                         </select>
+                        <small style="color:var(--text-muted); display:block; margin-top:5px;">Tip: Use Gemini 2.0 Flash for extracting messy scanned PDFs accurately.</small>
                     </div>
                     <button class="btn-primary" onclick="saveApiSettings()" style="background: #f59e0b;">Save Settings Securely</button>
                     <p id="api-status" class="status-text"></p>
