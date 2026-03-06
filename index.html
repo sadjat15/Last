@@ -818,11 +818,11 @@
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
 
 
-        // --- HEAVILY BULLETPROOFED JSON PARSER ---
+        // --- HEAVILY BULLETPROOFED JSON PARSER (THE "TANK") ---
         function parseAIJSON(rawText) {
             let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-            let startIndex = cleanText.indexOf('[');
             
+            let startIndex = cleanText.indexOf('[');
             if (startIndex === -1) throw new Error("AI did not return a proper JSON array.");
 
             let endIndex = cleanText.lastIndexOf(']');
@@ -831,30 +831,43 @@
                 if (lastBrace !== -1) {
                     cleanText = cleanText.substring(startIndex, lastBrace + 1) + ']';
                 } else {
-                    throw new Error("JSON response severely cut off. Couldn't rescue data.");
+                    throw new Error("JSON response severely cut off.");
                 }
             } else {
                 cleanText = cleanText.substring(startIndex, endIndex + 1);
             }
 
+            // --- LEVEL 1: STRUCTURAL CLEANUP ---
+            // 1. Remove raw control characters (newlines/tabs) that destroy JSON string values.
+            cleanText = cleanText.replace(/[\n\r\t]/g, ' ');
+
+            // 2. Remove trailing commas (e.g., "value",} -> "value"})
             cleanText = cleanText.replace(/,\s*([\]}])/g, '$1');
+
+            // 3. Fix missing commas between objects or strings (common AI typo)
+            cleanText = cleanText.replace(/}\s+{/g, '}, {');
+            cleanText = cleanText.replace(/"\s+"/g, '", "');
+            cleanText = cleanText.replace(/]\s+{/g, '], {');
+
+            // --- LEVEL 2: ESCAPING CLEANUP ---
+            // 4. Double escape backslashes for LaTeX (Fixes SyntaxError: Bad escaped character)
+            cleanText = cleanText.replace(/\\([^"\\\/bfnrt])/g, '\\\\$1');
 
             try {
                 return JSON.parse(cleanText);
-            } catch (error) {
-                console.warn("Initial JSON parse failed. Attempting aggressive sanitization...", error);
+            } catch (e1) {
+                console.warn("Level 1 parse failed. Attempting deep quote sanitization...", e1);
                 
-                // 1. Fix unescaped backslashes (very common with math LaTeX)
-                let rescuedText = cleanText.replace(/\\([^"\\/bfnrt])/g, '\\\\$1');
+                // --- LEVEL 3: UNESCAPED QUOTE RESCUE ---
+                // If the AI put a double quote inside a string (e.g., "What is "Ohm's" Law?")
+                // This regex safely finds a quote sandwiched between two letters/numbers/punctuation and changes it to a single quote.
+                let rescuedText = cleanText.replace(/(\w)"(\w)/g, "$1'$2");
                 
-                // 2. Strip raw control characters that completely break JSON parsing 
-                // This removes raw newlines (\n), carriage returns (\r), tabs, etc. that the AI shouldn't have put inside quotes.
-                rescuedText = rescuedText.replace(/[\x00-\x1F\x7F-\x9F]/g, " ");
-
                 try {
                     return JSON.parse(rescuedText);
                 } catch(e2) {
-                    throw new Error("System blocked parsing: The AI used illegal characters (like unescaped quotes) inside the text. Try generating again.");
+                    console.error("Final Rescue Failed:", rescuedText);
+                    throw new Error("System blocked parsing: The AI used illegal characters (like complex unescaped quotes). Try generating again or use a simpler PDF.");
                 }
             }
         }
@@ -1158,7 +1171,6 @@
                 c.innerHTML=''; 
                 s.forEach(d=>{ 
                     let t=d.data(); 
-                    // Hide Question Bank tests from the normal test list if desired, but good for admin to edit them
                     c.innerHTML+=`
                     <div class="action-box">
                         <h4 style="margin-bottom:10px;">${t.title}</h4>
@@ -1218,7 +1230,6 @@
                 if(!sel) return;
                 sel.innerHTML = '<option value="">Select a test to view rankings...</option>';
                 s.forEach(d => { 
-                    // Hide pure question bank tests from leaderboard selector
                     if(d.data().groupId !== 'QUESTION_BANK') {
                         sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`; 
                     }
@@ -1348,7 +1359,6 @@
                 snap.forEach(doc => { if (doc.data().questions) existingQs.push(...doc.data().questions.map(q => q.questionEng)); });
                 
                 if (existingQs.length > 0) {
-                    // Send up to 30 recent questions to the AI to prevent dupes
                     let recentQs = existingQs.slice(-30).map((q, i) => `${i+1}. ${q}`).join("\n");
                     avoidText = `\n\nCRITICAL RULE: DO NOT generate questions that are identical or highly similar to these previously added questions:\n${recentQs}`;
                 }
@@ -1358,11 +1368,11 @@
             Ensure these questions cover different sub-topics and are highly accurate.
             
             CRITICAL JSON FORMATTING RULES (FAILURE TO FOLLOW WILL CRASH THE SYSTEM):
-            1. NEVER use double quotes (") inside your string values. Use single quotes (' ') instead.
-            2. NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep each value on a single line.
-            3. TECHNICAL: Double-escape all LaTeX format (\\\\( and \\\\) for inline, $$ for block) for complex math equations.
-            4. CATEGORIZE: Give a broad category string (e.g., Mathematics, General Science).
-            5. OUTPUT FORMAT: Return ONLY a valid JSON array. Do not include any other text, greetings, or markdown formatting.${avoidText}`;
+            1. NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
+            2. NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
+            3. Ensure strictly valid JSON. Every array element and object MUST be separated by a comma.
+            4. TECHNICAL: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int).
+            5. CATEGORIZE: Give a broad category string (e.g., Mathematics, General Science).${avoidText}`;
             
             try {
                 let q = await fetchFromGemini(prompt, s); 
@@ -1371,7 +1381,6 @@
                     s.innerText = `✅ Success! Generated ${q.length} Questions.`; 
                     document.getElementById('ai-topic').value = ''; 
                     
-                    // Route to Modal instead of instantly saving to database
                     tempExtractedQuestions = q;
                     showSaveModal();
                 } else { 
@@ -1415,12 +1424,11 @@
                     let prompt = `You are an expert bilingual test creator for competitive exams. Analyze the attached document/image visually and extract ALL available multiple-choice questions from it (up to 100 questions). Context: "${subjectContext}".
 
                     CRITICAL JSON FORMATTING RULES (FAILURE TO FOLLOW WILL CRASH THE SYSTEM):
-                    1. NEVER use double quotes (") inside your string values. If you are quoting text, use single quotes (' ') instead.
+                    1. NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
                     2. NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
-                    3. LATEX ESCAPING: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int). 
-                    4. CATEGORIZE: 'subject' must be accurate (e.g., Mathematics, Electrical Engineering). 
-                    5. BILINGUAL: 'questionHin', 'questionEng', 'optionsHin', 'optionsEng', 'explanationHin', 'explanationEng' fields MUST be filled. Translate missing languages.
-                    6. OUTPUT FORMAT: Return ONLY a valid JSON array matching the exact schema provided.`;
+                    3. Ensure strictly valid JSON. Every array element and object MUST be separated by a comma.
+                    4. LATEX ESCAPING: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int).
+                    5. BILINGUAL: 'questionHin', 'questionEng', 'optionsHin', 'optionsEng', 'explanationHin', 'explanationEng' fields MUST be filled. Translate missing languages.`;
 
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
                         method: 'POST',
