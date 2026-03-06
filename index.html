@@ -936,14 +936,14 @@
             } catch(e) { res.innerHTML = '<p style="color:red;">Error loading leaderboard data.</p>'; }
         }
 
-        // --- FIXED: HIGHLY ROBUST AI PARSER WITH GEMINI 2.0 FLASH & STRICT SCHEMA ---
+        // --- UPGRADED AI INTEGRATION ---
         async function fetchFromGemini(p, s) { 
             const k = getApiKey(); 
             if(!k) { s.innerText = "❌ No API Key found! Check API Settings."; return null; } 
             
             try { 
-                // Upgraded to Gemini 2.0 Flash
-                let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`, {
+                // Using 1.5-flash as it is extremely stable for JSON Schema formatting
+                let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -951,7 +951,6 @@
                         generationConfig: { 
                             temperature: 0.2, 
                             responseMimeType: "application/json",
-                            // Forces Gemini to output perfect JSON format every time
                             responseSchema: {
                                 type: "ARRAY",
                                 items: {
@@ -988,12 +987,20 @@
                 }
 
                 let rawText = d.candidates[0].content.parts[0].text;
-                let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
                 
-                return JSON.parse(cleanText); // responseSchema guarantees it is an array
+                // Advanced clean up: remove markdown blocks and safely extract only the JSON array
+                let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                let startIndex = cleanText.indexOf('[');
+                let endIndex = cleanText.lastIndexOf(']');
+                
+                if (startIndex !== -1 && endIndex !== -1) {
+                    cleanText = cleanText.substring(startIndex, endIndex + 1);
+                }
+
+                return JSON.parse(cleanText);
 
             } catch(e) { 
-                console.error("JSON Error. The AI generated invalid code:", e);
+                console.error("JSON Error. The AI generated invalid formatting:", e);
                 s.innerText = "❌ AI Formatting Error. The AI response could not be read."; 
                 return null; 
             } 
@@ -1005,18 +1012,18 @@
             if(!topic || !g.value) return alert("Select a target group and enter a topic!"); 
             
             let s = document.getElementById('ai-status'); 
-            
-            const targetQuestions = 10; // Forced to exactly 10 questions per request
-            
+            const targetQuestions = 10;
             s.innerText = `⏳ Generating ${targetQuestions} questions... Please wait.`;
             
+            // Explicitly instructing the AI not to add extra formatting
             let prompt = `Generate exactly ${targetQuestions} multiple choice questions about the topic: "${topic}". 
             Ensure these questions cover different sub-topics and are highly accurate.
             
             CRITICAL RULES:
             1. TECHNICAL: Use LaTeX format (\\\\( and \\\\) for inline, $$ for block) for complex math equations.
             2. SUBJECT TAG: Give a broad category string (e.g., Mathematics, General Science, Reasoning).
-            3. BILINGUAL: English and Hindi text MUST be provided.`;
+            3. BILINGUAL: English and Hindi text MUST be provided.
+            4. OUTPUT FORMAT: Return ONLY a valid JSON array. Do not include any other text, greetings, or markdown formatting.`;
             
             let q = await fetchFromGemini(prompt, s); 
             if (q && Array.isArray(q) && q.length > 0) {
@@ -1050,20 +1057,20 @@
 
                     s.innerText = "⏳ Analyzing document structure...";
                     
-                    const chunkSize = 8000; // Smaller chunk to absolutely avoid token limits
+                    const chunkSize = 8000; 
                     let chunks = [];
                     for(let i = 0; i < txt.length; i += chunkSize) { chunks.push(txt.substring(i, i + chunkSize)); }
 
                     let allQuestions = [];
-                    const targetPDFQuestions = 100; // Total requested questions
+                    const targetPDFQuestions = 100; 
 
                     for(let i = 0; i < chunks.length; i++) {
                         if (allQuestions.length >= targetPDFQuestions) break;
 
-                        // Cooldown prevents Google from blocking you for Too Many Requests
+                        // Increased delay to 6 seconds to prevent 429 errors on the 15 RPM Free Tier Limit
                         if (i > 0) {
-                            s.innerText = `⏳ Cooling down API for 3 seconds...`;
-                            await new Promise(res => setTimeout(res, 3000));
+                            s.innerText = `⏳ Cooling down API for 6 seconds to avoid limits...`;
+                            await new Promise(res => setTimeout(res, 6000));
                         }
 
                         let needed = Math.min(10, targetPDFQuestions - allQuestions.length);
@@ -1075,6 +1082,8 @@
                         1. SUBJECT TAG: Categorize each question accurately (e.g., Mathematics, General Awareness). 
                         2. LaTeX: Use standard LaTeX for math/electrical equations (\\\\( and \\\\) or $$).
                         3. BILINGUAL: 'Hin' and 'Eng' fields must be filled correctly with proper translations.
+                        4. If the text does not contain enough viable information to form questions, you MUST return an empty JSON array [].
+                        5. OUTPUT FORMAT: Return ONLY a valid JSON array. Do not include markdown codeblocks or conversational text.
                         
                         Text Segment: ${chunks[i]}`;
 
