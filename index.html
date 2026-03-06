@@ -335,8 +335,26 @@
                         <label>Select PDF File</label>
                         <input type="file" id="pdf-upload" accept=".pdf">
                     </div>
-                    <button class="btn-primary" onclick="processPDF()">Extract 100 Questions & Generate Test</button>
+                    <button class="btn-primary" onclick="processPDF()" id="pdf-extract-btn">Extract 100 Questions</button>
                     <p id="pdf-status" class="status-text"></p>
+
+                    <div id="pdf-post-extract-ui" style="display: none; margin-top: 25px; padding-top: 25px; border-top: 2px dashed var(--border-color); background: #f8fafc; padding: 20px; border-radius: 8px;">
+                        <h3 style="margin-bottom: 15px; color: var(--primary);">Questions Extracted! Where to save?</h3>
+                        
+                        <div class="input-group">
+                            <label>Select Destination</label>
+                            <select id="pdf-target-test" onchange="toggleNewTestInput()">
+                                <option value="new_test">➕ Create a New Test</option>
+                                </select>
+                        </div>
+                        
+                        <div class="input-group" id="pdf-new-test-div">
+                            <label>New Test Title</label>
+                            <input type="text" id="pdf-new-test-title" placeholder="e.g., Haryana CET Mock Test 5">
+                        </div>
+                        
+                        <button class="btn-success" onclick="saveExtractedPDFQuestions()" style="font-size: 1.1rem; padding: 14px;">💾 Save Questions to Test</button>
+                    </div>
                 </div>
             </div>
 
@@ -560,7 +578,11 @@
         let timeRemaining = 0;
         let activeTestId = null; 
 
-        // --- NEW: ANTI-REFRESH PROTECTION ---
+        // --- NEW GLOBALS FOR PDF EXTRACTION ---
+        let tempExtractedQuestions = [];
+        let tempPdfFilename = "";
+
+        // --- ANTI-REFRESH PROTECTION ---
         let isTestActive = false;
         window.addEventListener('beforeunload', function (e) {
             if (isTestActive) {
@@ -1089,7 +1111,17 @@
             }
         }
 
+        // --- NEW: Toggle the New Test Title input based on dropdown selection ---
+        function toggleNewTestInput() {
+            const sel = document.getElementById('pdf-target-test').value;
+            document.getElementById('pdf-new-test-div').style.display = sel === 'new_test' ? 'block' : 'none';
+        }
+
         async function processPDF() {
+            // Reset the post-extraction UI before a new generation
+            document.getElementById('pdf-post-extract-ui').style.display = 'none';
+            tempExtractedQuestions = [];
+            
             const f = document.getElementById('pdf-upload').files[0];
             const g = document.getElementById('pdf-test-group');
             const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
@@ -1152,17 +1184,30 @@
                         }
                     }
 
+                    // --- NEW: Keep questions in memory and ask admin where to save ---
                     if(allQuestions.length > 0) {
                         if(allQuestions.length > targetPDFQuestions) allQuestions = allQuestions.slice(0, targetPDFQuestions);
                         
-                        await db.collection("tests").add({
-                            title: `PDF: ${f.name}`, groupId: g.value, groupName: g.options[g.selectedIndex].text,
-                            questions: allQuestions, duration: allQuestions.length * 60, marksPerQuestion: 2, negativeMarks: 0, 
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
+                        tempExtractedQuestions = allQuestions;
+                        tempPdfFilename = f.name;
+                        
                         s.style.color = "var(--success)";
-                        s.innerText = `✅ Success! Saved ${allQuestions.length} Questions from the PDF.`;
-                        document.getElementById('pdf-subject').value = ''; 
+                        s.innerText = `✅ Success! Extracted ${allQuestions.length} Questions. Please choose where to save them below.`;
+                        
+                        // Populate the target dropdown with existing tests from the selected group
+                        const gId = g.value;
+                        const targetSelect = document.getElementById('pdf-target-test');
+                        targetSelect.innerHTML = '<option value="new_test">➕ Create a New Test</option>';
+                        
+                        db.collection("tests").where("groupId", "==", gId).get().then(snap => {
+                            snap.forEach(doc => {
+                                targetSelect.innerHTML += `<option value="${doc.id}">Append to: ${doc.data().title}</option>`;
+                            });
+                        });
+                        
+                        document.getElementById('pdf-post-extract-ui').style.display = 'block';
+                        toggleNewTestInput();
+
                     } else { 
                         s.style.color = "var(--danger)";
                         s.innerText = "❌ Extraction failed: AI could not find suitable question formats in this text."; 
@@ -1174,6 +1219,66 @@
                 }
             };
             fr.readAsArrayBuffer(f);
+        }
+
+        // --- NEW: Save Function to route the extracted PDF questions to the DB ---
+        async function saveExtractedPDFQuestions() {
+            const target = document.getElementById('pdf-target-test').value;
+            const g = document.getElementById('pdf-test-group');
+            const groupId = g.value;
+            const groupName = g.options[g.selectedIndex].text;
+            const s = document.getElementById('pdf-status');
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerText = "⏳ Saving...";
+
+            if (target === 'new_test') {
+                const title = document.getElementById('pdf-new-test-title').value.trim() || `PDF: ${tempPdfFilename}`;
+                try {
+                    await db.collection("tests").add({
+                        title: title, 
+                        groupId: groupId, 
+                        groupName: groupName,
+                        questions: tempExtractedQuestions, 
+                        duration: tempExtractedQuestions.length * 60, 
+                        marksPerQuestion: 2, 
+                        negativeMarks: 0, 
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert("New test created successfully!");
+                    resetPDFUI();
+                } catch(e) { alert("Error saving test: " + e); }
+            } else {
+                try {
+                    // Fetch existing test to append
+                    const docRef = db.collection("tests").doc(target);
+                    const docSnap = await docRef.get();
+                    if(docSnap.exists) {
+                        let existingQuestions = docSnap.data().questions || [];
+                        let combinedQuestions = existingQuestions.concat(tempExtractedQuestions);
+                        let newDuration = combinedQuestions.length * 60; // adding 1 min per new question
+                        
+                        await docRef.update({
+                            questions: combinedQuestions,
+                            duration: newDuration
+                        });
+                        alert(`Successfully added ${tempExtractedQuestions.length} questions to the existing test!`);
+                        resetPDFUI();
+                    }
+                } catch(e) { alert("Error updating test: " + e); }
+            }
+            btn.disabled = false;
+            btn.innerText = "💾 Save Questions to Test";
+        }
+        
+        function resetPDFUI() {
+            document.getElementById('pdf-post-extract-ui').style.display = 'none';
+            document.getElementById('pdf-subject').value = '';
+            document.getElementById('pdf-new-test-title').value = '';
+            document.getElementById('pdf-upload').value = '';
+            document.getElementById('pdf-status').innerText = '';
+            tempExtractedQuestions = [];
         }
 
         // --- TEST INTERFACE LOGIC ---
