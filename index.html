@@ -837,37 +837,63 @@
                 cleanText = cleanText.substring(startIndex, endIndex + 1);
             }
 
-            // --- LEVEL 1: STRUCTURAL CLEANUP ---
             // 1. Remove raw control characters (newlines/tabs) that destroy JSON string values.
             cleanText = cleanText.replace(/[\n\r\t]/g, ' ');
 
-            // 2. Remove trailing commas (e.g., "value",} -> "value"})
-            cleanText = cleanText.replace(/,\s*([\]}])/g, '$1');
-
-            // 3. Fix missing commas between objects or strings (common AI typo)
+            // 2. Fix missing commas between objects or string elements in arrays
             cleanText = cleanText.replace(/}\s+{/g, '}, {');
             cleanText = cleanText.replace(/"\s+"/g, '", "');
             cleanText = cleanText.replace(/]\s+{/g, '], {');
 
-            // --- LEVEL 2: ESCAPING CLEANUP ---
-            // 4. Double escape backslashes for LaTeX (Fixes SyntaxError: Bad escaped character)
-            cleanText = cleanText.replace(/\\([^"\\\/bfnrt])/g, '\\\\$1');
+            // 3. Fix trailing commas (e.g. "value",} -> "value"})
+            cleanText = cleanText.replace(/,\s*([\]}])/g, '$1');
+
+            // 4. Handle unescaped backslashes (Very common when dealing with Math/LaTeX)
+            cleanText = cleanText.replace(/\\([^"\\\/bfnrtu])/g, '\\\\$1');
 
             try {
                 return JSON.parse(cleanText);
             } catch (e1) {
-                console.warn("Level 1 parse failed. Attempting deep quote sanitization...", e1);
+                console.warn("Level 1 parse failed. Activating deep quote sanitization...", e1);
                 
-                // --- LEVEL 3: UNESCAPED QUOTE RESCUE ---
-                // If the AI put a double quote inside a string (e.g., "What is "Ohm's" Law?")
-                // This regex safely finds a quote sandwiched between two letters/numbers/punctuation and changes it to a single quote.
-                let rescuedText = cleanText.replace(/(\w)"(\w)/g, "$1'$2");
+                // 5. Deep Quote Sanitization (Iterates character by character to find unescaped internal double quotes)
+                let result = "";
+                for (let i = 0; i < cleanText.length; i++) {
+                    let char = cleanText[i];
+                    
+                    // If we find a quote that isn't already escaped...
+                    if (char === '"' && (i === 0 || cleanText[i-1] !== '\\')) {
+                        let isStructural = false;
+                        
+                        // Look ahead for structural JSON markers
+                        let j = i + 1;
+                        while (j < cleanText.length && /\s/.test(cleanText[j])) j++;
+                        let nextNonSpace = cleanText[j] || '';
+                        
+                        // Look behind for structural JSON markers
+                        let k = i - 1;
+                        while (k >= 0 && /\s/.test(cleanText[k])) k--;
+                        let prevNonSpace = cleanText[k] || '';
+
+                        // A quote is Structural if it is sitting next to JSON brackets, colons, or commas
+                        if (/[:,}\]]/.test(nextNonSpace) || /[{[:,]/.test(prevNonSpace)) {
+                            isStructural = true;
+                        }
+
+                        // If it's NOT a structural quote, it's an illegal internal quote. Escape it!
+                        if (!isStructural) {
+                            result += '\\"';
+                            continue;
+                        }
+                    }
+                    result += char;
+                }
                 
                 try {
-                    return JSON.parse(rescuedText);
+                    return JSON.parse(result);
                 } catch(e2) {
-                    console.error("Final Rescue Failed:", rescuedText);
-                    throw new Error("System blocked parsing: The AI used illegal characters (like complex unescaped quotes). Try generating again or use a simpler PDF.");
+                    console.error("Final Rescue Failed. Text state:", result);
+                    throw new Error("System blocked parsing: The AI returned highly complex unescaped text. Try regenerating.");
                 }
             }
         }
@@ -1367,11 +1393,11 @@
             let prompt = `Generate exactly ${targetQuestions} multiple choice questions about the topic: "${topic}" at a "${difficulty}" difficulty level. 
             Ensure these questions cover different sub-topics and are highly accurate.
             
-            CRITICAL JSON FORMATTING RULES (FAILURE TO FOLLOW WILL CRASH THE SYSTEM):
-            1. NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
-            2. NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
-            3. Ensure strictly valid JSON. Every array element and object MUST be separated by a comma.
-            4. TECHNICAL: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int).
+            CRITICAL JSON FORMATTING RULES:
+            1. STRICT JSON: Every array element and object MUST be separated by a comma.
+            2. NO INTERNAL QUOTES: NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
+            3. NO NEWLINES: NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
+            4. LATEX ESCAPING: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int).
             5. CATEGORIZE: Give a broad category string (e.g., Mathematics, General Science).${avoidText}`;
             
             try {
@@ -1423,10 +1449,10 @@
 
                     let prompt = `You are an expert bilingual test creator for competitive exams. Analyze the attached document/image visually and extract ALL available multiple-choice questions from it (up to 100 questions). Context: "${subjectContext}".
 
-                    CRITICAL JSON FORMATTING RULES (FAILURE TO FOLLOW WILL CRASH THE SYSTEM):
-                    1. NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
-                    2. NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
-                    3. Ensure strictly valid JSON. Every array element and object MUST be separated by a comma.
+                    CRITICAL JSON FORMATTING RULES:
+                    1. STRICT JSON: Every array element and object MUST be separated by a comma.
+                    2. NO INTERNAL QUOTES: NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
+                    3. NO NEWLINES: NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
                     4. LATEX ESCAPING: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int).
                     5. BILINGUAL: 'questionHin', 'questionEng', 'optionsHin', 'optionsEng', 'explanationHin', 'explanationEng' fields MUST be filled. Translate missing languages.`;
 
