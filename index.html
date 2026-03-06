@@ -370,7 +370,14 @@
                 </div>
             </div>
 
-            <div id="admin-sec-tests" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Active Tests</h2></div><div id="test-list-container" class="grid-list"></div></div>
+            <div id="admin-sec-tests" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Manage Active Tests</h2>
+                    <button class="btn-success" style="margin-left: auto; width: auto;" onclick="createNewBlankTest()">➕ Create Blank Test</button>
+                </div>
+                <div id="test-list-container" class="grid-list"></div>
+            </div>
             <div id="admin-sec-test-editor" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button><h2 id="editor-test-title">Editing Test Questions</h2></div><div class="action-box" style="background: transparent; border: none; box-shadow: none; padding: 0;"><div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"><button class="btn-primary" style="flex: 1;" onclick="addManualQuestion()">➕ Add Blank Question</button><button class="btn-primary" style="flex: 1; background: #8b5cf6;" onclick="openQuestionBank()">📚 Import from Question Bank</button><button class="btn-primary" style="flex: 1; background: var(--success);" onclick="saveTestQuestions()">💾 Save All Changes</button></div><div id="editor-questions-list"></div></div></div>
             <div id="admin-sec-attempts" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Live Student Attempts</h2></div><div id="admin-attempts-list" class="grid-list"></div></div>
             
@@ -538,7 +545,17 @@
         </div>
     </div>
     
-    <div id="qbank-modal" class="modal-overlay"><div class="modal" style="max-width: 800px;"><h2 style="margin-bottom: 20px; color: var(--primary);">Import Questions</h2><p style="margin-bottom: 15px; color: var(--text-muted);">Select previously uploaded questions from other tests.</p><div id="qbank-list" style="max-height: 50vh; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;">Loading past questions...</div><div style="display: flex; gap: 10px;"><button onclick="closeQuestionBank()" class="btn-outline" style="flex:1;">Cancel</button><button onclick="importSelectedQuestions()" class="btn-success" style="flex:1;">Import Selected Questions</button></div></div></div>
+    <div id="qbank-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px;">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Import Questions</h2>
+            <p style="margin-bottom: 15px; color: var(--text-muted);">Select previously uploaded questions by subject to add them to your test.</p>
+            <div id="qbank-list" style="margin-bottom: 20px;">Loading past questions...</div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closeQuestionBank()" class="btn-outline" style="flex:1;">Cancel</button>
+                <button onclick="importSelectedQuestions()" class="btn-success" style="flex:1;">Import Selected Questions</button>
+            </div>
+        </div>
+    </div>
 
     <div id="exit-modal" class="modal-overlay">
         <div class="modal" style="max-width: 450px; text-align: center;">
@@ -800,8 +817,115 @@
 
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
 
+
+        // --- ROBUST JSON PARSER TO FIX CUTOFF ERRORS ---
+        function parseAIJSON(rawText) {
+            let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+            let startIndex = cleanText.indexOf('[');
+            
+            if (startIndex === -1) throw new Error("AI did not return a proper JSON array.");
+
+            let endIndex = cleanText.lastIndexOf(']');
+            if (endIndex === -1) {
+                // If it got cut off due to max output tokens, rescue the text up to the last valid bracket
+                let lastBrace = cleanText.lastIndexOf('}');
+                if (lastBrace !== -1) {
+                    cleanText = cleanText.substring(startIndex, lastBrace + 1) + ']';
+                } else {
+                    throw new Error("JSON response severely cut off. Couldn't rescue data.");
+                }
+            } else {
+                cleanText = cleanText.substring(startIndex, endIndex + 1);
+            }
+
+            // Remove trailing commas inside arrays or objects before parsing
+            cleanText = cleanText.replace(/,\s*([\]}])/g, '$1');
+            return JSON.parse(cleanText);
+        }
+
         // --- ADMIN EDITOR LOGIC ---
         let editingTestId = null, editingQuestions = [];
+        
+        // MODAL FUNCTIONS
+        async function openEditModal(testId) {
+            const doc = await db.collection("tests").doc(testId).get();
+            if(!doc.exists) return;
+            const test = doc.data();
+            document.getElementById('edit-test-id').value = testId;
+            document.getElementById('edit-title').value = test.title || '';
+            document.getElementById('edit-timer').value = Math.floor((test.duration || 0) / 60);
+            document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
+            document.getElementById('edit-negative').value = test.negativeMarks || 0;
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        async function saveTestEdit() {
+            const testId = document.getElementById('edit-test-id').value;
+            const newTitle = document.getElementById('edit-title').value.trim();
+            const newDuration = parseInt(document.getElementById('edit-timer').value) * 60;
+            const newMarks = parseFloat(document.getElementById('edit-marks').value);
+            const newNegative = parseFloat(document.getElementById('edit-negative').value);
+
+            if(!newTitle) return alert("Test title cannot be empty!");
+
+            try {
+                await db.collection("tests").doc(testId).update({
+                    title: newTitle,
+                    duration: newDuration,
+                    marksPerQuestion: newMarks,
+                    negativeMarks: newNegative
+                });
+                alert("Test settings saved successfully!");
+                closeEditModal();
+            } catch(e) {
+                alert("Error saving test settings: " + e.message);
+            }
+        }
+
+        async function createNewBlankTest() {
+            const title = prompt("Enter a Title for the new test:");
+            if (!title) return;
+
+            const groupsSnap = await db.collection("groups").get();
+            if (groupsSnap.empty) return alert("Please create a 'Group' first from the main menu.");
+
+            let groupStr = "Select the Category Number:\n";
+            let groups = [];
+            groupsSnap.forEach(g => {
+                groups.push({ id: g.id, name: g.data().name });
+                groupStr += `${groups.length}. ${g.data().name}\n`;
+            });
+
+            const inputStr = prompt(groupStr);
+            if (!inputStr) return;
+
+            const gIndex = parseInt(inputStr) - 1;
+            if (isNaN(gIndex) || !groups[gIndex]) return alert("Invalid selection.");
+
+            const newTest = {
+                title: title,
+                groupId: groups[gIndex].id,
+                groupName: groups[gIndex].name,
+                questions: [],
+                duration: 3600, // default 60 mins
+                marksPerQuestion: 2,
+                negativeMarks: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                const docRef = await db.collection("tests").add(newTest);
+                alert("Blank test created! Opening editor to let you import questions from the bank.");
+                openTestEditor(docRef.id);
+            } catch (e) {
+                alert("Failed to create test: " + e.message);
+            }
+        }
+
         async function openTestEditor(testId) { editingTestId = testId; const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return; const test = doc.data(); document.getElementById('editor-test-title').innerText = `Editing: ${test.title}`; editingQuestions = test.questions || []; renderEditorQuestions(); openAdminSec('admin-sec-test-editor'); }
         
         function renderEditorQuestions() { 
@@ -887,7 +1011,68 @@
             }
         }
 
-        async function openQuestionBank() { document.getElementById('qbank-modal').style.display='flex'; const b=document.getElementById('qbank-list'); b.innerHTML="Fetching..."; const s = await db.collection("tests").get(); let h=''; s.forEach(d=>{ if(d.id===editingTestId)return; const t=d.data(); if(t.questions&&t.questions.length>0){ h+=`<div style="margin-bottom:10px; border:1px solid #e2e8f0; padding:10px; border-radius:8px;"><b>${t.title}</b><br>`; t.questions.forEach(q=>{ h+=`<label style="display:flex; gap:10px; margin-top:5px;"><input type="checkbox" class="qb-cb" value="${encodeURIComponent(JSON.stringify(q))}"> ${q.questionEng||'Q'}</label>`; }); h+='</div>'; } }); b.innerHTML=h||"No previous questions found."; } 
+        // --- ENHANCED SUBJECT-WISE QUESTION BANK ---
+        async function openQuestionBank() { 
+            document.getElementById('qbank-modal').style.display='flex'; 
+            const b = document.getElementById('qbank-list'); 
+            b.innerHTML = "Fetching questions..."; 
+            
+            const s = await db.collection("tests").get(); 
+            let allQuestions = [];
+            
+            s.forEach(d => { 
+                if(d.id === editingTestId) return; 
+                const t = d.data(); 
+                if(t.questions && t.questions.length > 0) {
+                    t.questions.forEach(q => {
+                        allQuestions.push({ ...q, sourceTest: t.title });
+                    });
+                } 
+            }); 
+
+            const subjects = [...new Set(allQuestions.map(q => q.subject || 'General'))];
+            let subjectOptions = `<option value="ALL">All Subjects</option>`;
+            subjects.forEach(sub => subjectOptions += `<option value="${sub}">${sub}</option>`);
+
+            window.tempQBankData = allQuestions;
+
+            b.innerHTML = `
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label>Filter by Subject</label>
+                    <select id="qbank-subject-filter" onchange="renderFilteredQBank()">
+                        ${subjectOptions}
+                    </select>
+                </div>
+                <div id="qbank-filtered-list" style="display:flex; flex-direction:column; gap:10px; max-height: 40vh; overflow-y: auto; padding-right: 5px;"></div>
+            `;
+            
+            renderFilteredQBank();
+        } 
+
+        function renderFilteredQBank() {
+            const filter = document.getElementById('qbank-subject-filter').value;
+            const container = document.getElementById('qbank-filtered-list');
+            let h = '';
+
+            window.tempQBankData.forEach((q) => {
+                if (filter === 'ALL' || (q.subject || 'General') === filter) {
+                    let cleanQ = { ...q };
+                    delete cleanQ.sourceTest; // Keep json neat
+
+                    h += `
+                    <label style="display:flex; gap:10px; align-items:flex-start; background: #f8fafc; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" class="qb-cb" value="${encodeURIComponent(JSON.stringify(cleanQ))}" style="margin-top: 4px;">
+                        <div>
+                            <span style="font-size: 0.8rem; color: var(--primary); font-weight: bold; background: #e0e7ff; padding: 2px 6px; border-radius: 4px; margin-right: 5px;">${q.subject || 'General'}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">From: ${q.sourceTest}</span>
+                            ${q.questionEng || 'Q'}
+                        </div>
+                    </label>`;
+                }
+            });
+            container.innerHTML = h || "<p style='color: gray;'>No questions found for this subject.</p>";
+        }
+
         function importSelectedQuestions() { document.querySelectorAll('.qb-cb:checked').forEach(c=>editingQuestions.push(JSON.parse(decodeURIComponent(c.value)))); closeQuestionBank(); renderEditorQuestions(); } 
         function closeQuestionBank() { document.getElementById('qbank-modal').style.display='none'; }
         
@@ -1066,6 +1251,7 @@
                             contents: [{ parts: [{ text: p }] }],
                             generationConfig: { 
                                 temperature: 0.2, 
+                                maxOutputTokens: 8192,
                                 responseMimeType: "application/json",
                                 responseSchema: {
                                     type: "ARRAY",
@@ -1102,7 +1288,7 @@
                             throw new Error("API Rate Limit Exceeded (429). Please wait a minute before trying again.");
                         }
 
-                        if (r.status === 400) throw new Error("Bad Request (400). Prompt might be too large. Details: " + (err.error?.message || ""));
+                        if (r.status === 400) throw new Error("Bad Request (400). Prompt might be too large.");
                         if (r.status === 403) throw new Error("API Key Invalid or Expired (403).");
                         if (r.status === 404) throw new Error(`Model '${m}' not found. Try a different model version in Settings.`);
                         throw new Error(`API Error (${r.status}): ${err.error?.message || "Unknown server error"}`);
@@ -1115,17 +1301,7 @@
                     }
 
                     let rawText = d.candidates[0].content.parts[0].text;
-                    let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-                    let startIndex = cleanText.indexOf('[');
-                    let endIndex = cleanText.lastIndexOf(']');
-                    
-                    if (startIndex !== -1 && endIndex !== -1) {
-                        cleanText = cleanText.substring(startIndex, endIndex + 1);
-                    } else {
-                        throw new Error("AI failed to format output correctly. Raw snippet: " + rawText.substring(0, 40) + "...");
-                    }
-
-                    return JSON.parse(cleanText);
+                    return parseAIJSON(rawText);
 
                 } catch(e) { 
                     if (attempt === retries) {
@@ -1240,6 +1416,7 @@
                             }],
                             generationConfig: {
                                 temperature: 0.1,
+                                maxOutputTokens: 8192,
                                 responseMimeType: "application/json",
                                 responseSchema: {
                                     type: "ARRAY",
@@ -1271,17 +1448,7 @@
                     if (!d.candidates || d.candidates.length === 0) throw new Error("AI returned an empty response.");
 
                     let rawText = d.candidates[0].content.parts[0].text;
-                    let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-                    let startIndex = cleanText.indexOf('[');
-                    let endIndex = cleanText.lastIndexOf(']');
-
-                    if (startIndex !== -1 && endIndex !== -1) {
-                        cleanText = cleanText.substring(startIndex, endIndex + 1);
-                    } else {
-                        throw new Error("AI failed to format output correctly.");
-                    }
-
-                    let allQuestions = JSON.parse(cleanText);
+                    let allQuestions = parseAIJSON(rawText);
 
                     if(allQuestions.length > 0) {
                         tempExtractedQuestions = allQuestions;
