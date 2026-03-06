@@ -1145,7 +1145,8 @@
 
                     s.innerText = "⏳ Analyzing document structure...";
                     
-                    const chunkSize = 8000; 
+                    // INCREASING TEXT BATCH SIZE for the AI to process more text at once
+                    const chunkSize = 30000; 
                     let chunks = [];
                     for(let i = 0; i < txt.length; i += chunkSize) { chunks.push(txt.substring(i, i + chunkSize)); }
 
@@ -1160,7 +1161,8 @@
                             await new Promise(res => setTimeout(res, 6000));
                         }
 
-                        let needed = Math.min(10, targetPDFQuestions - allQuestions.length);
+                        // INCREASED: Allowing AI to return up to 40 questions per API call instead of 10
+                        let needed = Math.min(40, targetPDFQuestions - allQuestions.length);
                         s.innerText = `⏳ AI Extracting Part ${i + 1}/${chunks.length}... (Collected: ${allQuestions.length}/100 Qs)`;
                         
                         let prompt = `You are an expert bilingual test creator for competitive exams. Extract a MAXIMUM OF ${needed} multiple-choice questions from the provided text segment. Context: "${subjectContext}".
