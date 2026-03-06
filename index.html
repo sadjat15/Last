@@ -818,82 +818,49 @@
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
 
 
-        // --- HEAVILY BULLETPROOFED JSON PARSER (THE "TANK") ---
+        // --- BULLETPROOF JSON PARSER ---
         function parseAIJSON(rawText) {
-            let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+            // Strip markdown code block wrappers
+            let text = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
             
-            let startIndex = cleanText.indexOf('[');
-            if (startIndex === -1) throw new Error("AI did not return a proper JSON array.");
-
-            let endIndex = cleanText.lastIndexOf(']');
-            if (endIndex === -1) {
-                let lastBrace = cleanText.lastIndexOf('}');
-                if (lastBrace !== -1) {
-                    cleanText = cleanText.substring(startIndex, lastBrace + 1) + ']';
-                } else {
-                    throw new Error("JSON response severely cut off.");
-                }
-            } else {
-                cleanText = cleanText.substring(startIndex, endIndex + 1);
-            }
-
-            // 1. Remove raw control characters (newlines/tabs) that destroy JSON string values.
-            cleanText = cleanText.replace(/[\n\r\t]/g, ' ');
-
-            // 2. Fix missing commas between objects or string elements in arrays
-            cleanText = cleanText.replace(/}\s+{/g, '}, {');
-            cleanText = cleanText.replace(/"\s+"/g, '", "');
-            cleanText = cleanText.replace(/]\s+{/g, '], {');
-
-            // 3. Fix trailing commas (e.g. "value",} -> "value"})
-            cleanText = cleanText.replace(/,\s*([\]}])/g, '$1');
-
-            // 4. Handle unescaped backslashes (Very common when dealing with Math/LaTeX)
-            cleanText = cleanText.replace(/\\([^"\\\/bfnrtu])/g, '\\\\$1');
-
+            let start = text.indexOf('[');
+            if (start === -1) throw new Error("No JSON array found in AI response.");
+            
+            // ALWAYS ATTEMPT STANDARD PARSING FIRST
             try {
-                return JSON.parse(cleanText);
+                return JSON.parse(text.substring(start));
             } catch (e1) {
-                console.warn("Level 1 parse failed. Activating deep quote sanitization...", e1);
+                console.warn("Standard parse failed. Attempting truncation rescue...");
                 
-                // 5. Deep Quote Sanitization (Iterates character by character to find unescaped internal double quotes)
-                let result = "";
-                for (let i = 0; i < cleanText.length; i++) {
-                    let char = cleanText[i];
-                    
-                    // If we find a quote that isn't already escaped...
-                    if (char === '"' && (i === 0 || cleanText[i-1] !== '\\')) {
-                        let isStructural = false;
-                        
-                        // Look ahead for structural JSON markers
-                        let j = i + 1;
-                        while (j < cleanText.length && /\s/.test(cleanText[j])) j++;
-                        let nextNonSpace = cleanText[j] || '';
-                        
-                        // Look behind for structural JSON markers
-                        let k = i - 1;
-                        while (k >= 0 && /\s/.test(cleanText[k])) k--;
-                        let prevNonSpace = cleanText[k] || '';
-
-                        // A quote is Structural if it is sitting next to JSON brackets, colons, or commas
-                        if (/[:,}\]]/.test(nextNonSpace) || /[{[:,]/.test(prevNonSpace)) {
-                            isStructural = true;
-                        }
-
-                        // If it's NOT a structural quote, it's an illegal internal quote. Escape it!
-                        if (!isStructural) {
-                            result += '\\"';
-                            continue;
-                        }
-                    }
-                    result += char;
+                // 1. TRUNCATION RESCUE: If the AI output hit a token limit, it stops mid-sentence.
+                // We find the last perfectly closed object '}' and slice off the broken half-written text.
+                let lastBrace = text.lastIndexOf('}');
+                if (lastBrace !== -1 && lastBrace >= start) {
+                    text = text.substring(start, lastBrace + 1) + ']';
+                } else {
+                    throw new Error("Response was severely cut off.");
                 }
-                
+
                 try {
-                    return JSON.parse(result);
-                } catch(e2) {
-                    console.error("Final Rescue Failed. Text state:", result);
-                    throw new Error("System blocked parsing: The AI returned highly complex unescaped text. Try regenerating.");
+                    return JSON.parse(text);
+                } catch (e2) {
+                    console.warn("Truncation rescue failed. Attempting structural cleanup...", e2);
+                    
+                    // 2. NEWLINE & CONTROL CHAR RESCUE: LLMs notoriously put raw newlines inside strings.
+                    text = text.replace(/[\n\r\t]/g, ' '); 
+
+                    // 3. LATEX ESCAPING RESCUE: LLMs often send "\int" instead of "\\int". 
+                    // JSON parsers instantly fail on unknown escape codes. This safely double escapes them.
+                    text = text.replace(/\\([^"\\\/bfnrtu])/g, '\\\\$1');
+
+                    try {
+                        return JSON.parse(text);
+                    } catch (e3) {
+                        console.error("Final Rescue Failed. Text state:", text);
+                        // If it fails here, the AI hallucinates completely broken quotes. 
+                        // We throw a friendly message advising a retry rather than crashing the page.
+                        throw new Error("The AI returned a highly complex or malformed text format that couldn't be automatically repaired. Please extract fewer questions at a time to prevent AI confusion.");
+                    }
                 }
             }
         }
@@ -1197,6 +1164,7 @@
                 c.innerHTML=''; 
                 s.forEach(d=>{ 
                     let t=d.data(); 
+                    // Hide Question Bank tests from the normal test list if desired, but good for admin to edit them
                     c.innerHTML+=`
                     <div class="action-box">
                         <h4 style="margin-bottom:10px;">${t.title}</h4>
@@ -1256,6 +1224,7 @@
                 if(!sel) return;
                 sel.innerHTML = '<option value="">Select a test to view rankings...</option>';
                 s.forEach(d => { 
+                    // Hide pure question bank tests from leaderboard selector
                     if(d.data().groupId !== 'QUESTION_BANK') {
                         sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`; 
                     }
@@ -1385,6 +1354,7 @@
                 snap.forEach(doc => { if (doc.data().questions) existingQs.push(...doc.data().questions.map(q => q.questionEng)); });
                 
                 if (existingQs.length > 0) {
+                    // Send up to 30 recent questions to the AI to prevent dupes
                     let recentQs = existingQs.slice(-30).map((q, i) => `${i+1}. ${q}`).join("\n");
                     avoidText = `\n\nCRITICAL RULE: DO NOT generate questions that are identical or highly similar to these previously added questions:\n${recentQs}`;
                 }
@@ -1393,11 +1363,11 @@
             let prompt = `Generate exactly ${targetQuestions} multiple choice questions about the topic: "${topic}" at a "${difficulty}" difficulty level. 
             Ensure these questions cover different sub-topics and are highly accurate.
             
-            CRITICAL JSON FORMATTING RULES:
-            1. STRICT JSON: Every array element and object MUST be separated by a comma.
-            2. NO INTERNAL QUOTES: NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
-            3. NO NEWLINES: NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
-            4. LATEX ESCAPING: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int).
+            CRITICAL RULES FOR JSON GENERATION:
+            1. STRICT VALID JSON: You MUST return a flawless JSON array.
+            2. NO DOUBLE QUOTES IN STRINGS: Never use double quotes (") inside your text. Use single quotes (' ') instead.
+            3. NO NEWLINES: Keep the text for every field on a single continuous line.
+            4. ESCAPE LATEX: You MUST double-escape all backslashes in math formulas (e.g., write \\\\frac instead of \\frac).
             5. CATEGORIZE: Give a broad category string (e.g., Mathematics, General Science).${avoidText}`;
             
             try {
@@ -1407,6 +1377,7 @@
                     s.innerText = `✅ Success! Generated ${q.length} Questions.`; 
                     document.getElementById('ai-topic').value = ''; 
                     
+                    // Route to Modal instead of instantly saving to database
                     tempExtractedQuestions = q;
                     showSaveModal();
                 } else { 
@@ -1447,13 +1418,13 @@
 
                     s.innerText = "⏳ AI is visually analyzing the document and extracting questions (This may take a minute)...";
 
-                    let prompt = `You are an expert bilingual test creator for competitive exams. Analyze the attached document/image visually and extract ALL available multiple-choice questions from it (up to 100 questions). Context: "${subjectContext}".
+                    let prompt = `You are an expert bilingual test creator for competitive exams. Analyze the attached document/image visually and extract ALL available multiple-choice questions from it. Context: "${subjectContext}".
 
-                    CRITICAL JSON FORMATTING RULES:
-                    1. STRICT JSON: Every array element and object MUST be separated by a comma.
-                    2. NO INTERNAL QUOTES: NEVER use double quotes (") inside your string values. Use single quotes (' ') or HTML entities (&quot;) instead.
-                    3. NO NEWLINES: NEVER include raw line breaks or newlines (pressing Enter) inside strings. Keep all text for a field on one single line.
-                    4. LATEX ESCAPING: Double-escape all LaTeX commands (e.g. use \\\\int instead of \\int).
+                    CRITICAL RULES FOR JSON GENERATION:
+                    1. STRICT VALID JSON: You MUST return a flawless JSON array.
+                    2. NO DOUBLE QUOTES IN STRINGS: Never use double quotes (") inside your text. Use single quotes (' ') instead.
+                    3. NO NEWLINES: Keep the text for every field on a single continuous line.
+                    4. ESCAPE LATEX: You MUST double-escape all backslashes in math formulas (e.g., write \\\\frac instead of \\frac).
                     5. BILINGUAL: 'questionHin', 'questionEng', 'optionsHin', 'optionsEng', 'explanationHin', 'explanationEng' fields MUST be filled. Translate missing languages.`;
 
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
