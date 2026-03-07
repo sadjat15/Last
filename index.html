@@ -13,6 +13,34 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <script>
+// Fetch and apply branding on page load
+db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
+    if (doc.exists) {
+        const data = doc.data();
+        document.getElementById('portal-name').innerText = data.portalName || "KD JAAT Test Portal";
+        const logoImg = document.getElementById('portal-logo');
+        if (data.portalLogo) {
+            logoImg.src = data.portalLogo;
+            logoImg.style.display = "block";
+        } else {
+            logoImg.style.display = "none";
+        }
+        // Fill admin inputs if they exist
+        if(document.getElementById('admin-portal-name')) document.getElementById('admin-portal-name').value = data.portalName || "";
+        if(document.getElementById('admin-portal-logo')) document.getElementById('admin-portal-logo').value = data.portalLogo || "";
+    }
+});
+
+function savePortalDesign() {
+    const pName = document.getElementById('admin-portal-name').value.trim();
+    const pLogo = document.getElementById('admin-portal-logo').value.trim();
+    db.collection("adminSettings").doc("branding").set({
+        portalName: pName,
+        portalLogo: pLogo
+    }).then(() => alert("Portal Design Updated!"))
+      .catch(e => alert("Error: " + e.message));
+}
+
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
