@@ -435,6 +435,23 @@ function submitForgotRequest() {
 
             <div id="admin-sec-creds" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Change Admin Credentials</h2></div><div class="action-box" style="border-left: 4px solid var(--danger);"><div class="input-group"><label>New Admin ID / Username</label><input type="text" id="new-admin-id" placeholder="Enter new admin ID"></div><div class="input-group"><label>New Admin Password</label><input type="password" id="new-admin-pass" placeholder="Minimum 6 characters"></div><button class="btn-danger" onclick="updateAdminCreds()">Update Credentials & Auto-Logout</button></div></div>
         </div>
+<div id="admin-sec-branding" class="sub-sec">
+    <div class="sec-header">
+        <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+        <h2>Portal Design Settings</h2>
+    </div>
+    <div class="action-box">
+        <div class="input-group">
+            <label>Portal Name</label>
+            <input type="text" id="admin-portal-name" placeholder="e.g., KD JAAT Test Portal">
+        </div>
+        <div class="input-group">
+            <label>Logo URL (Optional)</label>
+            <input type="text" id="admin-portal-logo" placeholder="https://example.com/logo.png">
+        </div>
+        <button class="btn-primary" onclick="savePortalDesign()">Save Design Settings</button>
+    </div>
+</div>
 
         <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
