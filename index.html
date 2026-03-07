@@ -784,15 +784,26 @@
         }
 
         function registerStudent() {
-            const phoneId = document.getElementById('reg-phone').value.trim();
-            const pass = document.getElementById('reg-password').value;
-            if(phoneId.length < 4 || pass.length < 6) return alert("Check inputs.");
-            auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
-                .then((userCred) => {
-                    db.collection("users").doc(userCred.user.uid).set({ phone: phoneId, password: pass, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    currentUserRole = 'student'; navigate('view-student'); loadStudentData();
-                }).catch(e => { alert("Error: " + e.message); });
-        }
+    const nameVal = document.getElementById('reg-name').value.trim();
+    const phoneId = document.getElementById('reg-phone').value.trim();
+    const pass = document.getElementById('reg-password').value;
+    
+    if(nameVal === "" || phoneId.length < 4 || pass.length < 6) return alert("Please check all inputs (Name, Phone, and Password).");
+    
+    auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
+        .then((userCred) => {
+            db.collection("users").doc(userCred.user.uid).set({ 
+                name: nameVal, 
+                phone: phoneId, 
+                password: pass, 
+                role: 'student', 
+                createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+            });
+            currentUserRole = 'student'; 
+            navigate('view-student'); 
+            loadStudentData();
+        }).catch(e => { alert("Error: " + e.message); });
+}
 
         async function login() {
             if (checkDeviceLockout()) return;
