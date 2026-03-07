@@ -276,24 +276,6 @@ function savePortalDesign() {
 <div style="text-align: right; margin-top: 10px;">
     <a href="javascript:void(0);" onclick="document.getElementById('forgot-modal').style.display='flex'" style="color: var(--primary); font-size: 0.9rem; font-weight: 500;">Forgot Password?</a>
 </div>
-function submitForgotRequest() {
-    const phone = document.getElementById('forgot-phone').value.trim();
-    const newPass = document.getElementById('forgot-new-pass').value.trim();
-    if(phone.length < 4 || newPass.length < 6) return alert("Enter valid phone and a 6+ char password.");
-    
-    db.collection("passwordRequests").add({
-        phone: phone,
-        requestedPassword: newPass,
-        status: "Pending",
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-        document.getElementById('forgot-modal').style.display = 'none';
-        document.getElementById('done-modal').style.display = 'flex';
-        document.getElementById('forgot-phone').value = '';
-        document.getElementById('forgot-new-pass').value = '';
-    }).catch(e => alert("Error: " + e.message));
-}
-
                 <div style="text-align: center; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px;">
                     <p style="font-size: 0.9rem; color: var(--text-muted);">New Student? <a href="javascript:void(0);" onclick="toggleAuthForm('register')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create Account</a></p>
                 </div>
