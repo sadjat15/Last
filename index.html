@@ -125,7 +125,6 @@
         /* Question Editor UI */
         .question-edit-card { border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 20px; border-radius: 12px; background: white; box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-
         /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
@@ -289,15 +288,13 @@
                 </div>
             </div>
         </div>
-
         <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Manage Banners</h3><p>Promote tests on dashboard</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-ai')"><h3>🤖 Topic AI Test</h3><p>Generate Qs via Topic</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-pdf')"><h3>📄 Upload PDF Test</h3><p>Extract Qs directly from files</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-pdf')"><h3>📄 AI PDF Extraction</h3><p>Extract Qs directly from files</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Edit timer, marks, delete tests</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings</h3><p>Change Name & Logo</p></div>
@@ -327,7 +324,19 @@
                 </div>
             </div>
 
-            <div id="admin-sec-groups" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Test Groups</h2></div><div class="action-box"><div class="input-group"><input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests"></div><button class="btn-primary" onclick="addGroup()">Add New Group</button><div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div></div></div>
+            <div id="admin-sec-groups" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Manage Test Groups</h2>
+                </div>
+                <div class="action-box">
+                    <div class="input-group">
+                        <input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests">
+                    </div>
+                    <button class="btn-primary" onclick="addGroup()">Add New Group</button>
+                    <div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+            </div>
             
             <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
@@ -353,44 +362,11 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-
-            <div id="admin-sec-ai" class="sub-sec">
-                <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Create AI Test</h2>
-                </div>
-                <div class="action-box">
-                    <div class="input-group">
-                        <label>Select Target Group</label>
-                        <select class="group-select" id="ai-test-group"><option value="">Loading...</option></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Topic Name</label>
-                        <input type="text" id="ai-topic" placeholder="e.g., General Science">
-                    </div>
-                    <div class="form-grid" style="margin-bottom: 15px;">
-                        <div class="input-group" style="margin: 0;">
-                            <label>Number of Questions</label>
-                            <input type="number" id="ai-count" value="10" min="1" max="50">
-                        </div>
-                        <div class="input-group" style="margin: 0;">
-                            <label>Difficulty Level</label>
-                            <select id="ai-difficulty">
-                                <option value="Easy">Easy</option>
-                                <option value="Medium" selected>Medium</option>
-                                <option value="Hard">Hard</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="btn-primary" onclick="generateAITest()">Generate Questions via AI</button>
-                    <p id="ai-status" class="status-text"></p>
-                </div>
-            </div>
             
             <div id="admin-sec-pdf" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Upload Document/Image Test</h2>
+                    <h2>Upload Document/Image Test (AI Extraction)</h2>
                 </div>
                 <div class="action-box">
                     <div class="input-group">
@@ -419,11 +395,35 @@
                 </div>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
-            <div id="admin-sec-test-editor" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button><h2 id="editor-test-title">Editing Test Questions</h2></div><div class="action-box" style="background: transparent; border: none; box-shadow: none; padding: 0;"><div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"><button class="btn-primary" style="flex: 1;" onclick="addManualQuestion()">➕ Add Blank Question</button><button class="btn-primary" style="flex: 1; background: #8b5cf6;" onclick="openQuestionBank()">📚 Import from Question Bank</button><button class="btn-primary" style="flex: 1; background: var(--success);" onclick="saveTestQuestions()">💾 Save All Changes</button></div><div id="editor-questions-list"></div></div></div>
-            <div id="admin-sec-attempts" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Live Student Attempts</h2></div><div id="admin-attempts-list" class="grid-list"></div></div>
+            
+            <div id="admin-sec-test-editor" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
+                    <h2 id="editor-test-title">Editing Test Questions</h2>
+                </div>
+                <div class="action-box" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn-primary" style="flex: 1;" onclick="addManualQuestion()">➕ Add Blank Question</button>
+                        <button class="btn-primary" style="flex: 1; background: #8b5cf6;" onclick="openQuestionBank()">📚 Import from Question Bank</button>
+                        <button class="btn-primary" style="flex: 1; background: var(--success);" onclick="saveTestQuestions()">💾 Save All Changes</button>
+                    </div>
+                    <div id="editor-questions-list"></div>
+                </div>
+            </div>
+            
+            <div id="admin-sec-attempts" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Live Student Attempts</h2>
+                </div>
+                <div id="admin-attempts-list" class="grid-list"></div>
+            </div>
             
             <div id="admin-sec-settings" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Gemini API Configuration</h2></div>
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Gemini API Configuration</h2>
+                </div>
                 <div class="action-box">
                     <div class="input-group">
                         <label>Gemini API Key</label>
@@ -443,9 +443,24 @@
                 </div>
             </div>
 
-            <div id="admin-sec-creds" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Change Admin Credentials</h2></div><div class="action-box" style="border-left: 4px solid var(--danger);"><div class="input-group"><label>New Admin ID / Username</label><input type="text" id="new-admin-id" placeholder="Enter new admin ID"></div><div class="input-group"><label>New Admin Password</label><input type="password" id="new-admin-pass" placeholder="Minimum 6 characters"></div><button class="btn-danger" onclick="updateAdminCreds()">Update Credentials & Auto-Logout</button></div></div>
+            <div id="admin-sec-creds" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Change Admin Credentials</h2>
+                </div>
+                <div class="action-box" style="border-left: 4px solid var(--danger);">
+                    <div class="input-group">
+                        <label>New Admin ID / Username</label>
+                        <input type="text" id="new-admin-id" placeholder="Enter new admin ID">
+                    </div>
+                    <div class="input-group">
+                        <label>New Admin Password</label>
+                        <input type="password" id="new-admin-pass" placeholder="Minimum 6 characters">
+                    </div>
+                    <button class="btn-danger" onclick="updateAdminCreds()">Update Credentials & Auto-Logout</button>
+                </div>
+            </div>
         </div>
-
         <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -463,9 +478,29 @@
                 </div>
             </div>
 
-            <div id="student-sec-groups" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>Select a Test Category</h2></div><div class="grid-list" id="student-group-list"></div></div>
-            <div id="student-sec-tests-list" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-sec-groups')">← Back to Categories</button><h2 id="current-group-title">Available Tests</h2></div><div class="grid-list" id="student-test-list"></div></div>
-            <div id="student-sec-attempts" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>My Attempt History</h2></div><div class="grid-list" id="student-attempts-list"></div></div>
+            <div id="student-sec-groups" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <h2>Select a Test Category</h2>
+                </div>
+                <div class="grid-list" id="student-group-list"></div>
+            </div>
+            
+            <div id="student-sec-tests-list" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openStudentSec('student-sec-groups')">← Back to Categories</button>
+                    <h2 id="current-group-title">Available Tests</h2>
+                </div>
+                <div class="grid-list" id="student-test-list"></div>
+            </div>
+            
+            <div id="student-sec-attempts" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <h2>My Attempt History</h2>
+                </div>
+                <div class="grid-list" id="student-attempts-list"></div>
+            </div>
             
             <div id="student-sec-leaderboards" class="sub-sec">
                 <div class="sec-header">
@@ -483,7 +518,19 @@
                 </div>
             </div>
 
-            <div id="student-sec-password" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button><h2>Change My Password</h2></div><div class="action-box" style="max-width: 500px;"><div class="input-group"><label>New Password</label><input type="password" id="new-student-pass" placeholder="Minimum 6 characters"></div><button class="btn-primary" onclick="updateStudentPassword()">Update Password</button></div></div>
+            <div id="student-sec-password" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <h2>Change My Password</h2>
+                </div>
+                <div class="action-box" style="max-width: 500px;">
+                    <div class="input-group">
+                        <label>New Password</label>
+                        <input type="password" id="new-student-pass" placeholder="Minimum 6 characters">
+                    </div>
+                    <button class="btn-primary" onclick="updateStudentPassword()">Update Password</button>
+                </div>
+            </div>
         </div>
 
         <div id="view-test" class="view">
@@ -738,7 +785,6 @@
             });
         }
         
-        // Call it immediately so branding loads fast
         loadPortalBranding();
 
         async function updatePortalBranding() {
@@ -969,6 +1015,7 @@
         }
 
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
+
         // --- BULLETPROOF JSON PARSER ---
         function parseAIJSON(rawText) {
             let text = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1138,7 +1185,6 @@
                 statusText.innerText = "✅ Upload successful!";
             } catch (error) { statusText.innerText = "❌ Upload failed: " + error.message; statusText.style.color = "var(--danger)"; }
         }
-
         // --- QUESTION BANK ---
         async function openQuestionBank() { 
             document.getElementById('qbank-modal').style.display='flex'; 
@@ -1285,7 +1331,6 @@
         
         // --- STUDENT LOAD LOGIC ---
         function loadStudentData() {
-            // Fetch User Name to display
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
                     if (doc.exists && doc.data().fullName) {
@@ -1354,88 +1399,7 @@
             } catch(e) { res.innerHTML = '<p style="color:red;">Error loading leaderboard data.</p>'; }
         }
 
-        // --- AI API INTEGRATION ---
-        async function fetchFromGemini(p, s, retries = 3) { 
-            const { key: k, model: m } = getApiSettings(); 
-            if(!k) throw new Error("No API Key found! Please check your API Settings."); 
-            
-            for (let attempt = 1; attempt <= retries; attempt++) {
-                try { 
-                    let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: p }] }],
-                            generationConfig: { 
-                                temperature: 0.2, maxOutputTokens: 8192, responseMimeType: "application/json",
-                                responseSchema: {
-                                    type: "ARRAY", items: {
-                                        type: "OBJECT",
-                                        properties: {
-                                            subject: { type: "STRING" }, questionEng: { type: "STRING" }, questionHin: { type: "STRING" },
-                                            optionsEng: { type: "ARRAY", items: { type: "STRING" } }, optionsHin: { type: "ARRAY", items: { type: "STRING" } },
-                                            correctIndex: { type: "INTEGER" }, explanationEng: { type: "STRING" }, explanationHin: { type: "STRING" }
-                                        },
-                                        required: ["subject", "questionEng", "questionHin", "optionsEng", "optionsHin", "correctIndex", "explanationEng", "explanationHin"]
-                                    }
-                                }
-                            } 
-                        })
-                    }); 
-                    if (!r.ok) {
-                        let err = await r.json();
-                        if (r.status === 429) {
-                            if (attempt < retries) { if (s) s.innerText = `⏳ Rate limit hit. Waiting 15s to retry (Attempt ${attempt}/${retries})...`; await new Promise(res => setTimeout(res, 15000)); continue; }
-                            throw new Error("API Rate Limit Exceeded (429). Please wait a minute before trying again.");
-                        }
-                        throw new Error(`API Error (${r.status}): ${err.error?.message || "Unknown server error"}`);
-                    }
-                    let d = await r.json(); 
-                    if (!d.candidates || d.candidates.length === 0) throw new Error("AI returned an empty response.");
-                    return parseAIJSON(d.candidates[0].content.parts[0].text);
-                } catch(e) { if (attempt === retries) throw e; } 
-            }
-        }
-        
-        async function generateAITest() { 
-            const topic = document.getElementById('ai-topic').value;
-            const targetQs = parseInt(document.getElementById('ai-count').value) || 10;
-            const difficulty = document.getElementById('ai-difficulty').value;
-            const g = document.getElementById('ai-test-group'); 
-            
-            if(!topic || !g.value) return alert("Select a target group and enter a topic!"); 
-            
-            let s = document.getElementById('ai-status'); 
-            s.style.color = "var(--text-main)"; s.innerText = `⏳ Generating ${targetQs} ${difficulty} questions... Please wait.`;
-            
-            let avoidText = "";
-            try {
-                const snap = await db.collection("tests").where("groupId", "==", g.value).get();
-                let existingQs = [];
-                snap.forEach(doc => { if (doc.data().questions) existingQs.push(...doc.data().questions.map(q => q.questionEng)); });
-                if (existingQs.length > 0) {
-                    let recentQs = existingQs.slice(-30).map((q, i) => `${i+1}. ${q}`).join("\n");
-                    avoidText = `\n\nCRITICAL RULE: DO NOT generate questions that are identical or highly similar to these previously added questions:\n${recentQs}`;
-                }
-            } catch(e) {}
-
-            let prompt = `Generate exactly ${targetQs} multiple choice questions about the topic: "${topic}" at a "${difficulty}" difficulty level. Ensure these questions cover different sub-topics and are highly accurate.
-            CRITICAL RULES:
-            1. STRICT VALID JSON ARRAY.
-            2. NO DOUBLE QUOTES IN STRINGS (use single quotes).
-            3. NO NEWLINES inside string fields.
-            4. ESCAPE LATEX (e.g., \\\\frac).
-            5. Provide subject categorization.${avoidText}`;
-            
-            try {
-                let q = await fetchFromGemini(prompt, s); 
-                if (q && Array.isArray(q) && q.length > 0) {
-                    s.style.color = "var(--success)"; s.innerText = `✅ Success! Generated ${q.length} Questions.`; 
-                    document.getElementById('ai-topic').value = ''; 
-                    tempExtractedQuestions = q; showSaveModal();
-                } else { s.style.color = "var(--danger)"; s.innerText = "❌ Failed: AI generated an empty list of questions."; }
-            } catch (error) { s.style.color = "var(--danger)"; s.innerText = "❌ Generation Failed: " + error.message; }
-        }
-
+        // --- AI PDF EXTRACTION INTEGRATION ---
         async function processPDF() {
             tempExtractedQuestions = [];
             const f = document.getElementById('pdf-upload').files[0];
@@ -1453,7 +1417,7 @@
                 try {
                     const base64Data = reader.result.split(',')[1];
                     const { key: k, model: m } = getApiSettings(); 
-                    if(!k) throw new Error("No API Key found!");
+                    if(!k) throw new Error("No API Key found! Configure API Settings first.");
 
                     s.innerText = "⏳ AI is visually analyzing the document and extracting questions...";
 
@@ -1551,7 +1515,7 @@
                     }
                 }
                 closeSaveModal(); tempExtractedQuestions = []; 
-                document.getElementById('pdf-upload').value = ''; document.getElementById('pdf-status').innerText = ''; document.getElementById('ai-status').innerText = '';
+                document.getElementById('pdf-upload').value = ''; document.getElementById('pdf-status').innerText = ''; 
             } catch(e) { alert("Error saving: " + e.message); }
             btn.disabled = false; btn.innerText = "💾 Confirm & Save";
         }
