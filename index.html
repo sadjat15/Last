@@ -122,9 +122,12 @@
         }
         @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-        /* Question Editor UI */
-        .question-edit-card { border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 20px; border-radius: 12px; background: white; box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* Student Record Table Styles (NEW) */
+        .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
+        .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
+        .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .student-table tr:hover { background: #f1f5f9; }
+
         /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
@@ -288,17 +291,17 @@
                 </div>
             </div>
         </div>
+
         <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Manage Banners</h3><p>Promote tests on dashboard</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-pdf')"><h3>📄 AI PDF Extraction</h3><p>Extract Qs directly from files</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-students')"><h3>👥 Manage Students</h3><p>View, track & remove students</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Edit timer, marks, delete tests</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings</h3><p>Change Name & Logo</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-settings')"><h3>⚙️ API Settings</h3><p>Update Google Gemini API Key</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
@@ -362,53 +365,44 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-            
-            <div id="admin-sec-pdf" class="sub-sec">
+            <div id="admin-sec-students" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Upload Document/Image Test (AI Extraction)</h2>
+                    <h2>Manage Registered Students</h2>
                 </div>
-                <div class="action-box">
-                    <div class="input-group">
-                        <label>Select Target Group</label>
-                        <select class="group-select" id="pdf-test-group"><option value="">Loading...</option></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Document Subject/Context (Optional)</label>
-                        <input type="text" id="pdf-subject" placeholder="e.g., Mixed GK & Math, or English Grammar">
-                    </div>
-                    <div class="input-group">
-                        <label>Select Document or Image (Scanned PDFs supported)</label>
-                        <input type="file" id="pdf-upload" accept=".pdf, image/jpeg, image/png, image/webp">
-                        <small style="color:var(--text-muted);">Max size: 15MB. AI will analyze the file visually to extract questions.</small>
-                    </div>
-                    <button class="btn-primary" onclick="processPDF()" id="pdf-extract-btn">Extract Questions</button>
-                    <p id="pdf-status" class="status-text"></p>
+                <div class="action-box" style="overflow-x: auto;">
+                    <table class="student-table" id="admin-students-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                                <th>Joined Date</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-students-list">
+                            <tr><td colspan="4" style="text-align:center; padding:20px;">Loading students...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+
+            <div id="admin-sec-student-records" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-sec-students')">← Back to Students List</button>
+                    <h2 id="view-student-name">Student Records</h2>
+                </div>
+                <div class="grid-list" id="admin-student-specific-attempts">
+                    </div>
             </div>
 
             <div id="admin-sec-tests" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Active Tests</h2>
-                    <button class="btn-success" style="margin-left: auto; width: auto;" onclick="createNewBlankTest()">➕ Create Blank Test</button>
                 </div>
+                <p style="color: var(--text-muted); margin-bottom: 15px;">Note: Question adding features have been removed. You can modify settings or delete entire tests here.</p>
                 <div id="test-list-container" class="grid-list"></div>
-            </div>
-            
-            <div id="admin-sec-test-editor" class="sub-sec">
-                <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
-                    <h2 id="editor-test-title">Editing Test Questions</h2>
-                </div>
-                <div class="action-box" style="background: transparent; border: none; box-shadow: none; padding: 0;">
-                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
-                        <button class="btn-primary" style="flex: 1;" onclick="addManualQuestion()">➕ Add Blank Question</button>
-                        <button class="btn-primary" style="flex: 1; background: #8b5cf6;" onclick="openQuestionBank()">📚 Import from Question Bank</button>
-                        <button class="btn-primary" style="flex: 1; background: var(--success);" onclick="saveTestQuestions()">💾 Save All Changes</button>
-                    </div>
-                    <div id="editor-questions-list"></div>
-                </div>
             </div>
             
             <div id="admin-sec-attempts" class="sub-sec">
@@ -417,30 +411,6 @@
                     <h2>Live Student Attempts</h2>
                 </div>
                 <div id="admin-attempts-list" class="grid-list"></div>
-            </div>
-            
-            <div id="admin-sec-settings" class="sub-sec">
-                <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Gemini API Configuration</h2>
-                </div>
-                <div class="action-box">
-                    <div class="input-group">
-                        <label>Gemini API Key</label>
-                        <input type="password" id="admin-api-key" placeholder="Paste AIzaSy... here">
-                    </div>
-                    <div class="input-group">
-                        <label>AI Model Version (Affects Speed)</label>
-                        <select id="admin-ai-model">
-                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Super Fast, Good for simple text)</option>
-                            <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash (Recommended: Fast & Powerful OCR)</option>
-                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Most Advanced / Beta)</option>
-                        </select>
-                        <small style="color:var(--text-muted); display:block; margin-top:5px;">Tip: Use Gemini 2.0 Flash for extracting messy scanned PDFs accurately.</small>
-                    </div>
-                    <button class="btn-primary" onclick="saveApiSettings()" style="background: #f59e0b;">Save Settings Securely</button>
-                    <p id="api-status" class="status-text"></p>
-                </div>
             </div>
 
             <div id="admin-sec-creds" class="sub-sec">
@@ -461,6 +431,7 @@
                 </div>
             </div>
         </div>
+
         <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -532,7 +503,6 @@
                 </div>
             </div>
         </div>
-
         <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -666,18 +636,6 @@
             </div>
         </div>
     </div>
-    
-    <div id="qbank-modal" class="modal-overlay">
-        <div class="modal" style="max-width: 800px;">
-            <h2 style="margin-bottom: 20px; color: var(--primary);">Import Questions</h2>
-            <p style="margin-bottom: 15px; color: var(--text-muted);">Select previously uploaded questions by subject to add them to your test.</p>
-            <div id="qbank-list" style="margin-bottom: 20px;">Loading past questions...</div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="closeQuestionBank()" class="btn-outline" style="flex:1;">Cancel</button>
-                <button onclick="importSelectedQuestions()" class="btn-success" style="flex:1;">Import Selected Questions</button>
-            </div>
-        </div>
-    </div>
 
     <div id="exit-modal" class="modal-overlay">
         <div class="modal" style="max-width: 450px; text-align: center;">
@@ -706,42 +664,6 @@
             </div>
         </div>
     </div>
-
-    <div id="save-qs-modal" class="modal-overlay">
-        <div class="modal">
-            <h2 style="margin-bottom: 20px; color: var(--primary);">Save Generated Questions</h2>
-            <p style="margin-bottom: 15px; color: var(--text-muted);">You have <span id="save-qs-count">0</span> questions ready. Where would you like to add them?</p>
-            
-            <div class="input-group">
-                <label>Target Destination</label>
-                <select id="save-qs-target" onchange="toggleSaveQsInputs()">
-                    <option value="new_test">➕ Create a New Test</option>
-                    <option value="old_test">📂 Add to Existing Test</option>
-                    <option value="q_bank">🏦 Save to Question Bank Only (Hidden)</option>
-                </select>
-            </div>
-
-            <div class="input-group" id="save-qs-group-div">
-                <label>Select Group</label>
-                <select id="save-qs-group" class="group-select" onchange="loadTestsForSaving(this.value)"><option value="">Loading...</option></select>
-            </div>
-
-            <div class="input-group" id="save-qs-old-test-div" style="display: none;">
-                <label>Select Existing Test</label>
-                <select id="save-qs-test-select"><option value="">Select a group first...</option></select>
-            </div>
-            
-            <div class="input-group" id="save-qs-new-test-div">
-                <label>New Title</label>
-                <input type="text" id="save-qs-title" placeholder="e.g., General Science Mock 1">
-            </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="closeSaveModal()" class="btn-outline" style="flex:1;">Cancel</button>
-                <button onclick="confirmSaveQuestions()" class="btn-success" id="btn-confirm-save" style="flex:1;">💾 Confirm & Save</button>
-            </div>
-        </div>
-    </div>
     <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
@@ -756,13 +678,12 @@
         const db = firebase.firestore();
         const storage = firebase.storage(); 
 
+        // --- GLOBAL VARIABLES ---
         let currentUserRole = null;
         let currentTest = null;
         let testTimer = null;
         let timeRemaining = 0;
         let activeTestId = null; 
-        let tempExtractedQuestions = [];
-        let tempPdfFilename = "";
         let isTestActive = false;
 
         // --- PORTAL BRANDING LOGIC ---
@@ -896,11 +817,8 @@
                     document.getElementById('forgot-pass-phone').value = '';
                 })
                 .catch((error) => {
-                    if(error.code === 'auth/user-not-found') {
-                        alert("No account found with this number.");
-                    } else {
-                        alert("Error: " + error.message);
-                    }
+                    if(error.code === 'auth/user-not-found') { alert("No account found with this number."); } 
+                    else { alert("Error: " + error.message); }
                 });
         }
         
@@ -946,17 +864,6 @@
         };
 
         // --- AUTH LOGIC ---
-        function getApiSettings() {
-            return { key: localStorage.getItem('geminiApiKey') || '', model: localStorage.getItem('geminiModel') || 'gemini-2.0-flash' };
-        }
-
-        function saveApiSettings() { 
-            const key = document.getElementById('admin-api-key').value.trim(); 
-            const model = document.getElementById('admin-ai-model').value;
-            if(key) { localStorage.setItem('geminiApiKey', key); localStorage.setItem('geminiModel', model); document.getElementById('api-status').innerText = "✅ API Settings Saved Successfully!"; } 
-            else { alert("Please enter a valid API key."); }
-        }
-
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
 
         async function updateAdminCreds() {
@@ -964,7 +871,8 @@
             const newPass = document.getElementById('new-admin-pass').value.trim();
             if(!newId || !newPass) return alert("Please fill both fields.");
             if(newPass.length < 6) return alert("Password must be at least 6 characters.");
-            try { await db.collection('adminSettings').doc('credentials').set({ id: newId, pass: newPass }); } catch(e) { localStorage.setItem('adminCustomId', newId); localStorage.setItem('adminCustomPass', newPass); }
+            try { await db.collection('adminSettings').doc('credentials').set({ id: newId, pass: newPass }); } 
+            catch(e) { localStorage.setItem('adminCustomId', newId); localStorage.setItem('adminCustomPass', newPass); }
             alert("Admin Credentials Updated! Please log in again."); logout();
         }
 
@@ -1003,9 +911,6 @@
                 if (idInput === validId && pass === validPass) { 
                     clearLockoutOnSuccess(); currentUserRole = 'admin'; localStorage.setItem('adminSession', 'active');
                     navigate('view-admin'); loadAdminData(); 
-                    const settings = getApiSettings();
-                    if(settings.key) document.getElementById('admin-api-key').value = settings.key;
-                    if(settings.model) document.getElementById('admin-ai-model').value = settings.model;
                 } else { recordFailedAttempt(); }
             } else {
                 auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass).then(() => { 
@@ -1016,34 +921,80 @@
 
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
 
-        // --- BULLETPROOF JSON PARSER ---
-        function parseAIJSON(rawText) {
-            let text = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-            let start = text.indexOf('[');
-            if (start === -1) throw new Error("No JSON array found in AI response.");
+        // --- NEW: MANAGE STUDENTS LOGIC ---
+        
+        function loadAdminStudents() {
+            db.collection("users").where("role", "==", "student").onSnapshot(s => {
+                let tbody = document.getElementById('admin-students-list');
+                if(!tbody) return;
+                tbody.innerHTML = '';
+                if(s.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No students found.</td></tr>'; return; }
+                
+                s.forEach(doc => {
+                    let user = doc.data();
+                    let dateJoined = user.createdAt ? new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight: 500; color: var(--primary);">${user.fullName || 'N/A'}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td>${dateJoined}</td>
+                            <td style="text-align: right;">
+                                <button class="btn-outline" style="padding: 6px 12px; font-size: 0.85rem; margin-right: 5px;" onclick="viewStudentAttempts('${doc.id}', '${user.fullName || 'Student'}')">📊 Records</button>
+                                <button class="btn-danger" style="padding: 6px 12px; font-size: 0.85rem; width: auto;" onclick="deleteStudentAccount('${doc.id}')">🗑 Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
+        function viewStudentAttempts(uid, name) {
+            document.getElementById('view-student-name').innerText = `Records for ${name}`;
+            openAdminSec('admin-sec-student-records');
             
-            try { return JSON.parse(text.substring(start)); } 
-            catch (e1) {
-                console.warn("Standard parse failed. Attempting truncation rescue...");
-                let lastBrace = text.lastIndexOf('}');
-                if (lastBrace !== -1 && lastBrace >= start) { text = text.substring(start, lastBrace + 1) + ']'; } 
-                else { throw new Error("Response was severely cut off."); }
+            db.collection("attempts").where("userId", "==", uid).orderBy("timestamp", "desc").onSnapshot(s => {
+                let container = document.getElementById('admin-student-specific-attempts');
+                container.innerHTML = '';
+                if(s.empty) { container.innerHTML = '<p style="padding: 20px; color: var(--text-muted); grid-column: 1 / -1;">No test attempts found for this student.</p>'; return; }
+                
+                s.forEach(d => {
+                    let a = d.data();
+                    let date = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleString() : 'N/A';
+                    container.innerHTML += `
+                        <div class="action-box" style="border-left: 4px solid var(--success); margin-bottom: 0;">
+                            <h4 style="margin-bottom: 5px;">${a.testTitle}</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Attempted on: ${date}</p>
+                            <div style="background: #f0fdf4; padding: 10px; border-radius: 8px; color: #166534; font-weight: bold; display: flex; justify-content: space-between;">
+                                <span>Score: ${a.score} / ${a.totalMarks}</span>
+                                <span>🎯 ${a.correct} Correct</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
 
-                try { return JSON.parse(text); } 
-                catch (e2) {
-                    console.warn("Truncation rescue failed. Attempting structural cleanup...", e2);
-                    text = text.replace(/[\n\r\t]/g, ' '); 
-                    text = text.replace(/\\([^"\\\/bfnrtu])/g, '\\\\$1');
-
-                    try { return JSON.parse(text); } 
-                    catch (e3) { throw new Error("The AI returned a highly complex or malformed text format that couldn't be automatically repaired."); }
+        async function deleteStudentAccount(uid) {
+            if(confirm("Are you sure you want to remove this student? This will delete their profile data and test attempts.")) {
+                try {
+                    // Delete user profile document
+                    await db.collection("users").doc(uid).delete();
+                    
+                    // Delete user attempts
+                    const attemptsSnap = await db.collection("attempts").where("userId", "==", uid).get();
+                    const batch = db.batch();
+                    attemptsSnap.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+                    
+                    alert("Student profile and records deleted successfully. Note: For complete security, you may also need to delete the user from your Firebase Authentication console.");
+                } catch (error) {
+                    alert("Error deleting student: " + error.message);
                 }
             }
         }
-
-        // --- ADMIN EDITOR LOGIC ---
-        let editingTestId = null, editingQuestions = [];
-        
+        // --- ADMIN DASHBOARD LOGIC ---
         async function openEditModal(testId) {
             const doc = await db.collection("tests").doc(testId).get();
             if(!doc.exists) return;
@@ -1074,175 +1025,6 @@
             } catch(e) { alert("Error saving test settings: " + e.message); }
         }
 
-        async function createNewBlankTest() {
-            const title = prompt("Enter a Title for the new test:");
-            if (!title) return;
-
-            const groupsSnap = await db.collection("groups").get();
-            if (groupsSnap.empty) return alert("Please create a 'Group' first from the main menu.");
-
-            let groupStr = "Select the Category Number:\n";
-            let groups = [];
-            groupsSnap.forEach(g => { groups.push({ id: g.id, name: g.data().name }); groupStr += `${groups.length}. ${g.data().name}\n`; });
-
-            const inputStr = prompt(groupStr);
-            if (!inputStr) return;
-
-            const gIndex = parseInt(inputStr) - 1;
-            if (isNaN(gIndex) || !groups[gIndex]) return alert("Invalid selection.");
-
-            const newTest = {
-                title: title, groupId: groups[gIndex].id, groupName: groups[gIndex].name,
-                questions: [], duration: 3600, marksPerQuestion: 2, negativeMarks: 0,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            try {
-                const docRef = await db.collection("tests").add(newTest);
-                alert("Blank test created! Opening editor...");
-                openTestEditor(docRef.id);
-            } catch (e) { alert("Failed to create test: " + e.message); }
-        }
-
-        async function openTestEditor(testId) { editingTestId = testId; const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return; const test = doc.data(); document.getElementById('editor-test-title').innerText = `Editing: ${test.title}`; editingQuestions = test.questions || []; renderEditorQuestions(); openAdminSec('admin-sec-test-editor'); }
-        
-        function renderEditorQuestions() { 
-            const c = document.getElementById('editor-questions-list'); c.innerHTML = ''; 
-            if(editingQuestions.length===0) { c.innerHTML='<p style="text-align:center; padding:20px; color:gray;">No questions. Add one manually or import from the bank.</p>';} 
-            
-            editingQuestions.forEach((q,i) => { 
-                c.innerHTML += `
-                <div class="question-edit-card">
-                    <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
-                        <strong style="font-size: 1.1rem; color: var(--primary);">Question ${i+1}</strong>
-                        <button class="btn-danger" style="width:auto; padding: 6px 12px; font-size: 0.85rem;" onclick="deleteQuestion(${i})">🗑 Delete</button>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Subject / Section Name</label>
-                        <input type="text" onchange="updateQ(${i},'subject',this.value)" value="${q.subject||'General'}" placeholder="e.g., Mathematics, General Awareness">
-                    </div>
-
-                    <label style="font-weight: bold; font-size: 0.9rem;">Attach Image to Question (Optional)</label>
-                    <div class="input-group" style="display: flex; gap: 10px; margin-bottom: 5px;">
-                        <input type="text" id="q-img-url-${i}" value="${q.imageUrl||''}" onchange="updateQ(${i},'imageUrl',this.value)" placeholder="Image URL" style="flex: 1;">
-                        <div style="display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:0 10px;">
-                            <input type="file" accept="image/*" onchange="uploadQuestionImage(${i}, this)" style="border:none; padding:5px 0;">
-                        </div>
-                    </div>
-                    <p id="q-img-status-${i}" style="font-size:0.8rem; color:var(--success); margin-bottom:15px;"></p>
-                    
-                    <div class="input-group"><label>Question (Eng)</label><textarea onchange="updateQ(${i},'questionEng',this.value)">${q.questionEng||''}</textarea></div>
-                    <div class="input-group"><label>Question (Hin)</label><textarea onchange="updateQ(${i},'questionHin',this.value)">${q.questionHin||''}</textarea></div>
-                    
-                    <label style="font-weight: bold; font-size: 0.9rem; margin-top: 10px; display: block;">Options</label>
-                    <div class="form-grid" style="margin-bottom: 15px;">
-                        <div class="input-group"><input value="${q.optionsEng?.[0]||''}" onchange="updateOpt(${i},'Eng',0,this.value)" placeholder="Op 1 Eng"></div>
-                        <div class="input-group"><input value="${q.optionsHin?.[0]||''}" onchange="updateOpt(${i},'Hin',0,this.value)" placeholder="Op 1 Hin"></div>
-                        <div class="input-group"><input value="${q.optionsEng?.[1]||''}" onchange="updateOpt(${i},'Eng',1,this.value)" placeholder="Op 2 Eng"></div>
-                        <div class="input-group"><input value="${q.optionsHin?.[1]||''}" onchange="updateOpt(${i},'Hin',1,this.value)" placeholder="Op 2 Hin"></div>
-                        <div class="input-group"><input value="${q.optionsEng?.[2]||''}" onchange="updateOpt(${i},'Eng',2,this.value)" placeholder="Op 3 Eng"></div>
-                        <div class="input-group"><input value="${q.optionsHin?.[2]||''}" onchange="updateOpt(${i},'Hin',2,this.value)" placeholder="Op 3 Hin"></div>
-                        <div class="input-group"><input value="${q.optionsEng?.[3]||''}" onchange="updateOpt(${i},'Eng',3,this.value)" placeholder="Op 4 Eng"></div>
-                        <div class="input-group"><input value="${q.optionsHin?.[3]||''}" onchange="updateOpt(${i},'Hin',3,this.value)" placeholder="Op 4 Hin"></div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Correct Answer (Index 0-3)</label>
-                        <select onchange="updateQ(${i},'correctIndex',parseInt(this.value))">
-                            <option value="0" ${q.correctIndex===0?'selected':''}>Option 1</option>
-                            <option value="1" ${q.correctIndex===1?'selected':''}>Option 2</option>
-                            <option value="2" ${q.correctIndex===2?'selected':''}>Option 3</option>
-                            <option value="3" ${q.correctIndex===3?'selected':''}>Option 4</option>
-                        </select>
-                    </div>
-
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color); margin-top: 15px;">
-                        <div class="input-group"><label>Explanation/Solution (Eng)</label><textarea rows="2" onchange="updateQ(${i},'explanationEng',this.value)" placeholder="Explain the correct answer...">${q.explanationEng||''}</textarea></div>
-                        <div class="input-group" style="margin-bottom:0;"><label>Explanation/Solution (Hin)</label><textarea rows="2" onchange="updateQ(${i},'explanationHin',this.value)" placeholder="उत्तर की व्याख्या...">${q.explanationHin||''}</textarea></div>
-                    </div>
-                </div>`; 
-            }); 
-        }
-        
-        function updateQ(i,f,v) { editingQuestions[i][f] = v; } 
-        function updateOpt(i,l,oi,v) { if(l==='Eng'){if(!editingQuestions[i].optionsEng)editingQuestions[i].optionsEng=[];editingQuestions[i].optionsEng[oi]=v;}else{if(!editingQuestions[i].optionsHin)editingQuestions[i].optionsHin=[];editingQuestions[i].optionsHin[oi]=v;} } 
-        function deleteQuestion(i) { if(confirm("Remove this question?")) {editingQuestions.splice(i,1);renderEditorQuestions();} } 
-        function addManualQuestion() { editingQuestions.push({subject:"General", questionEng:"",questionHin:"",imageUrl:"",optionsEng:["","","",""],optionsHin:["","","",""],correctIndex:0, explanationEng:"", explanationHin:""}); renderEditorQuestions(); } 
-        async function saveTestQuestions() { try { await db.collection("tests").doc(editingTestId).update({questions:editingQuestions}); alert("Questions Saved!"); openAdminSec('admin-sec-tests'); } catch(e){alert("Error: "+e);} }
-        
-        async function uploadQuestionImage(index, inputElement) {
-            const file = inputElement.files[0];
-            if(!file) return;
-            const statusText = document.getElementById(`q-img-status-${index}`);
-            statusText.innerText = "⏳ Uploading image...";
-            try {
-                const storageRef = storage.ref(`questions/${Date.now()}_${file.name}`);
-                await storageRef.put(file);
-                const downloadUrl = await storageRef.getDownloadURL();
-                editingQuestions[index].imageUrl = downloadUrl;
-                document.getElementById(`q-img-url-${index}`).value = downloadUrl;
-                statusText.innerText = "✅ Upload successful!";
-            } catch (error) { statusText.innerText = "❌ Upload failed: " + error.message; statusText.style.color = "var(--danger)"; }
-        }
-        // --- QUESTION BANK ---
-        async function openQuestionBank() { 
-            document.getElementById('qbank-modal').style.display='flex'; 
-            const b = document.getElementById('qbank-list'); 
-            b.innerHTML = "Fetching questions..."; 
-            
-            const s = await db.collection("tests").get(); 
-            let allQuestions = [];
-            
-            s.forEach(d => { 
-                if(d.id === editingTestId) return; 
-                const t = d.data(); 
-                if(t.questions && t.questions.length > 0) {
-                    t.questions.forEach(q => { allQuestions.push({ ...q, sourceTest: t.title }); });
-                } 
-            }); 
-
-            const subjects = [...new Set(allQuestions.map(q => q.subject || 'General'))];
-            let subjectOptions = `<option value="ALL">All Subjects</option>`;
-            subjects.forEach(sub => subjectOptions += `<option value="${sub}">${sub}</option>`);
-
-            window.tempQBankData = allQuestions;
-
-            b.innerHTML = `
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label>Filter by Subject</label>
-                    <select id="qbank-subject-filter" onchange="renderFilteredQBank()">${subjectOptions}</select>
-                </div>
-                <div id="qbank-filtered-list" style="display:flex; flex-direction:column; gap:10px; max-height: 40vh; overflow-y: auto; padding-right: 5px;"></div>
-            `;
-            renderFilteredQBank();
-        } 
-
-        function renderFilteredQBank() {
-            const filter = document.getElementById('qbank-subject-filter').value;
-            const container = document.getElementById('qbank-filtered-list');
-            let h = '';
-
-            window.tempQBankData.forEach((q) => {
-                if (filter === 'ALL' || (q.subject || 'General') === filter) {
-                    let cleanQ = { ...q }; delete cleanQ.sourceTest;
-                    h += `
-                    <label style="display:flex; gap:10px; align-items:flex-start; background: #f8fafc; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer;">
-                        <input type="checkbox" class="qb-cb" value="${encodeURIComponent(JSON.stringify(cleanQ))}" style="margin-top: 4px;">
-                        <div>
-                            <span style="font-size: 0.8rem; color: var(--primary); font-weight: bold; background: #e0e7ff; padding: 2px 6px; border-radius: 4px; margin-right: 5px;">${q.subject || 'General'}</span>
-                            <span style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">From: ${q.sourceTest}</span>
-                            ${q.questionEng || 'Q'}
-                        </div>
-                    </label>`;
-                }
-            });
-            container.innerHTML = h || "<p style='color: gray;'>No questions found for this subject.</p>";
-        }
-
-        function importSelectedQuestions() { document.querySelectorAll('.qb-cb:checked').forEach(c=>editingQuestions.push(JSON.parse(decodeURIComponent(c.value)))); closeQuestionBank(); renderEditorQuestions(); } 
-        function closeQuestionBank() { document.getElementById('qbank-modal').style.display='none'; }
-        
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
         
         async function addBanner() {
@@ -1277,6 +1059,9 @@
         async function deleteBanner(id) { if(confirm("Are you sure you want to remove this banner?")) { await db.collection("banners").doc(id).delete(); } }
 
         function loadAdminData() { 
+            // Load the new Manage Students list
+            loadAdminStudents();
+
             db.collection("groups").onSnapshot(s=>{ 
                 let l=document.getElementById('admin-group-list'), sel=document.querySelectorAll('.group-select'); 
                 l.innerHTML=''; sel.forEach(x=>x.innerHTML='<option value="">Select...</option>'); 
@@ -1312,7 +1097,6 @@
                         <h4 style="margin-bottom:10px;">${t.title}</h4>
                         <div style="display:flex; gap:10px; flex-wrap: wrap;">
                             <button class="btn-outline" style="flex:1; min-width: 80px;" onclick="openEditModal('${d.id}')">⚙️ Settings</button> 
-                            <button class="btn-primary" style="flex:1; min-width: 80px;" onclick="openTestEditor('${d.id}')">📝 Qs</button>
                             <button class="btn-danger" style="flex:1; min-width: 80px;" onclick="deleteTest('${d.id}')">🗑 Delete</button>
                         </div>
                     </div>`; 
@@ -1397,127 +1181,6 @@
                 });
                 html += '</div>'; res.innerHTML = html;
             } catch(e) { res.innerHTML = '<p style="color:red;">Error loading leaderboard data.</p>'; }
-        }
-
-        // --- AI PDF EXTRACTION INTEGRATION ---
-        async function processPDF() {
-            tempExtractedQuestions = [];
-            const f = document.getElementById('pdf-upload').files[0];
-            const g = document.getElementById('pdf-test-group');
-            const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
-            
-            if(!f || !g.value) return alert("Please select a group and attach a document/image.");
-            if(f.size > 15 * 1024 * 1024) return alert("File is too large! Please upload a file under 15MB.");
-
-            let s = document.getElementById('pdf-status'); 
-            s.style.color = "var(--text-main)"; s.innerText = "⏳ Preparing file and sending to AI...";
-            
-            const reader = new FileReader();
-            reader.onload = async function() {
-                try {
-                    const base64Data = reader.result.split(',')[1];
-                    const { key: k, model: m } = getApiSettings(); 
-                    if(!k) throw new Error("No API Key found! Configure API Settings first.");
-
-                    s.innerText = "⏳ AI is visually analyzing the document and extracting questions...";
-
-                    let prompt = `You are an expert bilingual test creator for competitive exams. Analyze the attached document/image visually and extract ALL available multiple-choice questions from it. Context: "${subjectContext}".
-                    CRITICAL RULES: 1. STRICT VALID JSON. 2. NO DOUBLE QUOTES IN STRINGS. 3. NO NEWLINES inside strings. 4. ESCAPE LATEX. 5. BILINGUAL. Translate missing languages.`;
-
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [ { text: prompt }, { inlineData: { mimeType: f.type || 'application/pdf', data: base64Data } } ] }],
-                            generationConfig: {
-                                temperature: 0.1, maxOutputTokens: 8192, responseMimeType: "application/json",
-                                responseSchema: {
-                                    type: "ARRAY", items: {
-                                        type: "OBJECT", properties: {
-                                            subject: { type: "STRING" }, questionEng: { type: "STRING" }, questionHin: { type: "STRING" },
-                                            optionsEng: { type: "ARRAY", items: { type: "STRING" } }, optionsHin: { type: "ARRAY", items: { type: "STRING" } },
-                                            correctIndex: { type: "INTEGER" }, explanationEng: { type: "STRING" }, explanationHin: { type: "STRING" }
-                                        }, required: ["subject", "questionEng", "questionHin", "optionsEng", "optionsHin", "correctIndex", "explanationEng", "explanationHin"]
-                                    }
-                                }
-                            }
-                        })
-                    });
-
-                    if (!response.ok) { let err = await response.json(); throw new Error(`API Error: ${err.error?.message}`); }
-                    let d = await response.json();
-                    if (!d.candidates || d.candidates.length === 0) throw new Error("AI returned an empty response.");
-
-                    let allQs = parseAIJSON(d.candidates[0].content.parts[0].text);
-
-                    if(allQs.length > 0) {
-                        tempExtractedQuestions = allQs; tempPdfFilename = f.name;
-                        s.style.color = "var(--success)"; s.innerText = `✅ Success! Extracted ${allQs.length} Questions.`;
-                        showSaveModal();
-                    } else { s.style.color = "var(--danger)"; s.innerText = "❌ Extraction failed."; }
-
-                } catch (e) { s.style.color = "var(--danger)"; s.innerText = "❌ AI Analysis Error: " + e.message; }
-            };
-            reader.readAsDataURL(f);
-        }
-
-        // --- SAVE EXTRACTED QS LOGIC ---
-        function showSaveModal() { document.getElementById('save-qs-count').innerText = tempExtractedQuestions.length; document.getElementById('save-qs-modal').style.display = 'flex'; toggleSaveQsInputs(); }
-        function closeSaveModal() { document.getElementById('save-qs-modal').style.display = 'none'; }
-
-        function toggleSaveQsInputs() {
-            const t = document.getElementById('save-qs-target').value;
-            document.getElementById('save-qs-new-test-div').style.display = (t === 'new_test' || t === 'q_bank') ? 'block' : 'none';
-            document.getElementById('save-qs-old-test-div').style.display = t === 'old_test' ? 'block' : 'none';
-            if(t === 'q_bank') { document.getElementById('save-qs-group-div').style.display = 'none'; document.getElementById('save-qs-title').placeholder = "e.g., Science Q-Bank Part 1"; } 
-            else { document.getElementById('save-qs-group-div').style.display = 'block'; document.getElementById('save-qs-title').placeholder = "e.g., General Science Mock 1"; }
-        }
-
-        async function loadTestsForSaving(groupId) {
-            const sel = document.getElementById('save-qs-test-select'); sel.innerHTML = '<option value="">Loading...</option>';
-            if(!groupId) { sel.innerHTML = '<option value="">Select a group first...</option>'; return; }
-            try {
-                const snap = await db.collection("tests").where("groupId", "==", groupId).get();
-                sel.innerHTML = '';
-                if(snap.empty) { sel.innerHTML = '<option value="">No existing tests in this group</option>'; return; }
-                snap.forEach(doc => { sel.innerHTML += `<option value="${doc.id}">${doc.data().title}</option>`; });
-            } catch(e) { sel.innerHTML = '<option value="">Error loading tests</option>'; }
-        }
-
-        async function confirmSaveQuestions() {
-            const target = document.getElementById('save-qs-target').value;
-            const title = document.getElementById('save-qs-title').value.trim();
-            const btn = document.getElementById('btn-confirm-save');
-            
-            let groupId = "", groupName = "";
-            if (target !== 'q_bank') {
-                const g = document.getElementById('save-qs-group'); if(!g.value) return alert("Please select a target group.");
-                groupId = g.value; groupName = g.options[g.selectedIndex].text;
-            } else { groupId = "QUESTION_BANK"; groupName = "Question Bank"; }
-
-            btn.disabled = true; btn.innerText = "⏳ Saving...";
-
-            try {
-                if (target === 'new_test' || target === 'q_bank') {
-                    const finalTitle = title || (target === 'q_bank' ? `Question Bank - ${new Date().toLocaleDateString()}` : `New Test - ${new Date().toLocaleDateString()}`);
-                    await db.collection("tests").add({
-                        title: target === 'q_bank' ? `[BANK] ${finalTitle}` : finalTitle, groupId: groupId, groupName: groupName,
-                        questions: tempExtractedQuestions, duration: tempExtractedQuestions.length * 60, marksPerQuestion: 2, negativeMarks: 0, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    alert("Questions saved successfully!");
-                } else if (target === 'old_test') {
-                    const testId = document.getElementById('save-qs-test-select').value;
-                    if(!testId) { btn.disabled = false; btn.innerText = "💾 Confirm & Save"; return alert("Please select an existing test to append to."); }
-                    const docRef = db.collection("tests").doc(testId); const docSnap = await docRef.get();
-                    if(docSnap.exists) {
-                        let combinedQs = (docSnap.data().questions || []).concat(tempExtractedQuestions);
-                        await docRef.update({ questions: combinedQs, duration: combinedQs.length * 60 });
-                        alert(`Successfully appended ${tempExtractedQuestions.length} questions!`);
-                    }
-                }
-                closeSaveModal(); tempExtractedQuestions = []; 
-                document.getElementById('pdf-upload').value = ''; document.getElementById('pdf-status').innerText = ''; 
-            } catch(e) { alert("Error saving: " + e.message); }
-            btn.disabled = false; btn.innerText = "💾 Confirm & Save";
         }
 
         // --- TEST INTERFACE LOGIC ---
@@ -1710,9 +1373,6 @@
         firebase.auth().onAuthStateChanged((user) => {
             if (localStorage.getItem('adminSession') === 'active') {
                 currentUserRole = 'admin'; navigate('view-admin', false); loadAdminData(); 
-                const settings = getApiSettings();
-                if(settings.key) document.getElementById('admin-api-key').value = settings.key;
-                if(settings.model) document.getElementById('admin-ai-model').value = settings.model;
             } else if (user) {
                 currentUserRole = 'student'; navigate('view-student', false); loadStudentData();
             } else {
