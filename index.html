@@ -191,8 +191,12 @@
 </head>
 <body>
 
-    <nav>
-        <h1>KD JAAT Test Portal</h1>
+   <nav>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <img id="portal-logo" src="" style="height: 35px; border-radius: 5px; display: none;">
+        <h1 id="portal-name">KD JAAT Test Portal</h1>
+    </div>
+
         <div id="nav-actions" style="display: flex; gap: 10px;">
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
