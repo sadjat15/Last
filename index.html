@@ -527,6 +527,36 @@
 
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
+            <div id="forgot-modal" class="modal-overlay">
+    <div class="modern-card" style="width: 90%; max-width: 400px; text-align: center; overflow: hidden; animation: fadeIn 0.3s ease-out;">
+        <div class="modern-header" style="background: linear-gradient(135deg, var(--warning), #fbbf24); padding: 20px;">
+            <h2 style="margin:0;">Reset Password</h2>
+        </div>
+        <div style="padding: 25px; background: white;">
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Enter your registered phone number. We will send a request to the Admin to reset your password.</p>
+            <div class="input-group" style="text-align: left;">
+                <label>Phone Number</label>
+                <input type="tel" id="forgot-phone" placeholder="Enter your 10-digit number">
+            </div>
+            <div class="input-group" style="text-align: left;">
+                <label>Request New Password</label>
+                <input type="text" id="forgot-new-pass" placeholder="Enter desired new password">
+            </div>
+            <button class="btn-primary" onclick="submitForgotRequest()" style="background: var(--warning); color: black;">Send Request to Admin</button>
+            <button class="btn-outline" onclick="document.getElementById('forgot-modal').style.display='none'" style="margin-top: 10px; border: none;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="done-modal" class="modal-overlay">
+    <div class="modal" style="text-align: center; max-width: 350px;">
+        <div style="font-size: 4rem; color: var(--success); margin-bottom: 10px;">✅</div>
+        <h2 style="color: var(--text-main);">Request Sent!</h2>
+        <p style="color: var(--text-muted); margin: 15px 0;">The Admin has received your request and will update your password shortly.</p>
+        <button class="btn-success" onclick="document.getElementById('done-modal').style.display='none'">Okay</button>
+    </div>
+</div>
+
             <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Test Settings</h2>
             <input type="hidden" id="edit-test-id">
             <div class="input-group">
