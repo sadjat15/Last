@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+Make a code for this website which I can add in this where admin can change name and logo of portal 
+And students can create account using name  and number and password 
+And a student forgot password modern portal be added where students can request to change the password of their id using number after request a modern popup of done is apper and a message goes to admin from student to change their paswerd 
+And pdf to ai question generate make some changes in code that ai scan all type of pdf questions like screenshot or scanned or any type pdf ai scan all questions from them and add all questions one by one to avoid ai limits 
+This is my code tell me where I add these codes in this code <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,34 +17,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <script>
-// Fetch and apply branding on page load
-db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
-    if (doc.exists) {
-        const data = doc.data();
-        document.getElementById('portal-name').innerText = data.portalName || "KD JAAT Test Portal";
-        const logoImg = document.getElementById('portal-logo');
-        if (data.portalLogo) {
-            logoImg.src = data.portalLogo;
-            logoImg.style.display = "block";
-        } else {
-            logoImg.style.display = "none";
-        }
-        // Fill admin inputs if they exist
-        if(document.getElementById('admin-portal-name')) document.getElementById('admin-portal-name').value = data.portalName || "";
-        if(document.getElementById('admin-portal-logo')) document.getElementById('admin-portal-logo').value = data.portalLogo || "";
-    }
-});
-
-function savePortalDesign() {
-    const pName = document.getElementById('admin-portal-name').value.trim();
-    const pLogo = document.getElementById('admin-portal-logo').value.trim();
-    db.collection("adminSettings").doc("branding").set({
-        portalName: pName,
-        portalLogo: pLogo
-    }).then(() => alert("Portal Design Updated!"))
-      .catch(e => alert("Error: " + e.message));
-}
-
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
@@ -219,12 +195,8 @@ function savePortalDesign() {
 </head>
 <body>
 
-   <nav>
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <img id="portal-logo" src="" style="height: 35px; border-radius: 5px; display: none;">
-        <h1 id="portal-name">KD JAAT Test Portal</h1>
-    </div>
-
+    <nav>
+        <h1>KD JAAT Test Portal</h1>
         <div id="nav-actions" style="display: flex; gap: 10px;">
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
@@ -273,9 +245,6 @@ function savePortalDesign() {
                     <input type="password" id="login-password" placeholder="••••••••">
                 </div>
                 <button id="login-submit-btn" class="btn-primary" onclick="login()" style="margin-top: 10px;">Sign In</button>
-<div style="text-align: right; margin-top: 10px;">
-    <a href="javascript:void(0);" onclick="document.getElementById('forgot-modal').style.display='flex'" style="color: var(--primary); font-size: 0.9rem; font-weight: 500;">Forgot Password?</a>
-</div>
                 <div style="text-align: center; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px;">
                     <p style="font-size: 0.9rem; color: var(--text-muted);">New Student? <a href="javascript:void(0);" onclick="toggleAuthForm('register')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create Account</a></p>
                 </div>
@@ -287,10 +256,6 @@ function savePortalDesign() {
                     <p style="opacity: 0.9; font-size: 0.95rem;">Create your student account to take mock tests</p>
                 </div>
                 <div style="padding: 30px;">
-                    <div class="input-group">
-    <label>Full Name</label>
-    <input type="text" id="reg-name" placeholder="Enter your full name">
-</div>
                     <div class="input-group">
                         <label>Phone Number</label>
                         <input type="tel" id="reg-phone" placeholder="Enter your 10-digit phone number">
@@ -311,9 +276,7 @@ function savePortalDesign() {
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
-                  
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Design</h3><p>Change Name & Logo</p></div>
-<div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Manage Banners</h3><p>Promote tests on student dashboard</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-ai')"><h3>🤖 Topic AI Test</h3><p>Generate Qs via Topic</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-pdf')"><h3>📄 Upload PDF/Img Test</h3><p>Extract Qs directly from files</p></div>
@@ -403,9 +366,7 @@ function savePortalDesign() {
                     </div>
                     <div class="input-group">
                         <label>Select Document or Image (Scanned PDFs supported)</label>
-                       <input type="file" id="pdf-upload" accept=".pdf, image/jpeg, image/png, image/webp" multiple>
-<small style="color:var(--text-muted); display:block; margin-top:5px;">Tip: Select multiple screenshots/pages. AI will process them one by one to prevent limits.</small>
-
+                        <input type="file" id="pdf-upload" accept=".pdf, image/jpeg, image/png, image/webp">
                         <small style="color:var(--text-muted);">Max size: 15MB. AI will analyze the file visually to extract questions.</small>
                     </div>
                     <button class="btn-primary" onclick="processPDF()" id="pdf-extract-btn">Extract Questions with Powerful AI Engine</button>
@@ -447,23 +408,6 @@ function savePortalDesign() {
 
             <div id="admin-sec-creds" class="sub-sec"><div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Change Admin Credentials</h2></div><div class="action-box" style="border-left: 4px solid var(--danger);"><div class="input-group"><label>New Admin ID / Username</label><input type="text" id="new-admin-id" placeholder="Enter new admin ID"></div><div class="input-group"><label>New Admin Password</label><input type="password" id="new-admin-pass" placeholder="Minimum 6 characters"></div><button class="btn-danger" onclick="updateAdminCreds()">Update Credentials & Auto-Logout</button></div></div>
         </div>
-<div id="admin-sec-branding" class="sub-sec">
-    <div class="sec-header">
-        <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-        <h2>Portal Design Settings</h2>
-    </div>
-    <div class="action-box">
-        <div class="input-group">
-            <label>Portal Name</label>
-            <input type="text" id="admin-portal-name" placeholder="e.g., KD JAAT Test Portal">
-        </div>
-        <div class="input-group">
-            <label>Logo URL (Optional)</label>
-            <input type="text" id="admin-portal-logo" placeholder="https://example.com/logo.png">
-        </div>
-        <button class="btn-primary" onclick="savePortalDesign()">Save Design Settings</button>
-    </div>
-</div>
 
         <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
@@ -579,36 +523,6 @@ function savePortalDesign() {
 
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
-            <div id="forgot-modal" class="modal-overlay">
-    <div class="modern-card" style="width: 90%; max-width: 400px; text-align: center; overflow: hidden; animation: fadeIn 0.3s ease-out;">
-        <div class="modern-header" style="background: linear-gradient(135deg, var(--warning), #fbbf24); padding: 20px;">
-            <h2 style="margin:0;">Reset Password</h2>
-        </div>
-        <div style="padding: 25px; background: white;">
-            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Enter your registered phone number. We will send a request to the Admin to reset your password.</p>
-            <div class="input-group" style="text-align: left;">
-                <label>Phone Number</label>
-                <input type="tel" id="forgot-phone" placeholder="Enter your 10-digit number">
-            </div>
-            <div class="input-group" style="text-align: left;">
-                <label>Request New Password</label>
-                <input type="text" id="forgot-new-pass" placeholder="Enter desired new password">
-            </div>
-            <button class="btn-primary" onclick="submitForgotRequest()" style="background: var(--warning); color: black;">Send Request to Admin</button>
-            <button class="btn-outline" onclick="document.getElementById('forgot-modal').style.display='none'" style="margin-top: 10px; border: none;">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div id="done-modal" class="modal-overlay">
-    <div class="modal" style="text-align: center; max-width: 350px;">
-        <div style="font-size: 4rem; color: var(--success); margin-bottom: 10px;">✅</div>
-        <h2 style="color: var(--text-main);">Request Sent!</h2>
-        <p style="color: var(--text-muted); margin: 15px 0;">The Admin has received your request and will update your password shortly.</p>
-        <button class="btn-success" onclick="document.getElementById('done-modal').style.display='none'">Okay</button>
-    </div>
-</div>
-
             <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Test Settings</h2>
             <input type="hidden" id="edit-test-id">
             <div class="input-group">
@@ -870,26 +784,15 @@ function savePortalDesign() {
         }
 
         function registerStudent() {
-    const nameVal = document.getElementById('reg-name').value.trim();
-    const phoneId = document.getElementById('reg-phone').value.trim();
-    const pass = document.getElementById('reg-password').value;
-    
-    if(nameVal === "" || phoneId.length < 4 || pass.length < 6) return alert("Please check all inputs (Name, Phone, and Password).");
-    
-    auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
-        .then((userCred) => {
-            db.collection("users").doc(userCred.user.uid).set({ 
-                name: nameVal, 
-                phone: phoneId, 
-                password: pass, 
-                role: 'student', 
-                createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-            });
-            currentUserRole = 'student'; 
-            navigate('view-student'); 
-            loadStudentData();
-        }).catch(e => { alert("Error: " + e.message); });
-}
+            const phoneId = document.getElementById('reg-phone').value.trim();
+            const pass = document.getElementById('reg-password').value;
+            if(phoneId.length < 4 || pass.length < 6) return alert("Check inputs.");
+            auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
+                .then((userCred) => {
+                    db.collection("users").doc(userCred.user.uid).set({ phone: phoneId, password: pass, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    currentUserRole = 'student'; navigate('view-student'); loadStudentData();
+                }).catch(e => { alert("Error: " + e.message); });
+        }
 
         async function login() {
             if (checkDeviceLockout()) return;
@@ -1494,91 +1397,106 @@ function savePortalDesign() {
 
         // --- DIRECT PDF & MULTIMODAL EXTRACTION ---
         async function processPDF() {
-    tempExtractedQuestions = [];
-    const files = document.getElementById('pdf-upload').files;
-    const g = document.getElementById('pdf-test-group');
-    const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
-    
-    if(files.length === 0 || !g.value) return alert("Please select a group and attach at least one document/image.");
-    
-    let s = document.getElementById('pdf-status'); 
-    s.style.color = "var(--text-main)";
-    
-    const { key: k, model: m } = getApiSettings(); 
-    if(!k) return alert("No API Key found! Please check your API Settings.");
+            tempExtractedQuestions = [];
+            const f = document.getElementById('pdf-upload').files[0];
+            const g = document.getElementById('pdf-test-group');
+            const subjectContext = document.getElementById('pdf-subject').value.trim() || "Mixed subjects";
+            
+            if(!f || !g.value) return alert("Please select a group and attach a document/image.");
+            
+            if(f.size > 15 * 1024 * 1024) {
+                return alert("File is too large! Please upload a file under 15MB to prevent browser crashes.");
+            }
 
-    document.getElementById('pdf-extract-btn').disabled = true;
-
-    // Loop through each file one by one to avoid AI token limits
-    for (let i = 0; i < files.length; i++) {
-        let f = files[i];
-        if(f.size > 15 * 1024 * 1024) {
-            alert(`File ${f.name} is too large (>15MB) and will be skipped.`);
-            continue;
-        }
-
-        s.innerText = `⏳ Processing file ${i + 1} of ${files.length} (${f.name})... Please wait.`;
-        
-        try {
-            const base64Data = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(f);
-            });
-
+            let s = document.getElementById('pdf-status'); 
+            s.style.color = "var(--text-main)";
+            s.innerText = "⏳ Preparing file and sending to AI...";
+            
             const mimeType = f.type || 'application/pdf';
-            
-            let prompt = `You are an expert bilingual test creator. Analyze the attached document/image visually and extract ALL available multiple-choice questions. Context: "${subjectContext}".
-            CRITICAL RULES:
-            1. STRICT VALID JSON array only.
-            2. NO DOUBLE QUOTES IN STRINGS (use single quotes).
-            3. NO NEWLINES inside string fields.
-            4. ESCAPE LATEX (e.g., \\\\frac).
-            5. MUST contain: subject, questionEng, questionHin, optionsEng, optionsHin, correctIndex, explanationEng, explanationHin. Translate missing languages.`;
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [ { text: prompt }, { inlineData: { mimeType: mimeType, data: base64Data } } ] }],
-                    generationConfig: { temperature: 0.1, maxOutputTokens: 8192, responseMimeType: "application/json" }
-                })
-            });
+            const reader = new FileReader();
+            reader.onload = async function() {
+                try {
+                    const base64Data = reader.result.split(',')[1];
+                    const { key: k, model: m } = getApiSettings(); 
+                    if(!k) throw new Error("No API Key found! Please check your API Settings.");
 
-            if (!response.ok) throw new Error(`API Error (${response.status})`);
-            
-            let d = await response.json();
-            if (d.candidates && d.candidates.length > 0) {
-                let rawText = d.candidates[0].content.parts[0].text;
-                let fileQuestions = parseAIJSON(rawText);
-                tempExtractedQuestions.push(...fileQuestions);
-            }
-            
-            // Wait 3 seconds between files to prevent Gemini rate limit (429 Too Many Requests)
-            if(i < files.length - 1) {
-                s.innerText = `⏳ Cooldown... waiting to process next file...`;
-                await new Promise(res => setTimeout(res, 3000));
-            }
+                    s.innerText = "⏳ AI is visually analyzing the document and extracting questions (This may take a minute)...";
 
-        } catch (e) {
-            console.error(`Error on file ${f.name}:`, e);
-            alert(`Failed to extract from ${f.name}. Moving to next file. Error: ` + e.message);
-        }
-    }
+                    let prompt = `You are an expert bilingual test creator for competitive exams. Analyze the attached document/image visually and extract ALL available multiple-choice questions from it. Context: "${subjectContext}".
 
-    document.getElementById('pdf-extract-btn').disabled = false;
+                    CRITICAL RULES FOR JSON GENERATION:
+                    1. STRICT VALID JSON: You MUST return a flawless JSON array.
+                    2. NO DOUBLE QUOTES IN STRINGS: Never use double quotes (") inside your text. Use single quotes (' ') instead.
+                    3. NO NEWLINES: Keep the text for every field on a single continuous line.
+                    4. ESCAPE LATEX: You MUST double-escape all backslashes in math formulas (e.g., write \\\\frac instead of \\frac).
+                    5. BILINGUAL: 'questionHin', 'questionEng', 'optionsHin', 'optionsEng', 'explanationHin', 'explanationEng' fields MUST be filled. Translate missing languages.`;
 
-    if(tempExtractedQuestions.length > 0) {
-        s.style.color = "var(--success)";
-        s.innerText = `✅ Success! Extracted a total of ${tempExtractedQuestions.length} Questions from ${files.length} files.`;
-        showSaveModal();
-    } else { 
-        s.style.color = "var(--danger)";
-        s.innerText = "❌ Extraction failed: AI could not find suitable questions in any of the files."; 
-    }
-}
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [
+                                    { text: prompt },
+                                    { inlineData: { mimeType: mimeType, data: base64Data } }
+                                ]
+                            }],
+                            generationConfig: {
+                                temperature: 0.1,
+                                maxOutputTokens: 8192,
+                                responseMimeType: "application/json",
+                                responseSchema: {
+                                    type: "ARRAY",
+                                    items: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            subject: { type: "STRING" },
+                                            questionEng: { type: "STRING" },
+                                            questionHin: { type: "STRING" },
+                                            optionsEng: { type: "ARRAY", items: { type: "STRING" } },
+                                            optionsHin: { type: "ARRAY", items: { type: "STRING" } },
+                                            correctIndex: { type: "INTEGER" },
+                                            explanationEng: { type: "STRING" },
+                                            explanationHin: { type: "STRING" }
+                                        },
+                                        required: ["subject", "questionEng", "questionHin", "optionsEng", "optionsHin", "correctIndex", "explanationEng", "explanationHin"]
+                                    }
+                                }
+                            }
+                        })
+                    });
 
+                    if (!response.ok) {
+                        let err = await response.json();
+                        throw new Error(`API Error (${response.status}): ${err.error?.message || response.statusText}`);
+                    }
+
+                    let d = await response.json();
+                    if (!d.candidates || d.candidates.length === 0) throw new Error("AI returned an empty response.");
+
+                    let rawText = d.candidates[0].content.parts[0].text;
+                    let allQuestions = parseAIJSON(rawText);
+
+                    if(allQuestions.length > 0) {
+                        tempExtractedQuestions = allQuestions;
+                        tempPdfFilename = f.name;
+                        
+                        s.style.color = "var(--success)";
+                        s.innerText = `✅ Success! Extracted ${allQuestions.length} Questions.`;
+                        
+                        showSaveModal();
+                    } else { 
+                        s.style.color = "var(--danger)";
+                        s.innerText = "❌ Extraction failed: AI could not find suitable questions."; 
+                    }
+
+                } catch (e) { 
+                    s.style.color = "var(--danger)";
+                    s.innerText = "❌ AI Analysis Error: " + e.message; 
+                    console.error("Multimodal processing error:", e); 
+                }
+            };
             reader.readAsDataURL(f);
         }
 
