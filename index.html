@@ -90,8 +90,7 @@
         .sec-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
         .back-menu-btn { background: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .back-menu-btn:hover { background: #cbd5e1; }
-
-        /* Inputs & Buttons */
+                /* Inputs & Buttons */
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #475569; }
         .input-group input, .input-group select, .input-group textarea { 
@@ -124,8 +123,7 @@
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover { background: #f1f5f9; }
-
-        /* Modals & Overlays */
+                /* Modals & Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
         #lightboxModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; }
@@ -302,8 +300,7 @@
                 </div>
             </div>
         </div>
-
-        <div id="view-admin" class="view">
+                <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
@@ -319,7 +316,7 @@
 
             <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
+                        <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
                 </div>
                 
@@ -386,6 +383,7 @@
                 <h3 style="margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 15px;"></div>
             </div>
+            
             <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
@@ -418,8 +416,7 @@
                     <p id="aiKeyMsg" style="color: var(--success); font-weight: bold; margin-top: 10px; display: none;"></p>
                 </div>
             </div>
-
-            <div id="admin-sec-groups" class="sub-sec">
+                        <div id="admin-sec-groups" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Test Groups</h2>
@@ -535,8 +532,8 @@
                     <button class="btn-danger" onclick="updateAdminCreds()">Update Credentials & Auto-Logout</button>
                 </div>
             </div>
-        </div> ```
-        <div id="view-student" class="view">
+        </div>
+                <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -681,8 +678,8 @@
             <div id="review-container"></div>
         </div>
 
-    </div> ```
-    <div id="lightboxModal" class="hidden" onclick="closeLightbox()" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; cursor: zoom-out;">
+    </div>
+            <div id="lightboxModal" class="hidden" onclick="closeLightbox()" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; cursor: zoom-out;">
         <img id="lightboxImg" src="" style="max-width: 90%; max-height: 90%; border-radius: 8px;">
     </div>
 
@@ -797,7 +794,7 @@
             authDomain: "test2-672e5.firebaseapp.com",
             databaseURL: "https://test2-672e5-default-rtdb.firebaseio.com",
             projectId: "test2-672e5",
-            storageBucket: "test2-672e5.firebasestorage.app"
+            storageBucket: "test2-672e5.appspot.com", // FIXED BUCKET URL HERE
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -823,8 +820,7 @@
         function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxModal').classList.remove('hidden'); }
         function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); }
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
-
-        // --- PORTAL BRANDING LOGIC ---
+                // --- PORTAL BRANDING LOGIC ---
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
                 if(doc.exists) {
@@ -1054,7 +1050,8 @@
             const pass = document.getElementById('login-password').value;
 
             if (role === 'admin') {
-                let validId = 'admin'; let validPass = 'Sachin@123';
+                // MODIFIED AS REQUESTED
+                let validId = '9992774574'; let validPass = 'Sachin@123';
                 if(localStorage.getItem('adminCustomId')) { validId = localStorage.getItem('adminCustomId'); validPass = localStorage.getItem('adminCustomPass'); }
                 try { const doc = await db.collection('adminSettings').doc('credentials').get(); if(doc.exists) { validId = doc.data().id; validPass = doc.data().pass; } } catch(e) {}
                 if (idInput === validId && pass === validPass) { 
@@ -1069,8 +1066,7 @@
         }
 
         function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
-
-        // --- ADMIN: MANAGE STUDENTS LOGIC ---
+                // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list');
