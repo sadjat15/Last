@@ -65,8 +65,7 @@
         /* Navbar & Branding */
         nav { background: var(--primary); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 100; }
         .portal-brand { display: flex; align-items: center; gap: 12px; }
-        
-        /* Image Auto Adjustments (Logo & General) & NEW Upload Rules CSS */
+                /* Image Auto Adjustments (Logo & General) & NEW Upload Rules CSS */
         .portal-logo { max-height: 40px; max-width: 150px; border-radius: 8px; display: none; object-fit: contain; background: white; padding: 2px;}
         .auto-adjust-img { max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; }
         .upload-rules { display: block; font-size: 0.8rem; color: #ef4444; margin-top: 6px; font-weight: 600; }
@@ -128,8 +127,7 @@
         .modern-done-popup { text-align: center; padding: 40px 20px; }
         .check-circle { width: 80px; height: 80px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--success); font-size: 40px; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        
-        /* Student Record Table Styles */
+                /* Student Record Table Styles */
         .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
@@ -263,8 +261,7 @@
             <div class="legend-item"><div class="legend-dot" style="background: var(--review);"></div> Marked for Review</div>
         </div>
     </div>
-
-    <div class="container">
+        <div class="container">
         <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -782,7 +779,7 @@
         </div>
 
     </div>
-        <div id="student-popup-modal" class="modal-overlay">
+            <div id="student-popup-modal" class="modal-overlay">
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <img id="popup-display-img" class="popup-img" src="" alt="Announcement Image">
@@ -946,8 +943,8 @@
             return true; // Passed all strict checks!
         }
 
-        // --- THE FIX: SMART IMAGE AUTO-ADJUST (Native Blob canvas compression) ---
-        // Converts image to a highly compressed Blob instantly without memory crashing
+        // --- THE FIX: SMART IMAGE AUTO-ADJUST (Returns Base64 for safe upload) ---
+        // Converts image directly to base64 data URL to prevent Blob timeout errors in Firebase
         function smartAdjustImage(file, maxWidth, maxHeight) {
             return new Promise((resolve, reject) => {
                 if (!file) return resolve(null);
@@ -971,11 +968,9 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // New Fast Blob implementation alongside base64 for previews
-                        canvas.toBlob((blob) => {
-                            const base64 = canvas.toDataURL('image/jpeg', 0.7);
-                            resolve({ blob: blob, base64: base64 });
-                        }, 'image/jpeg', 0.7);
+                        // FIX: We generate a base64 string instead of a blob to avoid 'storage/retry-limit-exceeded'
+                        const base64 = canvas.toDataURL('image/jpeg', 0.7);
+                        resolve({ base64: base64 });
                     }
                     img.onerror = () => reject("Failed to load image");
                 }
@@ -987,8 +982,7 @@
         function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxModal').classList.remove('hidden'); }
         function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); }
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
-        
-        // --- STUDENT POPUP LOGIC ---
+                // --- STUDENT POPUP LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
@@ -1000,7 +994,6 @@
             const urlInput = document.getElementById('popup-image-url').value.trim();
             const btn = document.getElementById('btn-save-popup');
 
-            // Final safety validation before saving
             if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 5)) return;
 
             btn.disabled = true; btn.innerText = "⏳ Saving...";
@@ -1008,10 +1001,10 @@
             try {
                 let finalImageUrl = urlInput;
                 if(fileInput.files[0]) {
-                    // Uses the newly fixed Blob uploader
+                    // FIX APPLIED HERE: Using putString with base64 data_url instead of put(blob)
                     const imageResult = await smartAdjustImage(fileInput.files[0], 600, 400);
                     const storageRef = storage.ref(`popups/${Date.now()}_popup.jpg`);
-                    await storageRef.put(imageResult.blob);
+                    await storageRef.putString(imageResult.base64, 'data_url'); 
                     finalImageUrl = await storageRef.getDownloadURL();
                 }
 
@@ -1087,7 +1080,6 @@
             const urlInput = document.getElementById('portal-logo-url').value.trim();
             const btn = document.getElementById('btn-save-branding');
 
-            // Final safety validation before saving
             if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 2)) return;
 
             btn.disabled = true; btn.innerText = "⏳ Saving...";
@@ -1095,10 +1087,10 @@
             try {
                 let finalLogoUrl = urlInput;
                 if(fileInput.files[0]) {
-                    // Fixed Blob Uploader
+                    // FIX APPLIED HERE: Using putString with base64 data_url instead of put(blob)
                     const imageResult = await smartAdjustImage(fileInput.files[0], 300, 100);
                     const storageRef = storage.ref(`branding/${Date.now()}_logo.jpg`);
-                    await storageRef.put(imageResult.blob);
+                    await storageRef.putString(imageResult.base64, 'data_url');
                     finalLogoUrl = await storageRef.getDownloadURL();
                 }
 
@@ -1119,7 +1111,8 @@
             const msg = document.getElementById('aiKeyMsg'); msg.innerText = "AI API Key Saved Successfully!";
             msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000);
         }
-                // --- ANTI-REFRESH PROTECTION ---
+
+        // --- ANTI-REFRESH PROTECTION ---
         window.addEventListener('beforeunload', function (e) { if (isTestActive) { e.preventDefault(); e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.'; } });
 
         // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
@@ -1225,8 +1218,7 @@
         }
 
         function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
-        
-        // --- ADMIN: MANAGE STUDENTS LOGIC ---
+                // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1299,14 +1291,13 @@
 
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
         
-        // --- UPDATED BANNER LOGIC (With Fast Blob Upload & Strict Validation) ---
+        // --- UPDATED BANNER LOGIC (With Fast Base64 Upload Fix) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const fileInput = document.getElementById('banner-file-upload'); const urlInput = document.getElementById('banner-image-url').value.trim();
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
             const file = fileInput.files[0];
 
-            // Final safety validation before saving
             if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 5)) return;
             
             if(!customTitle) return alert("Please enter a stylish banner name."); if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
@@ -1317,10 +1308,10 @@
             
             try {
                 if(file) {
-                    // Uses the highly efficient Blob upload to prevent crashing
+                    // FIX APPLIED HERE: Using putString with base64 data_url instead of put(blob)
                     const imageResult = await smartAdjustImage(file, 800, 400);
                     const storageRef = storage.ref(`banners/${Date.now()}_banner.jpg`);
-                    await storageRef.put(imageResult.blob);
+                    await storageRef.putString(imageResult.base64, 'data_url');
                     finalImageUrl = await storageRef.getDownloadURL();
                 }
                 
@@ -1439,9 +1430,9 @@
             document.getElementById('correctAnswer').value='0'; resetImageUpload(); 
         }
 
-        // --- QUESTION IMAGE SMART UPLOAD WITH STRICT VALIDATION ---
+        // --- QUESTION IMAGE SMART UPLOAD ---
         document.getElementById('qImageUpload').addEventListener('change', async function(e) {
-            if(!validateImageUpload(this, 5)) return; // Strict validation before anything happens!
+            if(!validateImageUpload(this, 5)) return;
 
             const file = e.target.files[0]; if (!file) return;
             const imageResult = await smartAdjustImage(file, 800, 800);
