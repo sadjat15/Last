@@ -66,9 +66,10 @@
         nav { background: var(--primary); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 100; }
         .portal-brand { display: flex; align-items: center; gap: 12px; }
         
-        /* Image Auto Adjustments (Logo & General) */
+        /* Image Auto Adjustments (Logo & General) & NEW Upload Rules CSS */
         .portal-logo { max-height: 40px; max-width: 150px; border-radius: 8px; display: none; object-fit: contain; background: white; padding: 2px;}
         .auto-adjust-img { max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; }
+        .upload-rules { display: block; font-size: 0.8rem; color: #ef4444; margin-top: 6px; font-weight: 600; }
 
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
@@ -85,8 +86,7 @@
         .menu-btn:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--primary); }
         .menu-btn h3 { color: var(--primary); font-size: 1.3rem; }
         .menu-btn p { color: var(--text-muted); font-size: 0.9rem; }
-
-        /* Action Boxes & Question Cards */
+                /* Action Boxes & Question Cards */
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
         .action-box h3 { font-size: 1.2rem; margin-bottom: 15px; }
         .q-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.2s; }
@@ -119,7 +119,8 @@
         .btn-warning { background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
-                /* Modern Register & Forgot Password Portal */
+        
+        /* Modern Register & Forgot Password Portal */
         .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
         .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
 
@@ -174,8 +175,7 @@
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
 
         .test-nav-bar { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        
-        /* Side Panel (Question Palette) */
+                /* Side Panel (Question Palette) */
         .side-panel {
             position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
             background: white; box-shadow: var(--shadow-lg); z-index: 1500;
@@ -248,7 +248,8 @@
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
-        <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
+    
+    <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
 
     <div id="side-palette" class="side-panel">
         <div class="side-panel-header">
@@ -323,8 +324,7 @@
                 </div>
             </div>
         </div>
-        
-        <div id="view-admin" class="view">
+                <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
@@ -337,7 +337,8 @@
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-                        <div id="admin-sec-banners" class="sub-sec">
+            
+            <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Promo Banners & Student Popup</h2>
@@ -378,8 +379,10 @@
                     </div>
 
                     <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--review);">
-                        <label>Upload Popup Image (Optional - Auto Adjusts for Fast Load)</label>
-                        <input type="file" id="popup-file-upload" accept="image/*">
+                        <label>Upload Popup Image</label>
+                        <input type="file" id="popup-file-upload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 5)">
+                        <span class="upload-rules">Rules: Max 5MB | Formats: JPG, PNG, WEBP | Recommended Size: 600x400px</span>
+
                         <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
                         <label>Paste Image URL</label>
                         <input type="text" id="popup-image-url" placeholder="https://example.com/your-image.jpg">
@@ -420,8 +423,10 @@
                     </div>
                     
                     <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
-                        <label>Upload Banner Image (Auto Adjusts Size/Speed)</label>
-                        <input type="file" id="banner-file-upload" accept="image/*">
+                        <label>Upload Banner Image</label>
+                        <input type="file" id="banner-file-upload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 5)">
+                        <span class="upload-rules">Rules: Max 5MB | Formats: JPG, PNG, WEBP | Recommended Size: 800x400px</span>
+
                         <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
                         <label>Paste Image URL</label>
                         <input type="text" id="banner-image-url" placeholder="https://example.com/your-image.jpg">
@@ -433,8 +438,7 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-            
-            <div id="admin-sec-question-editor" class="sub-sec">
+                        <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                         <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
@@ -475,8 +479,10 @@
                     </div>
                     
                     <div style="margin-bottom: 15px;">
-                        <label style="font-size: 0.9rem; font-weight: bold; color: #475569; display: block; margin-bottom: 5px;">Question Image (Auto Adjusts Size/Quality)</label>
-                        <input type="file" id="qImageUpload" accept="image/*" style="background: white; border: 1px solid var(--border-color); padding: 5px; border-radius: 8px; width: 100%; box-sizing: border-box;">
+                        <label style="font-size: 0.9rem; font-weight: bold; color: #475569; display: block; margin-bottom: 5px;">Question Image</label>
+                        <input type="file" id="qImageUpload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 5)" style="background: white; border: 1px solid var(--border-color); padding: 5px; border-radius: 8px; width: 100%; box-sizing: border-box;">
+                        <span class="upload-rules">Rules: Max 5MB | Formats: JPG, PNG, WEBP | Recommended Size: 800x800px</span>
+                        
                         <input type="hidden" id="qImageBase64">
                         <img id="imagePreview" class="auto-adjust-img hidden" src="" alt="Preview" style="margin-top: 10px; max-height: 200px;">
                     </div>
@@ -503,7 +509,8 @@
                 <h3 style="margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 15px;"></div>
             </div>
-                        <div id="admin-sec-branding" class="sub-sec">
+            
+            <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Portal Branding & AI Settings</h2>
@@ -515,8 +522,10 @@
                         <input type="text" id="portal-name-input" placeholder="e.g., KD JAAT Test Portal">
                     </div>
                     <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
-                        <label>Upload Portal Logo (Auto Adjusts to Fit)</label>
-                        <input type="file" id="portal-logo-upload" accept="image/*">
+                        <label>Upload Portal Logo</label>
+                        <input type="file" id="portal-logo-upload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 2)">
+                        <span class="upload-rules">Rules: Max 2MB | Formats: JPG, PNG, WEBP | Recommended Size: 300x100px</span>
+
                         <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
                         <label>Paste Logo URL</label>
                         <input type="text" id="portal-logo-url" placeholder="https://example.com/logo.png">
@@ -535,8 +544,7 @@
                     <p id="aiKeyMsg" style="color: var(--success); font-weight: bold; margin-top: 10px; display: none;"></p>
                 </div>
             </div>
-            
-            <div id="admin-sec-groups" class="sub-sec">
+                        <div id="admin-sec-groups" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Test Groups</h2>
@@ -628,8 +636,7 @@
                 </div>
             </div>
         </div>
-        
-        <div id="view-student" class="view">
+                <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -700,7 +707,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-test" class="view">
+        
+        <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
@@ -774,8 +782,7 @@
         </div>
 
     </div>
-    
-    <div id="student-popup-modal" class="modal-overlay">
+        <div id="student-popup-modal" class="modal-overlay">
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <img id="popup-display-img" class="popup-img" src="" alt="Announcement Image">
@@ -887,7 +894,7 @@
             </div>
         </div>
     </div>
-            <script>
+                <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -914,6 +921,30 @@
         let editingQuestionIndex = null;
         let allTestsCache = []; 
         let localQuestionsBuffer = []; 
+
+        // --- NEW: STRICT IMAGE VALIDATION LOGIC ---
+        function validateImageUpload(inputElement, maxSizeMB) {
+            const file = inputElement.files[0];
+            if (!file) return false;
+
+            // 1. Check Format (MIME type)
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                alert("Strict Rule: Invalid file format! Please upload a JPG, PNG, or WEBP image.");
+                inputElement.value = ''; // Clear the input instantly
+                return false;
+            }
+
+            // 2. Check Size
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+            if (file.size > maxSizeBytes) {
+                alert(`Strict Rule: File too large! Maximum allowed size is ${maxSizeMB}MB. Your file is ${(file.size / (1024*1024)).toFixed(2)}MB.`);
+                inputElement.value = ''; // Clear the input instantly
+                return false;
+            }
+
+            return true; // Passed all strict checks!
+        }
 
         // --- THE FIX: SMART IMAGE AUTO-ADJUST (Native Blob canvas compression) ---
         // Converts image to a highly compressed Blob instantly without memory crashing
@@ -965,17 +996,20 @@
             const message = document.getElementById('popup-message').value.trim();
             const textColor = document.getElementById('popup-text-color').value;
             const font = document.getElementById('popup-text-font').value;
-            const fileInput = document.getElementById('popup-file-upload').files[0];
+            const fileInput = document.getElementById('popup-file-upload');
             const urlInput = document.getElementById('popup-image-url').value.trim();
             const btn = document.getElementById('btn-save-popup');
+
+            // Final safety validation before saving
+            if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 5)) return;
 
             btn.disabled = true; btn.innerText = "⏳ Saving...";
 
             try {
                 let finalImageUrl = urlInput;
-                if(fileInput) {
+                if(fileInput.files[0]) {
                     // Uses the newly fixed Blob uploader
-                    const imageResult = await smartAdjustImage(fileInput, 600, 400);
+                    const imageResult = await smartAdjustImage(fileInput.files[0], 600, 400);
                     const storageRef = storage.ref(`popups/${Date.now()}_popup.jpg`);
                     await storageRef.put(imageResult.blob);
                     finalImageUrl = await storageRef.getDownloadURL();
@@ -987,7 +1021,7 @@
                 await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
                 
                 alert("Popup settings updated successfully!");
-                document.getElementById('popup-file-upload').value = '';
+                fileInput.value = '';
                 document.getElementById('popup-image-url').value = '';
             } catch (e) { alert("Error updating popup: " + e.message); } 
             finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
@@ -1049,17 +1083,20 @@
 
         async function updatePortalBranding() {
             const nameInput = document.getElementById('portal-name-input').value.trim();
-            const fileInput = document.getElementById('portal-logo-upload').files[0];
+            const fileInput = document.getElementById('portal-logo-upload');
             const urlInput = document.getElementById('portal-logo-url').value.trim();
             const btn = document.getElementById('btn-save-branding');
+
+            // Final safety validation before saving
+            if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 2)) return;
 
             btn.disabled = true; btn.innerText = "⏳ Saving...";
 
             try {
                 let finalLogoUrl = urlInput;
-                if(fileInput) {
+                if(fileInput.files[0]) {
                     // Fixed Blob Uploader
-                    const imageResult = await smartAdjustImage(fileInput, 300, 100);
+                    const imageResult = await smartAdjustImage(fileInput.files[0], 300, 100);
                     const storageRef = storage.ref(`branding/${Date.now()}_logo.jpg`);
                     await storageRef.put(imageResult.blob);
                     finalLogoUrl = await storageRef.getDownloadURL();
@@ -1071,7 +1108,7 @@
 
                 await db.collection("adminSettings").doc("branding").set(updateData, { merge: true });
                 alert("Branding updated successfully!");
-                document.getElementById('portal-logo-upload').value = ''; document.getElementById('portal-logo-url').value = '';
+                fileInput.value = ''; document.getElementById('portal-logo-url').value = '';
             } catch (e) { alert("Error updating branding: " + e.message); } 
             finally { btn.disabled = false; btn.innerText = "Save Branding Changes"; }
         }
@@ -1082,8 +1119,7 @@
             const msg = document.getElementById('aiKeyMsg'); msg.innerText = "AI API Key Saved Successfully!";
             msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000);
         }
-
-        // --- ANTI-REFRESH PROTECTION ---
+                // --- ANTI-REFRESH PROTECTION ---
         window.addEventListener('beforeunload', function (e) { if (isTestActive) { e.preventDefault(); e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.'; } });
 
         // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
@@ -1189,7 +1225,8 @@
         }
 
         function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
-                // --- ADMIN: MANAGE STUDENTS LOGIC ---
+        
+        // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1262,12 +1299,15 @@
 
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
         
-        // --- UPDATED BANNER LOGIC (With Fast Blob Upload) ---
+        // --- UPDATED BANNER LOGIC (With Fast Blob Upload & Strict Validation) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const fileInput = document.getElementById('banner-file-upload'); const urlInput = document.getElementById('banner-image-url').value.trim();
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
             const file = fileInput.files[0];
+
+            // Final safety validation before saving
+            if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 5)) return;
             
             if(!customTitle) return alert("Please enter a stylish banner name."); if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
             if(!file && !urlInput) return alert("You must either upload an image file or paste an image URL.");
@@ -1290,7 +1330,7 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                document.getElementById('banner-custom-title').value = ''; document.getElementById('banner-image-url').value = ''; document.getElementById('banner-file-upload').value = '';
+                document.getElementById('banner-custom-title').value = ''; document.getElementById('banner-image-url').value = ''; fileInput.value = '';
                 alert("Banner successfully published!");
             } catch (error) { alert("Error publishing banner: " + error.message); } 
             finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
@@ -1399,8 +1439,10 @@
             document.getElementById('correctAnswer').value='0'; resetImageUpload(); 
         }
 
-        // --- QUESTION IMAGE SMART UPLOAD ---
+        // --- QUESTION IMAGE SMART UPLOAD WITH STRICT VALIDATION ---
         document.getElementById('qImageUpload').addEventListener('change', async function(e) {
+            if(!validateImageUpload(this, 5)) return; // Strict validation before anything happens!
+
             const file = e.target.files[0]; if (!file) return;
             const imageResult = await smartAdjustImage(file, 800, 800);
             document.getElementById('qImageBase64').value = imageResult.base64; 
