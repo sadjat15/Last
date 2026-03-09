@@ -119,8 +119,7 @@
         .btn-warning { background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
-
-        /* Modern Register & Forgot Password Portal */
+                /* Modern Register & Forgot Password Portal */
         .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
         .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
 
@@ -128,7 +127,8 @@
         .modern-done-popup { text-align: center; padding: 40px 20px; }
         .check-circle { width: 80px; height: 80px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--success); font-size: 40px; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-                /* Student Record Table Styles */
+        
+        /* Student Record Table Styles */
         .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
@@ -248,8 +248,7 @@
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
-
-    <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
+        <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
 
     <div id="side-palette" class="side-panel">
         <div class="side-panel-header">
@@ -265,7 +264,7 @@
     </div>
 
     <div class="container">
-               <div id="view-login" class="view active">
+        <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
@@ -338,8 +337,7 @@
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-
-            <div id="admin-sec-banners" class="sub-sec">
+                        <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Promo Banners & Student Popup</h2>
@@ -435,7 +433,8 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-                        <div id="admin-sec-question-editor" class="sub-sec">
+            
+            <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                         <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
@@ -504,8 +503,7 @@
                 <h3 style="margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 15px;"></div>
             </div>
-            
-            <div id="admin-sec-branding" class="sub-sec">
+                        <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Portal Branding & AI Settings</h2>
@@ -630,7 +628,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-student" class="view">
+        
+        <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -701,8 +700,7 @@
                 </div>
             </div>
         </div>
-        
-        <div id="view-test" class="view">
+                <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
@@ -889,7 +887,7 @@
             </div>
         </div>
     </div>
-        <script>
+            <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -917,36 +915,41 @@
         let allTestsCache = []; 
         let localQuestionsBuffer = []; 
 
-        // --- SMART IMAGE AUTO-ADJUST (Canvas compression) ---
-        // This takes ANY image and resizes/compresses it to fit site standards automatically
-        function smartAdjustImage(file, maxWidth, maxHeight, callback) {
-            if (!file) return callback(null);
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function (event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function () {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
+        // --- THE FIX: SMART IMAGE AUTO-ADJUST (Native Blob canvas compression) ---
+        // Converts image to a highly compressed Blob instantly without memory crashing
+        function smartAdjustImage(file, maxWidth, maxHeight) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve(null);
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
 
-                    // Automatically calculate new dimensions while keeping aspect ratio
-                    if (width > height) {
-                        if (width > maxWidth) { height = Math.round((height *= maxWidth / width)); width = maxWidth; }
-                    } else {
-                        if (height > maxHeight) { width = Math.round((width *= maxHeight / height)); height = maxHeight; }
+                        if (width > height) {
+                            if (width > maxWidth) { height = Math.round((height *= maxWidth / width)); width = maxWidth; }
+                        } else {
+                            if (height > maxHeight) { width = Math.round((width *= maxHeight / height)); height = maxHeight; }
+                        }
+
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // New Fast Blob implementation alongside base64 for previews
+                        canvas.toBlob((blob) => {
+                            const base64 = canvas.toDataURL('image/jpeg', 0.7);
+                            resolve({ blob: blob, base64: base64 });
+                        }, 'image/jpeg', 0.7);
                     }
-
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Compress to 70% quality JPEG to save database space while looking great
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    callback(dataUrl);
+                    img.onerror = () => reject("Failed to load image");
                 }
-            }
+                reader.onerror = () => reject("Failed to read file");
+            });
         }
 
         // --- UTILITIES & MODAL HELPERS ---
@@ -954,10 +957,8 @@
         function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); }
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
         
-        // --- BRAND NEW: STUDENT POPUP LOGIC ---
-        function closeStudentPopup() {
-            document.getElementById('student-popup-modal').style.display = 'none';
-        }
+        // --- STUDENT POPUP LOGIC ---
+        function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
             const status = document.getElementById('popup-status').value;
@@ -973,13 +974,10 @@
             try {
                 let finalImageUrl = urlInput;
                 if(fileInput) {
-                    // Smart Adjust Popup Image to max 600x400
-                    const base64Data = await new Promise((resolve) => smartAdjustImage(fileInput, 600, 400, resolve));
-                    const response = await fetch(base64Data);
-                    const blob = await response.blob();
-                    
+                    // Uses the newly fixed Blob uploader
+                    const imageResult = await smartAdjustImage(fileInput, 600, 400);
                     const storageRef = storage.ref(`popups/${Date.now()}_popup.jpg`);
-                    await storageRef.put(blob);
+                    await storageRef.put(imageResult.blob);
                     finalImageUrl = await storageRef.getDownloadURL();
                 }
 
@@ -991,15 +989,11 @@
                 alert("Popup settings updated successfully!");
                 document.getElementById('popup-file-upload').value = '';
                 document.getElementById('popup-image-url').value = '';
-            } catch (e) {
-                alert("Error updating popup: " + e.message);
-            } finally {
-                btn.disabled = false; btn.innerText = "Save Popup Settings";
-            }
+            } catch (e) { alert("Error updating popup: " + e.message); } 
+            finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
         }
 
         function loadStudentPopup() {
-            // Only show if the student hasn't seen it THIS session (resets on login/refresh)
             if(sessionStorage.getItem('popupShown')) return;
 
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
@@ -1013,15 +1007,11 @@
                         msgEl.style.color = data.textColor || '#0f172a';
                         msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
 
-                        if(data.imageUrl) {
-                            imgEl.src = data.imageUrl;
-                            imgEl.style.display = 'block';
-                        } else {
-                            imgEl.style.display = 'none';
-                        }
+                        if(data.imageUrl) { imgEl.src = data.imageUrl; imgEl.style.display = 'block'; } 
+                        else { imgEl.style.display = 'none'; }
 
                         document.getElementById('student-popup-modal').style.display = 'flex';
-                        sessionStorage.setItem('popupShown', 'true'); // Mark as shown for this session
+                        sessionStorage.setItem('popupShown', 'true');
                     }
                 }
             }).catch(e => console.error("Error loading popup: ", e));
@@ -1040,26 +1030,17 @@
                     if(data.logoUrl) { logoEl.src = data.logoUrl; logoEl.style.display = 'block'; } 
                     else { logoEl.style.display = 'none'; }
 
-                    if(data.geminiKey) {
-                        storedGeminiKey = data.geminiKey;
-                        document.getElementById('adminAiKey').value = storedGeminiKey;
-                    }
+                    if(data.geminiKey) { storedGeminiKey = data.geminiKey; document.getElementById('adminAiKey').value = storedGeminiKey; }
                 }
             });
             
-            // Also load admin settings for the popup editor when admin views it
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
                  if(doc.exists) {
                      const data = doc.data();
-                     const statusEl = document.getElementById('popup-status');
-                     const msgEl = document.getElementById('popup-message');
-                     const colorEl = document.getElementById('popup-text-color');
-                     const fontEl = document.getElementById('popup-text-font');
-                     
-                     if(statusEl) statusEl.value = data.status || 'inactive';
-                     if(msgEl) msgEl.value = data.message || '';
-                     if(colorEl) colorEl.value = data.textColor || '#0f172a';
-                     if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
+                     const statusEl = document.getElementById('popup-status'); const msgEl = document.getElementById('popup-message');
+                     const colorEl = document.getElementById('popup-text-color'); const fontEl = document.getElementById('popup-text-font');
+                     if(statusEl) statusEl.value = data.status || 'inactive'; if(msgEl) msgEl.value = data.message || '';
+                     if(colorEl) colorEl.value = data.textColor || '#0f172a'; if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
                  }
             });
         }
@@ -1077,13 +1058,10 @@
             try {
                 let finalLogoUrl = urlInput;
                 if(fileInput) {
-                    // Smart Adjust Logo to max 300x100
-                    const base64Data = await new Promise((resolve) => smartAdjustImage(fileInput, 300, 100, resolve));
-                    const response = await fetch(base64Data);
-                    const blob = await response.blob();
-                    
+                    // Fixed Blob Uploader
+                    const imageResult = await smartAdjustImage(fileInput, 300, 100);
                     const storageRef = storage.ref(`branding/${Date.now()}_logo.jpg`);
-                    await storageRef.put(blob);
+                    await storageRef.put(imageResult.blob);
                     finalLogoUrl = await storageRef.getDownloadURL();
                 }
 
@@ -1092,101 +1070,63 @@
                 if(finalLogoUrl) updateData.logoUrl = finalLogoUrl;
 
                 await db.collection("adminSettings").doc("branding").set(updateData, { merge: true });
-                
                 alert("Branding updated successfully!");
-                document.getElementById('portal-logo-upload').value = '';
-                document.getElementById('portal-logo-url').value = '';
+                document.getElementById('portal-logo-upload').value = ''; document.getElementById('portal-logo-url').value = '';
             } catch (e) { alert("Error updating branding: " + e.message); } 
             finally { btn.disabled = false; btn.innerText = "Save Branding Changes"; }
         }
 
         async function saveGeminiKey() {
-            const key = document.getElementById('adminAiKey').value.trim();
-            storedGeminiKey = key;
+            const key = document.getElementById('adminAiKey').value.trim(); storedGeminiKey = key;
             await db.collection("adminSettings").doc("branding").set({ geminiKey: key }, { merge: true });
-            
-            const msg = document.getElementById('aiKeyMsg');
-            msg.innerText = "AI API Key Saved Successfully!";
-            msg.style.display = 'block';
-            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+            const msg = document.getElementById('aiKeyMsg'); msg.innerText = "AI API Key Saved Successfully!";
+            msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000);
         }
 
         // --- ANTI-REFRESH PROTECTION ---
-        window.addEventListener('beforeunload', function (e) {
-            if (isTestActive) {
-                e.preventDefault();
-                e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.';
-            }
-        });
+        window.addEventListener('beforeunload', function (e) { if (isTestActive) { e.preventDefault(); e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.'; } });
 
         // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
-        const MAX_FAILED_ATTEMPTS = 5;
-        const LOCKOUT_DURATION_MS = 12 * 60 * 60 * 1000;
+        const MAX_FAILED_ATTEMPTS = 5; const LOCKOUT_DURATION_MS = 12 * 60 * 60 * 1000;
 
         function checkDeviceLockout() {
-            const lockoutDataStr = localStorage.getItem('deviceLockoutData');
-            if (!lockoutDataStr) return false;
-            const lockoutData = JSON.parse(lockoutDataStr);
-            const now = new Date().getTime();
+            const lockoutDataStr = localStorage.getItem('deviceLockoutData'); if (!lockoutDataStr) return false;
+            const lockoutData = JSON.parse(lockoutDataStr); const now = new Date().getTime();
             if (now - lockoutData.firstAttempt > LOCKOUT_DURATION_MS) { localStorage.removeItem('deviceLockoutData'); return false; }
             if (lockoutData.attempts >= MAX_FAILED_ATTEMPTS) {
                 const hoursLeft = Math.ceil((LOCKOUT_DURATION_MS - (now - lockoutData.firstAttempt)) / (60 * 60 * 1000));
-                document.getElementById('lockout-warning').style.display = 'block';
-                document.getElementById('lockout-warning').innerText = `Device Locked. Try again in ${hoursLeft} hours.`;
-                document.getElementById('login-submit-btn').disabled = true;
-                return true;
+                document.getElementById('lockout-warning').style.display = 'block'; document.getElementById('lockout-warning').innerText = `Device Locked. Try again in ${hoursLeft} hours.`;
+                document.getElementById('login-submit-btn').disabled = true; return true;
             }
             return false;
         }
 
         function recordFailedAttempt() {
-            const lockoutDataStr = localStorage.getItem('deviceLockoutData');
-            const now = new Date().getTime();
+            const lockoutDataStr = localStorage.getItem('deviceLockoutData'); const now = new Date().getTime();
             let lockoutData = { attempts: 0, firstAttempt: now };
             if (lockoutDataStr) {
                 lockoutData = JSON.parse(lockoutDataStr);
-                if (now - lockoutData.firstAttempt > LOCKOUT_DURATION_MS) { lockoutData = { attempts: 1, firstAttempt: now }; } 
-                else { lockoutData.attempts += 1; }
+                if (now - lockoutData.firstAttempt > LOCKOUT_DURATION_MS) { lockoutData = { attempts: 1, firstAttempt: now }; } else { lockoutData.attempts += 1; }
             } else { lockoutData.attempts = 1; }
             localStorage.setItem('deviceLockoutData', JSON.stringify(lockoutData));
             if (lockoutData.attempts >= MAX_FAILED_ATTEMPTS) { checkDeviceLockout(); } 
             else { alert(`Invalid Credentials. You have ${MAX_FAILED_ATTEMPTS - lockoutData.attempts} attempts remaining before a 12-hour device lockout.`); }
         }
 
-        function clearLockoutOnSuccess() {
-            localStorage.removeItem('deviceLockoutData');
-            document.getElementById('lockout-warning').style.display = 'none';
-            document.getElementById('login-submit-btn').disabled = false;
-        }
-
+        function clearLockoutOnSuccess() { localStorage.removeItem('deviceLockoutData'); document.getElementById('lockout-warning').style.display = 'none'; document.getElementById('login-submit-btn').disabled = false; }
         window.onload = checkDeviceLockout;
-                // --- FORGOT PASSWORD MODAL LOGIC ---
-        function toggleForgotPassVisibility() {
-            const role = document.getElementById('login-role').value;
-            const forgotContainer = document.getElementById('forgot-pass-container');
-            if(role === 'student') { forgotContainer.style.display = 'block'; } 
-            else { forgotContainer.style.display = 'none'; }
-        }
-
+        
+        // --- FORGOT PASSWORD MODAL LOGIC ---
+        function toggleForgotPassVisibility() { const role = document.getElementById('login-role').value; const forgotContainer = document.getElementById('forgot-pass-container'); forgotContainer.style.display = role === 'student' ? 'block' : 'none'; }
         function openForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'flex'; }
         function closeForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'none'; }
         function closeDonePopup() { document.getElementById('done-popup-modal').style.display = 'none'; }
 
         function requestPasswordReset() {
-            const phone = document.getElementById('forgot-pass-phone').value.trim();
-            if(phone.length < 4) return alert("Please enter a valid phone number.");
-            
+            const phone = document.getElementById('forgot-pass-phone').value.trim(); if(phone.length < 4) return alert("Please enter a valid phone number.");
             const email = formatIDAsEmail(phone);
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    closeForgotPassModal();
-                    document.getElementById('done-popup-modal').style.display = 'flex';
-                    document.getElementById('forgot-pass-phone').value = '';
-                })
-                .catch((error) => {
-                    if(error.code === 'auth/user-not-found') { alert("No account found with this number."); } 
-                    else { alert("Error: " + error.message); }
-                });
+            auth.sendPasswordResetEmail(email).then(() => { closeForgotPassModal(); document.getElementById('done-popup-modal').style.display = 'flex'; document.getElementById('forgot-pass-phone').value = ''; })
+                .catch((error) => { alert(error.code === 'auth/user-not-found' ? "No account found with this number." : "Error: " + error.message); });
         }
         
         function toggleAuthForm(type) {
@@ -1196,156 +1136,96 @@
 
         // --- NAVIGATION ---
         function navigate(viewId, pushState = true) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            
-            const showNav = (viewId === 'view-login') ? 'none' : 'block';
-            document.getElementById('logout-btn').style.display = showNav;
-
-            if (pushState) {
-                window.history.pushState({ view: viewId }, "", `#${viewId}`);
-                if(viewId === 'view-admin') openAdminSec('admin-main-menu', false);
-                if(viewId === 'view-student') openStudentSec('student-main-menu', false);
-            }
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active');
+            document.getElementById('logout-btn').style.display = (viewId === 'view-login') ? 'none' : 'block';
+            if (pushState) { window.history.pushState({ view: viewId }, "", `#${viewId}`); if(viewId === 'view-admin') openAdminSec('admin-main-menu', false); if(viewId === 'view-student') openStudentSec('student-main-menu', false); }
             if (viewId === 'view-login') { checkDeviceLockout(); toggleAuthForm('login'); toggleForgotPassVisibility(); }
         }
 
-        function openAdminSec(secId, pushState = true) {
-            document.querySelectorAll('#view-admin .sub-sec').forEach(s => s.classList.remove('active'));
-            document.getElementById(secId).classList.add('active');
-            if (pushState) window.history.pushState({ view: 'view-admin', sec: secId }, "", `#${secId}`);
-        }
-
-        function openStudentSec(secId, pushState = true) {
-            document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active'));
-            document.getElementById(secId).classList.add('active');
-            if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`);
-        }
+        function openAdminSec(secId, pushState = true) { document.querySelectorAll('#view-admin .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-admin', sec: secId }, "", `#${secId}`); }
+        function openStudentSec(secId, pushState = true) { document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); }
 
         window.onpopstate = function(event) {
-            if (event.state) {
-                navigate(event.state.view, false);
-                if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false);
-                else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false);
-            } else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
+            if (event.state) { navigate(event.state.view, false); if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); } 
+            else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
         };
 
         // --- AUTH LOGIC ---
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
 
         async function updateAdminCreds() {
-            const newId = document.getElementById('new-admin-id').value.trim();
-            const newPass = document.getElementById('new-admin-pass').value.trim();
-            if(!newId || !newPass) return alert("Please fill both fields.");
-            if(newPass.length < 6) return alert("Password must be at least 6 characters.");
-            try { await db.collection('adminSettings').doc('credentials').set({ id: newId, pass: newPass }); } 
-            catch(e) { localStorage.setItem('adminCustomId', newId); localStorage.setItem('adminCustomPass', newPass); }
+            const newId = document.getElementById('new-admin-id').value.trim(); const newPass = document.getElementById('new-admin-pass').value.trim();
+            if(!newId || !newPass) return alert("Please fill both fields."); if(newPass.length < 6) return alert("Password must be at least 6 characters.");
+            try { await db.collection('adminSettings').doc('credentials').set({ id: newId, pass: newPass }); } catch(e) { localStorage.setItem('adminCustomId', newId); localStorage.setItem('adminCustomPass', newPass); }
             alert("Admin Credentials Updated! Please log in again."); logout();
         }
 
         function updateStudentPassword() {
-            const newPass = document.getElementById('new-student-pass').value;
-            if(newPass.length < 6) return alert("Password must be at least 6 characters.");
+            const newPass = document.getElementById('new-student-pass').value; if(newPass.length < 6) return alert("Password must be at least 6 characters.");
             const user = firebase.auth().currentUser;
             if(user) { user.updatePassword(newPass).then(() => { alert("Password updated successfully!"); document.getElementById('new-student-pass').value = ''; openStudentSec('student-main-menu'); }).catch(e => { alert(e.message); }); }
         }
 
         function registerStudent() {
-            const fullName = document.getElementById('reg-name').value.trim();
-            const phoneId = document.getElementById('reg-phone').value.trim();
-            const pass = document.getElementById('reg-password').value;
-            
-            if(!fullName) return alert("Please enter your full name.");
-            if(phoneId.length < 4 || pass.length < 6) return alert("Check inputs. Password min 6 chars.");
-            
+            const fullName = document.getElementById('reg-name').value.trim(); const phoneId = document.getElementById('reg-phone').value.trim(); const pass = document.getElementById('reg-password').value;
+            if(!fullName) return alert("Please enter your full name."); if(phoneId.length < 4 || pass.length < 6) return alert("Check inputs. Password min 6 chars.");
             auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
-                .then((userCred) => {
-                    db.collection("users").doc(userCred.user.uid).set({ fullName: fullName, phone: phoneId, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    currentUserRole = 'student'; 
-                    navigate('view-student'); 
-                    loadStudentData();
-                    loadStudentPopup(); // Trigger popup on new registration
-                }).catch(e => { alert("Error: " + e.message); });
+                .then((userCred) => { db.collection("users").doc(userCred.user.uid).set({ fullName: fullName, phone: phoneId, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); currentUserRole = 'student'; navigate('view-student'); loadStudentData(); loadStudentPopup(); })
+                .catch(e => { alert("Error: " + e.message); });
         }
 
         async function login() {
             if (checkDeviceLockout()) return;
-            const role = document.getElementById('login-role').value;
-            const idInput = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-password').value;
-
+            const role = document.getElementById('login-role').value; const idInput = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-password').value;
             if (role === 'admin') {
                 let validId = '9992774574'; let validPass = 'Sachin@123';
                 if(localStorage.getItem('adminCustomId')) { validId = localStorage.getItem('adminCustomId'); validPass = localStorage.getItem('adminCustomPass'); }
                 try { const doc = await db.collection('adminSettings').doc('credentials').get(); if(doc.exists) { validId = doc.data().id; validPass = doc.data().pass; } } catch(e) {}
-                if (idInput === validId && pass === validPass) { 
-                    clearLockoutOnSuccess(); currentUserRole = 'admin'; localStorage.setItem('adminSession', 'active');
-                    navigate('view-admin'); loadAdminData(); 
-                } else { recordFailedAttempt(); }
+                if (idInput === validId && pass === validPass) { clearLockoutOnSuccess(); currentUserRole = 'admin'; localStorage.setItem('adminSession', 'active'); navigate('view-admin'); loadAdminData(); } 
+                else { recordFailedAttempt(); }
             } else {
-                auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass).then(() => { 
-                    clearLockoutOnSuccess(); currentUserRole = 'student'; 
-                    navigate('view-student'); 
-                    loadStudentData();
-                    loadStudentPopup(); // Trigger popup on login
-                }).catch(e => { recordFailedAttempt(); });
+                auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass).then(() => { clearLockoutOnSuccess(); currentUserRole = 'student'; navigate('view-student'); loadStudentData(); loadStudentPopup(); }).catch(e => { recordFailedAttempt(); });
             }
         }
 
-        function logout() { 
-            localStorage.removeItem('adminSession'); 
-            sessionStorage.removeItem('popupShown'); // Reset popup for next login
-            auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); 
-        }
-
-        // --- ADMIN: MANAGE STUDENTS LOGIC ---
+        function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
+                // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
-                let tbody = document.getElementById('admin-students-list');
-                if(!tbody) return;
+                let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
                 tbody.innerHTML = '';
                 if(s.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No students found.</td></tr>'; return; }
                 
                 s.forEach(doc => {
-                    let user = doc.data();
-                    let dateJoined = user.createdAt ? new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
+                    let user = doc.data(); let dateJoined = user.createdAt ? new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
                     tbody.innerHTML += `
                         <tr>
                             <td style="font-weight: 500; color: var(--primary);">${user.fullName || 'N/A'}</td>
-                            <td>${user.phone || 'N/A'}</td>
-                            <td>${dateJoined}</td>
+                            <td>${user.phone || 'N/A'}</td><td>${dateJoined}</td>
                             <td style="text-align: right;">
                                 <button class="btn-outline" style="padding: 6px 12px; font-size: 0.85rem; margin-right: 5px;" onclick="viewStudentAttempts('${doc.id}', '${user.fullName || 'Student'}')">📊 Records</button>
                                 <button class="btn-danger" style="padding: 6px 12px; font-size: 0.85rem; width: auto;" onclick="deleteStudentAccount('${doc.id}')">🗑 Delete</button>
                             </td>
-                        </tr>
-                    `;
+                        </tr>`;
                 });
             });
         }
 
         function viewStudentAttempts(uid, name) {
-            document.getElementById('view-student-name').innerText = `Records for ${name}`;
-            openAdminSec('admin-sec-student-records');
-            
+            document.getElementById('view-student-name').innerText = `Records for ${name}`; openAdminSec('admin-sec-student-records');
             db.collection("attempts").where("userId", "==", uid).orderBy("timestamp", "desc").onSnapshot(s => {
-                let container = document.getElementById('admin-student-specific-attempts');
-                container.innerHTML = '';
+                let container = document.getElementById('admin-student-specific-attempts'); container.innerHTML = '';
                 if(s.empty) { container.innerHTML = '<p style="padding: 20px; color: var(--text-muted); grid-column: 1 / -1;">No test attempts found for this student.</p>'; return; }
-                
                 s.forEach(d => {
-                    let a = d.data();
-                    let date = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleString() : 'N/A';
+                    let a = d.data(); let date = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleString() : 'N/A';
                     container.innerHTML += `
                         <div class="action-box" style="border-left: 4px solid var(--success); margin-bottom: 0;">
                             <h4 style="margin-bottom: 5px;">${a.testTitle}</h4>
                             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Attempted on: ${date}</p>
                             <div style="background: #f0fdf4; padding: 10px; border-radius: 8px; color: #166534; font-weight: bold; display: flex; justify-content: space-between;">
-                                <span>Score: ${a.score} / ${a.totalMarks}</span>
-                                <span>🎯 ${a.correct} Correct</span>
+                                <span>Score: ${a.score} / ${a.totalMarks}</span><span>🎯 ${a.correct} Correct</span>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             });
         }
@@ -1355,9 +1235,7 @@
                 try {
                     await db.collection("users").doc(uid).delete();
                     const attemptsSnap = await db.collection("attempts").where("userId", "==", uid).get();
-                    const batch = db.batch();
-                    attemptsSnap.forEach(doc => batch.delete(doc.ref));
-                    await batch.commit();
+                    const batch = db.batch(); attemptsSnap.forEach(doc => batch.delete(doc.ref)); await batch.commit();
                     alert("Student profile and records deleted successfully.");
                 } catch (error) { alert("Error deleting student: " + error.message); }
             }
@@ -1365,91 +1243,64 @@
 
         // --- ADMIN: TEST SETTINGS & MANAGEMENT ---
         async function openEditModal(testId) {
-            const doc = await db.collection("tests").doc(testId).get();
-            if(!doc.exists) return;
-            const test = doc.data();
-            document.getElementById('edit-test-id').value = testId;
-            document.getElementById('edit-title').value = test.title || '';
-            document.getElementById('edit-timer').value = Math.floor((test.duration || 0) / 60);
-            document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
-            document.getElementById('edit-negative').value = test.negativeMarks || 0;
-            document.getElementById('edit-modal').style.display = 'flex';
+            const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return;
+            const test = doc.data(); document.getElementById('edit-test-id').value = testId; document.getElementById('edit-title').value = test.title || '';
+            document.getElementById('edit-timer').value = Math.floor((test.duration || 0) / 60); document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
+            document.getElementById('edit-negative').value = test.negativeMarks || 0; document.getElementById('edit-modal').style.display = 'flex';
         }
 
         function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
 
         async function saveTestEdit() {
-            const testId = document.getElementById('edit-test-id').value;
-            const newTitle = document.getElementById('edit-title').value.trim();
-            const newDuration = parseInt(document.getElementById('edit-timer').value) * 60;
-            const newMarks = parseFloat(document.getElementById('edit-marks').value);
+            const testId = document.getElementById('edit-test-id').value; const newTitle = document.getElementById('edit-title').value.trim();
+            const newDuration = parseInt(document.getElementById('edit-timer').value) * 60; const newMarks = parseFloat(document.getElementById('edit-marks').value);
             const newNegative = parseFloat(document.getElementById('edit-negative').value);
-
             if(!newTitle) return alert("Test title cannot be empty!");
-
-            try {
-                await db.collection("tests").doc(testId).update({ title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative });
-                alert("Test settings saved successfully!");
-                closeEditModal();
-            } catch(e) { alert("Error saving test settings: " + e.message); }
+            try { await db.collection("tests").doc(testId).update({ title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative }); alert("Test settings saved successfully!"); closeEditModal(); } 
+            catch(e) { alert("Error saving test settings: " + e.message); }
         }
 
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
         
-        // --- UPDATED BANNER LOGIC (With Color & Font) ---
+        // --- UPDATED BANNER LOGIC (With Fast Blob Upload) ---
         async function addBanner() {
-            const customTitle = document.getElementById('banner-custom-title').value.trim();
-            const testSelect = document.getElementById('banner-test-select');
-            const fileInput = document.getElementById('banner-file-upload');
-            const urlInput = document.getElementById('banner-image-url').value.trim();
-            const textColor = document.getElementById('banner-text-color').value;
-            const textFont = document.getElementById('banner-text-font').value;
+            const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
+            const fileInput = document.getElementById('banner-file-upload'); const urlInput = document.getElementById('banner-image-url').value.trim();
+            const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
             const file = fileInput.files[0];
             
-            if(!customTitle) return alert("Please enter a stylish banner name.");
-            if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
+            if(!customTitle) return alert("Please enter a stylish banner name."); if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
             if(!file && !urlInput) return alert("You must either upload an image file or paste an image URL.");
             
-            const btn = document.getElementById('btn-publish-banner');
-            btn.disabled = true; btn.innerText = "⏳ Publishing Banner... Please wait";
+            const btn = document.getElementById('btn-publish-banner'); btn.disabled = true; btn.innerText = "⏳ Publishing Banner... Please wait";
             let finalImageUrl = urlInput; 
             
             try {
                 if(file) {
-                    // Smart Adjust image size to 800x400 for quick loading banners
-                    const base64Data = await new Promise((resolve) => smartAdjustImage(file, 800, 400, resolve));
-                    const response = await fetch(base64Data);
-                    const blob = await response.blob();
-
+                    // Uses the highly efficient Blob upload to prevent crashing
+                    const imageResult = await smartAdjustImage(file, 800, 400);
                     const storageRef = storage.ref(`banners/${Date.now()}_banner.jpg`);
-                    await storageRef.put(blob);
+                    await storageRef.put(imageResult.blob);
                     finalImageUrl = await storageRef.getDownloadURL();
                 }
                 
                 await db.collection("banners").add({
-                    testId: testSelect.value, 
-                    testName: testSelect.options[testSelect.selectedIndex].text,
-                    customTitle: customTitle,
-                    imageUrl: finalImageUrl, 
-                    textColor: textColor,
-                    textFont: textFont,
+                    testId: testSelect.value, testName: testSelect.options[testSelect.selectedIndex].text,
+                    customTitle: customTitle, imageUrl: finalImageUrl, textColor: textColor, textFont: textFont,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                document.getElementById('banner-custom-title').value = '';
-                document.getElementById('banner-image-url').value = ''; 
-                document.getElementById('banner-file-upload').value = '';
+                document.getElementById('banner-custom-title').value = ''; document.getElementById('banner-image-url').value = ''; document.getElementById('banner-file-upload').value = '';
                 alert("Banner successfully published!");
             } catch (error) { alert("Error publishing banner: " + error.message); } 
             finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
         }
 
         async function deleteBanner(id) { if(confirm("Are you sure you want to remove this banner?")) { await db.collection("banners").doc(id).delete(); } }
-
         async function deleteTest(tid) { if(confirm("Are you sure you want to completely delete this test?")) { try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); } } }
-                function loadAdminData() { 
-            loadAdminStudents();
 
+        function loadAdminData() { 
+            loadAdminStudents();
             db.collection("groups").onSnapshot(s=>{ 
                 let l=document.getElementById('admin-group-list'), sel=document.querySelectorAll('.group-select'); 
                 l.innerHTML=''; sel.forEach(x=>x.innerHTML='<option value="">Select Group...</option>'); 
@@ -1460,19 +1311,13 @@
                 }); 
             }); 
             
-            // Populating Test Selection for Banners
             db.collection("tests").onSnapshot(s=>{ 
                 let c=document.getElementById('test-list-container'); c.innerHTML=''; 
-                let bannerTestSel = document.getElementById('banner-test-select');
-                if(bannerTestSel) bannerTestSel.innerHTML = '<option value="">Select Specific Test...</option>';
+                let bannerTestSel = document.getElementById('banner-test-select'); if(bannerTestSel) bannerTestSel.innerHTML = '<option value="">Select Specific Test...</option>';
                 allTestsCache = []; 
                 s.forEach(d=>{ 
-                    let t=d.data(); 
-                    allTestsCache.push({ id: d.id, ...t });
-                    
-                    // Add tests to banner dropdown
+                    let t=d.data(); allTestsCache.push({ id: d.id, ...t });
                     if(bannerTestSel) bannerTestSel.innerHTML += `<option value="${d.id}">${t.title}</option>`;
-                    
                     c.innerHTML+=`
                     <div class="action-box">
                         <h4 style="margin-bottom:5px; color: var(--primary);">${t.title}</h4>
@@ -1488,21 +1333,14 @@
             
             db.collection("banners").onSnapshot(s => {
                 let l = document.getElementById('admin-banner-list'); if(!l) return;
-                l.innerHTML = '';
-                if(s.empty) l.innerHTML = '<p style="color: gray;">No active banners.</p>';
+                l.innerHTML = ''; if(s.empty) l.innerHTML = '<p style="color: gray;">No active banners.</p>';
                 s.forEach(d => {
-                    let b = d.data();
-                    let colorStyle = b.textColor ? `color: ${b.textColor};` : '';
-                    let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
-                    
+                    let b = d.data(); let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
                     l.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
                         <div style="display:flex; align-items:center; gap:15px;">
                             <img src="${b.imageUrl}" style="width:60px; height:40px; object-fit:cover; border-radius:4px; border: 1px solid #cbd5e1;">
-                            <div style="display:flex; flex-direction:column;">
-                                <span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span>
-                                <span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'}</span>
-                            </div>
+                            <div style="display:flex; flex-direction:column;"><span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span><span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'}</span></div>
                         </div>
                         <button class="btn-danger" style="width:auto; padding:5px 12px; font-size: 0.9rem;" onclick="deleteBanner('${d.id}')">🗑 Remove</button>
                     </div>`;
@@ -1511,141 +1349,80 @@
 
             db.collection("attempts").orderBy("timestamp","desc").limit(30).onSnapshot(s=>{ 
                 let c=document.getElementById('admin-attempts-list'); c.innerHTML=''; 
-                s.forEach(d=>{ 
-                    let a=d.data(); 
-                    c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; 
-                }); 
+                s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; }); 
             }); 
         }
 
         // --- AI QUESTION EDITOR & TEST CREATION ---
         async function createNewTest() {
-            const name = document.getElementById('newTestName').value.trim();
-            const group = document.getElementById('newTestGroup').value;
-            const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
-            
+            const name = document.getElementById('newTestName').value.trim(); const group = document.getElementById('newTestGroup').value; const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
             if (!name || !group) return alert("Please provide a test name and select a group.");
-
             try {
-                const docRef = await db.collection("tests").add({
-                    title: name,
-                    groupId: group,
-                    duration: timer * 60,
-                    marksPerQuestion: 2,
-                    negativeMarks: 0,
-                    questions: [],
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                document.getElementById('newTestName').value = '';
-                document.getElementById('newTestTimer').value = '';
-                openTestEditor(docRef.id, name);
+                const docRef = await db.collection("tests").add({ title: name, groupId: group, duration: timer * 60, marksPerQuestion: 2, negativeMarks: 0, questions: [], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                document.getElementById('newTestName').value = ''; document.getElementById('newTestTimer').value = ''; openTestEditor(docRef.id, name);
             } catch (error) { alert("Error creating test: " + error.message); }
         }
 
         async function openTestEditor(testId, testTitle) {
-            activeAdminTestId = testId;
-            document.getElementById('editingTestTitle').innerText = `Adding Questions to: ${testTitle}`;
-            
-            const doc = await db.collection("tests").doc(testId).get();
-            localQuestionsBuffer = doc.exists && doc.data().questions ? doc.data().questions : [];
-            
-            cancelQuestionEdit();
-            renderAdminQuestionList();
-            openAdminSec('admin-sec-question-editor');
+            activeAdminTestId = testId; document.getElementById('editingTestTitle').innerText = `Adding Questions to: ${testTitle}`;
+            const doc = await db.collection("tests").doc(testId).get(); localQuestionsBuffer = doc.exists && doc.data().questions ? doc.data().questions : [];
+            cancelQuestionEdit(); renderAdminQuestionList(); openAdminSec('admin-sec-question-editor');
         }
 
-        async function updateTestQuestionsInDb() {
-            try { await db.collection("tests").doc(activeAdminTestId).update({ questions: localQuestionsBuffer }); } 
-            catch (e) { alert("Failed to save to cloud: " + e.message); }
-        }
+        async function updateTestQuestionsInDb() { try { await db.collection("tests").doc(activeAdminTestId).update({ questions: localQuestionsBuffer }); } catch (e) { alert("Failed to save to cloud: " + e.message); } }
 
         function renderAdminQuestionList() { 
             const div = document.getElementById('adminExistingQuestionsList'); div.innerHTML=''; 
             if(localQuestionsBuffer.length === 0) { div.innerHTML = '<p style="color:var(--text-muted);">No questions added yet.</p>'; return; }
-
             localQuestionsBuffer.forEach((q,i) => { 
                 div.innerHTML += `
                 <div class="list-item">
                     <div><strong>Q${i+1}:</strong> ${(q.questionEng || q.questionHin || '').substring(0,40)}...</div>
-                    <div class="action-buttons">
-                        <button class="btn-outline" onclick="editQuestion(${i})">Edit</button>
-                        <button class="btn-danger" onclick="deleteQuestion(${i})">Del</button>
-                    </div>
+                    <div class="action-buttons"><button class="btn-outline" onclick="editQuestion(${i})">Edit</button><button class="btn-danger" onclick="deleteQuestion(${i})">Del</button></div>
                 </div>`; 
             }); 
         }
 
         function editQuestion(i) { 
             const q = localQuestionsBuffer[i]; 
-            document.getElementById('qTextEn').value = q.questionEng || ''; 
-            document.getElementById('qTextHi').value = q.questionHin || ''; 
-            for(let j=0; j<4; j++){ 
-                document.getElementById(`opt${j}En`).value = (q.optionsEng && q.optionsEng[j]) ? q.optionsEng[j] : ''; 
-                document.getElementById(`opt${j}Hi`).value = (q.optionsHin && q.optionsHin[j]) ? q.optionsHin[j] : ''; 
-            } 
+            document.getElementById('qTextEn').value = q.questionEng || ''; document.getElementById('qTextHi').value = q.questionHin || ''; 
+            for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value = (q.optionsEng && q.optionsEng[j]) ? q.optionsEng[j] : ''; document.getElementById(`opt${j}Hi`).value = (q.optionsHin && q.optionsHin[j]) ? q.optionsHin[j] : ''; } 
             document.getElementById('correctAnswer').value = q.correctIndex || 0; 
-            if(q.imageUrl){ 
-                document.getElementById('qImageBase64').value = q.imageUrl; 
-                document.getElementById('imagePreview').src = q.imageUrl; 
-                document.getElementById('imagePreview').classList.remove('hidden'); 
-            } else { resetImageUpload(); } 
-            
-            editingQuestionIndex = i; 
-            document.getElementById('saveQuestionBtn').innerText="Update"; 
-            document.getElementById('cancelEditBtn').classList.remove('hidden'); 
-            document.getElementById('admin-sec-question-editor').scrollIntoView();
+            if(q.imageUrl){ document.getElementById('qImageBase64').value = q.imageUrl; document.getElementById('imagePreview').src = q.imageUrl; document.getElementById('imagePreview').classList.remove('hidden'); } else { resetImageUpload(); } 
+            editingQuestionIndex = i; document.getElementById('saveQuestionBtn').innerText="Update"; document.getElementById('cancelEditBtn').classList.remove('hidden'); document.getElementById('admin-sec-question-editor').scrollIntoView();
         }
 
         function cancelQuestionEdit() { 
-            editingQuestionIndex = null; 
-            document.getElementById('saveQuestionBtn').innerText="Save Question"; 
-            document.getElementById('cancelEditBtn').classList.add('hidden'); 
+            editingQuestionIndex = null; document.getElementById('saveQuestionBtn').innerText="Save Question"; document.getElementById('cancelEditBtn').classList.add('hidden'); 
             document.getElementById('qTextEn').value=''; document.getElementById('qTextHi').value=''; 
             for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value=''; document.getElementById(`opt${j}Hi`).value=''; } 
-            document.getElementById('correctAnswer').value='0'; 
-            resetImageUpload(); 
+            document.getElementById('correctAnswer').value='0'; resetImageUpload(); 
         }
 
         // --- QUESTION IMAGE SMART UPLOAD ---
-        document.getElementById('qImageUpload').addEventListener('change', function(e) {
+        document.getElementById('qImageUpload').addEventListener('change', async function(e) {
             const file = e.target.files[0]; if (!file) return;
-            // Uses our new Smart Adjuster: Max 800px width for fast loading, keeps aspect ratio
-            smartAdjustImage(file, 800, 800, function(dataUrl) {
-                document.getElementById('qImageBase64').value = dataUrl; 
-                document.getElementById('imagePreview').src = dataUrl; 
-                document.getElementById('imagePreview').classList.remove('hidden');
-            });
+            const imageResult = await smartAdjustImage(file, 800, 800);
+            document.getElementById('qImageBase64').value = imageResult.base64; 
+            document.getElementById('imagePreview').src = imageResult.base64; 
+            document.getElementById('imagePreview').classList.remove('hidden');
         });
 
         function resetImageUpload() { document.getElementById('qImageUpload').value=""; document.getElementById('qImageBase64').value=""; document.getElementById('imagePreview').classList.add('hidden'); }
 
         async function addQuestionToTest() { 
-            const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; 
-            const optsEn=[], optsHi=[]; 
+            const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; const optsEn=[], optsHi=[]; 
             for(let i=0;i<4;i++) { optsEn.push(document.getElementById(`opt${i}En`).value); optsHi.push(document.getElementById(`opt${i}Hi`).value); } 
-            
             if(!qEn && !qHi) return alert("Fill at least one question field."); 
             
-            const obj = { 
-                questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, 
-                correctIndex: parseInt(document.getElementById('correctAnswer').value), 
-                imageUrl: document.getElementById('qImageBase64').value, subject: "General", explanationEng: "", explanationHin: ""
-            }; 
+            const obj = { questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, correctIndex: parseInt(document.getElementById('correctAnswer').value), imageUrl: document.getElementById('qImageBase64').value, subject: "General", explanationEng: "", explanationHin: "" }; 
+            if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; else localQuestionsBuffer.push(obj); 
             
-            if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; 
-            else localQuestionsBuffer.push(obj); 
-            
-            await updateTestQuestionsInDb();
-            renderAdminQuestionList(); cancelQuestionEdit(); 
-            
-            const msg = document.getElementById('adminMessage'); msg.innerText = "Question Saved successfully!";
-            msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 3000);
+            await updateTestQuestionsInDb(); renderAdminQuestionList(); cancelQuestionEdit(); 
+            const msg = document.getElementById('adminMessage'); msg.innerText = "Question Saved successfully!"; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 3000);
         }
 
-        async function deleteQuestion(i) { 
-            if(confirm("Delete this question?")) { localQuestionsBuffer.splice(i,1); await updateTestQuestionsInDb(); renderAdminQuestionList(); }
-        }
+        async function deleteQuestion(i) { if(confirm("Delete this question?")) { localQuestionsBuffer.splice(i,1); await updateTestQuestionsInDb(); renderAdminQuestionList(); } }
 
         function checkIfLanguageSubject(text) { const t = text.toLowerCase(); return t.includes('english grammar') || t.includes('hindi grammar') || t.includes('hindi sahitya') || t.includes('english literature'); }
 
@@ -1658,8 +1435,7 @@
             
             errorMsg.style.display = 'none'; generateBtn.innerText = `Generating ${count}...`; generateBtn.disabled = true;
 
-            const isLangSubject = checkIfLanguageSubject(topic);
-            let promptText = "";
+            const isLangSubject = checkIfLanguageSubject(topic); let promptText = "";
             if(isLangSubject) { promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. Since this is a language subject, keep the question and options in their native language (do not translate). Map the text to BOTH English and Hindi fields identically. Return ONLY a valid JSON ARRAY. Structure: [{"questionEng":"...","questionHin":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"..."}]`; } 
             else { promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. You MUST provide the question, options, and explanation in BOTH English and Hindi. Return ONLY a valid JSON ARRAY. Structure: [{"questionEng":"[English Text]","questionHin":"[Hindi Translation]","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"..."}]`; }
 
@@ -1668,9 +1444,7 @@
                 if (!response.ok) throw new Error(`Google API Error`);
                 const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
                 
-                parsedQuestions.forEach(qData => { 
-                    localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, imageUrl: "", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20) }); 
-                });
+                parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, imageUrl: "", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20) }); });
                 await updateTestQuestionsInDb(); renderAdminQuestionList(); 
                 const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Added ${parsedQuestions.length} bilingual questions!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000); topicInput.value = '';
             } catch (error) { errorMsg.innerText = "Error: " + error.message; errorMsg.style.display = 'block'; } finally { generateBtn.innerText = "Bulk Generate"; generateBtn.disabled = false; }
@@ -1681,14 +1455,12 @@
             if (!storedGeminiKey) { msgBox.innerText = "Configure API Key in Settings first."; msgBox.style.color = "var(--danger)"; msgBox.style.display = 'block'; return; }
             if (!fileInput.files || fileInput.files.length === 0) { msgBox.innerText = "Select a PDF."; msgBox.style.color = "var(--danger)"; msgBox.style.display = 'block'; return; }
             
-            const currentTest = allTestsCache.find(t => t.id === activeAdminTestId);
-            const isLangSubject = checkIfLanguageSubject(currentTest ? currentTest.title : "");
+            const currentTest = allTestsCache.find(t => t.id === activeAdminTestId); const isLangSubject = checkIfLanguageSubject(currentTest ? currentTest.title : "");
             const file = fileInput.files[0]; msgBox.style.color = "var(--primary)"; msgBox.innerText = "Reading & Translating PDF..."; msgBox.style.display = 'block'; extractBtn.disabled = true; extractBtn.innerText = "Extracting...";
             
             const reader = new FileReader();
             reader.onload = async function(e) {
-                const base64String = e.target.result.split(',')[1];
-                let promptText = "";
+                const base64String = e.target.result.split(',')[1]; let promptText = "";
                 if(isLangSubject) { promptText = `Extract ALL multiple-choice questions from this PDF. Do NOT translate the text. Put the exact extracted text into BOTH Eng and Hin fields. Deduce correctIndex if answer key is present, else 0. Return ONLY JSON ARRAY: [{"questionEng":"...","questionHin":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"","explanationHin":""}]`; } 
                 else { promptText = `Extract ALL multiple-choice questions from this PDF. You MUST translate the questions and options so they are in BOTH English and Hindi. Deduce correctIndex if answer key is present, else 0. Return ONLY JSON ARRAY: [{"questionEng":"...","questionHin":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"","explanationHin":""}]`; }
 
@@ -1697,9 +1469,7 @@
                     if (!response.ok) throw new Error("API Request Failed");
                     const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
                     
-                    parsedQuestions.forEach(qData => { 
-                        localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, imageUrl: "", subject: "Imported PDF", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "" }); 
-                    });
+                    parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, imageUrl: "", subject: "Imported PDF", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "" }); });
                     await updateTestQuestionsInDb(); renderAdminQuestionList(); 
                     msgBox.innerText = `✨ Success! Extracted & Translated ${parsedQuestions.length} questions.`; msgBox.style.color = "var(--success)"; fileInput.value = ""; 
                 } catch (error) { msgBox.innerText = "Error: " + error.message; msgBox.style.color = "var(--danger)"; } finally { extractBtn.innerText = "Extract Questions"; extractBtn.disabled = false; }
@@ -1707,8 +1477,7 @@
         }
 
         function openQuestionBankModal() {
-            const sel = document.getElementById('qbTestFilter');
-            sel.innerHTML = '<option value="all">All Other Tests</option>';
+            const sel = document.getElementById('qbTestFilter'); sel.innerHTML = '<option value="all">All Other Tests</option>';
             allTestsCache.forEach(t => { if (t.id !== activeAdminTestId && t.questions && t.questions.length > 0) { sel.innerHTML += `<option value="${t.id}">${t.title} (${t.questions.length} Qs)</option>`; } });
             renderQuestionBankList(); document.getElementById('questionBankModal').style.display = 'flex';
         }
@@ -1728,21 +1497,17 @@
         }
 
         async function importSelectedQuestions() {
-            const checkboxes = document.querySelectorAll('.qb-checkbox:checked');
-            if (checkboxes.length === 0) return alert("Select at least one question.");
+            const checkboxes = document.querySelectorAll('.qb-checkbox:checked'); if (checkboxes.length === 0) return alert("Select at least one question.");
             let importedCount = 0;
             checkboxes.forEach(cb => {
                 const [tId, qIdxStr] = cb.value.split('_'); const sourceTest = allTestsCache.find(t => t.id === tId);
-                if (sourceTest && sourceTest.questions && sourceTest.questions[parseInt(qIdxStr)]) {
-                    const qCopy = JSON.parse(JSON.stringify(sourceTest.questions[parseInt(qIdxStr)]));
-                    localQuestionsBuffer.push(qCopy); importedCount++;
-                }
+                if (sourceTest && sourceTest.questions && sourceTest.questions[parseInt(qIdxStr)]) { const qCopy = JSON.parse(JSON.stringify(sourceTest.questions[parseInt(qIdxStr)])); localQuestionsBuffer.push(qCopy); importedCount++; }
             });
             await updateTestQuestionsInDb(); renderAdminQuestionList(); closeModals();
             const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Successfully imported ${importedCount} question(s)!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000);
         }
 
-        // --- STUDENT DASHBOARD LOGIC (Updated Banner Dynamic Styling) ---
+        // --- STUDENT DASHBOARD LOGIC ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1755,18 +1520,11 @@
             
             db.collection("banners").onSnapshot(s => {
                 let c = document.getElementById('student-banners'); if(!c) return;
-                c.innerHTML = '';
-                if(s.empty) { c.style.display = 'none'; return; }
+                c.innerHTML = ''; if(s.empty) { c.style.display = 'none'; return; }
                 c.style.display = 'flex';
                 s.forEach(d => {
-                    let b = d.data();
-                    let colorStyle = b.textColor ? `color: ${b.textColor};` : '';
-                    let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
-                    
-                    c.innerHTML += `
-                    <div class="promo-banner" style="background-image: url('${b.imageUrl}')" onclick="startTest('${b.testId}')">
-                        <div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div>
-                    </div>`;
+                    let b = d.data(); let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
+                    c.innerHTML += `<div class="promo-banner" style="background-image: url('${b.imageUrl}')" onclick="startTest('${b.testId}')"><div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div></div>`;
                 });
             });
         }
@@ -1775,116 +1533,62 @@
         function viewGroupTests(gid, gn) { document.getElementById('current-group-title').innerText=gn; db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ let c=document.getElementById('student-test-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No tests found.</p>'; s.forEach(d=>{ let t=d.data(); c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4><p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p><button class="btn-primary" onclick="startTest('${d.id}')">Start Attempt 🚀</button></div>`; }); }); openStudentSec('student-sec-tests-list'); }
         function loadStudentAttempts() { if(!auth.currentUser)return; db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ let c=document.getElementById('student-attempts-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><h4 style="margin-bottom:10px">${a.testTitle}</h4><div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold;">Score: ${a.score}/${a.totalMarks}</div></div>`; }); }); }
         
-        function loadLeaderboardTests() {
-            db.collection("tests").onSnapshot(s => {
-                let sel = document.getElementById('leaderboard-test-select'); if(!sel) return;
-                sel.innerHTML = '<option value="">Select a test to view rankings...</option>';
-                s.forEach(d => { if(d.data().groupId !== 'QUESTION_BANK') { sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`; } });
-            });
-        }
+        function loadLeaderboardTests() { db.collection("tests").onSnapshot(s => { let sel = document.getElementById('leaderboard-test-select'); if(!sel) return; sel.innerHTML = '<option value="">Select a test to view rankings...</option>'; s.forEach(d => { if(d.data().groupId !== 'QUESTION_BANK') { sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`; } }); }); }
 
         async function fetchLeaderboard(tid) {
-            const res = document.getElementById('leaderboard-results');
-            if(!tid) { res.innerHTML = ''; return; }
+            const res = document.getElementById('leaderboard-results'); if(!tid) { res.innerHTML = ''; return; }
             res.innerHTML = '<p>Loading rankings...</p>';
             try {
                 const snapshot = await db.collection("attempts").where("testId", "==", tid).get();
                 if(snapshot.empty) { res.innerHTML = '<p style="color:var(--text-muted); padding:20px;">No attempts for this test yet. Be the first!</p>'; return; }
-                let attempts = [];
-                snapshot.forEach(doc => attempts.push(doc.data()));
-                attempts.sort((a, b) => b.score - a.score);
+                let attempts = []; snapshot.forEach(doc => attempts.push(doc.data())); attempts.sort((a, b) => b.score - a.score);
                 
                 let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
                 attempts.forEach((att, idx) => {
-                    let isMe = (auth.currentUser && att.userId === auth.currentUser.uid);
-                    let rowStyle = isMe ? 'background: #e0e7ff; border-color: var(--primary);' : 'background: #f8fafc; border-color: var(--border-color);';
-                    let phoneStr = att.userIdEmail.split('@')[0];
-                    let maskedPhone = phoneStr.length > 4 ? phoneStr.substring(0, 2) + '******' + phoneStr.substring(phoneStr.length - 2) : phoneStr;
+                    let isMe = (auth.currentUser && att.userId === auth.currentUser.uid); let rowStyle = isMe ? 'background: #e0e7ff; border-color: var(--primary);' : 'background: #f8fafc; border-color: var(--border-color);';
+                    let phoneStr = att.userIdEmail.split('@')[0]; let maskedPhone = phoneStr.length > 4 ? phoneStr.substring(0, 2) + '******' + phoneStr.substring(phoneStr.length - 2) : phoneStr;
                     html += `<div style="display:flex; justify-content:space-between; padding:15px; border:1px solid; border-radius:8px; ${rowStyle}"><div style="font-weight:bold;"><span style="color:var(--primary); margin-right:15px; font-size:1.1rem;">#${idx+1}</span> ${isMe ? 'You ('+phoneStr+')' : 'Student: '+maskedPhone}</div><div style="font-weight:bold; color:var(--success);">Score: ${att.score}</div></div>`;
-                });
-                html += '</div>'; res.innerHTML = html;
+                }); html += '</div>'; res.innerHTML = html;
             } catch(e) { res.innerHTML = '<p style="color:red;">Error loading leaderboard data.</p>'; }
         }
 
         // --- TEST INTERFACE LOGIC ---
-        let testQuestions = [], userAnswers = [], questionStates = []; 
-        let currentLanguage = 'Eng', testMarks = 2, testNegativeMarks = 0, currentQuestionIndex = 0; 
-        let reviewLanguage = 'Eng';
+        let testQuestions = [], userAnswers = [], questionStates = []; let currentLanguage = 'Eng', testMarks = 2, testNegativeMarks = 0, currentQuestionIndex = 0; let reviewLanguage = 'Eng';
 
         async function startTest(testId) {
             const doc = await db.collection("tests").doc(testId).get(); if (!doc.exists) return;
-            currentTest = doc.data(); activeTestId = testId; 
-            testQuestions = currentTest.questions || []; testMarks = currentTest.marksPerQuestion || 2; testNegativeMarks = currentTest.negativeMarks || 0; 
-            
+            currentTest = doc.data(); activeTestId = testId; testQuestions = currentTest.questions || []; testMarks = currentTest.marksPerQuestion || 2; testNegativeMarks = currentTest.negativeMarks || 0; 
             if(testQuestions.length === 0) return alert("This test currently has no questions.");
 
             userAnswers = new Array(testQuestions.length).fill(null); questionStates = new Array(testQuestions.length).fill('unanswered');
-            currentQuestionIndex = 0; timeRemaining = currentTest.duration || 1800;
-            document.getElementById('test-title').innerText = currentTest.title;
+            currentQuestionIndex = 0; timeRemaining = currentTest.duration || 1800; document.getElementById('test-title').innerText = currentTest.title;
             
-            const subjectSet = new Set(testQuestions.map(q => q.subject || 'General'));
-            let tabsHtml = '';
-            Array.from(subjectSet).forEach(sub => {
-                let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub);
-                tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn" style="white-space:nowrap; padding:6px 15px;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`;
-            });
+            const subjectSet = new Set(testQuestions.map(q => q.subject || 'General')); let tabsHtml = '';
+            Array.from(subjectSet).forEach(sub => { let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub); tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn" style="white-space:nowrap; padding:6px 15px;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`; });
             document.getElementById('section-tabs').innerHTML = tabsHtml;
 
-            navigate('view-test'); isTestActive = true; 
-            renderPalette(); renderCurrentQuestion(); startTimer();
+            navigate('view-test'); isTestActive = true; renderPalette(); renderCurrentQuestion(); startTimer();
         }
 
-        function togglePalette() {
-            const panel = document.getElementById('side-palette'); const overlay = document.getElementById('side-overlay');
-            if(panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } 
-            else { panel.classList.add('open'); overlay.style.display = 'block'; }
-        }
-
-        function renderPalette() {
-            const grid = document.getElementById('palette-grid'); grid.innerHTML = '';
-            for(let i = 0; i < testQuestions.length; i++) {
-                let statusClass = questionStates[i] === 'answered' ? 'answered' : (questionStates[i] === 'marked' ? 'marked' : '');
-                grid.innerHTML += `<button class="q-btn ${statusClass} ${i === currentQuestionIndex ? 'active' : ''}" id="p-btn-${i}" onclick="jumpToQuestion(${i})">${i + 1}</button>`;
-            }
-        }
-
-        function updatePaletteButton(index) {
-            const btn = document.getElementById(`p-btn-${index}`); if(!btn) return;
-            btn.className = `q-btn ${index === currentQuestionIndex ? 'active' : ''}`;
-            if(questionStates[index] === 'answered') btn.classList.add('answered');
-            if(questionStates[index] === 'marked') btn.classList.add('marked');
-        }
-
-        function jumpToQuestion(index) {
-            const oldBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(oldBtn) oldBtn.classList.remove('active');
-            currentQuestionIndex = index; renderCurrentQuestion();
-            const newBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(newBtn) newBtn.classList.add('active');
-            if(document.getElementById('side-palette').classList.contains('open')) togglePalette();
-        }
+        function togglePalette() { const panel = document.getElementById('side-palette'); const overlay = document.getElementById('side-overlay'); if(panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } else { panel.classList.add('open'); overlay.style.display = 'block'; } }
+        function renderPalette() { const grid = document.getElementById('palette-grid'); grid.innerHTML = ''; for(let i = 0; i < testQuestions.length; i++) { let statusClass = questionStates[i] === 'answered' ? 'answered' : (questionStates[i] === 'marked' ? 'marked' : ''); grid.innerHTML += `<button class="q-btn ${statusClass} ${i === currentQuestionIndex ? 'active' : ''}" id="p-btn-${i}" onclick="jumpToQuestion(${i})">${i + 1}</button>`; } }
+        function updatePaletteButton(index) { const btn = document.getElementById(`p-btn-${index}`); if(!btn) return; btn.className = `q-btn ${index === currentQuestionIndex ? 'active' : ''}`; if(questionStates[index] === 'answered') btn.classList.add('answered'); if(questionStates[index] === 'marked') btn.classList.add('marked'); }
+        function jumpToQuestion(index) { const oldBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(oldBtn) oldBtn.classList.remove('active'); currentQuestionIndex = index; renderCurrentQuestion(); const newBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(newBtn) newBtn.classList.add('active'); if(document.getElementById('side-palette').classList.contains('open')) togglePalette(); }
 
         function renderCurrentQuestion() {
-            const container = document.getElementById('question-container');
-            const q = testQuestions[currentQuestionIndex]; if(!q) return;
-
+            const container = document.getElementById('question-container'); const q = testQuestions[currentQuestionIndex]; if(!q) return;
             document.querySelectorAll('.section-tab-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--primary)'; });
-            const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`);
-            if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
+            const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
 
             document.getElementById('question-tracker').innerText = `Question ${currentQuestionIndex + 1} of ${testQuestions.length}`;
-            const qText = currentLanguage === 'Eng' ? q.questionEng : q.questionHin;
-            const opts = currentLanguage === 'Eng' ? q.optionsEng : q.optionsHin;
+            const qText = currentLanguage === 'Eng' ? q.questionEng : q.questionHin; const opts = currentLanguage === 'Eng' ? q.optionsEng : q.optionsHin;
             
-            let optionsHTML = '';
-            if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
-
+            let optionsHTML = ''; if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
             let imgHTML = q.imageUrl ? `<img src="${q.imageUrl}" class="auto-adjust-img" style="border: 1px solid var(--border-color); cursor: pointer;" onclick="openLightbox(this.src)">` : '';
             container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || 'Language translation missing'}</h4>${imgHTML}<div class="options">${optionsHTML}</div></div>`;
 
             document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
-            const nextBtn = document.getElementById('btn-next');
-            if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } 
-            else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
-
+            const nextBtn = document.getElementById('btn-next'); if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
             if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
         }
 
@@ -1896,13 +1600,8 @@
         function toggleLanguage() { currentLanguage = currentLanguage === 'Eng' ? 'Hin' : 'Eng'; renderCurrentQuestion(); }
 
         function startTimer() {
-            clearInterval(testTimer);
-            if(timeRemaining <= 0) { document.getElementById('timer').innerText = "No Limit"; return; }
-            testTimer = setInterval(() => {
-                timeRemaining--;
-                document.getElementById('timer').innerText = `${Math.floor(timeRemaining/60).toString().padStart(2,'0')}:${(timeRemaining%60).toString().padStart(2,'0')}`;
-                if (timeRemaining <= 0) { hideSubmitSummary(); hideExitModal(); finalSubmitTest(); }
-            }, 1000);
+            clearInterval(testTimer); if(timeRemaining <= 0) { document.getElementById('timer').innerText = "No Limit"; return; }
+            testTimer = setInterval(() => { timeRemaining--; document.getElementById('timer').innerText = `${Math.floor(timeRemaining/60).toString().padStart(2,'0')}:${(timeRemaining%60).toString().padStart(2,'0')}`; if (timeRemaining <= 0) { hideSubmitSummary(); hideExitModal(); finalSubmitTest(); } }, 1000);
         }
 
         function showExitModal() { document.getElementById('exit-modal').style.display = 'flex'; }
@@ -1910,16 +1609,9 @@
         function confirmPause() { isTestActive = false; clearInterval(testTimer); hideExitModal(); navigate('view-student'); }
 
         function showSubmitSummary() {
-            hideExitModal(); 
-            let answered = 0, unanswered = 0, marked = 0;
-            for(let i = 0; i < testQuestions.length; i++) {
-                if (questionStates[i] === 'marked') marked++;
-                else if (questionStates[i] === 'answered' || userAnswers[i] !== null) answered++;
-                else unanswered++;
-            }
-            document.getElementById('sum-total').innerText = testQuestions.length; document.getElementById('sum-answered').innerText = answered;
-            document.getElementById('sum-unanswered').innerText = unanswered; document.getElementById('sum-marked').innerText = marked;
-            document.getElementById('summary-modal').style.display = 'flex';
+            hideExitModal(); let answered = 0, unanswered = 0, marked = 0;
+            for(let i = 0; i < testQuestions.length; i++) { if (questionStates[i] === 'marked') marked++; else if (questionStates[i] === 'answered' || userAnswers[i] !== null) answered++; else unanswered++; }
+            document.getElementById('sum-total').innerText = testQuestions.length; document.getElementById('sum-answered').innerText = answered; document.getElementById('sum-unanswered').innerText = unanswered; document.getElementById('sum-marked').innerText = marked; document.getElementById('summary-modal').style.display = 'flex';
         }
         function hideSubmitSummary() { document.getElementById('summary-modal').style.display = 'none'; }
 
@@ -1928,21 +1620,15 @@
             let correct = 0, wrong = 0, left = 0, sectionStats = {}; 
             
             testQuestions.forEach((q, i) => { 
-                let sub = q.subject || 'General';
-                if (!sectionStats[sub]) sectionStats[sub] = { total: 0, correct: 0, wrong: 0, left: 0 };
-                sectionStats[sub].total++;
-
-                if (userAnswers[i] === null) { left++; sectionStats[sub].left++; }
-                else if (userAnswers[i] === q.correctIndex) { correct++; sectionStats[sub].correct++; }
-                else { wrong++; sectionStats[sub].wrong++; }
+                let sub = q.subject || 'General'; if (!sectionStats[sub]) sectionStats[sub] = { total: 0, correct: 0, wrong: 0, left: 0 }; sectionStats[sub].total++;
+                if (userAnswers[i] === null) { left++; sectionStats[sub].left++; } else if (userAnswers[i] === q.correctIndex) { correct++; sectionStats[sub].correct++; } else { wrong++; sectionStats[sub].wrong++; }
             });
 
             let finalScore = Math.round(((correct * testMarks) - (wrong * testNegativeMarks)) * 100) / 100; 
 
             if(auth.currentUser) {
                 db.collection("attempts").add({
-                    userId: auth.currentUser.uid, userIdEmail: auth.currentUser.email,
-                    testId: activeTestId, testTitle: currentTest.title, score: finalScore, totalMarks: testQuestions.length * testMarks,
+                    userId: auth.currentUser.uid, userIdEmail: auth.currentUser.email, testId: activeTestId, testTitle: currentTest.title, score: finalScore, totalMarks: testQuestions.length * testMarks,
                     correct: correct, wrong: wrong, left: left, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
             }
@@ -1966,22 +1652,17 @@
         function renderReviewContent() {
             const container = document.getElementById('review-container'); container.innerHTML = '';
             testQuestions.forEach((q, i) => {
-                const qText = reviewLanguage === 'Eng' ? q.questionEng : q.questionHin;
-                const opts = reviewLanguage === 'Eng' ? q.optionsEng : q.optionsHin;
-                const exp = reviewLanguage === 'Eng' ? q.explanationEng : q.explanationHin;
-                
+                const qText = reviewLanguage === 'Eng' ? q.questionEng : q.questionHin; const opts = reviewLanguage === 'Eng' ? q.optionsEng : q.optionsHin; const exp = reviewLanguage === 'Eng' ? q.explanationEng : q.explanationHin;
                 let optionsHTML = '';
                 if(opts) {
                     opts.forEach((opt, optIndex) => {
                         let optClass = '', label = '';
-                        if (optIndex === q.correctIndex) { optClass = 'opt-correct'; label = '✅ '; } 
-                        else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) { optClass = 'opt-wrong'; label = '❌ (Your Answer) '; }
+                        if (optIndex === q.correctIndex) { optClass = 'opt-correct'; label = '✅ '; } else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) { optClass = 'opt-wrong'; label = '❌ (Your Answer) '; }
                         optionsHTML += `<div class="options" style="margin: 0;"><label class="${optClass}" style="cursor: default;">${label}${opt}</label></div>`;
                     });
                 }
                 
                 let expHTML = exp && exp.trim() !== '' ? `<div class="explanation-box"><strong>💡 Solution / Explanation:</strong><br>${exp}</div>` : `<div class="explanation-box" style="color: var(--text-muted);"><em>No explanation provided for this question.</em></div>`;
-                
                 let imgHTML = q.imageUrl ? `<img src="${q.imageUrl}" class="auto-adjust-img" style="margin-bottom: 15px; cursor: pointer;" onclick="openLightbox(this.src)">` : '';
 
                 container.innerHTML += `
@@ -1998,17 +1679,9 @@
         }
 
         firebase.auth().onAuthStateChanged((user) => {
-            if (localStorage.getItem('adminSession') === 'active') {
-                currentUserRole = 'admin'; navigate('view-admin', false); loadAdminData(); 
-            } else if (user) {
-                currentUserRole = 'student'; navigate('view-student', false); 
-                loadStudentData();
-                loadStudentPopup(); // Trigger popup if valid session
-            } else {
-                currentUserRole = null;
-                if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); }
-                navigate('view-login', false);
-            }
+            if (localStorage.getItem('adminSession') === 'active') { currentUserRole = 'admin'; navigate('view-admin', false); loadAdminData(); } 
+            else if (user) { currentUserRole = 'student'; navigate('view-student', false); loadStudentData(); loadStudentPopup(); } 
+            else { currentUserRole = null; if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); } navigate('view-login', false); }
         });
 
     </script>
