@@ -7,6 +7,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&family=Oswald:wght@500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -103,8 +104,12 @@
             width: 100%; padding: 12px; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 1rem; background: #f8fafc; transition: 0.2s; box-sizing: border-box;
         }
-        .input-group input[type="file"] { background: white; padding: 8px; }
+        .input-group input[type="file"], .input-group input[type="color"] { background: white; padding: 8px; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+        
+        /* Custom UI Tools for Admins */
+        .flex-row { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
+        .flex-row .input-group { margin-bottom: 0; flex: 1; }
         
         .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 500; transition: 0.2s; width: 100%; }
         .btn-primary:hover { background: var(--primary-hover); }
@@ -123,17 +128,25 @@
         .modern-done-popup { text-align: center; padding: 40px 20px; }
         .check-circle { width: 80px; height: 80px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--success); font-size: 40px; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-
-        /* Student Record Table Styles */
+                /* Student Record Table Styles */
         .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover { background: #f1f5f9; }
-                /* Modals & Overlays */
+        
+        /* Modals & Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
         #lightboxModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; }
         
+        /* --- NEW: Student Announcement Popup Styles --- */
+        #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
+        .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
+        .popup-img { width: 100%; max-height: 250px; object-fit: cover; display: none; border-bottom: 1px solid var(--border-color); }
+        .popup-content { padding: 25px; text-align: center; }
+        .popup-message { margin: 15px 0; font-size: 1.1rem; line-height: 1.6; }
+
         /* Updated Question Image - Auto Adjust */
         .responsive-img { max-width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; margin: 15px auto; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: zoom-in; }
 
@@ -204,7 +217,7 @@
         
         .promo-banner {
             min-width: 280px; width: 100%; max-width: 500px; height: 160px; border-radius: 12px;
-            background-color: #f1f5f9; background-size: contain; background-repeat: no-repeat; background-position: center;
+            background-color: #f1f5f9; background-size: cover; background-repeat: no-repeat; background-position: center;
             box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
             position: relative; overflow: hidden; display: flex; align-items: flex-end;
             border: 1px solid var(--border-color); flex-shrink: 0; scroll-snap-align: start;
@@ -215,11 +228,7 @@
         .promo-banner-title {
             width: 100%; 
             background: linear-gradient(transparent, rgba(0,0,0,0.85));
-            color: white; 
             padding: 30px 15px 12px; 
-            font-family: 'Poppins', sans-serif; /* Stylish Font */
-            font-weight: 800; 
-            font-size: 1.3rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
             letter-spacing: 0.5px;
         }
@@ -256,7 +265,7 @@
     </div>
 
     <div class="container">
-                <div id="view-login" class="view active">
+               <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
@@ -322,7 +331,7 @@
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Create tests, edit timer, marks, and delete</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Manage Banners</h3><p>Promote tests on dashboard</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Banners & Popups</h3><p>Promote tests & student announcements</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-students')"><h3>👥 Manage Students</h3><p>View, track & remove students</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings & AI</h3><p>Change Name, Logo & API Keys</p></div>
@@ -330,7 +339,103 @@
                 </div>
             </div>
 
-            <div id="admin-sec-question-editor" class="sub-sec">
+            <div id="admin-sec-banners" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                    <h2>Manage Promo Banners & Student Popup</h2>
+                </div>
+                
+                <div class="action-box" style="border-left: 4px solid var(--review);">
+                    <h3 style="color: var(--review); margin-bottom: 15px;">📢 Student Login Popup Announcement</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">This popup appears once every time a student logs in. They can close it by clicking the 'X'.</p>
+                    
+                    <div class="input-group">
+                        <label>Popup Status</label>
+                        <select id="popup-status">
+                            <option value="active">Active (Show to students)</option>
+                            <option value="inactive">Inactive (Hide from students)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Custom Announcement Message</label>
+                        <textarea id="popup-message" rows="3" placeholder="e.g., Welcome to the new session! Check out our latest mock tests..."></textarea>
+                    </div>
+                    
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Text Color</label>
+                            <input type="color" id="popup-text-color" value="#0f172a" style="height: 45px; cursor: pointer;">
+                        </div>
+                        <div class="input-group">
+                            <label>Text Font</label>
+                            <select id="popup-text-font">
+                                <option value="'Inter', sans-serif">Inter (Default)</option>
+                                <option value="'Poppins', sans-serif">Poppins (Bold & Modern)</option>
+                                <option value="'Roboto', sans-serif">Roboto (Clean)</option>
+                                <option value="'Oswald', sans-serif">Oswald (Tall & Impactful)</option>
+                                <option value="'Montserrat', sans-serif">Montserrat (Elegant)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--review);">
+                        <label>Upload Popup Image (Optional - Auto Adjusts for Fast Load)</label>
+                        <input type="file" id="popup-file-upload" accept="image/*">
+                        <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
+                        <label>Paste Image URL</label>
+                        <input type="text" id="popup-image-url" placeholder="https://example.com/your-image.jpg">
+                    </div>
+
+                    <button class="btn-primary" id="btn-save-popup" style="background: var(--review);" onclick="savePopupSettings()">Save Popup Settings</button>
+                </div>
+
+                <hr style="border: 0; height: 2px; background: var(--border-color); margin: 30px 0;">
+
+                <div class="action-box">
+                    <h3 style="margin-bottom: 15px;">🖼️ Create New Promo Banner</h3>
+                    <div class="input-group">
+                        <label>Stylish Banner Name (Visible to Students)</label>
+                        <input type="text" id="banner-custom-title" placeholder="e.g., 🔴 LIVE NOW: RUVNL Mains Exam">
+                    </div>
+                    
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Title Color</label>
+                            <input type="color" id="banner-text-color" value="#ffffff" style="height: 45px; cursor: pointer;">
+                        </div>
+                        <div class="input-group">
+                            <label>Title Font</label>
+                            <select id="banner-text-font">
+                                <option value="'Poppins', sans-serif">Poppins (Default)</option>
+                                <option value="'Inter', sans-serif">Inter</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Select Specific Test to Link to Banner</label>
+                        <select class="test-select" id="banner-test-select"><option value="">Loading Tests...</option></select>
+                    </div>
+                    
+                    <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                        <label>Upload Banner Image (Auto Adjusts Size/Speed)</label>
+                        <input type="file" id="banner-file-upload" accept="image/*">
+                        <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
+                        <label>Paste Image URL</label>
+                        <input type="text" id="banner-image-url" placeholder="https://example.com/your-image.jpg">
+                    </div>
+
+                    <button class="btn-primary" id="btn-publish-banner" onclick="addBanner()">Publish Banner to Student Dashboard</button>
+                    
+                    <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Banners</h3>
+                    <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+            </div>
+                        <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                         <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
@@ -447,36 +552,7 @@
                 </div>
             </div>
             
-            <div id="admin-sec-banners" class="sub-sec">
-                <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Manage Promo Banners</h2>
-                </div>
-                <div class="action-box">
-                    <div class="input-group">
-                        <label>Stylish Banner Name (Visible to Students)</label>
-                        <input type="text" id="banner-custom-title" placeholder="e.g., 🔴 LIVE NOW: RUVNL Mains Exam">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Select Specific Test to Link to Banner</label>
-                        <select class="test-select" id="banner-test-select"><option value="">Loading Tests...</option></select>
-                    </div>
-                    
-                    <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
-                        <label>Upload Banner Image (Any Size - AI Auto Adjusts)</label>
-                        <input type="file" id="banner-file-upload" accept="image/*">
-                        <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
-                        <label>Paste Image URL</label>
-                        <input type="text" id="banner-image-url" placeholder="https://example.com/your-image.jpg">
-                    </div>
-
-                    <button class="btn-primary" id="btn-publish-banner" onclick="addBanner()">Publish Banner to Student Dashboard</button>
-                    <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Banners</h3>
-                    <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
-                </div>
-            </div>
-                        <div id="admin-sec-students" class="sub-sec">
+            <div id="admin-sec-students" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Registered Students</h2>
@@ -554,8 +630,7 @@
                 </div>
             </div>
         </div>
-
-        <div id="view-student" class="view">
+                <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -626,7 +701,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-test" class="view">
+        
+        <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
@@ -701,6 +777,17 @@
 
     </div>
     
+    <div id="student-popup-modal" class="modal-overlay">
+        <div class="modal">
+            <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
+            <img id="popup-display-img" class="popup-img" src="" alt="Announcement Image">
+            <div class="popup-content">
+                <div id="popup-display-msg" class="popup-message"></div>
+                <button onclick="closeStudentPopup()" class="btn-primary" style="margin-top: 10px; border-radius: 25px;">Okay, got it!</button>
+            </div>
+        </div>
+    </div>
+
     <div id="lightboxModal" class="hidden" onclick="closeLightbox()">
         <img id="lightboxImg" class="auto-adjust-img" src="" style="max-width: 90%; max-height: 90%; border-radius: 8px;">
     </div>
@@ -802,8 +889,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+        <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -847,19 +933,12 @@
 
                     // Automatically calculate new dimensions while keeping aspect ratio
                     if (width > height) {
-                        if (width > maxWidth) {
-                            height = Math.round((height *= maxWidth / width));
-                            width = maxWidth;
-                        }
+                        if (width > maxWidth) { height = Math.round((height *= maxWidth / width)); width = maxWidth; }
                     } else {
-                        if (height > maxHeight) {
-                            width = Math.round((width *= maxHeight / height));
-                            height = maxHeight;
-                        }
+                        if (height > maxHeight) { width = Math.round((width *= maxHeight / height)); height = maxHeight; }
                     }
 
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     
@@ -874,7 +953,81 @@
         function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxModal').classList.remove('hidden'); }
         function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); }
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
-                // --- PORTAL BRANDING LOGIC ---
+        
+        // --- BRAND NEW: STUDENT POPUP LOGIC ---
+        function closeStudentPopup() {
+            document.getElementById('student-popup-modal').style.display = 'none';
+        }
+
+        async function savePopupSettings() {
+            const status = document.getElementById('popup-status').value;
+            const message = document.getElementById('popup-message').value.trim();
+            const textColor = document.getElementById('popup-text-color').value;
+            const font = document.getElementById('popup-text-font').value;
+            const fileInput = document.getElementById('popup-file-upload').files[0];
+            const urlInput = document.getElementById('popup-image-url').value.trim();
+            const btn = document.getElementById('btn-save-popup');
+
+            btn.disabled = true; btn.innerText = "⏳ Saving...";
+
+            try {
+                let finalImageUrl = urlInput;
+                if(fileInput) {
+                    // Smart Adjust Popup Image to max 600x400
+                    const base64Data = await new Promise((resolve) => smartAdjustImage(fileInput, 600, 400, resolve));
+                    const response = await fetch(base64Data);
+                    const blob = await response.blob();
+                    
+                    const storageRef = storage.ref(`popups/${Date.now()}_popup.jpg`);
+                    await storageRef.put(blob);
+                    finalImageUrl = await storageRef.getDownloadURL();
+                }
+
+                let updateData = { status: status, message: message, textColor: textColor, font: font };
+                if(finalImageUrl) updateData.imageUrl = finalImageUrl;
+
+                await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
+                
+                alert("Popup settings updated successfully!");
+                document.getElementById('popup-file-upload').value = '';
+                document.getElementById('popup-image-url').value = '';
+            } catch (e) {
+                alert("Error updating popup: " + e.message);
+            } finally {
+                btn.disabled = false; btn.innerText = "Save Popup Settings";
+            }
+        }
+
+        function loadStudentPopup() {
+            // Only show if the student hasn't seen it THIS session (resets on login/refresh)
+            if(sessionStorage.getItem('popupShown')) return;
+
+            db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
+                if(doc.exists) {
+                    const data = doc.data();
+                    if(data.status === 'active') {
+                        const msgEl = document.getElementById('popup-display-msg');
+                        const imgEl = document.getElementById('popup-display-img');
+                        
+                        msgEl.innerText = data.message || '';
+                        msgEl.style.color = data.textColor || '#0f172a';
+                        msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
+
+                        if(data.imageUrl) {
+                            imgEl.src = data.imageUrl;
+                            imgEl.style.display = 'block';
+                        } else {
+                            imgEl.style.display = 'none';
+                        }
+
+                        document.getElementById('student-popup-modal').style.display = 'flex';
+                        sessionStorage.setItem('popupShown', 'true'); // Mark as shown for this session
+                    }
+                }
+            }).catch(e => console.error("Error loading popup: ", e));
+        }
+
+        // --- PORTAL BRANDING LOGIC ---
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
                 if(doc.exists) {
@@ -893,6 +1046,22 @@
                     }
                 }
             });
+            
+            // Also load admin settings for the popup editor when admin views it
+            db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
+                 if(doc.exists) {
+                     const data = doc.data();
+                     const statusEl = document.getElementById('popup-status');
+                     const msgEl = document.getElementById('popup-message');
+                     const colorEl = document.getElementById('popup-text-color');
+                     const fontEl = document.getElementById('popup-text-font');
+                     
+                     if(statusEl) statusEl.value = data.status || 'inactive';
+                     if(msgEl) msgEl.value = data.message || '';
+                     if(colorEl) colorEl.value = data.textColor || '#0f172a';
+                     if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
+                 }
+            });
         }
         
         loadPortalBranding();
@@ -903,8 +1072,7 @@
             const urlInput = document.getElementById('portal-logo-url').value.trim();
             const btn = document.getElementById('btn-save-branding');
 
-            btn.disabled = true;
-            btn.innerText = "⏳ Saving...";
+            btn.disabled = true; btn.innerText = "⏳ Saving...";
 
             try {
                 let finalLogoUrl = urlInput;
@@ -928,12 +1096,8 @@
                 alert("Branding updated successfully!");
                 document.getElementById('portal-logo-upload').value = '';
                 document.getElementById('portal-logo-url').value = '';
-            } catch (e) {
-                alert("Error updating branding: " + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Save Branding Changes";
-            }
+            } catch (e) { alert("Error updating branding: " + e.message); } 
+            finally { btn.disabled = false; btn.innerText = "Save Branding Changes"; }
         }
 
         async function saveGeminiKey() {
@@ -996,8 +1160,7 @@
         }
 
         window.onload = checkDeviceLockout;
-
-        // --- FORGOT PASSWORD MODAL LOGIC ---
+                // --- FORGOT PASSWORD MODAL LOGIC ---
         function toggleForgotPassVisibility() {
             const role = document.getElementById('login-role').value;
             const forgotContainer = document.getElementById('forgot-pass-container');
@@ -1098,7 +1261,10 @@
             auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
                 .then((userCred) => {
                     db.collection("users").doc(userCred.user.uid).set({ fullName: fullName, phone: phoneId, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    currentUserRole = 'student'; navigate('view-student'); loadStudentData();
+                    currentUserRole = 'student'; 
+                    navigate('view-student'); 
+                    loadStudentData();
+                    loadStudentPopup(); // Trigger popup on new registration
                 }).catch(e => { alert("Error: " + e.message); });
         }
 
@@ -1118,12 +1284,19 @@
                 } else { recordFailedAttempt(); }
             } else {
                 auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass).then(() => { 
-                    clearLockoutOnSuccess(); currentUserRole = 'student'; navigate('view-student'); loadStudentData();
+                    clearLockoutOnSuccess(); currentUserRole = 'student'; 
+                    navigate('view-student'); 
+                    loadStudentData();
+                    loadStudentPopup(); // Trigger popup on login
                 }).catch(e => { recordFailedAttempt(); });
             }
         }
 
-        function logout() { localStorage.removeItem('adminSession'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
+        function logout() { 
+            localStorage.removeItem('adminSession'); 
+            sessionStorage.removeItem('popupShown'); // Reset popup for next login
+            auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); 
+        }
 
         // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
@@ -1223,12 +1396,14 @@
 
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
         
-        // --- UPDATED BANNER LOGIC (Specific Tests, Custom Title & Smart Image Adjust) ---
+        // --- UPDATED BANNER LOGIC (With Color & Font) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim();
             const testSelect = document.getElementById('banner-test-select');
             const fileInput = document.getElementById('banner-file-upload');
             const urlInput = document.getElementById('banner-image-url').value.trim();
+            const textColor = document.getElementById('banner-text-color').value;
+            const textFont = document.getElementById('banner-text-font').value;
             const file = fileInput.files[0];
             
             if(!customTitle) return alert("Please enter a stylish banner name.");
@@ -1256,6 +1431,8 @@
                     testName: testSelect.options[testSelect.selectedIndex].text,
                     customTitle: customTitle,
                     imageUrl: finalImageUrl, 
+                    textColor: textColor,
+                    textFont: textFont,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
@@ -1270,8 +1447,7 @@
         async function deleteBanner(id) { if(confirm("Are you sure you want to remove this banner?")) { await db.collection("banners").doc(id).delete(); } }
 
         async function deleteTest(tid) { if(confirm("Are you sure you want to completely delete this test?")) { try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); } } }
-
-        function loadAdminData() { 
+                function loadAdminData() { 
             loadAdminStudents();
 
             db.collection("groups").onSnapshot(s=>{ 
@@ -1316,12 +1492,15 @@
                 if(s.empty) l.innerHTML = '<p style="color: gray;">No active banners.</p>';
                 s.forEach(d => {
                     let b = d.data();
+                    let colorStyle = b.textColor ? `color: ${b.textColor};` : '';
+                    let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
+                    
                     l.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
                         <div style="display:flex; align-items:center; gap:15px;">
                             <img src="${b.imageUrl}" style="width:60px; height:40px; object-fit:cover; border-radius:4px; border: 1px solid #cbd5e1;">
                             <div style="display:flex; flex-direction:column;">
-                                <span style="font-weight: 700; color:var(--primary);">${b.customTitle || 'Promo Banner'}</span>
+                                <span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span>
                                 <span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'}</span>
                             </div>
                         </div>
@@ -1338,7 +1517,8 @@
                 }); 
             }); 
         }
-                // --- AI QUESTION EDITOR & TEST CREATION ---
+
+        // --- AI QUESTION EDITOR & TEST CREATION ---
         async function createNewTest() {
             const name = document.getElementById('newTestName').value.trim();
             const group = document.getElementById('newTestGroup').value;
@@ -1562,7 +1742,7 @@
             const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Successfully imported ${importedCount} question(s)!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000);
         }
 
-        // --- STUDENT DASHBOARD LOGIC (Updated Banner Direct Link to Test) ---
+        // --- STUDENT DASHBOARD LOGIC (Updated Banner Dynamic Styling) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1580,10 +1760,12 @@
                 c.style.display = 'flex';
                 s.forEach(d => {
                     let b = d.data();
-                    // BANNER UPDATE: Now clicking directly runs startTest() with the linked test ID
+                    let colorStyle = b.textColor ? `color: ${b.textColor};` : '';
+                    let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
+                    
                     c.innerHTML += `
                     <div class="promo-banner" style="background-image: url('${b.imageUrl}')" onclick="startTest('${b.testId}')">
-                        <div class="promo-banner-title">${b.customTitle || b.testName}</div>
+                        <div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div>
                     </div>`;
                 });
             });
@@ -1695,7 +1877,6 @@
             let optionsHTML = '';
             if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
 
-            // Using the updated class .auto-adjust-img
             let imgHTML = q.imageUrl ? `<img src="${q.imageUrl}" class="auto-adjust-img" style="border: 1px solid var(--border-color); cursor: pointer;" onclick="openLightbox(this.src)">` : '';
             container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || 'Language translation missing'}</h4>${imgHTML}<div class="options">${optionsHTML}</div></div>`;
 
@@ -1801,7 +1982,6 @@
                 
                 let expHTML = exp && exp.trim() !== '' ? `<div class="explanation-box"><strong>💡 Solution / Explanation:</strong><br>${exp}</div>` : `<div class="explanation-box" style="color: var(--text-muted);"><em>No explanation provided for this question.</em></div>`;
                 
-                // Using the updated class .auto-adjust-img
                 let imgHTML = q.imageUrl ? `<img src="${q.imageUrl}" class="auto-adjust-img" style="margin-bottom: 15px; cursor: pointer;" onclick="openLightbox(this.src)">` : '';
 
                 container.innerHTML += `
@@ -1821,7 +2001,9 @@
             if (localStorage.getItem('adminSession') === 'active') {
                 currentUserRole = 'admin'; navigate('view-admin', false); loadAdminData(); 
             } else if (user) {
-                currentUserRole = 'student'; navigate('view-student', false); loadStudentData();
+                currentUserRole = 'student'; navigate('view-student', false); 
+                loadStudentData();
+                loadStudentPopup(); // Trigger popup if valid session
             } else {
                 currentUserRole = null;
                 if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); }
