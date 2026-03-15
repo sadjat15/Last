@@ -69,7 +69,8 @@
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
         .nav-btn:hover { background: rgba(255,255,255,0.2); }
-                /* Dashboard Main Menu Buttons */
+        
+        /* Dashboard Main Menu Buttons */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .menu-btn { 
             background: var(--card-bg); padding: 30px 20px; border-radius: var(--radius); 
@@ -82,12 +83,11 @@
         .menu-btn h3 { color: var(--primary); font-size: 1.3rem; z-index: 2; position: relative;}
         .menu-btn p { color: var(--text-muted); font-size: 0.9rem; z-index: 2; position: relative;}
         
-        /* Dynamic AI Image Container */
-        .ai-bg-img {
+        /* Dynamic Uploaded Image Container */
+        .custom-bg-img {
             width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;
             background-color: #e2e8f0;
         }
-
         /* Action Boxes & Question Cards */
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
         .action-box h3 { font-size: 1.2rem; margin-bottom: 15px; }
@@ -106,9 +106,12 @@
             width: 100%; padding: 12px; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 1rem; background: #f8fafc; transition: 0.2s; box-sizing: border-box;
         }
+        .input-group input[type="file"] { padding: 8px; background: white; cursor: pointer; }
         .input-group input[type="color"] { background: white; padding: 8px; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         
+        .upload-hint { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: block; }
+
         /* Custom UI Tools for Admins */
         .flex-row { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
         .flex-row .input-group { margin-bottom: 0; flex: 1; }
@@ -130,7 +133,8 @@
         .modern-done-popup { text-align: center; padding: 40px 20px; }
         .check-circle { width: 80px; height: 80px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--success); font-size: 40px; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-                /* Student Record Table Styles */
+                
+        /* Student Record Table Styles */
         .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
@@ -147,9 +151,8 @@
         .popup-content { padding: 25px; text-align: center; }
         .popup-message { margin: 15px 0; font-size: 1.1rem; line-height: 1.6; }
         
-        /* ADDED: Dynamic AI Image Clue container for Popups */
-        .popup-ai-image { width: 100%; height: 180px; object-fit: cover; border-bottom: 3px solid var(--primary); display: none; }
-
+        /* Dynamic Uploaded Image container for Popups */
+        .popup-custom-image { width: 100%; height: 180px; object-fit: cover; border-bottom: 3px solid var(--primary); display: none; }
         /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s;}
@@ -187,7 +190,7 @@
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 1499;
         }
-                .side-panel-header { padding: 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .side-panel-header { padding: 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
         .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 20px; overflow-y: auto; align-content: start; }
         
         .q-btn { 
@@ -246,7 +249,7 @@
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
-        <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
+    <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
 
     <div id="side-palette" class="side-panel">
         <div class="side-panel-header">
@@ -262,7 +265,7 @@
     </div>
     
     <div class="container">
-                <div id="view-login" class="view active">
+        <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
@@ -331,11 +334,12 @@
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Text Banners & Popups</h3><p>Promote tests & student announcements</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-students')"><h3>👥 Manage Students</h3><p>View, track & remove students</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings & AI</h3><p>Change Name & API Keys</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings</h3><p>Change Name & API Keys</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-                        <div id="admin-sec-banners" class="sub-sec">
+            
+            <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Text Banners & Student Popup</h2>
@@ -359,8 +363,10 @@
                     </div>
                     
                     <div class="input-group">
-                        <label>AI Image Clue (Optional - Automatically adds a photo above the text)</label>
-                        <input type="text" id="popup-image-clue" placeholder="e.g., students studying, exam success, celebration">
+                        <label>Upload Photo for Popup (Optional)</label>
+                        <input type="file" id="popup-image-upload" accept="image/jpeg, image/png, image/webp">
+                        <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
+                        <input type="hidden" id="popup-image-url">
                     </div>
                     
                     <div class="flex-row">
@@ -393,10 +399,10 @@
                     </div>
                     
                     <div class="input-group">
-                        <label>AI Image Clue (Generates a background photo for the banner)</label>
-                        <input type="text" id="banner-image-clue" placeholder="e.g., electricity, modern classroom, focus">
+                        <label>Upload Photo for Banner Background</label>
+                        <input type="file" id="banner-image-upload" accept="image/jpeg, image/png, image/webp">
+                        <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
                     </div>
-                    
                     <div class="flex-row">
                         <div class="input-group">
                             <label>Title Color</label>
@@ -443,7 +449,8 @@
                         <button id="aiGenerateBtn" class="btn-success" style="margin: 0; width: auto; padding: 10px 20px;" onclick="generateBulkQuestionsWithAI()">Bulk Generate</button>
                     </div><p id="aiGenError" style="color: var(--danger); font-size: 14px; margin-top: 10px; display: none;"></p>
                 </div>
-                                <div class="ai-panel" style="background: #fffbeb; border-color: #f59e0b; margin-top: 15px;">
+                
+                <div class="ai-panel" style="background: #fffbeb; border-color: #f59e0b; margin-top: 15px;">
                     <p style="font-size: 14px; font-weight: bold; color: #d97706; margin: 0 0 10px 0;">📚 Import from Question Bank</p>
                     <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 10px;">Reuse questions you have already added to other tests across the app.</p>
                     <button class="btn-warning" style="margin: 0; width: auto; padding: 10px 20px;" onclick="openQuestionBankModal()">Browse Question Bank</button>
@@ -464,7 +471,6 @@
                         <input type="text" id="qTextEn" placeholder="Question (English)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
                         <input type="text" id="qTextHi" placeholder="Question (Hindi)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
                     </div>
-
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <input type="text" id="opt0En" placeholder="Opt 1 (Eng)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);"><input type="text" id="opt0Hi" placeholder="Opt 1 (Hin)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
                         <input type="text" id="opt1En" placeholder="Opt 2 (Eng)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);"><input type="text" id="opt1Hi" placeholder="Opt 2 (Hin)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
@@ -487,10 +493,11 @@
                 <h3 style="margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 15px;"></div>
             </div>
-                        <div id="admin-sec-branding" class="sub-sec">
+            
+            <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Portal Branding & AI Settings</h2>
+                    <h2>Portal Branding & API Settings</h2>
                 </div>
                 <div class="action-box">
                     <h3 style="margin-bottom: 15px;">Portal Appearance</h3>
@@ -525,6 +532,11 @@
                         <input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests">
                     </div>
                     
+                    <div class="input-group">
+                        <label>Upload Photo for Group Card</label>
+                        <input type="file" id="new-group-image-upload" accept="image/jpeg, image/png, image/webp">
+                        <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
+                    </div>
                     <div class="flex-row">
                         <div class="input-group">
                             <label>Name Color</label>
@@ -598,7 +610,6 @@
                 <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Live Cloud Tests</h3>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
-            
             <div id="admin-sec-attempts" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
@@ -625,7 +636,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-student" class="view">
+        
+        <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -696,7 +708,6 @@
                 </div>
             </div>
         </div>
-        
         <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -777,7 +788,7 @@
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <div class="popup-content">
                 <div id="popup-fallback" style="display:none; width:100%; height:180px; background:linear-gradient(135deg, var(--primary), #818cf8); color:white; font-size:3rem; font-weight:bold; align-items:center; justify-content:center; border-bottom:3px solid var(--primary); border-radius: 8px 8px 0 0;">📢</div>
-                <img id="popup-ai-img" class="popup-ai-image" src="" alt="Announcement Graphic" loading="eager" onerror="this.style.display='none'; document.getElementById('popup-fallback').style.display='flex';">
+                <img id="popup-custom-img" class="popup-custom-image" src="" alt="Announcement Graphic" loading="eager" onerror="this.style.display='none'; document.getElementById('popup-fallback').style.display='flex';">
                 <div id="popup-display-msg" class="popup-message"></div>
                 <button onclick="closeStudentPopup()" class="btn-primary" style="margin-top: 10px; border-radius: 25px;">Okay, got it!</button>
             </div>
@@ -790,6 +801,11 @@
             <div class="input-group">
                 <label>Stylish Group Name</label>
                 <input type="text" id="edit-group-name">
+            </div>
+            <div class="input-group">
+                <label>Upload New Photo (Optional)</label>
+                <input type="file" id="edit-group-image-upload" accept="image/jpeg, image/png, image/webp">
+                <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
             </div>
             <div class="flex-row">
                 <div class="input-group">
@@ -923,6 +939,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const storage = firebase.storage(); // ADDED STORAGE REFERENCE
 
         // --- GLOBAL VARIABLES ---
         let currentUserRole = null;
@@ -942,10 +959,23 @@
         // --- UTILITIES & MODAL HELPERS ---
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
         
-        // --- AI IMAGE GENERATOR & BULLETPROOF FALLBACK ---
-        function getAiImageUrl(prompt, width=500, height=200) {
-            if(!prompt) return "";
-            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true`;
+        // --- FIREBASE IMAGE UPLOAD HELPER ---
+        async function uploadImageToFirebase(fileInputId, folderPath) {
+            const fileInput = document.getElementById(fileInputId);
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
+            
+            const file = fileInput.files[0];
+            const fileName = new Date().getTime() + "_" + file.name;
+            const storageRef = storage.ref().child(`${folderPath}/${fileName}`);
+            
+            try {
+                const snapshot = await storageRef.put(file);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+                return downloadURL;
+            } catch (error) {
+                console.error("Upload failed", error);
+                throw new Error("Failed to upload image. Please try again.");
+            }
         }
 
         function getFallbackImage(text) {
@@ -956,24 +986,30 @@
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="120" viewBox="0 0 300 120"><rect width="300" height="120" fill="${color}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="40" font-weight="bold">${initials}</text></svg>`;
             return 'data:image/svg+xml;base64,' + btoa(svg);
         }
-
         // --- STUDENT POPUP LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
             const status = document.getElementById('popup-status').value;
             const message = document.getElementById('popup-message').value.trim();
-            const imageClue = document.getElementById('popup-image-clue').value.trim();
             const textColor = document.getElementById('popup-text-color').value;
             const font = document.getElementById('popup-text-font').value;
             const btn = document.getElementById('btn-save-popup');
 
-            btn.disabled = true; btn.innerText = "⏳ Saving...";
+            btn.disabled = true; btn.innerText = "⏳ Uploading & Saving...";
 
             try {
-                let updateData = { status: status, message: message, imageClue: imageClue, textColor: textColor, font: font };
+                let updateData = { status: status, message: message, textColor: textColor, font: font };
+                
+                // Handle Image Upload to Firebase
+                const newImageUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
+                if (newImageUrl) {
+                    updateData.imageUrl = newImageUrl;
+                }
+
                 await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
                 alert("Popup settings updated successfully!");
+                document.getElementById('popup-image-upload').value = ''; // clear input
             } catch (e) { alert("Error updating popup: " + e.message); } 
             finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
         }
@@ -986,14 +1022,14 @@
                     const data = doc.data();
                     if(data.status === 'active') {
                         const msgEl = document.getElementById('popup-display-msg');
-                        const imgEl = document.getElementById('popup-ai-img');
+                        const imgEl = document.getElementById('popup-custom-img');
                         
                         msgEl.innerText = data.message || '';
                         msgEl.style.color = data.textColor || '#0f172a';
                         msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
                         
-                        if(data.imageClue) {
-                            imgEl.src = getAiImageUrl(data.imageClue, 450, 180);
+                        if(data.imageUrl) {
+                            imgEl.src = data.imageUrl;
                             imgEl.style.display = 'block';
                         } else {
                             imgEl.style.display = 'none';
@@ -1022,12 +1058,10 @@
                  if(doc.exists) {
                      const data = doc.data();
                      const statusEl = document.getElementById('popup-status'); const msgEl = document.getElementById('popup-message');
-                     const clueEl = document.getElementById('popup-image-clue');
                      const colorEl = document.getElementById('popup-text-color'); const fontEl = document.getElementById('popup-text-font');
                      
                      if(statusEl) statusEl.value = data.status || 'inactive'; 
                      if(msgEl) msgEl.value = data.message || '';
-                     if(clueEl) clueEl.value = data.imageClue || '';
                      if(colorEl) colorEl.value = data.textColor || '#0f172a'; 
                      if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
                  }
@@ -1051,7 +1085,7 @@
         async function saveGeminiKey() {
             const key = document.getElementById('adminAiKey').value.trim(); storedGeminiKey = key;
             await db.collection("adminSettings").doc("branding").set({ geminiKey: key }, { merge: true });
-            const msg = document.getElementById('aiKeyMsg'); msg.innerText = "AI API Key Saved Successfully!";
+            const msg = document.getElementById('aiKeyMsg'); msg.innerText = "API Key Saved Successfully!";
             msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000);
         }
         
@@ -1106,7 +1140,7 @@
             else { document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; }
         }
 
-        // --- NAVIGATION ---
+        // --- NAVIGATION & AUTO-SUBMIT ON BACK LOGIC ---
         function navigate(viewId, pushState = true) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active');
             document.getElementById('logout-btn').style.display = (viewId === 'view-login') ? 'none' : 'block';
@@ -1118,10 +1152,16 @@
         function openStudentSec(secId, pushState = true) { document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); }
 
         window.onpopstate = function(event) {
+            // AUTO-SUBMIT INTERCEPTOR
+            if (isTestActive) {
+                alert("Navigating away from an active test! Your test has been automatically submitted.");
+                finalSubmitTest();
+                return; 
+            }
+
             if (event.state) { navigate(event.state.view, false); if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); } 
             else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
         };
-
         // --- AUTH LOGIC ---
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
 
@@ -1235,17 +1275,26 @@
 
         async function deleteTest(tid) { if(confirm("Are you sure you want to completely delete this test?")) { try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); } } }
 
-        // --- ADMIN: GROUP SETTINGS ---
-        function addGroup() { 
+        // --- ADMIN: GROUP SETTINGS (UPDATED WITH IMAGE UPLOADS) ---
+        async function addGroup() { 
             const n = document.getElementById('new-group-name').value; 
             const c = document.getElementById('new-group-color').value;
             const f = document.getElementById('new-group-font').value;
-            if(n) {
-                db.collection("groups").add({name: n, color: c, font: f, createdAt: new Date()}).then(()=>{
-                    document.getElementById('new-group-name').value=''; 
-                    alert("Added!");
-                }); 
-            } else { alert("Please enter a group name."); }
+            
+            if(!n) return alert("Please enter a group name."); 
+            
+            try {
+                let groupData = {name: n, color: c, font: f, createdAt: new Date()};
+                const imageUrl = await uploadImageToFirebase('new-group-image-upload', 'groups');
+                if (imageUrl) groupData.imageUrl = imageUrl;
+                
+                await db.collection("groups").add(groupData);
+                document.getElementById('new-group-name').value=''; 
+                document.getElementById('new-group-image-upload').value='';
+                alert("Group Added!");
+            } catch(e) {
+                alert("Error adding group: " + e.message);
+            }
         }
 
         function openEditGroupModal(gid, name, color, font) {
@@ -1264,9 +1313,15 @@
             const c = document.getElementById('edit-group-color').value;
             const f = document.getElementById('edit-group-font').value;
             if(!n) return alert("Group name cannot be empty!");
+            
             try {
-                await db.collection("groups").doc(gid).update({ name: n, color: c, font: f });
-                alert("Group styled and updated successfully!"); closeEditGroupModal();
+                let updateData = { name: n, color: c, font: f };
+                const imageUrl = await uploadImageToFirebase('edit-group-image-upload', 'groups');
+                if (imageUrl) updateData.imageUrl = imageUrl;
+
+                await db.collection("groups").doc(gid).update(updateData);
+                alert("Group styled and updated successfully!"); 
+                closeEditGroupModal();
             } catch(e) { alert("Error updating group: " + e.message); }
         }
         
@@ -1276,25 +1331,29 @@
             }
         }
         
-        // --- ADMIN: BANNERS LOGIC ---
+        // --- ADMIN: BANNERS LOGIC (UPDATED WITH IMAGE UPLOADS) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
-            const imageClue = document.getElementById('banner-image-clue').value.trim();
 
             if(!customTitle) return alert("Please enter a stylish banner name."); if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
             
             const btn = document.getElementById('btn-publish-banner'); btn.disabled = true; btn.innerText = "⏳ Publishing Banner... Please wait";
             
             try {
-                await db.collection("banners").add({
+                let bannerData = {
                     testId: testSelect.value, testName: testSelect.options[testSelect.selectedIndex].text,
-                    customTitle: customTitle, textColor: textColor, textFont: textFont, imageClue: imageClue,
+                    customTitle: customTitle, textColor: textColor, textFont: textFont,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                };
+
+                const imageUrl = await uploadImageToFirebase('banner-image-upload', 'banners');
+                if (imageUrl) bannerData.imageUrl = imageUrl;
+
+                await db.collection("banners").add(bannerData);
                 
                 document.getElementById('banner-custom-title').value = '';
-                document.getElementById('banner-image-clue').value = '';
+                document.getElementById('banner-image-upload').value = '';
                 alert("Banner successfully published!");
             } catch (error) { alert("Error publishing banner: " + error.message); } 
             finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
@@ -1351,7 +1410,7 @@
                     l.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
                         <div style="display:flex; align-items:center; gap:15px;">
-                            <div style="display:flex; flex-direction:column;"><span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span><span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'} | Clue: ${b.imageClue || 'None'}</span></div>
+                            <div style="display:flex; flex-direction:column;"><span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span><span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'} ${b.imageUrl ? '| Has Photo' : ''}</span></div>
                         </div>
                         <button class="btn-danger" style="width:auto; padding:5px 12px; font-size: 0.9rem;" onclick="deleteBanner('${d.id}')">🗑 Remove</button>
                     </div>`;
@@ -1507,7 +1566,7 @@
             const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Successfully imported ${importedCount} question(s)!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000);
         }
 
-        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH BULLETPROOF FALLBACKS) ---
+        // --- STUDENT DASHBOARD LOGIC (UPDATED FOR FIREBASE IMAGES) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1531,14 +1590,11 @@
                     
                     let bannerTitle = b.customTitle || b.testName;
                     let fallbackUrl = getFallbackImage(bannerTitle);
-                    let aiUrl = b.imageClue ? getAiImageUrl(b.imageClue, 500, 160) : fallbackUrl;
-                    let bgStyle = `background-image: url('${aiUrl}'); background-size: cover; background-position: center;`;
-                    
-                    let eagerPreloadHtml = `<img src="${aiUrl}" style="display:none;" loading="eager" onerror="this.onerror=null; this.parentElement.style.backgroundImage='url(${fallbackUrl})';">`;
+                    let finalImgUrl = b.imageUrl ? b.imageUrl : fallbackUrl;
+                    let bgStyle = `background-image: url('${finalImgUrl}'); background-size: cover; background-position: center;`;
 
                     c.innerHTML += `
                     <div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')">
-                        ${eagerPreloadHtml}
                         <div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${bannerTitle}</div>
                     </div>`;
                 });
@@ -1553,12 +1609,12 @@
                     let cStyle = g.color ? `color: ${g.color};` : ''; 
                     let fStyle = g.font ? `font-family: ${g.font};` : '';
                     
-                    let aiImgUrl = getAiImageUrl(g.name + " concept, educational, graphic", 300, 120);
                     let fallbackSrc = getFallbackImage(g.name);
+                    let finalImgUrl = g.imageUrl ? g.imageUrl : fallbackSrc;
                     
                     c.innerHTML+=`
                     <div class="menu-btn" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
-                        <img src="${aiImgUrl}" class="ai-bg-img" alt="${g.name}" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                        <img src="${finalImgUrl}" class="custom-bg-img" alt="${g.name}" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';">
                         <h3 style="margin:0; ${cStyle} ${fStyle}">${g.name}</h3>
                     </div>`; 
                 }); 
