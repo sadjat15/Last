@@ -65,11 +65,7 @@
         /* Navbar & Branding */
         nav { background: var(--primary); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 100; }
         .portal-brand { display: flex; align-items: center; gap: 12px; }
-                /* Image Auto Adjustments (Logo & General) & NEW Upload Rules CSS */
-        .portal-logo { max-height: 40px; max-width: 150px; border-radius: 8px; display: none; object-fit: contain; background: white; padding: 2px;}
-        .auto-adjust-img { max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; }
-        .upload-rules { display: block; font-size: 0.8rem; color: #ef4444; margin-top: 6px; font-weight: 600; }
-
+        
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
         .nav-btn:hover { background: rgba(255,255,255,0.2); }
@@ -103,7 +99,7 @@
             width: 100%; padding: 12px; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 1rem; background: #f8fafc; transition: 0.2s; box-sizing: border-box;
         }
-        .input-group input[type="file"], .input-group input[type="color"] { background: white; padding: 8px; }
+        .input-group input[type="color"] { background: white; padding: 8px; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         
         /* Custom UI Tools for Admins */
@@ -127,27 +123,22 @@
         .modern-done-popup { text-align: center; padding: 40px 20px; }
         .check-circle { width: 80px; height: 80px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--success); font-size: 40px; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-                /* Student Record Table Styles */
+        
+        /* Student Record Table Styles */
         .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover { background: #f1f5f9; }
-        
-        /* Modals & Overlays */
+                /* Modals & Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
-        #lightboxModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; }
         
-        /* --- NEW: Student Announcement Popup Styles --- */
+        /* Student Announcement Popup Styles */
         #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
         .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
-        .popup-img { width: 100%; max-height: 250px; object-fit: cover; display: none; border-bottom: 1px solid var(--border-color); }
         .popup-content { padding: 25px; text-align: center; }
         .popup-message { margin: 15px 0; font-size: 1.1rem; line-height: 1.6; }
-
-        /* Updated Question Image - Auto Adjust */
-        .responsive-img { max-width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; margin: 15px auto; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: zoom-in; }
 
         /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
@@ -205,7 +196,7 @@
         .status-text { margin-top: 10px; font-size: 0.9rem; font-weight: 500; text-align: center; }
         .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
 
-        /* --- Banner Carousel Styles & Auto Adjust --- */
+        /* Banner Carousel Styles */
         .banner-container {
             display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -215,14 +206,13 @@
         
         .promo-banner {
             min-width: 280px; width: 100%; max-width: 500px; height: 160px; border-radius: 12px;
-            background-color: #f1f5f9; background-size: cover; background-repeat: no-repeat; background-position: center;
+            background-color: var(--primary); /* Replaced image logic with a solid color fallback */
             box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
             position: relative; overflow: hidden; display: flex; align-items: flex-end;
             border: 1px solid var(--border-color); flex-shrink: 0; scroll-snap-align: start;
         }
         .promo-banner:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
         
-        /* New Stylish Banner Title */
         .promo-banner-title {
             width: 100%; 
             background: linear-gradient(transparent, rgba(0,0,0,0.85));
@@ -239,7 +229,6 @@
 <body>
     <nav>
         <div class="portal-brand">
-            <img id="nav-logo" class="portal-logo" src="" alt="Portal Logo">
             <h1 id="nav-title">KD JAAT Test Portal</h1>
         </div>
         <div id="nav-actions" style="display: flex; gap: 10px;">
@@ -261,7 +250,7 @@
             <div class="legend-item"><div class="legend-dot" style="background: var(--review);"></div> Marked for Review</div>
         </div>
     </div>
-        <div class="container">
+            <div class="container">
         <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -327,10 +316,10 @@
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Create tests, edit timer, marks, and delete</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Banners & Popups</h3><p>Promote tests & student announcements</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Text Banners & Popups</h3><p>Promote tests & student announcements</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-students')"><h3>👥 Manage Students</h3><p>View, track & remove students</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings & AI</h3><p>Change Name, Logo & API Keys</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings & AI</h3><p>Change Name & API Keys</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
@@ -338,7 +327,7 @@
             <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Manage Promo Banners & Student Popup</h2>
+                    <h2>Manage Text Banners & Student Popup</h2>
                 </div>
                 
                 <div class="action-box" style="border-left: 4px solid var(--review);">
@@ -375,16 +364,6 @@
                         </div>
                     </div>
 
-                    <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--review);">
-                        <label>Upload Popup Image</label>
-                        <input type="file" id="popup-file-upload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 5)">
-                        <span class="upload-rules">Rules: Max 5MB | Formats: JPG, PNG, WEBP | Recommended Size: 600x400px</span>
-
-                        <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
-                        <label>Paste Image URL</label>
-                        <input type="text" id="popup-image-url" placeholder="https://example.com/your-image.jpg">
-                    </div>
-
                     <button class="btn-primary" id="btn-save-popup" style="background: var(--review);" onclick="savePopupSettings()">Save Popup Settings</button>
                 </div>
 
@@ -417,16 +396,6 @@
                     <div class="input-group">
                         <label>Select Specific Test to Link to Banner</label>
                         <select class="test-select" id="banner-test-select"><option value="">Loading Tests...</option></select>
-                    </div>
-                    
-                    <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
-                        <label>Upload Banner Image</label>
-                        <input type="file" id="banner-file-upload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 5)">
-                        <span class="upload-rules">Rules: Max 5MB | Formats: JPG, PNG, WEBP | Recommended Size: 800x400px</span>
-
-                        <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
-                        <label>Paste Image URL</label>
-                        <input type="text" id="banner-image-url" placeholder="https://example.com/your-image.jpg">
                     </div>
 
                     <button class="btn-primary" id="btn-publish-banner" onclick="addBanner()">Publish Banner to Student Dashboard</button>
@@ -474,15 +443,6 @@
                         <input type="text" id="qTextEn" placeholder="Question (English)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
                         <input type="text" id="qTextHi" placeholder="Question (Hindi)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
                     </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <label style="font-size: 0.9rem; font-weight: bold; color: #475569; display: block; margin-bottom: 5px;">Question Image</label>
-                        <input type="file" id="qImageUpload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 5)" style="background: white; border: 1px solid var(--border-color); padding: 5px; border-radius: 8px; width: 100%; box-sizing: border-box;">
-                        <span class="upload-rules">Rules: Max 5MB | Formats: JPG, PNG, WEBP | Recommended Size: 800x800px</span>
-                        
-                        <input type="hidden" id="qImageBase64">
-                        <img id="imagePreview" class="auto-adjust-img hidden" src="" alt="Preview" style="margin-top: 10px; max-height: 200px;">
-                    </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <input type="text" id="opt0En" placeholder="Opt 1 (Eng)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);"><input type="text" id="opt0Hi" placeholder="Opt 1 (Hin)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
@@ -517,15 +477,6 @@
                     <div class="input-group">
                         <label>Portal Title / Name</label>
                         <input type="text" id="portal-name-input" placeholder="e.g., KD JAAT Test Portal">
-                    </div>
-                    <div class="input-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
-                        <label>Upload Portal Logo</label>
-                        <input type="file" id="portal-logo-upload" accept="image/png, image/jpeg, image/webp" onchange="validateImageUpload(this, 2)">
-                        <span class="upload-rules">Rules: Max 2MB | Formats: JPG, PNG, WEBP | Recommended Size: 300x100px</span>
-
-                        <div style="text-align: center; margin: 15px 0; color: var(--text-muted); font-weight: bold;">- OR -</div>
-                        <label>Paste Logo URL</label>
-                        <input type="text" id="portal-logo-url" placeholder="https://example.com/logo.png">
                     </div>
                     <button class="btn-primary" onclick="updatePortalBranding()" id="btn-save-branding">Save Branding Changes</button>
                 </div>
@@ -782,16 +733,11 @@
             <div id="student-popup-modal" class="modal-overlay">
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
-            <img id="popup-display-img" class="popup-img" src="" alt="Announcement Image">
             <div class="popup-content">
                 <div id="popup-display-msg" class="popup-message"></div>
                 <button onclick="closeStudentPopup()" class="btn-primary" style="margin-top: 10px; border-radius: 25px;">Okay, got it!</button>
             </div>
         </div>
-    </div>
-
-    <div id="lightboxModal" class="hidden" onclick="closeLightbox()">
-        <img id="lightboxImg" class="auto-adjust-img" src="" style="max-width: 90%; max-height: 90%; border-radius: 8px;">
     </div>
 
     <div id="questionBankModal" class="modal-overlay">
@@ -891,7 +837,8 @@
             </div>
         </div>
     </div>
-                <script>
+
+    <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -903,7 +850,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const storage = firebase.storage(); 
+        // Removed Firebase Storage since we aren't uploading images anymore
 
         // --- GLOBAL VARIABLES ---
         let currentUserRole = null;
@@ -918,71 +865,12 @@
         let editingQuestionIndex = null;
         let allTestsCache = []; 
         let localQuestionsBuffer = []; 
-
-        // --- NEW: STRICT IMAGE VALIDATION LOGIC ---
-        function validateImageUpload(inputElement, maxSizeMB) {
-            const file = inputElement.files[0];
-            if (!file) return false;
-
-            // 1. Check Format (MIME type)
-            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                alert("Strict Rule: Invalid file format! Please upload a JPG, PNG, or WEBP image.");
-                inputElement.value = ''; // Clear the input instantly
-                return false;
-            }
-
-            // 2. Check Size
-            const maxSizeBytes = maxSizeMB * 1024 * 1024;
-            if (file.size > maxSizeBytes) {
-                alert(`Strict Rule: File too large! Maximum allowed size is ${maxSizeMB}MB. Your file is ${(file.size / (1024*1024)).toFixed(2)}MB.`);
-                inputElement.value = ''; // Clear the input instantly
-                return false;
-            }
-
-            return true; // Passed all strict checks!
-        }
-
-        // --- THE FIX: SMART IMAGE AUTO-ADJUST (Returns Base64 for safe upload) ---
-        // Converts image directly to base64 data URL to prevent Blob timeout errors in Firebase
-        function smartAdjustImage(file, maxWidth, maxHeight) {
-            return new Promise((resolve, reject) => {
-                if (!file) return resolve(null);
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function (event) {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = function () {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > height) {
-                            if (width > maxWidth) { height = Math.round((height *= maxWidth / width)); width = maxWidth; }
-                        } else {
-                            if (height > maxHeight) { width = Math.round((width *= maxHeight / height)); height = maxHeight; }
-                        }
-
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // FIX: We generate a base64 string instead of a blob to avoid 'storage/retry-limit-exceeded'
-                        const base64 = canvas.toDataURL('image/jpeg', 0.7);
-                        resolve({ base64: base64 });
-                    }
-                    img.onerror = () => reject("Failed to load image");
-                }
-                reader.onerror = () => reject("Failed to read file");
-            });
-        }
+        let studentAttemptedDB = {}; // NEW: To track which tests the student has already taken
 
         // --- UTILITIES & MODAL HELPERS ---
-        function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxModal').classList.remove('hidden'); }
-        function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); }
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
-                // --- STUDENT POPUP LOGIC ---
+        
+        // --- STUDENT POPUP LOGIC (Images Removed) ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
@@ -990,32 +878,14 @@
             const message = document.getElementById('popup-message').value.trim();
             const textColor = document.getElementById('popup-text-color').value;
             const font = document.getElementById('popup-text-font').value;
-            const fileInput = document.getElementById('popup-file-upload');
-            const urlInput = document.getElementById('popup-image-url').value.trim();
             const btn = document.getElementById('btn-save-popup');
-
-            if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 5)) return;
 
             btn.disabled = true; btn.innerText = "⏳ Saving...";
 
             try {
-                let finalImageUrl = urlInput;
-                if(fileInput.files[0]) {
-                    // FIX APPLIED HERE: Using putString with base64 data_url instead of put(blob)
-                    const imageResult = await smartAdjustImage(fileInput.files[0], 600, 400);
-                    const storageRef = storage.ref(`popups/${Date.now()}_popup.jpg`);
-                    await storageRef.putString(imageResult.base64, 'data_url'); 
-                    finalImageUrl = await storageRef.getDownloadURL();
-                }
-
                 let updateData = { status: status, message: message, textColor: textColor, font: font };
-                if(finalImageUrl) updateData.imageUrl = finalImageUrl;
-
                 await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
-                
                 alert("Popup settings updated successfully!");
-                fileInput.value = '';
-                document.getElementById('popup-image-url').value = '';
             } catch (e) { alert("Error updating popup: " + e.message); } 
             finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
         }
@@ -1028,14 +898,10 @@
                     const data = doc.data();
                     if(data.status === 'active') {
                         const msgEl = document.getElementById('popup-display-msg');
-                        const imgEl = document.getElementById('popup-display-img');
                         
                         msgEl.innerText = data.message || '';
                         msgEl.style.color = data.textColor || '#0f172a';
                         msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
-
-                        if(data.imageUrl) { imgEl.src = data.imageUrl; imgEl.style.display = 'block'; } 
-                        else { imgEl.style.display = 'none'; }
 
                         document.getElementById('student-popup-modal').style.display = 'flex';
                         sessionStorage.setItem('popupShown', 'true');
@@ -1044,7 +910,7 @@
             }).catch(e => console.error("Error loading popup: ", e));
         }
 
-        // --- PORTAL BRANDING LOGIC ---
+        // --- PORTAL BRANDING LOGIC (Images Removed) ---
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
                 if(doc.exists) {
@@ -1052,10 +918,6 @@
                     const title = data.portalName || "KD JAAT Test Portal";
                     document.getElementById('nav-title').innerText = title;
                     document.getElementById('page-title').innerText = title;
-                    
-                    const logoEl = document.getElementById('nav-logo');
-                    if(data.logoUrl) { logoEl.src = data.logoUrl; logoEl.style.display = 'block'; } 
-                    else { logoEl.style.display = 'none'; }
 
                     if(data.geminiKey) { storedGeminiKey = data.geminiKey; document.getElementById('adminAiKey').value = storedGeminiKey; }
                 }
@@ -1076,31 +938,16 @@
 
         async function updatePortalBranding() {
             const nameInput = document.getElementById('portal-name-input').value.trim();
-            const fileInput = document.getElementById('portal-logo-upload');
-            const urlInput = document.getElementById('portal-logo-url').value.trim();
             const btn = document.getElementById('btn-save-branding');
-
-            if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 2)) return;
 
             btn.disabled = true; btn.innerText = "⏳ Saving...";
 
             try {
-                let finalLogoUrl = urlInput;
-                if(fileInput.files[0]) {
-                    // FIX APPLIED HERE: Using putString with base64 data_url instead of put(blob)
-                    const imageResult = await smartAdjustImage(fileInput.files[0], 300, 100);
-                    const storageRef = storage.ref(`branding/${Date.now()}_logo.jpg`);
-                    await storageRef.putString(imageResult.base64, 'data_url');
-                    finalLogoUrl = await storageRef.getDownloadURL();
-                }
-
                 let updateData = {};
                 if(nameInput) updateData.portalName = nameInput;
-                if(finalLogoUrl) updateData.logoUrl = finalLogoUrl;
 
                 await db.collection("adminSettings").doc("branding").set(updateData, { merge: true });
                 alert("Branding updated successfully!");
-                fileInput.value = ''; document.getElementById('portal-logo-url').value = '';
             } catch (e) { alert("Error updating branding: " + e.message); } 
             finally { btn.disabled = false; btn.innerText = "Save Branding Changes"; }
         }
@@ -1111,8 +958,7 @@
             const msg = document.getElementById('aiKeyMsg'); msg.innerText = "AI API Key Saved Successfully!";
             msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000);
         }
-
-        // --- ANTI-REFRESH PROTECTION ---
+                // --- ANTI-REFRESH PROTECTION ---
         window.addEventListener('beforeunload', function (e) { if (isTestActive) { e.preventDefault(); e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.'; } });
 
         // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
@@ -1218,7 +1064,8 @@
         }
 
         function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
-                // --- ADMIN: MANAGE STUDENTS LOGIC ---
+        
+        // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1270,7 +1117,7 @@
             }
         }
 
-        // --- ADMIN: TEST SETTINGS & MANAGEMENT ---
+        // --- ADMIN: TEST & GROUP SETTINGS ---
         async function openEditModal(testId) {
             const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return;
             const test = doc.data(); document.getElementById('edit-test-id').value = testId; document.getElementById('edit-title').value = test.title || '';
@@ -1291,37 +1138,33 @@
 
         function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
         
-        // --- UPDATED BANNER LOGIC (With Fast Base64 Upload Fix) ---
+        // NEW: Group Deletion Logic
+        async function deleteGroup(gid) {
+            if(confirm("Are you sure you want to delete this group? Tests inside this group will not be deleted but will lose their category.")) {
+                try {
+                    await db.collection("groups").doc(gid).delete();
+                    alert("Group deleted successfully.");
+                } catch(e) { alert("Error deleting group: " + e.message); }
+            }
+        }
+        
+        // --- TEXT BANNERS LOGIC (Images Removed) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
-            const fileInput = document.getElementById('banner-file-upload'); const urlInput = document.getElementById('banner-image-url').value.trim();
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
-            const file = fileInput.files[0];
 
-            if(fileInput.files.length > 0 && !validateImageUpload(fileInput, 5)) return;
-            
             if(!customTitle) return alert("Please enter a stylish banner name."); if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
-            if(!file && !urlInput) return alert("You must either upload an image file or paste an image URL.");
             
             const btn = document.getElementById('btn-publish-banner'); btn.disabled = true; btn.innerText = "⏳ Publishing Banner... Please wait";
-            let finalImageUrl = urlInput; 
             
             try {
-                if(file) {
-                    // FIX APPLIED HERE: Using putString with base64 data_url instead of put(blob)
-                    const imageResult = await smartAdjustImage(file, 800, 400);
-                    const storageRef = storage.ref(`banners/${Date.now()}_banner.jpg`);
-                    await storageRef.putString(imageResult.base64, 'data_url');
-                    finalImageUrl = await storageRef.getDownloadURL();
-                }
-                
                 await db.collection("banners").add({
                     testId: testSelect.value, testName: testSelect.options[testSelect.selectedIndex].text,
-                    customTitle: customTitle, imageUrl: finalImageUrl, textColor: textColor, textFont: textFont,
+                    customTitle: customTitle, textColor: textColor, textFont: textFont,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                document.getElementById('banner-custom-title').value = ''; document.getElementById('banner-image-url').value = ''; fileInput.value = '';
+                document.getElementById('banner-custom-title').value = '';
                 alert("Banner successfully published!");
             } catch (error) { alert("Error publishing banner: " + error.message); } 
             finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
@@ -1337,7 +1180,12 @@
                 l.innerHTML=''; sel.forEach(x=>x.innerHTML='<option value="">Select Group...</option>'); 
                 s.forEach(d=>{ 
                     let g=d.data(); 
-                    l.innerHTML+=`<div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px;">📁 ${g.name}</div>`; 
+                    // ADDED: Delete button for Groups
+                    l.innerHTML+=`
+                    <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>📁 ${g.name}</span>
+                        <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
+                    </div>`; 
                     sel.forEach(x=>x.innerHTML+=`<option value="${d.id}">${g.name}</option>`); 
                 }); 
             }); 
@@ -1370,7 +1218,6 @@
                     l.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
                         <div style="display:flex; align-items:center; gap:15px;">
-                            <img src="${b.imageUrl}" style="width:60px; height:40px; object-fit:cover; border-radius:4px; border: 1px solid #cbd5e1;">
                             <div style="display:flex; flex-direction:column;"><span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span><span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'}</span></div>
                         </div>
                         <button class="btn-danger" style="width:auto; padding:5px 12px; font-size: 0.9rem;" onclick="deleteBanner('${d.id}')">🗑 Remove</button>
@@ -1384,7 +1231,7 @@
             }); 
         }
 
-        // --- AI QUESTION EDITOR & TEST CREATION ---
+        // --- AI QUESTION EDITOR & TEST CREATION (Image parsing removed) ---
         async function createNewTest() {
             const name = document.getElementById('newTestName').value.trim(); const group = document.getElementById('newTestGroup').value; const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
             if (!name || !group) return alert("Please provide a test name and select a group.");
@@ -1419,7 +1266,7 @@
             document.getElementById('qTextEn').value = q.questionEng || ''; document.getElementById('qTextHi').value = q.questionHin || ''; 
             for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value = (q.optionsEng && q.optionsEng[j]) ? q.optionsEng[j] : ''; document.getElementById(`opt${j}Hi`).value = (q.optionsHin && q.optionsHin[j]) ? q.optionsHin[j] : ''; } 
             document.getElementById('correctAnswer').value = q.correctIndex || 0; 
-            if(q.imageUrl){ document.getElementById('qImageBase64').value = q.imageUrl; document.getElementById('imagePreview').src = q.imageUrl; document.getElementById('imagePreview').classList.remove('hidden'); } else { resetImageUpload(); } 
+            
             editingQuestionIndex = i; document.getElementById('saveQuestionBtn').innerText="Update"; document.getElementById('cancelEditBtn').classList.remove('hidden'); document.getElementById('admin-sec-question-editor').scrollIntoView();
         }
 
@@ -1427,28 +1274,15 @@
             editingQuestionIndex = null; document.getElementById('saveQuestionBtn').innerText="Save Question"; document.getElementById('cancelEditBtn').classList.add('hidden'); 
             document.getElementById('qTextEn').value=''; document.getElementById('qTextHi').value=''; 
             for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value=''; document.getElementById(`opt${j}Hi`).value=''; } 
-            document.getElementById('correctAnswer').value='0'; resetImageUpload(); 
+            document.getElementById('correctAnswer').value='0'; 
         }
-
-        // --- QUESTION IMAGE SMART UPLOAD ---
-        document.getElementById('qImageUpload').addEventListener('change', async function(e) {
-            if(!validateImageUpload(this, 5)) return;
-
-            const file = e.target.files[0]; if (!file) return;
-            const imageResult = await smartAdjustImage(file, 800, 800);
-            document.getElementById('qImageBase64').value = imageResult.base64; 
-            document.getElementById('imagePreview').src = imageResult.base64; 
-            document.getElementById('imagePreview').classList.remove('hidden');
-        });
-
-        function resetImageUpload() { document.getElementById('qImageUpload').value=""; document.getElementById('qImageBase64').value=""; document.getElementById('imagePreview').classList.add('hidden'); }
 
         async function addQuestionToTest() { 
             const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; const optsEn=[], optsHi=[]; 
             for(let i=0;i<4;i++) { optsEn.push(document.getElementById(`opt${i}En`).value); optsHi.push(document.getElementById(`opt${i}Hi`).value); } 
             if(!qEn && !qHi) return alert("Fill at least one question field."); 
             
-            const obj = { questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, correctIndex: parseInt(document.getElementById('correctAnswer').value), imageUrl: document.getElementById('qImageBase64').value, subject: "General", explanationEng: "", explanationHin: "" }; 
+            const obj = { questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, correctIndex: parseInt(document.getElementById('correctAnswer').value), subject: "General", explanationEng: "", explanationHin: "" }; 
             if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; else localQuestionsBuffer.push(obj); 
             
             await updateTestQuestionsInDb(); renderAdminQuestionList(); cancelQuestionEdit(); 
@@ -1477,7 +1311,7 @@
                 if (!response.ok) throw new Error(`Google API Error`);
                 const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
                 
-                parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, imageUrl: "", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20) }); });
+                parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20) }); });
                 await updateTestQuestionsInDb(); renderAdminQuestionList(); 
                 const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Added ${parsedQuestions.length} bilingual questions!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000); topicInput.value = '';
             } catch (error) { errorMsg.innerText = "Error: " + error.message; errorMsg.style.display = 'block'; } finally { generateBtn.innerText = "Bulk Generate"; generateBtn.disabled = false; }
@@ -1502,7 +1336,7 @@
                     if (!response.ok) throw new Error("API Request Failed");
                     const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
                     
-                    parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, imageUrl: "", subject: "Imported PDF", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "" }); });
+                    parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, subject: "Imported PDF", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "" }); });
                     await updateTestQuestionsInDb(); renderAdminQuestionList(); 
                     msgBox.innerText = `✨ Success! Extracted & Translated ${parsedQuestions.length} questions.`; msgBox.style.color = "var(--success)"; fileInput.value = ""; 
                 } catch (error) { msgBox.innerText = "Error: " + error.message; msgBox.style.color = "var(--danger)"; } finally { extractBtn.innerText = "Extract Questions"; extractBtn.disabled = false; }
@@ -1549,7 +1383,10 @@
                 }).catch(e => console.error("Error fetching user data", e));
             }
 
-            loadGroupsForStudents(); loadStudentAttempts(); loadLeaderboardTests();
+            // Load attempts first so we know which tests to mark as "Retake / See Results"
+            loadStudentAttempts();
+            loadGroupsForStudents(); 
+            loadLeaderboardTests();
             
             db.collection("banners").onSnapshot(s => {
                 let c = document.getElementById('student-banners'); if(!c) return;
@@ -1557,14 +1394,61 @@
                 c.style.display = 'flex';
                 s.forEach(d => {
                     let b = d.data(); let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
-                    c.innerHTML += `<div class="promo-banner" style="background-image: url('${b.imageUrl}')" onclick="startTest('${b.testId}')"><div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div></div>`;
+                    c.innerHTML += `<div class="promo-banner" onclick="startTest('${b.testId}')"><div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div></div>`;
                 });
             });
         }
 
         function loadGroupsForStudents() { db.collection("groups").onSnapshot(s=>{ let c=document.getElementById('student-group-list'); c.innerHTML=''; s.forEach(d=>{ c.innerHTML+=`<div class="menu-btn" onclick="viewGroupTests('${d.id}','${d.data().name}')"><h3 style="font-size:2rem; margin:0;">📁</h3><h3>${d.data().name}</h3></div>`; }); }); }
-        function viewGroupTests(gid, gn) { document.getElementById('current-group-title').innerText=gn; db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ let c=document.getElementById('student-test-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No tests found.</p>'; s.forEach(d=>{ let t=d.data(); c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4><p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p><button class="btn-primary" onclick="startTest('${d.id}')">Start Attempt 🚀</button></div>`; }); }); openStudentSec('student-sec-tests-list'); }
-        function loadStudentAttempts() { if(!auth.currentUser)return; db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ let c=document.getElementById('student-attempts-list'); c.innerHTML=''; if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><h4 style="margin-bottom:10px">${a.testTitle}</h4><div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold;">Score: ${a.score}/${a.totalMarks}</div></div>`; }); }); }
+        
+        // MODIFIED: Test List UI to handle "Retake Test" & "See Results"
+        function viewGroupTests(gid, gn) { 
+            document.getElementById('current-group-title').innerText=gn; 
+            db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ 
+                let c=document.getElementById('student-test-list'); c.innerHTML=''; 
+                if(s.empty) c.innerHTML='<p>No tests found.</p>'; 
+                s.forEach(d=>{ 
+                    let t=d.data(); 
+                    let actionHtml = '';
+                    if(studentAttemptedDB[d.id]) {
+                        actionHtml = `
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                <button class="btn-primary" style="flex:1;" onclick="startTest('${d.id}')">Retake Test</button>
+                                <button class="btn-outline" style="flex:1; border-color:var(--primary); color:var(--primary);" onclick="seePastResults('${studentAttemptedDB[d.id]}')">See Results</button>
+                            </div>`;
+                    } else {
+                        actionHtml = `<button class="btn-primary" style="margin-top:10px;" onclick="startTest('${d.id}')">Start Attempt 🚀</button>`;
+                    }
+
+                    c.innerHTML+=`
+                    <div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;">
+                        <h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
+                        ${actionHtml}
+                    </div>`; 
+                }); 
+            }); 
+            openStudentSec('student-sec-tests-list'); 
+        }
+
+        // MODIFIED: Also populating the studentAttemptedDB
+        function loadStudentAttempts() { 
+            if(!auth.currentUser)return; 
+            db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ 
+                let c=document.getElementById('student-attempts-list'); c.innerHTML=''; 
+                studentAttemptedDB = {}; // Reset the DB cache
+                if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; 
+                s.forEach(d=>{ 
+                    let a=d.data(); 
+                    studentAttemptedDB[a.testId] = d.id; // Mark this test as attempted and store attempt ID
+                    c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)">
+                        <h4 style="margin-bottom:10px">${a.testTitle}</h4>
+                        <div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold; margin-bottom: 10px;">Score: ${a.score}/${a.totalMarks}</div>
+                        <button class="btn-outline" style="width: 100%; border-color: var(--primary); color: var(--primary);" onclick="seePastResults('${d.id}')">Review Solutions</button>
+                    </div>`; 
+                }); 
+            }); 
+        }
         
         function loadLeaderboardTests() { db.collection("tests").onSnapshot(s => { let sel = document.getElementById('leaderboard-test-select'); if(!sel) return; sel.innerHTML = '<option value="">Select a test to view rankings...</option>'; s.forEach(d => { if(d.data().groupId !== 'QUESTION_BANK') { sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`; } }); }); }
 
@@ -1617,8 +1501,8 @@
             const qText = currentLanguage === 'Eng' ? q.questionEng : q.questionHin; const opts = currentLanguage === 'Eng' ? q.optionsEng : q.optionsHin;
             
             let optionsHTML = ''; if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
-            let imgHTML = q.imageUrl ? `<img src="${q.imageUrl}" class="auto-adjust-img" style="border: 1px solid var(--border-color); cursor: pointer;" onclick="openLightbox(this.src)">` : '';
-            container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || 'Language translation missing'}</h4>${imgHTML}<div class="options">${optionsHTML}</div></div>`;
+            
+            container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || 'Language translation missing'}</h4><div class="options">${optionsHTML}</div></div>`;
 
             document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
             const nextBtn = document.getElementById('btn-next'); if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
@@ -1660,9 +1544,10 @@
             let finalScore = Math.round(((correct * testMarks) - (wrong * testNegativeMarks)) * 100) / 100; 
 
             if(auth.currentUser) {
+                // MODIFIED: We are now saving userAnswers array so they can review their exact choices later
                 db.collection("attempts").add({
                     userId: auth.currentUser.uid, userIdEmail: auth.currentUser.email, testId: activeTestId, testTitle: currentTest.title, score: finalScore, totalMarks: testQuestions.length * testMarks,
-                    correct: correct, wrong: wrong, left: left, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    correct: correct, wrong: wrong, left: left, userAnswers: userAnswers, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
             }
 
@@ -1677,6 +1562,27 @@
                     <div style="font-weight: 700; color: ${scoreColor}; font-size: 1.1rem;">${accuracy}% Acc.</div></div>`;
             }
             document.getElementById('res-sectional').innerHTML = secHtml; navigate('view-results');
+        }
+
+        // NEW: Load a past attempt from the DB to show on the review screen
+        async function seePastResults(attemptId) {
+            try {
+                const attDoc = await db.collection("attempts").doc(attemptId).get();
+                if(!attDoc.exists) return alert("Record not found.");
+                const attData = attDoc.data();
+                
+                const testDoc = await db.collection("tests").doc(attData.testId).get();
+                if(!testDoc.exists) return alert("This test no longer exists.");
+                
+                currentTest = testDoc.data();
+                testQuestions = currentTest.questions || [];
+                // Load the answers the user submitted during that attempt
+                userAnswers = attData.userAnswers || new Array(testQuestions.length).fill(null);
+                
+                showReviewScreen(); 
+            } catch(e) {
+                alert("Error loading past results: " + e.message);
+            }
         }
 
         function showReviewScreen() { reviewLanguage = currentLanguage; renderReviewContent(); navigate('view-review', false); window.scrollTo(0, 0); }
@@ -1696,7 +1602,6 @@
                 }
                 
                 let expHTML = exp && exp.trim() !== '' ? `<div class="explanation-box"><strong>💡 Solution / Explanation:</strong><br>${exp}</div>` : `<div class="explanation-box" style="color: var(--text-muted);"><em>No explanation provided for this question.</em></div>`;
-                let imgHTML = q.imageUrl ? `<img src="${q.imageUrl}" class="auto-adjust-img" style="margin-bottom: 15px; cursor: pointer;" onclick="openLightbox(this.src)">` : '';
 
                 container.innerHTML += `
                     <div class="question-card" style="min-height: auto; border-top: 4px solid ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#cbd5e1' : 'var(--danger)')};">
@@ -1705,7 +1610,7 @@
                             <span style="background:#f1f5f9; padding:2px 8px; border-radius:12px; font-size:0.75rem; color:#475569; font-weight:bold;">${q.subject || 'General'}</span>
                         </div>
                         <h4 style="font-size: 1.15rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${i + 1}.</span> ${qText || 'Language translation missing'}</h4>
-                        ${imgHTML} <div style="display:flex; flex-direction:column; gap:8px;">${optionsHTML}</div> ${expHTML}
+                        <div style="display:flex; flex-direction:column; gap:8px;">${optionsHTML}</div> ${expHTML}
                     </div>`;
             });
             if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
