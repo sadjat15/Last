@@ -69,8 +69,7 @@
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
         .nav-btn:hover { background: rgba(255,255,255,0.2); }
-
-        /* Dashboard Main Menu Buttons */
+                /* Dashboard Main Menu Buttons */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .menu-btn { 
             background: var(--card-bg); padding: 30px 20px; border-radius: var(--radius); 
@@ -122,7 +121,8 @@
         .btn-warning { background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
-                /* Modern Register & Forgot Password Portal */
+        
+        /* Modern Register & Forgot Password Portal */
         .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
         .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
 
@@ -130,8 +130,7 @@
         .modern-done-popup { text-align: center; padding: 40px 20px; }
         .check-circle { width: 80px; height: 80px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--success); font-size: 40px; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        
-        /* Student Record Table Styles */
+                /* Student Record Table Styles */
         .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
@@ -188,7 +187,7 @@
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 1499;
         }
-        .side-panel-header { padding: 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
+                .side-panel-header { padding: 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
         .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 20px; overflow-y: auto; align-content: start; }
         
         .q-btn { 
@@ -263,8 +262,7 @@
     </div>
     
     <div class="container">
-        
-        <div id="view-login" class="view active">
+                <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
@@ -445,8 +443,7 @@
                         <button id="aiGenerateBtn" class="btn-success" style="margin: 0; width: auto; padding: 10px 20px;" onclick="generateBulkQuestionsWithAI()">Bulk Generate</button>
                     </div><p id="aiGenError" style="color: var(--danger); font-size: 14px; margin-top: 10px; display: none;"></p>
                 </div>
-
-                <div class="ai-panel" style="background: #fffbeb; border-color: #f59e0b; margin-top: 15px;">
+                                <div class="ai-panel" style="background: #fffbeb; border-color: #f59e0b; margin-top: 15px;">
                     <p style="font-size: 14px; font-weight: bold; color: #d97706; margin: 0 0 10px 0;">📚 Import from Question Bank</p>
                     <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 10px;">Reuse questions you have already added to other tests across the app.</p>
                     <button class="btn-warning" style="margin: 0; width: auto; padding: 10px 20px;" onclick="openQuestionBankModal()">Browse Question Bank</button>
@@ -550,8 +547,7 @@
                     <div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-            
-            <div id="admin-sec-students" class="sub-sec">
+                        <div id="admin-sec-students" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Registered Students</h2>
@@ -732,7 +728,8 @@
                 <button class="btn-primary" style="width: auto; min-width: 120px;" onclick="nextQuestion()" id="btn-next">Next ➡</button>
             </div>
         </div>
-                <div id="view-results" class="view">
+        
+        <div id="view-results" class="view">
             <div class="action-box" style="text-align: center; padding: 40px 20px;">
                 <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 30px;">Test Completed! 🎉</h2>
                 <div class="grid-list" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -773,18 +770,19 @@
             <div id="review-container"></div>
         </div>
 
-    </div> <div id="student-popup-modal" class="modal-overlay">
+    </div> 
+    
+    <div id="student-popup-modal" class="modal-overlay">
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <div class="popup-content">
-                <img id="popup-ai-img" class="popup-ai-image" src="" alt="Announcement Graphic">
+                <img id="popup-ai-img" class="popup-ai-image" src="" alt="Announcement Graphic" loading="eager" onerror="this.style.display='none';">
                 <div id="popup-display-msg" class="popup-message"></div>
                 <button onclick="closeStudentPopup()" class="btn-primary" style="margin-top: 10px; border-radius: 25px;">Okay, got it!</button>
             </div>
         </div>
     </div>
-
-    <div id="edit-group-modal" class="modal-overlay">
+        <div id="edit-group-modal" class="modal-overlay">
         <div class="modal">
             <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Group Styling</h2>
             <input type="hidden" id="edit-group-id">
@@ -911,7 +909,8 @@
             </div>
         </div>
     </div>
-        <script>
+        
+    <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -943,13 +942,12 @@
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
         
         // --- AI IMAGE GENERATOR HELPER ---
-        // Uses Pollinations.ai to fetch free AI images based on text
         function getAiImageUrl(prompt, width=500, height=200) {
             if(!prompt) return "";
             return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true`;
         }
 
-        // --- STUDENT POPUP LOGIC (Now with AI Image Support) ---
+        // --- STUDENT POPUP LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
@@ -1153,7 +1151,8 @@
         }
 
         function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
-                // --- ADMIN: MANAGE STUDENTS LOGIC ---
+
+        // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1226,7 +1225,7 @@
 
         async function deleteTest(tid) { if(confirm("Are you sure you want to completely delete this test?")) { try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); } } }
 
-        // --- ADMIN: GROUP SETTINGS (NEW WITH EDIT & STYLE) ---
+        // --- ADMIN: GROUP SETTINGS ---
         function addGroup() { 
             const n = document.getElementById('new-group-name').value; 
             const c = document.getElementById('new-group-color').value;
@@ -1267,7 +1266,7 @@
             }
         }
         
-        // --- ADMIN: BANNERS LOGIC (NEW WITH AI BACKGROUND) ---
+        // --- ADMIN: BANNERS LOGIC ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
@@ -1354,7 +1353,8 @@
                 s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; }); 
             }); 
         }
-                // --- AI QUESTION EDITOR & TEST CREATION ---
+
+        // --- AI QUESTION EDITOR & TEST CREATION ---
         async function createNewTest() {
             const name = document.getElementById('newTestName').value.trim(); const group = document.getElementById('newTestGroup').value; const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
             if (!name || !group) return alert("Please provide a test name and select a group.");
@@ -1497,7 +1497,7 @@
             const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Successfully imported ${importedCount} question(s)!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000);
         }
 
-        // --- STUDENT DASHBOARD LOGIC (NEW: DYNAMIC AI IMAGES INJECTED HERE) ---
+        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH EAGER LOADING/FALLBACKS) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1519,10 +1519,17 @@
                     let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; 
                     let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
                     
-                    // NEW: Automatically fetch AI photo based on clue for Banners
-                    let bgStyle = b.imageClue ? `background-image: url('${getAiImageUrl(b.imageClue, 500, 160)}'); background-size: cover; background-position: center;` : 'background-color: var(--primary);';
+                    let aiUrl = b.imageClue ? getAiImageUrl(b.imageClue, 500, 160) : '';
+                    let bgStyle = aiUrl ? `background-image: url('${aiUrl}'); background-size: cover; background-position: center;` : 'background-color: var(--primary);';
                     
-                    c.innerHTML += `<div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')"><div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div></div>`;
+                    // Added a hidden eager loaded img tag to force the background to download immediately
+                    let eagerPreloadHtml = aiUrl ? `<img src="${aiUrl}" style="display:none;" loading="eager" onerror="this.onerror=null; this.parentElement.style.backgroundImage='none'; this.parentElement.style.backgroundColor='var(--primary)';">` : '';
+
+                    c.innerHTML += `
+                    <div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')">
+                        ${eagerPreloadHtml}
+                        <div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div>
+                    </div>`;
                 });
             });
         }
@@ -1535,12 +1542,12 @@
                     let cStyle = g.color ? `color: ${g.color};` : ''; 
                     let fStyle = g.font ? `font-family: ${g.font};` : '';
                     
-                    // NEW: Automatically fetch AI photo based on the exact group name!
                     let aiImgUrl = getAiImageUrl(g.name + " concept, educational, graphic", 300, 120);
                     
+                    // ADDED: loading="eager" to force quick loading and a safe fallback image using onerror
                     c.innerHTML+=`
                     <div class="menu-btn" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
-                        <img src="${aiImgUrl}" class="ai-bg-img" alt="${g.name}">
+                        <img src="${aiImgUrl}" class="ai-bg-img" alt="${g.name}" loading="eager" onerror="this.onerror=null; this.src='https://placehold.co/300x120/e2e8f0/4f46e5?text=KD+JAAT+TEST';">
                         <h3 style="margin:0; ${cStyle} ${fStyle}">${g.name}</h3>
                     </div>`; 
                 }); 
