@@ -77,11 +77,19 @@
             box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); 
             text-align: center; cursor: pointer; transition: 0.2s; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+            position: relative; overflow: hidden;
         }
         .menu-btn:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--primary); }
-        .menu-btn h3 { color: var(--primary); font-size: 1.3rem; }
-        .menu-btn p { color: var(--text-muted); font-size: 0.9rem; }
-                /* Action Boxes & Question Cards */
+        .menu-btn h3 { color: var(--primary); font-size: 1.3rem; z-index: 2; position: relative;}
+        .menu-btn p { color: var(--text-muted); font-size: 0.9rem; z-index: 2; position: relative;}
+        
+        /* Dynamic AI Image Container */
+        .ai-bg-img {
+            width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;
+            background-color: #e2e8f0;
+        }
+
+        /* Action Boxes & Question Cards */
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
         .action-box h3 { font-size: 1.2rem; margin-bottom: 15px; }
         .q-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.2s; }
@@ -114,8 +122,7 @@
         .btn-warning { background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
-        
-        /* Modern Register & Forgot Password Portal */
+                /* Modern Register & Forgot Password Portal */
         .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
         .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
 
@@ -129,7 +136,8 @@
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover { background: #f1f5f9; }
-                /* Modals & Overlays */
+        
+        /* Modals & Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
         
@@ -139,6 +147,9 @@
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
         .popup-content { padding: 25px; text-align: center; }
         .popup-message { margin: 15px 0; font-size: 1.1rem; line-height: 1.6; }
+        
+        /* ADDED: Dynamic AI Image Clue container for Popups */
+        .popup-ai-image { width: 100%; height: 180px; object-fit: cover; border-bottom: 3px solid var(--primary); display: none; }
 
         /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
@@ -164,7 +175,8 @@
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
 
         .test-nav-bar { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-                /* Side Panel (Question Palette) */
+        
+        /* Side Panel (Question Palette) */
         .side-panel {
             position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
             background: white; box-shadow: var(--shadow-lg); z-index: 1500;
@@ -206,7 +218,7 @@
         
         .promo-banner {
             min-width: 280px; width: 100%; max-width: 500px; height: 160px; border-radius: 12px;
-            background-color: var(--primary); /* Replaced image logic with a solid color fallback */
+            background-color: var(--primary); background-size: cover; background-position: center;
             box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
             position: relative; overflow: hidden; display: flex; align-items: flex-end;
             border: 1px solid var(--border-color); flex-shrink: 0; scroll-snap-align: start;
@@ -235,8 +247,7 @@
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
-    
-    <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
+        <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
 
     <div id="side-palette" class="side-panel">
         <div class="side-panel-header">
@@ -250,7 +261,9 @@
             <div class="legend-item"><div class="legend-dot" style="background: var(--review);"></div> Marked for Review</div>
         </div>
     </div>
-            <div class="container">
+    
+    <div class="container">
+        
         <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -310,11 +323,12 @@
                 </div>
             </div>
         </div>
-                <div id="view-admin" class="view">
+        
+        <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create or delete test categories</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create, edit, or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Create tests, edit timer, marks, and delete</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Text Banners & Popups</h3><p>Promote tests & student announcements</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-students')"><h3>👥 Manage Students</h3><p>View, track & remove students</p></div>
@@ -323,8 +337,7 @@
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-            
-            <div id="admin-sec-banners" class="sub-sec">
+                        <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Text Banners & Student Popup</h2>
@@ -345,6 +358,11 @@
                     <div class="input-group">
                         <label>Custom Announcement Message</label>
                         <textarea id="popup-message" rows="3" placeholder="e.g., Welcome to the new session! Check out our latest mock tests..."></textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>AI Image Clue (Optional - Automatically adds a photo above the text)</label>
+                        <input type="text" id="popup-image-clue" placeholder="e.g., students studying, exam success, celebration">
                     </div>
                     
                     <div class="flex-row">
@@ -376,6 +394,11 @@
                         <input type="text" id="banner-custom-title" placeholder="e.g., 🔴 LIVE NOW: RUVNL Mains Exam">
                     </div>
                     
+                    <div class="input-group">
+                        <label>AI Image Clue (Generates a background photo for the banner)</label>
+                        <input type="text" id="banner-image-clue" placeholder="e.g., electricity, modern classroom, focus">
+                    </div>
+                    
                     <div class="flex-row">
                         <div class="input-group">
                             <label>Title Color</label>
@@ -404,7 +427,8 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-                        <div id="admin-sec-question-editor" class="sub-sec">
+            
+            <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                         <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
@@ -466,8 +490,7 @@
                 <h3 style="margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 15px;"></div>
             </div>
-            
-            <div id="admin-sec-branding" class="sub-sec">
+                        <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Portal Branding & AI Settings</h2>
@@ -492,16 +515,38 @@
                     <p id="aiKeyMsg" style="color: var(--success); font-weight: bold; margin-top: 10px; display: none;"></p>
                 </div>
             </div>
-                        <div id="admin-sec-groups" class="sub-sec">
+            
+            <div id="admin-sec-groups" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Test Groups</h2>
                 </div>
                 <div class="action-box">
+                    <h3 style="margin-bottom: 15px;">Create a New Group</h3>
                     <div class="input-group">
+                        <label>Stylish Group Name</label>
                         <input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests">
                     </div>
+                    
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Name Color</label>
+                            <input type="color" id="new-group-color" value="#0f172a" style="height: 45px; cursor: pointer;">
+                        </div>
+                        <div class="input-group">
+                            <label>Name Font</label>
+                            <select id="new-group-font">
+                                <option value="'Poppins', sans-serif">Poppins (Bold)</option>
+                                <option value="'Inter', sans-serif">Inter (Clean)</option>
+                                <option value="'Oswald', sans-serif">Oswald (Tall)</option>
+                                <option value="'Montserrat', sans-serif">Montserrat (Elegant)</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <button class="btn-primary" onclick="addGroup()">Add New Group</button>
+                    
+                    <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Groups</h3>
                     <div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
@@ -687,8 +732,7 @@
                 <button class="btn-primary" style="width: auto; min-width: 120px;" onclick="nextQuestion()" id="btn-next">Next ➡</button>
             </div>
         </div>
-
-        <div id="view-results" class="view">
+                <div id="view-results" class="view">
             <div class="action-box" style="text-align: center; padding: 40px 20px;">
                 <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 30px;">Test Completed! 🎉</h2>
                 <div class="grid-list" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -729,13 +773,43 @@
             <div id="review-container"></div>
         </div>
 
-    </div>
-            <div id="student-popup-modal" class="modal-overlay">
+    </div> <div id="student-popup-modal" class="modal-overlay">
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <div class="popup-content">
+                <img id="popup-ai-img" class="popup-ai-image" src="" alt="Announcement Graphic">
                 <div id="popup-display-msg" class="popup-message"></div>
                 <button onclick="closeStudentPopup()" class="btn-primary" style="margin-top: 10px; border-radius: 25px;">Okay, got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-group-modal" class="modal-overlay">
+        <div class="modal">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Group Styling</h2>
+            <input type="hidden" id="edit-group-id">
+            <div class="input-group">
+                <label>Stylish Group Name</label>
+                <input type="text" id="edit-group-name">
+            </div>
+            <div class="flex-row">
+                <div class="input-group">
+                    <label>Name Color</label>
+                    <input type="color" id="edit-group-color" style="height: 45px; cursor: pointer;">
+                </div>
+                <div class="input-group">
+                    <label>Name Font</label>
+                    <select id="edit-group-font">
+                        <option value="'Poppins', sans-serif">Poppins (Bold)</option>
+                        <option value="'Inter', sans-serif">Inter (Clean)</option>
+                        <option value="'Oswald', sans-serif">Oswald (Tall)</option>
+                        <option value="'Montserrat', sans-serif">Montserrat (Elegant)</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="closeEditGroupModal()" class="btn-outline" style="flex:1;">Cancel</button>
+                <button onclick="saveGroupEdit()" class="btn-success" style="flex:1;">Save Changes</button>
             </div>
         </div>
     </div>
@@ -837,8 +911,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+        <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -850,7 +923,6 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        // Removed Firebase Storage since we aren't uploading images anymore
 
         // --- GLOBAL VARIABLES ---
         let currentUserRole = null;
@@ -865,17 +937,25 @@
         let editingQuestionIndex = null;
         let allTestsCache = []; 
         let localQuestionsBuffer = []; 
-        let studentAttemptedDB = {}; // NEW: To track which tests the student has already taken
+        let studentAttemptedDB = {}; 
 
         // --- UTILITIES & MODAL HELPERS ---
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
         
-        // --- STUDENT POPUP LOGIC (Images Removed) ---
+        // --- AI IMAGE GENERATOR HELPER ---
+        // Uses Pollinations.ai to fetch free AI images based on text
+        function getAiImageUrl(prompt, width=500, height=200) {
+            if(!prompt) return "";
+            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true`;
+        }
+
+        // --- STUDENT POPUP LOGIC (Now with AI Image Support) ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
             const status = document.getElementById('popup-status').value;
             const message = document.getElementById('popup-message').value.trim();
+            const imageClue = document.getElementById('popup-image-clue').value.trim();
             const textColor = document.getElementById('popup-text-color').value;
             const font = document.getElementById('popup-text-font').value;
             const btn = document.getElementById('btn-save-popup');
@@ -883,7 +963,7 @@
             btn.disabled = true; btn.innerText = "⏳ Saving...";
 
             try {
-                let updateData = { status: status, message: message, textColor: textColor, font: font };
+                let updateData = { status: status, message: message, imageClue: imageClue, textColor: textColor, font: font };
                 await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
                 alert("Popup settings updated successfully!");
             } catch (e) { alert("Error updating popup: " + e.message); } 
@@ -898,10 +978,18 @@
                     const data = doc.data();
                     if(data.status === 'active') {
                         const msgEl = document.getElementById('popup-display-msg');
+                        const imgEl = document.getElementById('popup-ai-img');
                         
                         msgEl.innerText = data.message || '';
                         msgEl.style.color = data.textColor || '#0f172a';
                         msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
+                        
+                        if(data.imageClue) {
+                            imgEl.src = getAiImageUrl(data.imageClue, 450, 180);
+                            imgEl.style.display = 'block';
+                        } else {
+                            imgEl.style.display = 'none';
+                        }
 
                         document.getElementById('student-popup-modal').style.display = 'flex';
                         sessionStorage.setItem('popupShown', 'true');
@@ -910,7 +998,7 @@
             }).catch(e => console.error("Error loading popup: ", e));
         }
 
-        // --- PORTAL BRANDING LOGIC (Images Removed) ---
+        // --- PORTAL BRANDING LOGIC ---
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
                 if(doc.exists) {
@@ -918,7 +1006,6 @@
                     const title = data.portalName || "KD JAAT Test Portal";
                     document.getElementById('nav-title').innerText = title;
                     document.getElementById('page-title').innerText = title;
-
                     if(data.geminiKey) { storedGeminiKey = data.geminiKey; document.getElementById('adminAiKey').value = storedGeminiKey; }
                 }
             });
@@ -927,9 +1014,14 @@
                  if(doc.exists) {
                      const data = doc.data();
                      const statusEl = document.getElementById('popup-status'); const msgEl = document.getElementById('popup-message');
+                     const clueEl = document.getElementById('popup-image-clue');
                      const colorEl = document.getElementById('popup-text-color'); const fontEl = document.getElementById('popup-text-font');
-                     if(statusEl) statusEl.value = data.status || 'inactive'; if(msgEl) msgEl.value = data.message || '';
-                     if(colorEl) colorEl.value = data.textColor || '#0f172a'; if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
+                     
+                     if(statusEl) statusEl.value = data.status || 'inactive'; 
+                     if(msgEl) msgEl.value = data.message || '';
+                     if(clueEl) clueEl.value = data.imageClue || '';
+                     if(colorEl) colorEl.value = data.textColor || '#0f172a'; 
+                     if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
                  }
             });
         }
@@ -939,13 +1031,9 @@
         async function updatePortalBranding() {
             const nameInput = document.getElementById('portal-name-input').value.trim();
             const btn = document.getElementById('btn-save-branding');
-
             btn.disabled = true; btn.innerText = "⏳ Saving...";
-
             try {
-                let updateData = {};
-                if(nameInput) updateData.portalName = nameInput;
-
+                let updateData = {}; if(nameInput) updateData.portalName = nameInput;
                 await db.collection("adminSettings").doc("branding").set(updateData, { merge: true });
                 alert("Branding updated successfully!");
             } catch (e) { alert("Error updating branding: " + e.message); } 
@@ -958,7 +1046,8 @@
             const msg = document.getElementById('aiKeyMsg'); msg.innerText = "AI API Key Saved Successfully!";
             msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000);
         }
-                // --- ANTI-REFRESH PROTECTION ---
+        
+        // --- ANTI-REFRESH PROTECTION ---
         window.addEventListener('beforeunload', function (e) { if (isTestActive) { e.preventDefault(); e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.'; } });
 
         // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
@@ -1064,8 +1153,7 @@
         }
 
         function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
-        
-        // --- ADMIN: MANAGE STUDENTS LOGIC ---
+                // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1117,7 +1205,7 @@
             }
         }
 
-        // --- ADMIN: TEST & GROUP SETTINGS ---
+        // --- ADMIN: TEST SETTINGS ---
         async function openEditModal(testId) {
             const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return;
             const test = doc.data(); document.getElementById('edit-test-id').value = testId; document.getElementById('edit-title').value = test.title || '';
@@ -1136,22 +1224,54 @@
             catch(e) { alert("Error saving test settings: " + e.message); }
         }
 
-        function addGroup() { const n = document.getElementById('new-group-name').value; if(n) db.collection("groups").add({name:n, createdAt:new Date()}).then(()=>{document.getElementById('new-group-name').value=''; alert("Added!");}); }
+        async function deleteTest(tid) { if(confirm("Are you sure you want to completely delete this test?")) { try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); } } }
+
+        // --- ADMIN: GROUP SETTINGS (NEW WITH EDIT & STYLE) ---
+        function addGroup() { 
+            const n = document.getElementById('new-group-name').value; 
+            const c = document.getElementById('new-group-color').value;
+            const f = document.getElementById('new-group-font').value;
+            if(n) {
+                db.collection("groups").add({name: n, color: c, font: f, createdAt: new Date()}).then(()=>{
+                    document.getElementById('new-group-name').value=''; 
+                    alert("Added!");
+                }); 
+            } else { alert("Please enter a group name."); }
+        }
+
+        function openEditGroupModal(gid, name, color, font) {
+            document.getElementById('edit-group-id').value = gid;
+            document.getElementById('edit-group-name').value = name;
+            document.getElementById('edit-group-color').value = color || '#0f172a';
+            document.getElementById('edit-group-font').value = font || "'Poppins', sans-serif";
+            document.getElementById('edit-group-modal').style.display = 'flex';
+        }
+
+        function closeEditGroupModal() { document.getElementById('edit-group-modal').style.display = 'none'; }
+
+        async function saveGroupEdit() {
+            const gid = document.getElementById('edit-group-id').value;
+            const n = document.getElementById('edit-group-name').value.trim();
+            const c = document.getElementById('edit-group-color').value;
+            const f = document.getElementById('edit-group-font').value;
+            if(!n) return alert("Group name cannot be empty!");
+            try {
+                await db.collection("groups").doc(gid).update({ name: n, color: c, font: f });
+                alert("Group styled and updated successfully!"); closeEditGroupModal();
+            } catch(e) { alert("Error updating group: " + e.message); }
+        }
         
-        // NEW: Group Deletion Logic
         async function deleteGroup(gid) {
             if(confirm("Are you sure you want to delete this group? Tests inside this group will not be deleted but will lose their category.")) {
-                try {
-                    await db.collection("groups").doc(gid).delete();
-                    alert("Group deleted successfully.");
-                } catch(e) { alert("Error deleting group: " + e.message); }
+                try { await db.collection("groups").doc(gid).delete(); alert("Group deleted successfully."); } catch(e) { alert("Error deleting group: " + e.message); }
             }
         }
         
-        // --- TEXT BANNERS LOGIC (Images Removed) ---
+        // --- ADMIN: BANNERS LOGIC (NEW WITH AI BACKGROUND) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
+            const imageClue = document.getElementById('banner-image-clue').value.trim();
 
             if(!customTitle) return alert("Please enter a stylish banner name."); if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
             
@@ -1160,18 +1280,18 @@
             try {
                 await db.collection("banners").add({
                     testId: testSelect.value, testName: testSelect.options[testSelect.selectedIndex].text,
-                    customTitle: customTitle, textColor: textColor, textFont: textFont,
+                    customTitle: customTitle, textColor: textColor, textFont: textFont, imageClue: imageClue,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 document.getElementById('banner-custom-title').value = '';
+                document.getElementById('banner-image-clue').value = '';
                 alert("Banner successfully published!");
             } catch (error) { alert("Error publishing banner: " + error.message); } 
             finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
         }
 
         async function deleteBanner(id) { if(confirm("Are you sure you want to remove this banner?")) { await db.collection("banners").doc(id).delete(); } }
-        async function deleteTest(tid) { if(confirm("Are you sure you want to completely delete this test?")) { try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); } } }
 
         function loadAdminData() { 
             loadAdminStudents();
@@ -1180,11 +1300,15 @@
                 l.innerHTML=''; sel.forEach(x=>x.innerHTML='<option value="">Select Group...</option>'); 
                 s.forEach(d=>{ 
                     let g=d.data(); 
-                    // ADDED: Delete button for Groups
+                    let cStyle = g.color ? `color: ${g.color};` : ''; let fStyle = g.font ? `font-family: ${g.font};` : '';
+                    
                     l.innerHTML+=`
                     <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-                        <span>📁 ${g.name}</span>
-                        <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
+                        <span style="font-weight:bold; ${cStyle} ${fStyle}">📁 ${g.name}</span>
+                        <div>
+                            <button class="btn-outline" style="width:auto; padding:5px 10px; font-size:0.8rem; margin-right: 5px;" onclick="openEditGroupModal('${d.id}', '${g.name.replace(/'/g, "\\'")}', '${g.color || '#000000'}', '${g.font || ''}')">✏️ Edit</button>
+                            <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
+                        </div>
                     </div>`; 
                     sel.forEach(x=>x.innerHTML+=`<option value="${d.id}">${g.name}</option>`); 
                 }); 
@@ -1218,7 +1342,7 @@
                     l.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
                         <div style="display:flex; align-items:center; gap:15px;">
-                            <div style="display:flex; flex-direction:column;"><span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span><span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'}</span></div>
+                            <div style="display:flex; flex-direction:column;"><span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span><span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'} | Clue: ${b.imageClue || 'None'}</span></div>
                         </div>
                         <button class="btn-danger" style="width:auto; padding:5px 12px; font-size: 0.9rem;" onclick="deleteBanner('${d.id}')">🗑 Remove</button>
                     </div>`;
@@ -1230,8 +1354,7 @@
                 s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; }); 
             }); 
         }
-
-        // --- AI QUESTION EDITOR & TEST CREATION (Image parsing removed) ---
+                // --- AI QUESTION EDITOR & TEST CREATION ---
         async function createNewTest() {
             const name = document.getElementById('newTestName').value.trim(); const group = document.getElementById('newTestGroup').value; const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
             if (!name || !group) return alert("Please provide a test name and select a group.");
@@ -1374,7 +1497,7 @@
             const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Successfully imported ${importedCount} question(s)!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000);
         }
 
-        // --- STUDENT DASHBOARD LOGIC ---
+        // --- STUDENT DASHBOARD LOGIC (NEW: DYNAMIC AI IMAGES INJECTED HERE) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1383,7 +1506,6 @@
                 }).catch(e => console.error("Error fetching user data", e));
             }
 
-            // Load attempts first so we know which tests to mark as "Retake / See Results"
             loadStudentAttempts();
             loadGroupsForStudents(); 
             loadLeaderboardTests();
@@ -1393,15 +1515,38 @@
                 c.innerHTML = ''; if(s.empty) { c.style.display = 'none'; return; }
                 c.style.display = 'flex';
                 s.forEach(d => {
-                    let b = d.data(); let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
-                    c.innerHTML += `<div class="promo-banner" onclick="startTest('${b.testId}')"><div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div></div>`;
+                    let b = d.data(); 
+                    let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; 
+                    let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
+                    
+                    // NEW: Automatically fetch AI photo based on clue for Banners
+                    let bgStyle = b.imageClue ? `background-image: url('${getAiImageUrl(b.imageClue, 500, 160)}'); background-size: cover; background-position: center;` : 'background-color: var(--primary);';
+                    
+                    c.innerHTML += `<div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')"><div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${b.customTitle || b.testName}</div></div>`;
                 });
             });
         }
 
-        function loadGroupsForStudents() { db.collection("groups").onSnapshot(s=>{ let c=document.getElementById('student-group-list'); c.innerHTML=''; s.forEach(d=>{ c.innerHTML+=`<div class="menu-btn" onclick="viewGroupTests('${d.id}','${d.data().name}')"><h3 style="font-size:2rem; margin:0;">📁</h3><h3>${d.data().name}</h3></div>`; }); }); }
+        function loadGroupsForStudents() { 
+            db.collection("groups").onSnapshot(s=>{ 
+                let c=document.getElementById('student-group-list'); c.innerHTML=''; 
+                s.forEach(d=>{ 
+                    let g = d.data();
+                    let cStyle = g.color ? `color: ${g.color};` : ''; 
+                    let fStyle = g.font ? `font-family: ${g.font};` : '';
+                    
+                    // NEW: Automatically fetch AI photo based on the exact group name!
+                    let aiImgUrl = getAiImageUrl(g.name + " concept, educational, graphic", 300, 120);
+                    
+                    c.innerHTML+=`
+                    <div class="menu-btn" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
+                        <img src="${aiImgUrl}" class="ai-bg-img" alt="${g.name}">
+                        <h3 style="margin:0; ${cStyle} ${fStyle}">${g.name}</h3>
+                    </div>`; 
+                }); 
+            }); 
+        }
         
-        // MODIFIED: Test List UI to handle "Retake Test" & "See Results"
         function viewGroupTests(gid, gn) { 
             document.getElementById('current-group-title').innerText=gn; 
             db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ 
@@ -1431,16 +1576,15 @@
             openStudentSec('student-sec-tests-list'); 
         }
 
-        // MODIFIED: Also populating the studentAttemptedDB
         function loadStudentAttempts() { 
             if(!auth.currentUser)return; 
             db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ 
                 let c=document.getElementById('student-attempts-list'); c.innerHTML=''; 
-                studentAttemptedDB = {}; // Reset the DB cache
+                studentAttemptedDB = {}; 
                 if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; 
                 s.forEach(d=>{ 
                     let a=d.data(); 
-                    studentAttemptedDB[a.testId] = d.id; // Mark this test as attempted and store attempt ID
+                    studentAttemptedDB[a.testId] = d.id; 
                     c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)">
                         <h4 style="margin-bottom:10px">${a.testTitle}</h4>
                         <div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold; margin-bottom: 10px;">Score: ${a.score}/${a.totalMarks}</div>
@@ -1544,7 +1688,6 @@
             let finalScore = Math.round(((correct * testMarks) - (wrong * testNegativeMarks)) * 100) / 100; 
 
             if(auth.currentUser) {
-                // MODIFIED: We are now saving userAnswers array so they can review their exact choices later
                 db.collection("attempts").add({
                     userId: auth.currentUser.uid, userIdEmail: auth.currentUser.email, testId: activeTestId, testTitle: currentTest.title, score: finalScore, totalMarks: testQuestions.length * testMarks,
                     correct: correct, wrong: wrong, left: left, userAnswers: userAnswers, timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -1564,7 +1707,6 @@
             document.getElementById('res-sectional').innerHTML = secHtml; navigate('view-results');
         }
 
-        // NEW: Load a past attempt from the DB to show on the review screen
         async function seePastResults(attemptId) {
             try {
                 const attDoc = await db.collection("attempts").doc(attemptId).get();
@@ -1576,7 +1718,6 @@
                 
                 currentTest = testDoc.data();
                 testQuestions = currentTest.questions || [];
-                // Load the answers the user submitted during that attempt
                 userAnswers = attData.userAnswers || new Array(testQuestions.length).fill(null);
                 
                 showReviewScreen(); 
