@@ -86,8 +86,7 @@
             width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;
             background-color: #e2e8f0;
         }
-        
-        /* Action Boxes & Question Cards */
+                /* Action Boxes & Question Cards */
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
         .action-box h3 { font-size: 1.2rem; margin-bottom: 15px; }
         .q-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.2s; }
@@ -97,7 +96,8 @@
         .sec-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
         .back-menu-btn { background: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .back-menu-btn:hover { background: #cbd5e1; }
-                /* Inputs & Buttons */
+        
+        /* Inputs & Buttons */
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #475569; }
         .input-group input, .input-group select, .input-group textarea { 
@@ -124,7 +124,7 @@
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
 
-        /* Modern Notification Toast (Replaces old alert boxes) */
+        /* Modern Notification Toast */
         .custom-toast {
             visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center;
             border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
@@ -161,15 +161,24 @@
         .confirm-btn-group { display: flex; gap: 15px; justify-content: center; }
         .confirm-btn-group button { flex: 1; padding: 12px; font-weight: 600; border-radius: 8px; }
 
-        /* Student Announcement Popup Styles */
+        /* Student Announcement Popup Styles (UPDATED FOR CENTERED TEXT) */
         #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
-        .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
-        .popup-content { padding: 25px; text-align: center; }
-        .popup-message { margin: 15px 0; font-size: 1.1rem; line-height: 1.6; }
+        .popup-content { position: relative; text-align: center; }
         
         /* Dynamic Uploaded Image container for Popups */
-        .popup-custom-image { width: 100%; height: 180px; object-fit: cover; border-bottom: 3px solid var(--primary); display: none; }
+        .popup-custom-image { width: 100%; height: 300px; object-fit: cover; display: none; }
+        
+        .popup-message { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; margin: 0; padding: 20px; font-size: 1.3rem; line-height: 1.4; font-weight: 800;
+            background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(5px); border-radius: 12px; 
+            color: #ffffff !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            border: 2px solid rgba(255,255,255,0.2); z-index: 10;
+        }
+        
+        .popup-action-area { padding: 20px; background: #fff; border-top: 3px solid var(--primary); }
                 /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s;}
@@ -227,7 +236,7 @@
         .status-text { margin-top: 10px; font-size: 0.9rem; font-weight: 500; text-align: center; }
         .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
 
-        /* Banner Carousel Styles */
+        /* Banner Carousel Styles (UPDATED FOR CENTERED TEXT) */
         .banner-container {
             display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -239,17 +248,20 @@
             min-width: 280px; width: 100%; max-width: 500px; height: 160px; border-radius: 12px;
             background-color: var(--primary); background-size: cover; background-position: center;
             box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-            position: relative; overflow: hidden; display: flex; align-items: flex-end;
+            position: relative; overflow: hidden; display: flex; 
+            align-items: center; justify-content: center; /* Centers the text box */
             border: 1px solid var(--border-color); flex-shrink: 0; scroll-snap-align: start;
         }
         .promo-banner:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
         
         .promo-banner-title {
-            width: 100%; 
-            background: linear-gradient(transparent, rgba(0,0,0,0.85));
-            padding: 30px 15px 12px; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-            letter-spacing: 0.5px;
+            width: 85%; text-align: center;
+            background: rgba(0,0,0,0.5); /* Adds a dark tint behind text for readability */
+            backdrop-filter: blur(4px); /* Stylish blur */
+            padding: 15px; border-radius: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.2);
+            color: #ffffff !important; /* Force text to be white for contrast, ignoring dynamic color if hard to read */
         }
 
         /* Section Tabs Styling */
@@ -282,7 +294,8 @@
             <div class="legend-item"><div class="legend-dot" style="background: var(--review);"></div> Marked for Review</div>
         </div>
     </div>
-        <div class="container">
+    
+    <div class="container">
         <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -331,6 +344,16 @@
                         <label>Phone Number</label>
                         <input type="tel" id="reg-phone" placeholder="Enter your 10-digit phone number">
                     </div>
+                    
+                    <div class="input-group">
+                        <label>Education Board / Level</label>
+                        <select id="reg-board" style="border: 2px solid var(--primary);">
+                            <option value="college">College Student (All Tests)</option>
+                            <option value="cbse">CBSE Board Student</option>
+                            <option value="hbse">HBSE Board Student</option>
+                        </select>
+                    </div>
+
                     <div class="input-group">
                         <label>Create Password</label>
                         <input type="password" id="reg-password" placeholder="Minimum 6 characters">
@@ -342,8 +365,7 @@
                 </div>
             </div>
         </div>
-
-        <div id="view-admin" class="view">
+                <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
@@ -356,7 +378,8 @@
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-                        <div id="admin-sec-banners" class="sub-sec">
+            
+            <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Text Banners & Student Popup</h2>
@@ -389,7 +412,7 @@
                     <div class="flex-row">
                         <div class="input-group">
                             <label>Text Color</label>
-                            <input type="color" id="popup-text-color" value="#0f172a" style="height: 45px; cursor: pointer;">
+                            <input type="color" id="popup-text-color" value="#ffffff" style="height: 45px; cursor: pointer;">
                         </div>
                         <div class="input-group">
                             <label>Text Font</label>
@@ -448,8 +471,7 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-
-            <div id="admin-sec-question-editor" class="sub-sec">
+                        <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                         <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
@@ -549,6 +571,15 @@
                     </div>
                     
                     <div class="input-group">
+                        <label>Target Audience (Board / Level)</label>
+                        <select id="new-group-board" style="border: 2px solid var(--primary);">
+                            <option value="college">College Students</option>
+                            <option value="cbse">CBSE Board Students</option>
+                            <option value="hbse">HBSE Board Students</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
                         <label>Upload Photo for Group Card</label>
                         <input type="file" id="new-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
                         <span class="upload-hint">Supported: JPG, PNG, WEBP. Recommended size: 400x400 pixels (Square) to fit nicely on the dashboard.</span>
@@ -587,12 +618,12 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Phone Number</th>
-                                <th>Joined Date</th>
+                                <th>Board/Level</th> <th>Joined Date</th>
                                 <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="admin-students-list">
-                            <tr><td colspan="4" style="text-align:center; padding:20px;">Loading students...</td></tr>
+                            <tr><td colspan="5" style="text-align:center; padding:20px;">Loading students...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -627,8 +658,7 @@
                 <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Live Cloud Tests</h3>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
-
-            <div id="admin-sec-attempts" class="sub-sec">
+                        <div id="admin-sec-attempts" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Live Student Attempts</h2>
@@ -654,7 +684,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-student" class="view">
+        
+        <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -694,8 +725,7 @@
                 </div>
                 <div class="grid-list" id="student-attempts-list"></div>
             </div>
-            
-            <div id="student-sec-leaderboards" class="sub-sec">
+                        <div id="student-sec-leaderboards" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
                     <h2>Test Leaderboards</h2>
@@ -725,7 +755,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-test" class="view">
+        
+        <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
@@ -786,8 +817,7 @@
                 </div>
             </div>
         </div>
-
-        <div id="view-review" class="view">
+                <div id="view-review" class="view">
             <div class="sec-header" style="background: white; padding: 20px; position: sticky; top: 70px; z-index: 90; box-shadow: var(--shadow-sm); border-radius: 12px; margin-bottom: 20px;">
                 <button class="back-menu-btn" onclick="navigate('view-results', false)">← Back to Score</button>
                 <h2 style="margin: 0; color: var(--primary);">Detailed Solutions</h2>
@@ -798,8 +828,7 @@
             <div id="review-container"></div>
         </div>
 
-    </div> 
-            <div id="custom-confirm-modal" class="modal-overlay">
+    </div> <div id="custom-confirm-modal" class="modal-overlay">
         <div class="modal">
             <h3 id="confirm-title" style="color: var(--text-main); font-size: 1.4rem; margin-bottom: 10px;">Are you sure?</h3>
             <p id="confirm-message" style="color: var(--text-muted); margin-bottom: 25px;">Do you want to proceed?</p>
@@ -814,10 +843,13 @@
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <div class="popup-content">
-                <div id="popup-fallback" style="display:none; width:100%; height:180px; background:linear-gradient(135deg, var(--primary), #818cf8); color:white; font-size:3rem; font-weight:bold; align-items:center; justify-content:center; border-bottom:3px solid var(--primary); border-radius: 8px 8px 0 0;">📢</div>
+                <div id="popup-fallback" style="display:none; width:100%; height:300px; background:linear-gradient(135deg, var(--primary), #818cf8); color:white; font-size:4rem; font-weight:bold; align-items:center; justify-content:center;">📢</div>
                 <img id="popup-custom-img" class="popup-custom-image" src="" alt="Announcement Graphic" loading="eager" onerror="this.style.display='none'; document.getElementById('popup-fallback').style.display='flex';">
+                
                 <div id="popup-display-msg" class="popup-message"></div>
-                <button onclick="closeStudentPopup()" class="btn-primary" style="margin-top: 10px; border-radius: 25px;">Okay, got it!</button>
+            </div>
+            <div class="popup-action-area">
+                <button onclick="closeStudentPopup()" class="btn-primary" style="border-radius: 25px;">Okay, got it!</button>
             </div>
         </div>
     </div>
@@ -830,6 +862,16 @@
                 <label>Stylish Group Name</label>
                 <input type="text" id="edit-group-name">
             </div>
+            
+            <div class="input-group">
+                <label>Target Audience (Board / Level)</label>
+                <select id="edit-group-board" style="border: 2px solid var(--primary);">
+                    <option value="college">College Students</option>
+                    <option value="cbse">CBSE Board Students</option>
+                    <option value="hbse">HBSE Board Students</option>
+                </select>
+            </div>
+
             <div class="input-group">
                 <label>Upload New Photo (Optional)</label>
                 <input type="file" id="edit-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
@@ -856,8 +898,7 @@
             </div>
         </div>
     </div>
-
-    <div id="questionBankModal" class="modal-overlay">
+        <div id="questionBankModal" class="modal-overlay">
         <div class="modal" style="width: 700px; max-width: 95vw; height: 80vh; display: flex; flex-direction: column;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3 style="color: var(--warning); margin: 0; font-size: 1.5rem;">📚 Question Bank</h3>
@@ -954,22 +995,22 @@
             </div>
         </div>
     </div>
-                <script>
+    
+    <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
             authDomain: "test2-672e5.firebaseapp.com",
             databaseURL: "https://test2-672e5-default-rtdb.firebaseio.com",
             projectId: "test2-672e5"
-            // storageBucket is completely removed! We use Cloudinary now.
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        // storage initialization removed!
 
         // --- GLOBAL VARIABLES ---
         let currentUserRole = null;
+        let currentUserBoard = null; // NEW: Track student board (college, cbse, hbse)
         let currentTest = null;
         let testTimer = null;
         let timeRemaining = 0;
@@ -982,8 +1023,7 @@
         let allTestsCache = []; 
         let localQuestionsBuffer = []; 
         let studentAttemptedDB = {}; 
-
-        // --- MODERN UI HELPERS ---
+                // --- MODERN UI HELPERS ---
         function showToast(message, type = 'success') {
             const toast = document.getElementById('customToast');
             toast.innerText = message;
@@ -1010,14 +1050,11 @@
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
         
         // --- CLOUDINARY IMAGE UPLOAD HELPER ---
-        // Function name kept same as old code so we don't have to rewrite the whole app
         async function uploadImageToFirebase(fileInputId, folderPath) {
             const fileInput = document.getElementById(fileInputId);
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
             
             const file = fileInput.files[0];
-            
-            // 1. Validations (Updated to 5MB for Cloudinary)
             const maxSizeInBytes = 5 * 1024 * 1024; 
             if (file.size > maxSizeInBytes) {
                 showToast(`File is too large! Max is 5MB. Yours is ${(file.size/1024/1024).toFixed(1)}MB.`, 'error');
@@ -1030,29 +1067,22 @@
                 throw new Error("Invalid file type"); 
             }
 
-            // 2. Cloudinary Setup using your provided details
             const cloudName = "djvbvtcrh";
-            const uploadPreset = "Upload"; // Unsigned preset
+            const uploadPreset = "Upload"; 
             
             const formData = new FormData();
             formData.append("file", file);
             formData.append("upload_preset", uploadPreset);
-            formData.append("folder", `kdjaat/${folderPath}`); // Organizes in Cloudinary
+            formData.append("folder", `kdjaat/${folderPath}`); 
 
             try {
-                // 3. Send to Cloudinary API
                 const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                     method: "POST",
                     body: formData
                 });
 
-                if (!response.ok) {
-                    throw new Error("Cloudinary rejected the upload. Check your Upload Preset settings.");
-                }
-
+                if (!response.ok) throw new Error("Cloudinary rejected the upload.");
                 const data = await response.json();
-                
-                // 4. Return the new Cloudinary URL! This gets saved into Firebase text DB
                 return data.secure_url;
                 
             } catch (error) {
@@ -1070,7 +1100,8 @@
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="120" viewBox="0 0 300 120"><rect width="300" height="120" fill="${color}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="40" font-weight="bold">${initials}</text></svg>`;
             return 'data:image/svg+xml;base64,' + btoa(svg);
         }
-                // --- STUDENT POPUP LOGIC ---
+        
+        // --- STUDENT POPUP LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
@@ -1090,9 +1121,8 @@
                 await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
                 showToast("Popup settings updated successfully!", "success");
                 document.getElementById('popup-image-upload').value = ''; 
-            } catch (e) { 
-                console.error(e); 
-            } finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
+            } catch (e) { console.error(e); } 
+            finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
         }
         
         function loadStudentPopup() {
@@ -1103,7 +1133,7 @@
                     if(data.status === 'active') {
                         const msgEl = document.getElementById('popup-display-msg');
                         const imgEl = document.getElementById('popup-custom-img');
-                        msgEl.innerText = data.message || ''; msgEl.style.color = data.textColor || '#0f172a'; msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
+                        msgEl.innerText = data.message || ''; msgEl.style.color = data.textColor || '#ffffff'; msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
                         if(data.imageUrl) { imgEl.src = data.imageUrl; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
                         document.getElementById('student-popup-modal').style.display = 'flex'; sessionStorage.setItem('popupShown', 'true');
                     }
@@ -1125,7 +1155,7 @@
                      const data = doc.data();
                      const statusEl = document.getElementById('popup-status'), msgEl = document.getElementById('popup-message'), colorEl = document.getElementById('popup-text-color'), fontEl = document.getElementById('popup-text-font');
                      if(statusEl) statusEl.value = data.status || 'inactive'; if(msgEl) msgEl.value = data.message || '';
-                     if(colorEl) colorEl.value = data.textColor || '#0f172a'; if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
+                     if(colorEl) colorEl.value = data.textColor || '#ffffff'; if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
                  }
             });
         }
@@ -1209,15 +1239,11 @@
         function openStudentSec(secId, pushState = true) { document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); }
 
         window.onpopstate = function(event) {
-            // FIX: Modern Exit Popup on Back Button
             if (isTestActive) {
-                // Trap the user: push the state back to the test view so they don't actually leave
                 window.history.pushState({ view: 'view-test' }, "", `#view-test`);
-                // Trigger the modern modal instead of auto-submitting
                 showExitModal(); 
                 return; 
             }
-
             if (event.state) { navigate(event.state.view, false); if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); } 
             else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
         };
@@ -1238,14 +1264,35 @@
             if(user) { user.updatePassword(newPass).then(() => { showToast("Password updated successfully!"); document.getElementById('new-student-pass').value = ''; openStudentSec('student-main-menu'); }).catch(e => { showToast(e.message, 'error'); }); }
         }
 
+        // UPDATED: Now captures the Student Board during Registration!
         function registerStudent() {
-            const fullName = document.getElementById('reg-name').value.trim(); const phoneId = document.getElementById('reg-phone').value.trim(); const pass = document.getElementById('reg-password').value;
-            if(!fullName) return showToast("Please enter your full name.", 'error'); if(phoneId.length < 4 || pass.length < 6) return showToast("Check inputs. Password min 6 chars.", 'error');
+            const fullName = document.getElementById('reg-name').value.trim(); 
+            const phoneId = document.getElementById('reg-phone').value.trim(); 
+            const pass = document.getElementById('reg-password').value;
+            const board = document.getElementById('reg-board').value; // Get the chosen board
+            
+            if(!fullName) return showToast("Please enter your full name.", 'error'); 
+            if(phoneId.length < 4 || pass.length < 6) return showToast("Check inputs. Password min 6 chars.", 'error');
+            
             auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
-                .then((userCred) => { db.collection("users").doc(userCred.user.uid).set({ fullName: fullName, phone: phoneId, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); currentUserRole = 'student'; navigate('view-student'); loadStudentData(); loadStudentPopup(); })
+                .then((userCred) => { 
+                    db.collection("users").doc(userCred.user.uid).set({ 
+                        fullName: fullName, 
+                        phone: phoneId, 
+                        role: 'student', 
+                        board: board, // Save board to Firestore
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+                    }); 
+                    currentUserRole = 'student'; 
+                    currentUserBoard = board; // Set global variable
+                    navigate('view-student'); 
+                    loadStudentData(); 
+                    loadStudentPopup(); 
+                })
                 .catch(e => { showToast("Error: " + e.message, 'error'); });
         }
 
+        // UPDATED: Fetches board data upon successful login!
         async function login() {
             if (checkDeviceLockout()) return;
             const role = document.getElementById('login-role').value; const idInput = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-password').value;
@@ -1256,24 +1303,44 @@
                 if (idInput === validId && pass === validPass) { clearLockoutOnSuccess(); currentUserRole = 'admin'; localStorage.setItem('adminSession', 'active'); navigate('view-admin'); loadAdminData(); } 
                 else { recordFailedAttempt(); }
             } else {
-                auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass).then(() => { clearLockoutOnSuccess(); currentUserRole = 'student'; navigate('view-student'); loadStudentData(); loadStudentPopup(); }).catch(e => { recordFailedAttempt(); });
+                auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass)
+                .then(async (userCred) => { 
+                    clearLockoutOnSuccess(); 
+                    currentUserRole = 'student'; 
+                    
+                    // Fetch student's board
+                    const userDoc = await db.collection("users").doc(userCred.user.uid).get();
+                    if(userDoc.exists && userDoc.data().board) {
+                        currentUserBoard = userDoc.data().board;
+                    } else {
+                        currentUserBoard = 'college'; // Fallback if missing
+                    }
+
+                    navigate('view-student'); 
+                    loadStudentData(); 
+                    loadStudentPopup(); 
+                }).catch(e => { recordFailedAttempt(); });
             }
         }
 
-        function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; navigate('view-login'); }); }
+        function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; currentUserBoard = null; navigate('view-login'); }); }
                 // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
                 tbody.innerHTML = '';
-                if(s.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No students found.</td></tr>'; return; }
+                if(s.empty) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No students found.</td></tr>'; return; }
                 
                 s.forEach(doc => {
                     let user = doc.data(); let dateJoined = user.createdAt ? new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
+                    let boardDisplay = user.board ? user.board.toUpperCase() : 'COLLEGE'; // Display board
+                    
                     tbody.innerHTML += `
                         <tr>
                             <td style="font-weight: 500; color: var(--primary);">${user.fullName || 'N/A'}</td>
-                            <td>${user.phone || 'N/A'}</td><td>${dateJoined}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td><span style="background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">${boardDisplay}</span></td>
+                            <td>${dateJoined}</td>
                             <td style="text-align: right;">
                                 <button class="btn-outline" style="padding: 6px 12px; font-size: 0.85rem; margin-right: 5px;" onclick="viewStudentAttempts('${doc.id}', '${user.fullName || 'Student'}')">📊 Records</button>
                                 <button class="btn-danger" style="padding: 6px 12px; font-size: 0.85rem; width: auto;" onclick="deleteStudentAccount('${doc.id}')">🗑 Delete</button>
@@ -1338,16 +1405,17 @@
             });
         }
 
-        // --- ADMIN: GROUP SETTINGS (UPDATED WITH IMAGE UPLOADS) ---
+        // --- ADMIN: GROUP SETTINGS (UPDATED WITH IMAGE & BOARD) ---
         async function addGroup() { 
             const n = document.getElementById('new-group-name').value; 
+            const b = document.getElementById('new-group-board').value; // Get target board
             const c = document.getElementById('new-group-color').value;
             const f = document.getElementById('new-group-font').value;
             
             if(!n) return showToast("Please enter a group name.", 'error'); 
             
             try {
-                let groupData = {name: n, color: c, font: f, createdAt: new Date()};
+                let groupData = {name: n, board: b, color: c, font: f, createdAt: new Date()};
                 const imageUrl = await uploadImageToFirebase('new-group-image-upload', 'groups');
                 if (imageUrl) groupData.imageUrl = imageUrl;
                 
@@ -1360,9 +1428,10 @@
             }
         }
 
-        function openEditGroupModal(gid, name, color, font) {
+        function openEditGroupModal(gid, name, board, color, font) {
             document.getElementById('edit-group-id').value = gid;
             document.getElementById('edit-group-name').value = name;
+            document.getElementById('edit-group-board').value = board || 'college'; // Set existing board
             document.getElementById('edit-group-color').value = color || '#0f172a';
             document.getElementById('edit-group-font').value = font || "'Poppins', sans-serif";
             document.getElementById('edit-group-modal').style.display = 'flex';
@@ -1373,12 +1442,13 @@
         async function saveGroupEdit() {
             const gid = document.getElementById('edit-group-id').value;
             const n = document.getElementById('edit-group-name').value.trim();
+            const b = document.getElementById('edit-group-board').value; // Get updated board
             const c = document.getElementById('edit-group-color').value;
             const f = document.getElementById('edit-group-font').value;
             if(!n) return showToast("Group name cannot be empty!", 'error');
             
             try {
-                let updateData = { name: n, color: c, font: f };
+                let updateData = { name: n, board: b, color: c, font: f };
                 const imageUrl = await uploadImageToFirebase('edit-group-image-upload', 'groups');
                 if (imageUrl) updateData.imageUrl = imageUrl;
 
@@ -1393,8 +1463,7 @@
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-
-        // --- ADMIN: BANNERS LOGIC (UPDATED WITH IMAGE UPLOADS) ---
+                // --- ADMIN: BANNERS LOGIC ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
@@ -1437,12 +1506,13 @@
                 s.forEach(d=>{ 
                     let g=d.data(); 
                     let cStyle = g.color ? `color: ${g.color};` : ''; let fStyle = g.font ? `font-family: ${g.font};` : '';
+                    let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; // Show target board
                     
                     l.innerHTML+=`
                     <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:bold; ${cStyle} ${fStyle}">📁 ${g.name}</span>
+                        <span style="font-weight:bold; ${cStyle} ${fStyle}">📁 ${g.name} <span style="font-size:0.75rem; background:#cbd5e1; padding:2px 6px; border-radius:4px; margin-left:10px;">${boardDisplay}</span></span>
                         <div>
-                            <button class="btn-outline" style="width:auto; padding:5px 10px; font-size:0.8rem; margin-right: 5px;" onclick="openEditGroupModal('${d.id}', '${g.name.replace(/'/g, "\\'")}', '${g.color || '#000000'}', '${g.font || ''}')">✏️ Edit</button>
+                            <button class="btn-outline" style="width:auto; padding:5px 10px; font-size:0.8rem; margin-right: 5px;" onclick="openEditGroupModal('${d.id}', '${g.name.replace(/'/g, "\\'")}', '${g.board || 'college'}', '${g.color || '#000000'}', '${g.font || ''}')">✏️ Edit</button>
                             <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
                         </div>
                     </div>`; 
@@ -1639,17 +1709,23 @@
             showToast(`✨ Successfully imported ${importedCount} question(s)!`, "success");
         }
 
-        // --- STUDENT DASHBOARD LOGIC ---
+        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH BOARD FILTERING) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
-                    if (doc.exists && doc.data().fullName) { document.getElementById('student-welcome-name').innerText = "Welcome, " + doc.data().fullName; } 
-                    else { document.getElementById('student-welcome-name').innerText = "Welcome, Student"; }
+                    if (doc.exists) {
+                        const data = doc.data();
+                        document.getElementById('student-welcome-name').innerText = "Welcome, " + (data.fullName || "Student");
+                        // Ensure we have their latest board loaded
+                        currentUserBoard = data.board || 'college'; 
+                        
+                        // NOW we load the filtered groups
+                        loadGroupsForStudents();
+                    }
                 }).catch(e => console.error("Error fetching user data", e));
             }
 
             loadStudentAttempts();
-            loadGroupsForStudents(); 
             loadLeaderboardTests();
             
             db.collection("banners").onSnapshot(s => {
@@ -1674,23 +1750,45 @@
             });
         }
 
+        // UPDATED: Filters groups based on currentUserBoard
         function loadGroupsForStudents() { 
             db.collection("groups").onSnapshot(s=>{ 
                 let c=document.getElementById('student-group-list'); c.innerHTML=''; 
                 s.forEach(d=>{ 
                     let g = d.data();
-                    let cStyle = g.color ? `color: ${g.color};` : ''; 
-                    let fStyle = g.font ? `font-family: ${g.font};` : '';
+                    let groupBoard = g.board || 'college'; // Assume college if no board is set on old groups
                     
-                    let fallbackSrc = getFallbackImage(g.name);
-                    let finalImgUrl = g.imageUrl ? g.imageUrl : fallbackSrc;
-                    
-                    c.innerHTML+=`
-                    <div class="menu-btn" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
-                        <img src="${finalImgUrl}" class="custom-bg-img" alt="${g.name}" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';">
-                        <h3 style="margin:0; ${cStyle} ${fStyle}">${g.name}</h3>
-                    </div>`; 
+                    // Filter Logic:
+                    // 1. College students see ALL groups.
+                    // 2. CBSE students see ONLY CBSE groups.
+                    // 3. HBSE students see ONLY HBSE groups.
+                    let showGroup = false;
+                    if (currentUserBoard === 'college') {
+                        showGroup = true;
+                    } else if (currentUserBoard === 'cbse' && groupBoard === 'cbse') {
+                        showGroup = true;
+                    } else if (currentUserBoard === 'hbse' && groupBoard === 'hbse') {
+                        showGroup = true;
+                    }
+
+                    if(showGroup) {
+                        let cStyle = g.color ? `color: ${g.color};` : ''; 
+                        let fStyle = g.font ? `font-family: ${g.font};` : '';
+                        
+                        let fallbackSrc = getFallbackImage(g.name);
+                        let finalImgUrl = g.imageUrl ? g.imageUrl : fallbackSrc;
+                        
+                        c.innerHTML+=`
+                        <div class="menu-btn" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
+                            <img src="${finalImgUrl}" class="custom-bg-img" alt="${g.name}" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                            <h3 style="margin:0; ${cStyle} ${fStyle}">${g.name}</h3>
+                        </div>`; 
+                    }
                 }); 
+                
+                if(c.innerHTML === '') {
+                    c.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">No tests available for your current board/level.</p>';
+                }
             }); 
         }
         
@@ -1905,10 +2003,34 @@
             if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
         }
 
-        firebase.auth().onAuthStateChanged((user) => {
-            if (localStorage.getItem('adminSession') === 'active') { currentUserRole = 'admin'; navigate('view-admin', false); loadAdminData(); } 
-            else if (user) { currentUserRole = 'student'; navigate('view-student', false); loadStudentData(); loadStudentPopup(); } 
-            else { currentUserRole = null; if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); } navigate('view-login', false); }
+        // AUTH STATE LISTENER
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (localStorage.getItem('adminSession') === 'active') { 
+                currentUserRole = 'admin'; 
+                navigate('view-admin', false); 
+                loadAdminData(); 
+            } 
+            else if (user) { 
+                currentUserRole = 'student'; 
+                
+                // Fetch the student's board when app loads or reloads
+                const userDoc = await db.collection("users").doc(user.uid).get();
+                if(userDoc.exists && userDoc.data().board) {
+                    currentUserBoard = userDoc.data().board;
+                } else {
+                    currentUserBoard = 'college'; 
+                }
+
+                navigate('view-student', false); 
+                loadStudentData(); 
+                loadStudentPopup(); 
+            } 
+            else { 
+                currentUserRole = null; 
+                currentUserBoard = null;
+                if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); } 
+                navigate('view-login', false); 
+            }
         });
 
     </script>
