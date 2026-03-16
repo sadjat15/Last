@@ -69,8 +69,7 @@
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
         .nav-btn:hover { background: rgba(255,255,255,0.2); }
-        
-        /* Dashboard Main Menu Buttons */
+                /* Dashboard Main Menu Buttons */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .menu-btn { 
             background: var(--card-bg); padding: 30px 20px; border-radius: var(--radius); 
@@ -110,7 +109,8 @@
         .input-group input[type="color"] { background: white; padding: 8px; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         
-        .upload-hint { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: block; }
+        /* Updated Upload Hint */
+        .upload-hint { font-size: 0.85rem; color: var(--warning); font-weight: 500; margin-top: 6px; display: block; }
 
         /* Custom UI Tools for Admins */
         .flex-row { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
@@ -124,8 +124,18 @@
         .btn-warning { background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
-        
-        /* Modern Register & Forgot Password Portal */
+
+        /* Modern Notification Toast (Replaces old alert boxes) */
+        .custom-toast {
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
+            transform: translateX(-50%); font-size: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: visibility 0.5s, bottom 0.5s, opacity 0.5s; opacity: 0;
+        }
+        .custom-toast.show { visibility: visible; bottom: 50px; opacity: 1; }
+        .custom-toast.error { background-color: var(--danger); }
+        .custom-toast.success { background-color: var(--success); }
+                /* Modern Register & Forgot Password Portal */
         .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
         .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
 
@@ -144,6 +154,13 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
         
+        /* Custom Confirm Modal */
+        #custom-confirm-modal .modal { max-width: 400px; text-align: center; padding: 40px 25px; border-radius: 16px; }
+        #custom-confirm-modal h3 { color: var(--text-main); margin-bottom: 15px; font-size: 1.4rem; }
+        #custom-confirm-modal p { color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+        .confirm-btn-group { display: flex; gap: 15px; justify-content: center; }
+        .confirm-btn-group button { flex: 1; padding: 12px; font-weight: 600; border-radius: 8px; }
+
         /* Student Announcement Popup Styles */
         #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
         .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
@@ -153,6 +170,7 @@
         
         /* Dynamic Uploaded Image container for Popups */
         .popup-custom-image { width: 100%; height: 180px; object-fit: cover; border-bottom: 3px solid var(--primary); display: none; }
+        
         /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s;}
@@ -177,8 +195,7 @@
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
 
         .test-nav-bar { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        
-        /* Side Panel (Question Palette) */
+                /* Side Panel (Question Palette) */
         .side-panel {
             position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
             background: white; box-shadow: var(--shadow-lg); z-index: 1500;
@@ -241,6 +258,8 @@
     </style>
 </head>
 <body>
+    <div id="customToast" class="custom-toast">Notification Message</div>
+
     <nav>
         <div class="portal-brand">
             <h1 id="nav-title">KD JAAT Test Portal</h1>
@@ -324,8 +343,7 @@
                 </div>
             </div>
         </div>
-        
-        <div id="view-admin" class="view">
+                <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
@@ -364,8 +382,8 @@
                     
                     <div class="input-group">
                         <label>Upload Photo for Popup (Optional)</label>
-                        <input type="file" id="popup-image-upload" accept="image/jpeg, image/png, image/webp">
-                        <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
+                        <input type="file" id="popup-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500KB). Recommended size: 400x400 pixels (Square) for best UI display.</span>
                         <input type="hidden" id="popup-image-url">
                     </div>
                     
@@ -400,8 +418,8 @@
                     
                     <div class="input-group">
                         <label>Upload Photo for Banner Background</label>
-                        <input type="file" id="banner-image-upload" accept="image/jpeg, image/png, image/webp">
-                        <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
+                        <input type="file" id="banner-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500KB). Recommended size: 600x300 pixels (Landscape) for fast load times.</span>
                     </div>
                     <div class="flex-row">
                         <div class="input-group">
@@ -431,8 +449,7 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-            
-            <div id="admin-sec-question-editor" class="sub-sec">
+                        <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                         <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
@@ -460,7 +477,7 @@
                     <p style="font-size: 14px; font-weight: bold; color: #4338ca; margin: 0 0 10px 0;">📄 Auto-Extract from PDF (AI)</p>
                     <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 10px;">Upload a PDF test. The AI will extract up to 100 questions and format them automatically.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                        <input type="file" id="pdfUploadInput" accept="application/pdf" style="margin: 0; flex-grow: 1; padding: 10px; background: #fff; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" style="margin: 0; flex-grow: 1; padding: 10px; background: #fff; border-radius: 8px; border: 1px solid var(--border-color);">
                         <button id="pdfExtractBtn" class="btn-primary" style="background: #4f46e5; margin: 0; width: auto; padding: 10px 20px;" onclick="extractQuestionsFromPDF()">Extract Questions</button>
                     </div><p id="pdfExtractMsg" style="font-size: 13px; font-weight: 600; margin-top: 10px; display: none;"></p>
                 </div>
@@ -534,8 +551,8 @@
                     
                     <div class="input-group">
                         <label>Upload Photo for Group Card</label>
-                        <input type="file" id="new-group-image-upload" accept="image/jpeg, image/png, image/webp">
-                        <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
+                        <input type="file" id="new-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500KB). Recommended size: 400x400 pixels (Square) to fit nicely on the dashboard.</span>
                     </div>
                     <div class="flex-row">
                         <div class="input-group">
@@ -636,8 +653,7 @@
                 </div>
             </div>
         </div>
-        
-        <div id="view-student" class="view">
+                <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -708,7 +724,7 @@
                 </div>
             </div>
         </div>
-        <div id="view-test" class="view">
+                <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
@@ -783,7 +799,17 @@
 
     </div> 
     
-    <div id="student-popup-modal" class="modal-overlay">
+    <div id="custom-confirm-modal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="confirm-title" style="color: var(--text-main); font-size: 1.4rem; margin-bottom: 10px;">Are you sure?</h3>
+            <p id="confirm-message" style="color: var(--text-muted); margin-bottom: 25px;">Do you want to proceed?</p>
+            <div class="confirm-btn-group">
+                <button class="btn-outline" onclick="closeCustomConfirm(false)">Cancel</button>
+                <button class="btn-danger" id="confirm-yes-btn" onclick="closeCustomConfirm(true)">Yes, Proceed</button>
+            </div>
+        </div>
+    </div>
+        <div id="student-popup-modal" class="modal-overlay">
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <div class="popup-content">
@@ -804,8 +830,8 @@
             </div>
             <div class="input-group">
                 <label>Upload New Photo (Optional)</label>
-                <input type="file" id="edit-group-image-upload" accept="image/jpeg, image/png, image/webp">
-                <span class="upload-hint">Supported types: JPG, PNG, WEBP. Use small size photo (under 500KB) for fast upload and easy display on website.</span>
+                <input type="file" id="edit-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500KB). Recommended size: 400x400 pixels (Square).</span>
             </div>
             <div class="flex-row">
                 <div class="input-group">
@@ -926,8 +952,7 @@
             </div>
         </div>
     </div>
-        
-    <script>
+        <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -939,7 +964,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const storage = firebase.storage(); // ADDED STORAGE REFERENCE
+        const storage = firebase.storage();
 
         // --- GLOBAL VARIABLES ---
         let currentUserRole = null;
@@ -956,15 +981,59 @@
         let localQuestionsBuffer = []; 
         let studentAttemptedDB = {}; 
 
+        // --- MODERN UI HELPERS (Replacing alert & confirm) ---
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('customToast');
+            toast.innerText = message;
+            toast.className = `custom-toast show ${type}`;
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 4000);
+        }
+
+        // Override default browser alert to use our modern toast globally!
+        window.alert = function(msg, type = 'error') { 
+            showToast(msg, type); 
+        };
+
+        let customConfirmCallback = null;
+        function showCustomConfirm(title, message, callback) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            customConfirmCallback = callback;
+            document.getElementById('custom-confirm-modal').style.display = 'flex';
+        }
+
+        function closeCustomConfirm(isConfirmed) {
+            document.getElementById('custom-confirm-modal').style.display = 'none';
+            if(customConfirmCallback && isConfirmed) {
+                customConfirmCallback();
+            }
+            customConfirmCallback = null;
+        }
+
         // --- UTILITIES & MODAL HELPERS ---
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
         
-        // --- FIREBASE IMAGE UPLOAD HELPER ---
+        // --- STRICT FIREBASE IMAGE UPLOAD HELPER ---
         async function uploadImageToFirebase(fileInputId, folderPath) {
             const fileInput = document.getElementById(fileInputId);
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
             
             const file = fileInput.files[0];
+            
+            // 1. Strict File Size Validation (Max 500KB)
+            const maxSizeInBytes = 500 * 1024; 
+            if (file.size > maxSizeInBytes) {
+                showToast(`File is too large! Max is 500KB. Yours is ${(file.size/1024).toFixed(1)}KB. Please compress it.`, 'error');
+                throw new Error("File too large"); // Stops execution so it doesn't get stuck
+            }
+
+            // 2. Strict File Type Validation
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                showToast(`Invalid format! Please use JPG, PNG, or WEBP only.`, 'error');
+                throw new Error("Invalid file type"); // Stops execution
+            }
+
             const fileName = new Date().getTime() + "_" + file.name;
             const storageRef = storage.ref().child(`${folderPath}/${fileName}`);
             
@@ -974,7 +1043,8 @@
                 return downloadURL;
             } catch (error) {
                 console.error("Upload failed", error);
-                throw new Error("Failed to upload image. Please try again.");
+                showToast("Upload failed. Please check your internet connection.", 'error');
+                throw new Error("Upload failed");
             }
         }
 
@@ -986,6 +1056,7 @@
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="120" viewBox="0 0 300 120"><rect width="300" height="120" fill="${color}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="40" font-weight="bold">${initials}</text></svg>`;
             return 'data:image/svg+xml;base64,' + btoa(svg);
         }
+
         // --- STUDENT POPUP LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
@@ -1001,20 +1072,22 @@
             try {
                 let updateData = { status: status, message: message, textColor: textColor, font: font };
                 
-                // Handle Image Upload to Firebase
+                // Uses our new strict uploader
                 const newImageUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
                 if (newImageUrl) {
                     updateData.imageUrl = newImageUrl;
                 }
 
                 await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
-                alert("Popup settings updated successfully!");
+                showToast("Popup settings updated successfully!", "success");
                 document.getElementById('popup-image-upload').value = ''; // clear input
-            } catch (e) { alert("Error updating popup: " + e.message); } 
+            } catch (e) { 
+                // Error toast is handled by the uploader now, but we catch it here to reset the button
+                console.error(e); 
+            } 
             finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
         }
-
-        function loadStudentPopup() {
+                function loadStudentPopup() {
             if(sessionStorage.getItem('popupShown')) return;
 
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
@@ -1077,8 +1150,8 @@
             try {
                 let updateData = {}; if(nameInput) updateData.portalName = nameInput;
                 await db.collection("adminSettings").doc("branding").set(updateData, { merge: true });
-                alert("Branding updated successfully!");
-            } catch (e) { alert("Error updating branding: " + e.message); } 
+                showToast("Branding updated successfully!");
+            } catch (e) { showToast("Error updating branding: " + e.message, 'error'); } 
             finally { btn.disabled = false; btn.innerText = "Save Branding Changes"; }
         }
 
@@ -1116,7 +1189,7 @@
             } else { lockoutData.attempts = 1; }
             localStorage.setItem('deviceLockoutData', JSON.stringify(lockoutData));
             if (lockoutData.attempts >= MAX_FAILED_ATTEMPTS) { checkDeviceLockout(); } 
-            else { alert(`Invalid Credentials. You have ${MAX_FAILED_ATTEMPTS - lockoutData.attempts} attempts remaining before a 12-hour device lockout.`); }
+            else { showToast(`Invalid Credentials. You have ${MAX_FAILED_ATTEMPTS - lockoutData.attempts} attempts remaining.`, 'error'); }
         }
 
         function clearLockoutOnSuccess() { localStorage.removeItem('deviceLockoutData'); document.getElementById('lockout-warning').style.display = 'none'; document.getElementById('login-submit-btn').disabled = false; }
@@ -1129,10 +1202,10 @@
         function closeDonePopup() { document.getElementById('done-popup-modal').style.display = 'none'; }
 
         function requestPasswordReset() {
-            const phone = document.getElementById('forgot-pass-phone').value.trim(); if(phone.length < 4) return alert("Please enter a valid phone number.");
+            const phone = document.getElementById('forgot-pass-phone').value.trim(); if(phone.length < 4) return showToast("Please enter a valid phone number.", 'error');
             const email = formatIDAsEmail(phone);
             auth.sendPasswordResetEmail(email).then(() => { closeForgotPassModal(); document.getElementById('done-popup-modal').style.display = 'flex'; document.getElementById('forgot-pass-phone').value = ''; })
-                .catch((error) => { alert(error.code === 'auth/user-not-found' ? "No account found with this number." : "Error: " + error.message); });
+                .catch((error) => { showToast(error.code === 'auth/user-not-found' ? "No account found with this number." : "Error: " + error.message, 'error'); });
         }
         
         function toggleAuthForm(type) {
@@ -1154,7 +1227,7 @@
         window.onpopstate = function(event) {
             // AUTO-SUBMIT INTERCEPTOR
             if (isTestActive) {
-                alert("Navigating away from an active test! Your test has been automatically submitted.");
+                showToast("Navigating away! Your test has been automatically submitted.", 'warning');
                 finalSubmitTest();
                 return; 
             }
@@ -1162,28 +1235,29 @@
             if (event.state) { navigate(event.state.view, false); if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); } 
             else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
         };
+
         // --- AUTH LOGIC ---
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
 
         async function updateAdminCreds() {
             const newId = document.getElementById('new-admin-id').value.trim(); const newPass = document.getElementById('new-admin-pass').value.trim();
-            if(!newId || !newPass) return alert("Please fill both fields."); if(newPass.length < 6) return alert("Password must be at least 6 characters.");
+            if(!newId || !newPass) return showToast("Please fill both fields.", 'error'); if(newPass.length < 6) return showToast("Password must be at least 6 characters.", 'error');
             try { await db.collection('adminSettings').doc('credentials').set({ id: newId, pass: newPass }); } catch(e) { localStorage.setItem('adminCustomId', newId); localStorage.setItem('adminCustomPass', newPass); }
-            alert("Admin Credentials Updated! Please log in again."); logout();
+            showToast("Admin Credentials Updated! Please log in again."); logout();
         }
 
         function updateStudentPassword() {
-            const newPass = document.getElementById('new-student-pass').value; if(newPass.length < 6) return alert("Password must be at least 6 characters.");
+            const newPass = document.getElementById('new-student-pass').value; if(newPass.length < 6) return showToast("Password must be at least 6 characters.", 'error');
             const user = firebase.auth().currentUser;
-            if(user) { user.updatePassword(newPass).then(() => { alert("Password updated successfully!"); document.getElementById('new-student-pass').value = ''; openStudentSec('student-main-menu'); }).catch(e => { alert(e.message); }); }
+            if(user) { user.updatePassword(newPass).then(() => { showToast("Password updated successfully!"); document.getElementById('new-student-pass').value = ''; openStudentSec('student-main-menu'); }).catch(e => { showToast(e.message, 'error'); }); }
         }
 
         function registerStudent() {
             const fullName = document.getElementById('reg-name').value.trim(); const phoneId = document.getElementById('reg-phone').value.trim(); const pass = document.getElementById('reg-password').value;
-            if(!fullName) return alert("Please enter your full name."); if(phoneId.length < 4 || pass.length < 6) return alert("Check inputs. Password min 6 chars.");
+            if(!fullName) return showToast("Please enter your full name.", 'error'); if(phoneId.length < 4 || pass.length < 6) return showToast("Check inputs. Password min 6 chars.", 'error');
             auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
                 .then((userCred) => { db.collection("users").doc(userCred.user.uid).set({ fullName: fullName, phone: phoneId, role: 'student', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); currentUserRole = 'student'; navigate('view-student'); loadStudentData(); loadStudentPopup(); })
-                .catch(e => { alert("Error: " + e.message); });
+                .catch(e => { showToast("Error: " + e.message, 'error'); });
         }
 
         async function login() {
@@ -1243,15 +1317,15 @@
             });
         }
 
-        async function deleteStudentAccount(uid) {
-            if(confirm("Are you sure you want to remove this student? This will delete their profile data and test attempts.")) {
+        function deleteStudentAccount(uid) {
+            showCustomConfirm("Delete Student?", "Are you sure you want to remove this student? This will permanently delete their profile data and test attempts.", async () => {
                 try {
                     await db.collection("users").doc(uid).delete();
                     const attemptsSnap = await db.collection("attempts").where("userId", "==", uid).get();
                     const batch = db.batch(); attemptsSnap.forEach(doc => batch.delete(doc.ref)); await batch.commit();
-                    alert("Student profile and records deleted successfully.");
-                } catch (error) { alert("Error deleting student: " + error.message); }
-            }
+                    showToast("Student profile and records deleted successfully.");
+                } catch (error) { showToast("Error deleting student: " + error.message, 'error'); }
+            });
         }
 
         // --- ADMIN: TEST SETTINGS ---
@@ -1268,12 +1342,16 @@
             const testId = document.getElementById('edit-test-id').value; const newTitle = document.getElementById('edit-title').value.trim();
             const newDuration = parseInt(document.getElementById('edit-timer').value) * 60; const newMarks = parseFloat(document.getElementById('edit-marks').value);
             const newNegative = parseFloat(document.getElementById('edit-negative').value);
-            if(!newTitle) return alert("Test title cannot be empty!");
-            try { await db.collection("tests").doc(testId).update({ title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative }); alert("Test settings saved successfully!"); closeEditModal(); } 
-            catch(e) { alert("Error saving test settings: " + e.message); }
+            if(!newTitle) return showToast("Test title cannot be empty!", 'error');
+            try { await db.collection("tests").doc(testId).update({ title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative }); showToast("Test settings saved successfully!"); closeEditModal(); } 
+            catch(e) { showToast("Error saving test settings: " + e.message, 'error'); }
         }
 
-        async function deleteTest(tid) { if(confirm("Are you sure you want to completely delete this test?")) { try { await db.collection("tests").doc(tid).delete(); } catch(e) { alert("Error deleting test: " + e.message); } } }
+        function deleteTest(tid) { 
+            showCustomConfirm("Delete Test?", "Are you sure you want to completely delete this test and all its questions?", async () => {
+                try { await db.collection("tests").doc(tid).delete(); showToast("Test deleted successfully!"); } catch(e) { showToast("Error deleting test: " + e.message, 'error'); } 
+            });
+        }
 
         // --- ADMIN: GROUP SETTINGS (UPDATED WITH IMAGE UPLOADS) ---
         async function addGroup() { 
@@ -1281,7 +1359,7 @@
             const c = document.getElementById('new-group-color').value;
             const f = document.getElementById('new-group-font').value;
             
-            if(!n) return alert("Please enter a group name."); 
+            if(!n) return showToast("Please enter a group name.", 'error'); 
             
             try {
                 let groupData = {name: n, color: c, font: f, createdAt: new Date()};
@@ -1291,9 +1369,9 @@
                 await db.collection("groups").add(groupData);
                 document.getElementById('new-group-name').value=''; 
                 document.getElementById('new-group-image-upload').value='';
-                alert("Group Added!");
+                showToast("Group Added successfully!", "success");
             } catch(e) {
-                alert("Error adding group: " + e.message);
+                console.error(e);
             }
         }
 
@@ -1312,7 +1390,7 @@
             const n = document.getElementById('edit-group-name').value.trim();
             const c = document.getElementById('edit-group-color').value;
             const f = document.getElementById('edit-group-font').value;
-            if(!n) return alert("Group name cannot be empty!");
+            if(!n) return showToast("Group name cannot be empty!", 'error');
             
             try {
                 let updateData = { name: n, color: c, font: f };
@@ -1320,23 +1398,22 @@
                 if (imageUrl) updateData.imageUrl = imageUrl;
 
                 await db.collection("groups").doc(gid).update(updateData);
-                alert("Group styled and updated successfully!"); 
+                showToast("Group styled and updated successfully!"); 
                 closeEditGroupModal();
-            } catch(e) { alert("Error updating group: " + e.message); }
+            } catch(e) { console.error(e); }
         }
         
-        async function deleteGroup(gid) {
-            if(confirm("Are you sure you want to delete this group? Tests inside this group will not be deleted but will lose their category.")) {
-                try { await db.collection("groups").doc(gid).delete(); alert("Group deleted successfully."); } catch(e) { alert("Error deleting group: " + e.message); }
-            }
+        function deleteGroup(gid) {
+            showCustomConfirm("Delete Group?", "Are you sure you want to delete this group? Tests inside this group will not be deleted but will lose their category.", async () => {
+                try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
+            });
         }
-        
-        // --- ADMIN: BANNERS LOGIC (UPDATED WITH IMAGE UPLOADS) ---
+                // --- ADMIN: BANNERS LOGIC (UPDATED WITH IMAGE UPLOADS) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
 
-            if(!customTitle) return alert("Please enter a stylish banner name."); if(!testSelect.value) return alert("Please select a specific test to link to this banner.");
+            if(!customTitle) return showToast("Please enter a stylish banner name.", 'error'); if(!testSelect.value) return showToast("Please select a specific test to link to this banner.", 'error');
             
             const btn = document.getElementById('btn-publish-banner'); btn.disabled = true; btn.innerText = "⏳ Publishing Banner... Please wait";
             
@@ -1347,6 +1424,7 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
+                // Uses our new strict uploader
                 const imageUrl = await uploadImageToFirebase('banner-image-upload', 'banners');
                 if (imageUrl) bannerData.imageUrl = imageUrl;
 
@@ -1354,12 +1432,17 @@
                 
                 document.getElementById('banner-custom-title').value = '';
                 document.getElementById('banner-image-upload').value = '';
-                alert("Banner successfully published!");
-            } catch (error) { alert("Error publishing banner: " + error.message); } 
+                showToast("Banner successfully published!", "success");
+            } catch (error) { console.error(error); } 
             finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
         }
 
-        async function deleteBanner(id) { if(confirm("Are you sure you want to remove this banner?")) { await db.collection("banners").doc(id).delete(); } }
+        function deleteBanner(id) { 
+            showCustomConfirm("Remove Banner?", "Are you sure you want to remove this banner?", async () => {
+                await db.collection("banners").doc(id).delete(); 
+                showToast("Banner removed.");
+            }); 
+        }
 
         function loadAdminData() { 
             loadAdminStudents();
@@ -1394,7 +1477,7 @@
                         <h4 style="margin-bottom:5px; color: var(--primary);">${t.title}</h4>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
                         <div style="display:flex; gap:8px; flex-wrap: wrap;">
-                            <button class="btn-success" style="flex:1; min-width: 80px; padding: 8px;" onclick="openTestEditor('${d.id}', '${t.title}')">➕ Add Qs</button> 
+                            <button class="btn-success" style="flex:1; min-width: 80px; padding: 8px;" onclick="openTestEditor('${d.id}', '${t.title.replace(/'/g, "\\'")}')">➕ Add Qs</button> 
                             <button class="btn-outline" style="flex:1; min-width: 80px; padding: 8px;" onclick="openEditModal('${d.id}')">⚙️ Setup</button> 
                             <button class="btn-danger" style="flex:1; min-width: 80px; padding: 8px;" onclick="deleteTest('${d.id}')">🗑 Del</button>
                         </div>
@@ -1426,11 +1509,11 @@
         // --- AI QUESTION EDITOR & TEST CREATION ---
         async function createNewTest() {
             const name = document.getElementById('newTestName').value.trim(); const group = document.getElementById('newTestGroup').value; const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
-            if (!name || !group) return alert("Please provide a test name and select a group.");
+            if (!name || !group) return showToast("Please provide a test name and select a group.", 'error');
             try {
                 const docRef = await db.collection("tests").add({ title: name, groupId: group, duration: timer * 60, marksPerQuestion: 2, negativeMarks: 0, questions: [], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
                 document.getElementById('newTestName').value = ''; document.getElementById('newTestTimer').value = ''; openTestEditor(docRef.id, name);
-            } catch (error) { alert("Error creating test: " + error.message); }
+            } catch (error) { showToast("Error creating test: " + error.message, 'error'); }
         }
 
         async function openTestEditor(testId, testTitle) {
@@ -1439,7 +1522,7 @@
             cancelQuestionEdit(); renderAdminQuestionList(); openAdminSec('admin-sec-question-editor');
         }
 
-        async function updateTestQuestionsInDb() { try { await db.collection("tests").doc(activeAdminTestId).update({ questions: localQuestionsBuffer }); } catch (e) { alert("Failed to save to cloud: " + e.message); } }
+        async function updateTestQuestionsInDb() { try { await db.collection("tests").doc(activeAdminTestId).update({ questions: localQuestionsBuffer }); } catch (e) { showToast("Failed to save to cloud: " + e.message, 'error'); } }
 
         function renderAdminQuestionList() { 
             const div = document.getElementById('adminExistingQuestionsList'); div.innerHTML=''; 
@@ -1472,16 +1555,21 @@
         async function addQuestionToTest() { 
             const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; const optsEn=[], optsHi=[]; 
             for(let i=0;i<4;i++) { optsEn.push(document.getElementById(`opt${i}En`).value); optsHi.push(document.getElementById(`opt${i}Hi`).value); } 
-            if(!qEn && !qHi) return alert("Fill at least one question field."); 
+            if(!qEn && !qHi) return showToast("Fill at least one question field.", 'warning'); 
             
             const obj = { questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, correctIndex: parseInt(document.getElementById('correctAnswer').value), subject: "General", explanationEng: "", explanationHin: "" }; 
             if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; else localQuestionsBuffer.push(obj); 
             
             await updateTestQuestionsInDb(); renderAdminQuestionList(); cancelQuestionEdit(); 
-            const msg = document.getElementById('adminMessage'); msg.innerText = "Question Saved successfully!"; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 3000);
+            showToast("Question Saved successfully!", "success");
         }
 
-        async function deleteQuestion(i) { if(confirm("Delete this question?")) { localQuestionsBuffer.splice(i,1); await updateTestQuestionsInDb(); renderAdminQuestionList(); } }
+        function deleteQuestion(i) { 
+            showCustomConfirm("Delete Question?", "Delete this question permanently?", async () => {
+                localQuestionsBuffer.splice(i,1); await updateTestQuestionsInDb(); renderAdminQuestionList(); 
+                showToast("Question deleted.");
+            }); 
+        }
 
         function checkIfLanguageSubject(text) { const t = text.toLowerCase(); return t.includes('english grammar') || t.includes('hindi grammar') || t.includes('hindi sahitya') || t.includes('english literature'); }
 
@@ -1505,7 +1593,7 @@
                 
                 parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20) }); });
                 await updateTestQuestionsInDb(); renderAdminQuestionList(); 
-                const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Added ${parsedQuestions.length} bilingual questions!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000); topicInput.value = '';
+                showToast(`✨ Added ${parsedQuestions.length} bilingual questions!`, "success"); topicInput.value = '';
             } catch (error) { errorMsg.innerText = "Error: " + error.message; errorMsg.style.display = 'block'; } finally { generateBtn.innerText = "Bulk Generate"; generateBtn.disabled = false; }
         }
 
@@ -1556,14 +1644,14 @@
         }
 
         async function importSelectedQuestions() {
-            const checkboxes = document.querySelectorAll('.qb-checkbox:checked'); if (checkboxes.length === 0) return alert("Select at least one question.");
+            const checkboxes = document.querySelectorAll('.qb-checkbox:checked'); if (checkboxes.length === 0) return showToast("Select at least one question.", 'error');
             let importedCount = 0;
             checkboxes.forEach(cb => {
                 const [tId, qIdxStr] = cb.value.split('_'); const sourceTest = allTestsCache.find(t => t.id === tId);
                 if (sourceTest && sourceTest.questions && sourceTest.questions[parseInt(qIdxStr)]) { const qCopy = JSON.parse(JSON.stringify(sourceTest.questions[parseInt(qIdxStr)])); localQuestionsBuffer.push(qCopy); importedCount++; }
             });
             await updateTestQuestionsInDb(); renderAdminQuestionList(); closeModals();
-            const msg = document.getElementById('adminMessage'); msg.innerText = `✨ Successfully imported ${importedCount} question(s)!`; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 4000);
+            showToast(`✨ Successfully imported ${importedCount} question(s)!`, "success");
         }
 
         // --- STUDENT DASHBOARD LOGIC (UPDATED FOR FIREBASE IMAGES) ---
@@ -1693,7 +1781,7 @@
         async function startTest(testId) {
             const doc = await db.collection("tests").doc(testId).get(); if (!doc.exists) return;
             currentTest = doc.data(); activeTestId = testId; testQuestions = currentTest.questions || []; testMarks = currentTest.marksPerQuestion || 2; testNegativeMarks = currentTest.negativeMarks || 0; 
-            if(testQuestions.length === 0) return alert("This test currently has no questions.");
+            if(testQuestions.length === 0) return showToast("This test currently has no questions.", 'error');
 
             userAnswers = new Array(testQuestions.length).fill(null); questionStates = new Array(testQuestions.length).fill('unanswered');
             currentQuestionIndex = 0; timeRemaining = currentTest.duration || 1800; document.getElementById('test-title').innerText = currentTest.title;
@@ -1784,11 +1872,11 @@
         async function seePastResults(attemptId) {
             try {
                 const attDoc = await db.collection("attempts").doc(attemptId).get();
-                if(!attDoc.exists) return alert("Record not found.");
+                if(!attDoc.exists) return showToast("Record not found.", 'error');
                 const attData = attDoc.data();
                 
                 const testDoc = await db.collection("tests").doc(attData.testId).get();
-                if(!testDoc.exists) return alert("This test no longer exists.");
+                if(!testDoc.exists) return showToast("This test no longer exists.", 'error');
                 
                 currentTest = testDoc.data();
                 testQuestions = currentTest.questions || [];
@@ -1796,7 +1884,7 @@
                 
                 showReviewScreen(); 
             } catch(e) {
-                alert("Error loading past results: " + e.message);
+                showToast("Error loading past results: " + e.message, 'error');
             }
         }
 
