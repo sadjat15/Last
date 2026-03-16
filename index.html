@@ -188,8 +188,7 @@
         .q-correct { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
         .q-wrong { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
         .q-skipped { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-
-        /* Review Styles */
+                /* Review Styles */
         .opt-correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46; font-weight: 600;}
         .opt-wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; font-weight: 600;}
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
@@ -282,8 +281,7 @@
             <div class="legend-item"><div class="legend-dot" style="background: var(--review);"></div> Marked for Review</div>
         </div>
     </div>
-    
-    <div class="container">
+        <div class="container">
         <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -356,7 +354,7 @@
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-            
+                        
             <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
@@ -536,8 +534,7 @@
                     <p id="aiKeyMsg" style="color: var(--success); font-weight: bold; margin-top: 10px; display: none;"></p>
                 </div>
             </div>
-            
-            <div id="admin-sec-groups" class="sub-sec">
+                        <div id="admin-sec-groups" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Test Groups</h2>
@@ -653,7 +650,7 @@
                 </div>
             </div>
         </div>
-                <div id="view-student" class="view">
+                        <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -724,7 +721,7 @@
                 </div>
             </div>
         </div>
-                <div id="view-test" class="view">
+                        <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
@@ -798,8 +795,7 @@
         </div>
 
     </div> 
-    
-    <div id="custom-confirm-modal" class="modal-overlay">
+        <div id="custom-confirm-modal" class="modal-overlay">
         <div class="modal">
             <h3 id="confirm-title" style="color: var(--text-main); font-size: 1.4rem; margin-bottom: 10px;">Are you sure?</h3>
             <p id="confirm-message" style="color: var(--text-muted); margin-bottom: 25px;">Do you want to proceed?</p>
@@ -928,7 +924,7 @@
     <div id="exit-modal" class="modal-overlay">
         <div class="modal" style="max-width: 450px; text-align: center;">
             <h2 style="margin-bottom: 10px; color: var(--text-main);">Pause Test?</h2>
-            <p style="color: var(--text-muted); margin-bottom: 25px;">Are you sure you want to pause and exit the test?</p>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Are you sure you want to pause and exit the test? Your progress will be saved but time may keep running.</p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <button onclick="confirmPause()" class="btn-warning" style="font-size: 1.1rem; padding: 14px;">⏸ Pause Test & Exit</button>
                 <button onclick="hideExitModal()" class="btn-outline" style="margin-top: 10px; border: none; color: var(--text-muted);">Cancel, return to test</button>
@@ -952,7 +948,7 @@
             </div>
         </div>
     </div>
-        <script>
+            <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -1010,10 +1006,9 @@
             customConfirmCallback = null;
         }
 
-        // --- UTILITIES & MODAL HELPERS ---
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
         
-        // --- STRICT FIREBASE IMAGE UPLOAD HELPER ---
+        // --- STRICT FIREBASE IMAGE UPLOAD HELPER (WITH TIMEOUT FIX) ---
         async function uploadImageToFirebase(fileInputId, folderPath) {
             const fileInput = document.getElementById(fileInputId);
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
@@ -1024,27 +1019,33 @@
             const maxSizeInBytes = 500 * 1024; 
             if (file.size > maxSizeInBytes) {
                 showToast(`File is too large! Max is 500KB. Yours is ${(file.size/1024).toFixed(1)}KB. Please compress it.`, 'error');
-                throw new Error("File too large"); // Stops execution so it doesn't get stuck
+                throw new Error("File too large"); 
             }
 
             // 2. Strict File Type Validation
             const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
             if (!validTypes.includes(file.type)) {
                 showToast(`Invalid format! Please use JPG, PNG, or WEBP only.`, 'error');
-                throw new Error("Invalid file type"); // Stops execution
+                throw new Error("Invalid file type"); 
             }
 
             const fileName = new Date().getTime() + "_" + file.name;
             const storageRef = storage.ref().child(`${folderPath}/${fileName}`);
             
+            // 3. Fix: 15-second Timeout Wrapper to prevent infinite hanging
+            const uploadPromise = storageRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Upload timed out. Check your network or Firebase rules.")), 15000)
+            );
+
             try {
-                const snapshot = await storageRef.put(file);
-                const downloadURL = await snapshot.ref.getDownloadURL();
+                // Race the upload against the 15-second timer
+                const downloadURL = await Promise.race([uploadPromise, timeoutPromise]);
                 return downloadURL;
             } catch (error) {
                 console.error("Upload failed", error);
-                showToast("Upload failed. Please check your internet connection.", 'error');
-                throw new Error("Upload failed");
+                showToast(error.message || "Upload failed. Please check your internet connection.", 'error');
+                throw error; // Propagate error so calling functions re-enable buttons
             }
         }
 
@@ -1071,45 +1072,28 @@
 
             try {
                 let updateData = { status: status, message: message, textColor: textColor, font: font };
-                
-                // Uses our new strict uploader
                 const newImageUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
-                if (newImageUrl) {
-                    updateData.imageUrl = newImageUrl;
-                }
+                if (newImageUrl) updateData.imageUrl = newImageUrl;
 
                 await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
                 showToast("Popup settings updated successfully!", "success");
-                document.getElementById('popup-image-upload').value = ''; // clear input
+                document.getElementById('popup-image-upload').value = ''; 
             } catch (e) { 
-                // Error toast is handled by the uploader now, but we catch it here to reset the button
                 console.error(e); 
-            } 
-            finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
+            } finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
         }
-                function loadStudentPopup() {
+        
+        function loadStudentPopup() {
             if(sessionStorage.getItem('popupShown')) return;
-
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
                 if(doc.exists) {
                     const data = doc.data();
                     if(data.status === 'active') {
                         const msgEl = document.getElementById('popup-display-msg');
                         const imgEl = document.getElementById('popup-custom-img');
-                        
-                        msgEl.innerText = data.message || '';
-                        msgEl.style.color = data.textColor || '#0f172a';
-                        msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
-                        
-                        if(data.imageUrl) {
-                            imgEl.src = data.imageUrl;
-                            imgEl.style.display = 'block';
-                        } else {
-                            imgEl.style.display = 'none';
-                        }
-
-                        document.getElementById('student-popup-modal').style.display = 'flex';
-                        sessionStorage.setItem('popupShown', 'true');
+                        msgEl.innerText = data.message || ''; msgEl.style.color = data.textColor || '#0f172a'; msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
+                        if(data.imageUrl) { imgEl.src = data.imageUrl; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+                        document.getElementById('student-popup-modal').style.display = 'flex'; sessionStorage.setItem('popupShown', 'true');
                     }
                 }
             }).catch(e => console.error("Error loading popup: ", e));
@@ -1119,33 +1103,24 @@
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
                 if(doc.exists) {
-                    const data = doc.data();
-                    const title = data.portalName || "KD JAAT Test Portal";
-                    document.getElementById('nav-title').innerText = title;
-                    document.getElementById('page-title').innerText = title;
+                    const data = doc.data(); const title = data.portalName || "KD JAAT Test Portal";
+                    document.getElementById('nav-title').innerText = title; document.getElementById('page-title').innerText = title;
                     if(data.geminiKey) { storedGeminiKey = data.geminiKey; document.getElementById('adminAiKey').value = storedGeminiKey; }
                 }
             });
-            
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
                  if(doc.exists) {
                      const data = doc.data();
-                     const statusEl = document.getElementById('popup-status'); const msgEl = document.getElementById('popup-message');
-                     const colorEl = document.getElementById('popup-text-color'); const fontEl = document.getElementById('popup-text-font');
-                     
-                     if(statusEl) statusEl.value = data.status || 'inactive'; 
-                     if(msgEl) msgEl.value = data.message || '';
-                     if(colorEl) colorEl.value = data.textColor || '#0f172a'; 
-                     if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
+                     const statusEl = document.getElementById('popup-status'), msgEl = document.getElementById('popup-message'), colorEl = document.getElementById('popup-text-color'), fontEl = document.getElementById('popup-text-font');
+                     if(statusEl) statusEl.value = data.status || 'inactive'; if(msgEl) msgEl.value = data.message || '';
+                     if(colorEl) colorEl.value = data.textColor || '#0f172a'; if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
                  }
             });
         }
-        
         loadPortalBranding();
 
         async function updatePortalBranding() {
-            const nameInput = document.getElementById('portal-name-input').value.trim();
-            const btn = document.getElementById('btn-save-branding');
+            const nameInput = document.getElementById('portal-name-input').value.trim(); const btn = document.getElementById('btn-save-branding');
             btn.disabled = true; btn.innerText = "⏳ Saving...";
             try {
                 let updateData = {}; if(nameInput) updateData.portalName = nameInput;
@@ -1167,7 +1142,6 @@
 
         // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
         const MAX_FAILED_ATTEMPTS = 5; const LOCKOUT_DURATION_MS = 12 * 60 * 60 * 1000;
-
         function checkDeviceLockout() {
             const lockoutDataStr = localStorage.getItem('deviceLockoutData'); if (!lockoutDataStr) return false;
             const lockoutData = JSON.parse(lockoutDataStr); const now = new Date().getTime();
@@ -1181,22 +1155,20 @@
         }
 
         function recordFailedAttempt() {
-            const lockoutDataStr = localStorage.getItem('deviceLockoutData'); const now = new Date().getTime();
-            let lockoutData = { attempts: 0, firstAttempt: now };
+            const lockoutDataStr = localStorage.getItem('deviceLockoutData'); const now = new Date().getTime(); let lockoutData = { attempts: 0, firstAttempt: now };
             if (lockoutDataStr) {
                 lockoutData = JSON.parse(lockoutDataStr);
                 if (now - lockoutData.firstAttempt > LOCKOUT_DURATION_MS) { lockoutData = { attempts: 1, firstAttempt: now }; } else { lockoutData.attempts += 1; }
             } else { lockoutData.attempts = 1; }
             localStorage.setItem('deviceLockoutData', JSON.stringify(lockoutData));
-            if (lockoutData.attempts >= MAX_FAILED_ATTEMPTS) { checkDeviceLockout(); } 
-            else { showToast(`Invalid Credentials. You have ${MAX_FAILED_ATTEMPTS - lockoutData.attempts} attempts remaining.`, 'error'); }
+            if (lockoutData.attempts >= MAX_FAILED_ATTEMPTS) { checkDeviceLockout(); } else { showToast(`Invalid Credentials. You have ${MAX_FAILED_ATTEMPTS - lockoutData.attempts} attempts remaining.`, 'error'); }
         }
 
         function clearLockoutOnSuccess() { localStorage.removeItem('deviceLockoutData'); document.getElementById('lockout-warning').style.display = 'none'; document.getElementById('login-submit-btn').disabled = false; }
         window.onload = checkDeviceLockout;
         
         // --- FORGOT PASSWORD MODAL LOGIC ---
-        function toggleForgotPassVisibility() { const role = document.getElementById('login-role').value; const forgotContainer = document.getElementById('forgot-pass-container'); forgotContainer.style.display = role === 'student' ? 'block' : 'none'; }
+        function toggleForgotPassVisibility() { const role = document.getElementById('login-role').value; document.getElementById('forgot-pass-container').style.display = role === 'student' ? 'block' : 'none'; }
         function openForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'flex'; }
         function closeForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'none'; }
         function closeDonePopup() { document.getElementById('done-popup-modal').style.display = 'none'; }
@@ -1213,7 +1185,7 @@
             else { document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; }
         }
 
-        // --- NAVIGATION & AUTO-SUBMIT ON BACK LOGIC ---
+        // --- NAVIGATION & MODERN BACK BUTTON INTERCEPTOR ---
         function navigate(viewId, pushState = true) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active');
             document.getElementById('logout-btn').style.display = (viewId === 'view-login') ? 'none' : 'block';
@@ -1225,18 +1197,19 @@
         function openStudentSec(secId, pushState = true) { document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); }
 
         window.onpopstate = function(event) {
-            // AUTO-SUBMIT INTERCEPTOR
+            // FIX: Modern Exit Popup on Back Button
             if (isTestActive) {
-                showToast("Navigating away! Your test has been automatically submitted.", 'warning');
-                finalSubmitTest();
+                // Trap the user: push the state back to the test view so they don't actually leave
+                window.history.pushState({ view: 'view-test' }, "", `#view-test`);
+                // Trigger the modern modal instead of auto-submitting
+                showExitModal(); 
                 return; 
             }
 
             if (event.state) { navigate(event.state.view, false); if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); } 
             else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
         };
-
-        // --- AUTH LOGIC ---
+                // --- AUTH LOGIC ---
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
 
         async function updateAdminCreds() {
@@ -1424,7 +1397,6 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                // Uses our new strict uploader
                 const imageUrl = await uploadImageToFirebase('banner-image-upload', 'banners');
                 if (imageUrl) bannerData.imageUrl = imageUrl;
 
@@ -1732,7 +1704,8 @@
                         <h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
                         ${actionHtml}
-                    </div>`; 
+                    </div>
+                    `; 
                 }); 
             }); 
             openStudentSec('student-sec-tests-list'); 
