@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="page-title">KD JAAT Test Portal</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,12 +19,11 @@
                 inlineMath: [['\\(', '\\)']],
                 displayMath: [['$$', '$$']]
             },
-            startup: {
-                typeset: false 
-            }
+            startup: { typeset: false }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
     <style>
         :root {
             --primary: #4f46e5;
@@ -42,10 +41,11 @@
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
             --radius: 12px;
+            --bottom-nav-height: 65px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; overflow-x: hidden; padding-bottom: var(--bottom-nav-height); }
         
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         .hidden { display: none !important; }
@@ -59,6 +59,34 @@
         .sub-sec.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+                /* App Download Banner */
+        #app-download-banner {
+            display: none; background: linear-gradient(90deg, #1e293b, var(--primary));
+            color: white; padding: 12px 20px; align-items: center; justify-content: space-between;
+            font-weight: 500; font-size: 0.9rem; z-index: 1000; position: relative;
+        }
+        .download-btn {
+            background: #ffffff; color: var(--primary); padding: 6px 16px;
+            border-radius: 20px; text-decoration: none; font-weight: 700;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s;
+        }
+        .download-btn:active { transform: scale(0.95); }
+
+        /* Bottom Navigation (Student App UI) */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--bottom-nav-height);
+            background: #ffffff; display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 999; border-top: 1px solid var(--border-color);
+            padding-bottom: env(safe-area-inset-bottom); /* iOS support */
+            display: none; /* Hidden by default, shown for students */
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 0.75rem; font-weight: 600; cursor: pointer;
+            flex: 1; height: 100%; transition: color 0.2s; text-decoration: none; gap: 4px;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 1.4rem; }
 
         /* Navbar & Branding */
         nav { background: var(--primary); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 100; }
@@ -67,7 +95,8 @@
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
         .nav-btn:hover { background: rgba(255,255,255,0.2); }
-                /* Dashboard Main Menu Buttons */
+                
+        /* Dashboard Main Menu Buttons */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .menu-btn { 
             background: var(--card-bg); padding: 30px 20px; border-radius: var(--radius); 
@@ -79,7 +108,8 @@
         .menu-btn:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--primary); }
         .menu-btn h3 { color: var(--primary); font-size: 1.3rem; z-index: 2; position: relative;}
         .menu-btn p { color: var(--text-muted); font-size: 0.9rem; z-index: 2; position: relative;}
-                /* Attractive Group Cards (Image background, text at bottom) */
+                
+        /* Attractive Group Cards (Image background, text at bottom) */
         .group-card {
             position: relative; height: 160px; border-radius: var(--radius); overflow: hidden;
             display: flex; align-items: flex-end; box-shadow: var(--shadow-sm); cursor: pointer; transition: 0.2s;
@@ -100,8 +130,13 @@
         .q-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.2s; }
         .q-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         
-        /* Section Header */
+        /* Section Header & Invisible Back Buttons */
         .sec-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
+        
+        /* Invisible but working student back buttons */
+        .student-back-btn { opacity: 0; position: absolute; left: -9999px; width: 0; height: 0; overflow: hidden; }
+        
+        /* Admin back buttons - visible */
         .back-menu-btn { background: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .back-menu-btn:hover { background: #cbd5e1; }
         
@@ -112,7 +147,7 @@
             width: 100%; padding: 12px; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 1rem; background: #f8fafc; transition: 0.2s; box-sizing: border-box;
         }
-        .input-group input[type="file"] { padding: 8px; background: white; cursor: pointer; }
+                .input-group input[type="file"] { padding: 8px; background: white; cursor: pointer; }
         .input-group input[type="color"] { background: white; padding: 8px; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         
@@ -131,17 +166,19 @@
         .btn-warning { background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
-                /* Modern Notification Toast */
+                
+        /* Modern Notification Toast */
         .custom-toast {
             visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center;
             border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
             transform: translateX(-50%); font-size: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: visibility 0.5s, bottom 0.5s, opacity 0.5s; opacity: 0;
         }
-        .custom-toast.show { visibility: visible; bottom: 50px; opacity: 1; }
+        .custom-toast.show { visibility: visible; bottom: 80px; opacity: 1; } /* Moved up slightly to clear bottom nav */
         .custom-toast.error { background-color: var(--danger); }
         .custom-toast.success { background-color: var(--success); }
-                /* Modern Register & Forgot Password Portal */
+                
+        /* Modern Register & Forgot Password Portal */
         .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
         .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
 
@@ -172,8 +209,7 @@
         .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
         .popup-content { position: relative; text-align: center; background: #f1f5f9; min-height: 150px; display: flex; align-items: center; justify-content: center; }
-        
-        /* Dynamic Uploaded Image container for Popups */
+                /* Dynamic Uploaded Image container for Popups */
         .popup-custom-image { width: 100%; height: 300px; object-fit: cover; display: none; }
         
         .popup-message { 
@@ -185,7 +221,8 @@
         }
         
         .popup-action-area { padding: 20px; background: #fff; border-top: 3px solid var(--primary); text-align: center; }
-                        /* --- TEST INTERFACE & REVIEW STYLES --- */
+                        
+        /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s;}
         .options label:hover { background: #f1f5f9; border-color: #cbd5e1; }
@@ -209,8 +246,7 @@
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
 
         .test-nav-bar { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-                
-        /* Side Panel (Question Palette) */
+                /* Side Panel (Question Palette) */
         .side-panel {
             position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
             background: white; box-shadow: var(--shadow-lg); z-index: 1500;
@@ -241,7 +277,8 @@
 
         .status-text { margin-top: 10px; font-size: 0.9rem; font-weight: 500; text-align: center; }
         .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-                /* Banner Carousel Styles */
+                
+        /* Banner Carousel Styles */
         .banner-container {
             display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -277,14 +314,39 @@
 <body>
     <div id="customToast" class="custom-toast">Notification Message</div>
 
-    <nav>
-        <div class="portal-brand">
+    <div id="app-download-banner">
+        <span id="app-download-text">Download our official App for the best experience!</span>
+        <a href="#" id="app-download-link" class="download-btn" target="_blank">Download App</a>
+    </div>
+
+    <nav id="main-nav">
+                <div class="portal-brand">
             <h1 id="nav-title">KD JAAT Test Portal</h1>
         </div>
         <div id="nav-actions" style="display: flex; gap: 10px;">
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
+
+    <div id="bottom-nav-student" class="bottom-nav">
+        <a href="javascript:void(0)" class="nav-item active" onclick="switchBottomTab('student-sec-groups', this)">
+            <span class="nav-icon">📝</span>
+            <span>Mock Test</span>
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="switchBottomTab('student-sec-leaderboards', this)">
+            <span class="nav-icon">🏆</span>
+            <span>Ranking</span>
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="switchBottomTab('student-sec-attempts', this)">
+            <span class="nav-icon">📜</span>
+            <span>Results</span>
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="switchBottomTab('student-sec-password', this)">
+            <span class="nav-icon">👤</span>
+            <span>Account</span>
+        </a>
+    </div>
+
     <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
 
     <div id="side-palette" class="side-panel">
@@ -306,7 +368,7 @@
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
                 </div>
-                                <div id="lockout-warning" style="display:none; background: #fee2e2; color: var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; text-align: center;">
+                <div id="lockout-warning" style="display:none; background: #fee2e2; color: var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; text-align: center;">
                     Device Locked. Try again later.
                 </div>
 
@@ -348,8 +410,7 @@
                         <label>Phone Number</label>
                         <input type="tel" id="reg-phone" placeholder="Enter your 10-digit phone number">
                     </div>
-                    
-                    <div class="input-group">
+                                        <div class="input-group">
                         <label>Education Board / Level</label>
                         <select id="reg-board" style="border: 2px solid var(--primary);">
                             <option value="college">College Student (All Tests)</option>
@@ -369,25 +430,55 @@
                 </div>
             </div>
         </div>
-                <div id="view-admin" class="view">
+
+        <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create, edit, or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Create tests, edit timer, marks, and delete</p></div>
-                    <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Text Banners & Popups</h3><p>Promote tests & student announcements</p></div>
+                    <div class="menu-btn" onclick="openAdminSec('admin-sec-banners')"><h3>🖼️ Banners & App Link</h3><p>Promote tests & App Download</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-students')"><h3>👥 Manage Students</h3><p>View, track & remove students</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-attempts')"><h3>📊 Student Attempts</h3><p>View real-time student scores</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-branding')"><h3>🎨 Portal Settings</h3><p>Change Name & API Keys</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-                        <div id="admin-sec-banners" class="sub-sec">
+            
+            <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Manage Text Banners & Student Popup</h2>
+                    <h2>Manage Banners & App Download</h2>
                 </div>
                 
+                <div class="action-box" style="border-left: 4px solid var(--success);">
+                    <h3 style="color: var(--success); margin-bottom: 15px;">📱 Top App Download Banner</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">This banner appears at the very top of the student dashboard.</p>
+                    
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Banner Visibility</label>
+                            <select id="app-banner-status">
+                                <option value="visible">Visible to Students</option>
+                                <option value="hidden">Hidden</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Banner Text Message</label>
+                        <input type="text" id="app-banner-text" placeholder="e.g., Download our official App for the best experience!">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>App Download Link (URL)</label>
+                        <input type="url" id="app-banner-link" placeholder="https://play.google.com/store/apps/details?id=...">
+                    </div>
+
+                    <button class="btn-primary" id="btn-save-app-banner" style="background: var(--success);" onclick="saveAppBannerSettings()">Save App Link Settings</button>
+                </div>
+                                <hr style="border: 0; height: 2px; background: var(--border-color); margin: 30px 0;">
+
                 <div class="action-box" style="border-left: 4px solid var(--review);">
                     <h3 style="color: var(--review); margin-bottom: 15px;">📢 Student Login Popup Announcement</h3>
                     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">This popup appears once every time a student logs in. They can close it by clicking the 'X'.</p>
@@ -461,7 +552,8 @@
                             <option value="hbse">HBSE Students Only</option>
                         </select>
                     </div>
-                                        <div class="input-group">
+                    
+                    <div class="input-group">
                         <label>Upload Photo for Banner Background</label>
                         <input type="file" id="banner-image-upload" accept=".jpg,.jpeg,.png,.webp">
                         <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB). Recommended size: 600x300 pixels (Landscape) for fast load times.</span>
@@ -512,8 +604,7 @@
                         <button id="aiGenerateBtn" class="btn-success" style="margin: 0; width: auto; padding: 10px 20px;" onclick="generateBulkQuestionsWithAI()">Bulk Generate</button>
                     </div><p id="aiGenError" style="color: var(--danger); font-size: 14px; margin-top: 10px; display: none;"></p>
                 </div>
-                
-                <div class="ai-panel" style="background: #fffbeb; border-color: #f59e0b; margin-top: 15px;">
+                                <div class="ai-panel" style="background: #fffbeb; border-color: #f59e0b; margin-top: 15px;">
                     <p style="font-size: 14px; font-weight: bold; color: #d97706; margin: 0 0 10px 0;">📚 Import from Question Bank</p>
                     <p style="font-size: 12px; color: #64748b; margin-top: 0; margin-bottom: 10px;">Reuse questions you have already added to other tests across the app.</p>
                     <button class="btn-warning" style="margin: 0; width: auto; padding: 10px 20px;" onclick="openQuestionBankModal()">Browse Question Bank</button>
@@ -527,8 +618,20 @@
                         <button id="pdfExtractBtn" class="btn-primary" style="background: #4f46e5; margin: 0; width: auto; padding: 10px 20px;" onclick="extractQuestionsFromPDF()">Extract Questions</button>
                     </div><p id="pdfExtractMsg" style="font-size: 13px; font-weight: 600; margin-top: 10px; display: none;"></p>
                 </div>
-                                <div class="action-box" style="margin-top: 25px;">
+                
+                <div class="action-box" style="margin-top: 25px;">
                     <h3 style="margin-bottom: 15px;">Manual Question Entry</h3>
+                    
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Student Display Language</label>
+                        <select id="qDisplayLang" style="border: 2px solid var(--primary);">
+                            <option value="both">Both (English & Hindi) - Student can switch</option>
+                            <option value="english">English Only</option>
+                            <option value="hindi">Hindi Only</option>
+                        </select>
+                        <span class="upload-hint">If set to 'English Only' or 'Hindi Only', the language switch button will be hidden for students on this question.</span>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                         <input type="text" id="qTextEn" placeholder="Question (English)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
                         <input type="text" id="qTextHi" placeholder="Question (Hindi)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
@@ -592,7 +695,8 @@
                         <label>Stylish Group Name</label>
                         <input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests">
                     </div>
-                                        <div class="flex-row">
+                                        
+                    <div class="flex-row">
                         <div class="input-group">
                             <label>Target Audience (Board / Level)</label>
                             <select id="new-group-board" style="border: 2px solid var(--primary);">
@@ -632,12 +736,11 @@
 
                     <button class="btn-primary" onclick="addGroup()">Add New Group</button>
                     
-                    <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Groups</h3>
+                    <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Groups & Sub-groups</h3>
                     <div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-
-            <div id="admin-sec-students" class="sub-sec">
+                        <div id="admin-sec-students" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Registered Students</h2>
@@ -666,20 +769,41 @@
                 </div>
                 <div class="grid-list" id="admin-student-specific-attempts"></div>
             </div>
-                        <div id="admin-sec-tests" class="sub-sec">
+            
+            <div id="admin-sec-tests" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Active Tests</h2>
                 </div>
-                                <div class="action-box" style="border-left: 4px solid var(--primary);">
+                
+                <div class="action-box" style="border-left: 4px solid var(--primary);">
                     <h3 style="margin-bottom: 15px; color: var(--primary);">Create a New Test</h3>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <input type="text" id="newTestName" placeholder="Test Name (e.g., Mock Test 1)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); flex-grow: 1; min-width: 200px;">
-                        <select id="newTestGroup" class="group-select" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 180px;">
-                            <option value="">Select Group...</option>
-                        </select>
-                        <input type="number" id="newTestTimer" placeholder="Mins (0=No Limit)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 150px;" min="0">
+                    
+                    <div class="input-group">
+                        <label>Test Name</label>
+                        <input type="text" id="newTestName" placeholder="e.g., Mock Test 1">
                     </div>
+
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Select Main Group</label>
+                            <select id="newTestGroup" class="group-select" onchange="handleAdminTestGroupChange()">
+                                <option value="">Select Group...</option>
+                            </select>
+                        </div>
+                        <div class="input-group" id="subGroupContainer" style="display: none;">
+                            <label>Select Sub-Group</label>
+                            <select id="newTestSubGroup" class="group-select">
+                                <option value="">Select Sub-group...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="max-width: 200px;">
+                        <label>Timer</label>
+                        <input type="number" id="newTestTimer" placeholder="Mins (0=No Limit)" min="0">
+                    </div>
+
                     <button class="btn-primary" onclick="createNewTest()">Create Test & Add Questions</button>
                 </div>
 
@@ -691,8 +815,7 @@
                 </div>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
-            
-            <div id="admin-sec-attempts" class="sub-sec">
+                        <div id="admin-sec-attempts" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Live Student Attempts</h2>
@@ -728,16 +851,16 @@
                 
                 <div id="student-banners" class="banner-container"></div>
 
-                <div class="menu-grid">
-                    <div class="menu-btn" onclick="openStudentSec('student-sec-groups')"><h3>📝 Take a Mock Test</h3><p>Browse categories and start tests</p></div>
+                <div class="menu-grid" style="display: none;"> <div class="menu-btn" onclick="openStudentSec('student-sec-groups')"><h3>📝 Take a Mock Test</h3><p>Browse categories and start tests</p></div>
                     <div class="menu-btn" onclick="openStudentSec('student-sec-attempts')"><h3>📜 My Attempt History</h3><p>Review your past scores</p></div>
                     <div class="menu-btn" onclick="openStudentSec('student-sec-leaderboards')"><h3>🏆 Leaderboard</h3><p>Check your rank globally</p></div>
                     <div class="menu-btn" onclick="openStudentSec('student-sec-password')"><h3>🔑 Change Password</h3><p>Update your account security</p></div>
                 </div>
             </div>
-                                    <div id="student-sec-groups" class="sub-sec">
+
+            <div id="student-sec-groups" class="sub-sec">
                 <div class="sec-header">
-                    <button id="btn-back-groups" class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <button id="btn-back-groups" class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button>
                     <h2 id="groups-header-title">Select a Test Category</h2>
                 </div>
                 <div class="grid-list" id="student-group-list"></div>
@@ -745,15 +868,14 @@
             
             <div id="student-sec-tests-list" class="sub-sec">
                 <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openStudentSec('student-sec-groups')">← Back to Categories</button>
+                    <button class="student-back-btn" onclick="openStudentSec('student-sec-groups')">← Back</button>
                     <h2 id="current-group-title">Available Tests</h2>
                 </div>
                 <div class="grid-list" id="student-test-list"></div>
             </div>
-            
-            <div id="student-sec-attempts" class="sub-sec">
+                        <div id="student-sec-attempts" class="sub-sec">
                 <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button>
                     <h2>My Attempt History</h2>
                 </div>
                 <div class="grid-list" id="student-attempts-list"></div>
@@ -761,7 +883,7 @@
             
             <div id="student-sec-leaderboards" class="sub-sec">
                 <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button>
                     <h2>Test Leaderboards</h2>
                 </div>
                 <div class="action-box">
@@ -777,7 +899,7 @@
 
             <div id="student-sec-password" class="sub-sec">
                 <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button>
                     <h2>Change My Password</h2>
                 </div>
                 <div class="action-box" style="max-width: 500px;">
@@ -791,7 +913,7 @@
         </div>
         
         <div id="view-test" class="view">
-            <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 70px; z-index: 90; padding: 15px 24px;">
+            <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 90; padding: 15px 24px; margin-bottom: 0; border-radius: 0; border-bottom: 2px solid var(--border-color);">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
                     <h2 id="test-title" style="margin: 0; color: var(--primary); font-size: 1.2rem; display: none;">Test</h2>
@@ -803,25 +925,28 @@
                 </div>
             </div>
             
-            <div id="section-tabs" style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color);"></div>
+            <div style="padding: 20px;">
+                <div id="section-tabs" style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color);"></div>
 
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                <span id="question-tracker" style="font-weight: 600; color: var(--primary);">Question 1 of 30</span>
-                <button id="btn-switch-lang" class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleLanguage()">🌐 Switch Lang (Eng/Hin)</button>
-            </div>
-
-            <div id="question-container"></div>
-            
-            <div class="test-nav-bar" id="test-bottom-nav">
-                <button class="btn-outline" style="width: auto; min-width: 120px;" onclick="prevQuestion()" id="btn-prev">⬅ Previous</button>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn-outline" style="width: auto; border-color: var(--danger); color: var(--danger);" onclick="clearResponse()" id="btn-clear">🗑 Clear</button>
-                    <button class="btn-outline" style="width: auto; border-color: var(--review); color: var(--review);" onclick="markForReview()" id="btn-review">⭐ Mark</button>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span id="question-tracker" style="font-weight: 600; color: var(--primary);">Question 1 of 30</span>
+                    <button id="btn-switch-lang" class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleLanguage()">🌐 Switch Lang (Eng/Hin)</button>
                 </div>
-                <button class="btn-primary" style="width: auto; min-width: 120px;" onclick="nextQuestion()" id="btn-next">Next ➡</button>
+
+                <div id="question-container"></div>
+                
+                <div class="test-nav-bar" id="test-bottom-nav">
+                    <button class="btn-outline" style="width: auto; min-width: 120px;" onclick="prevQuestion()" id="btn-prev">⬅ Previous</button>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-outline" style="width: auto; border-color: var(--danger); color: var(--danger);" onclick="clearResponse()" id="btn-clear">🗑 Clear</button>
+                        <button class="btn-outline" style="width: auto; border-color: var(--review); color: var(--review);" onclick="markForReview()" id="btn-review">⭐ Mark</button>
+                    </div>
+                    <button class="btn-primary" style="width: auto; min-width: 120px;" onclick="nextQuestion()" id="btn-next">Next ➡</button>
+                </div>
             </div>
         </div>
-                        <div id="view-results" class="view">
+        
+        <div id="view-results" class="view">
             <div class="action-box" style="text-align: center; padding: 40px 20px;">
                 <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 30px;">Test Completed! 🎉</h2>
                 <div class="grid-list" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -829,7 +954,7 @@
                         <h3 style="color: #166534; margin: 0;">Total Score</h3>
                         <p id="res-score" style="font-size: 3rem; font-weight: 700; color: var(--success); margin: 10px 0;"></p>
                     </div>
-                    <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); text-align: left;">
+                                        <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); text-align: left;">
                         <h3 style="border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Accuracy Breakdown</h3>
                         <div style="font-size: 1.1rem; line-height: 2;">
                             <div style="display: flex; justify-content: space-between;"><span>✅ Correct:</span> <strong id="res-correct" style="color: var(--success);">0</strong></div>
@@ -852,14 +977,14 @@
         </div>
         
         <div id="view-review" class="view">
-            <div class="sec-header" style="background: white; padding: 20px; position: sticky; top: 70px; z-index: 90; box-shadow: var(--shadow-sm); border-radius: 12px; margin-bottom: 20px;">
-                <button class="back-menu-btn" onclick="navigate('view-results', false)">← Back to Score</button>
+            <div class="sec-header" style="background: white; padding: 20px; position: sticky; top: 0; z-index: 90; box-shadow: var(--shadow-sm); border-radius: 12px; margin-bottom: 20px;">
+                <button class="student-back-btn" onclick="navigate('view-results', false)">← Back to Score</button>
                 <h2 style="margin: 0; color: var(--primary);">Detailed Solutions</h2>
                 <div style="margin-left: auto;">
                     <button id="btn-switch-lang-review" class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleReviewLanguage()">🌐 Lang (Eng/Hin)</button>
                 </div>
             </div>
-            <div id="review-container"></div>
+            <div id="review-container" style="padding: 0 20px;"></div>
         </div>
     </div> 
     
@@ -939,7 +1064,8 @@
             </div>
         </div>
     </div>
-        <div id="questionBankModal" class="modal-overlay">
+
+    <div id="questionBankModal" class="modal-overlay">
         <div class="modal" style="width: 700px; max-width: 95vw; height: 80vh; display: flex; flex-direction: column;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3 style="color: var(--warning); margin: 0; font-size: 1.5rem;">📚 Question Bank</h3>
@@ -968,8 +1094,7 @@
             </div>
         </div>
     </div>
-
-    <div id="done-popup-modal" class="modal-overlay">
+        <div id="done-popup-modal" class="modal-overlay">
         <div class="modal" style="max-width: 400px; padding: 0; overflow: hidden;">
             <div class="modern-done-popup">
                 <div class="check-circle">✓</div>
@@ -1036,7 +1161,8 @@
             </div>
         </div>
     </div>
-        <script>
+    
+    <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -1090,7 +1216,22 @@
         }
 
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
-                // --- CLOUDINARY IMAGE UPLOAD HELPER ---
+        
+        // --- BOTTOM NAV SWITCH HELPER (STUDENTS) ---
+        function switchBottomTab(secId, element) {
+            // Update active styling
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
+            if(element) element.classList.add('active');
+            
+            // If they click "Mock Test", open groups
+            if(secId === 'student-sec-groups') {
+                loadGroupsForStudents(""); 
+            } else {
+                openStudentSec(secId);
+            }
+        }
+
+        // --- CLOUDINARY IMAGE UPLOAD HELPER ---
         async function uploadImageToFirebase(fileInputId, folderPath) {
             const fileInput = document.getElementById(fileInputId);
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
@@ -1142,30 +1283,51 @@
             return 'data:image/svg+xml;base64,' + btoa(svg);
         }
         
-        // --- STUDENT POPUP LOGIC ---
-        function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
+        // --- APP DOWNLOAD BANNER LOGIC ---
+        async function saveAppBannerSettings() {
+            const status = document.getElementById('app-banner-status').value;
+            const text = document.getElementById('app-banner-text').value.trim();
+            const link = document.getElementById('app-banner-link').value.trim();
+            const btn = document.getElementById('btn-save-app-banner');
 
-        async function savePopupSettings() {
-            const status = document.getElementById('popup-status').value;
-            const audience = document.getElementById('popup-audience').value;
-            const message = document.getElementById('popup-message').value.trim();
-            const textColor = document.getElementById('popup-text-color').value;
-            const font = document.getElementById('popup-text-font').value;
-            const btn = document.getElementById('btn-save-popup');
-
-            btn.disabled = true; btn.innerText = "⏳ Uploading & Saving...";
+            btn.disabled = true; btn.innerText = "⏳ Saving...";
 
             try {
-                let updateData = { status: status, audience: audience, message: message, textColor: textColor, font: font };
-                const newImageUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
-                if (newImageUrl) updateData.imageUrl = newImageUrl;
-
-                await db.collection("adminSettings").doc("studentPopup").set(updateData, { merge: true });
-                showToast("Popup settings updated successfully!", "success");
-                document.getElementById('popup-image-upload').value = ''; 
-            } catch (e) { console.error(e); } 
-            finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
+                await db.collection("adminSettings").doc("appBanner").set({ status, text, link }, { merge: true });
+                showToast("App Banner settings updated successfully!", "success");
+            } catch (e) { console.error(e); showToast("Failed to save banner.", "error"); } 
+            finally { btn.disabled = false; btn.innerText = "Save App Link Settings"; }
         }
+
+        function loadAppBanner() {
+            db.collection("adminSettings").doc("appBanner").onSnapshot((doc) => {
+                const bannerEl = document.getElementById('app-download-banner');
+                if(doc.exists) {
+                    const data = doc.data();
+                    
+                    // Update admin inputs if they exist
+                    const statusInput = document.getElementById('app-banner-status');
+                    if(statusInput) statusInput.value = data.status || 'hidden';
+                    const textInput = document.getElementById('app-banner-text');
+                    if(textInput) textInput.value = data.text || '';
+                    const linkInput = document.getElementById('app-banner-link');
+                    if(linkInput) linkInput.value = data.link || '';
+
+                    // Update student view
+                    if(data.status === 'visible' && currentUserRole === 'student' && !isTestActive) {
+                        document.getElementById('app-download-text').innerText = data.text || 'Download our official App for the best experience!';
+                        document.getElementById('app-download-link').href = data.link || '#';
+                        bannerEl.style.display = 'flex';
+                    } else {
+                        bannerEl.style.display = 'none';
+                    }
+                } else {
+                    bannerEl.style.display = 'none';
+                }
+            });
+        }
+                // --- STUDENT POPUP LOGIC ---
+        function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
         
         function loadStudentPopup() {
             if(sessionStorage.getItem('popupShown')) return;
@@ -1185,6 +1347,195 @@
             }).catch(e => console.error("Error loading popup: ", e));
         }
 
+        // --- NAVIGATION & VISIBILITY CONTROLS ---
+        function updateUIVisibility() {
+            const bottomNav = document.getElementById('bottom-nav-student');
+            const appBanner = document.getElementById('app-download-banner');
+            
+            if (currentUserRole === 'student' && !isTestActive) {
+                bottomNav.style.display = 'flex';
+                // Trigger banner check
+                db.collection("adminSettings").doc("appBanner").get().then(doc => {
+                    if(doc.exists && doc.data().status === 'visible') appBanner.style.display = 'flex';
+                    else appBanner.style.display = 'none';
+                });
+            } else {
+                bottomNav.style.display = 'none';
+                appBanner.style.display = 'none';
+            }
+        }
+
+        function navigate(viewId, pushState = true) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); 
+            document.getElementById(viewId).classList.add('active');
+            document.getElementById('logout-btn').style.display = (viewId === 'view-login') ? 'none' : 'block';
+            
+            updateUIVisibility();
+
+            if (pushState) { 
+                window.history.pushState({ view: viewId }, "", `#${viewId}`); 
+                if(viewId === 'view-admin') openAdminSec('admin-main-menu', false); 
+                if(viewId === 'view-student') openStudentSec('student-main-menu', false); 
+            }
+        }
+
+        function openAdminSec(secId, pushState = true) { document.querySelectorAll('#view-admin .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-admin', sec: secId }, "", `#${secId}`); }
+        function openStudentSec(secId, pushState = true) { 
+            document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); 
+            document.getElementById(secId).classList.add('active'); 
+            if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); 
+        }
+
+        // --- ADMIN TEST & GROUP CASCADING ---
+        function handleAdminTestGroupChange() {
+            const parentId = document.getElementById('newTestGroup').value;
+            const subGroupContainer = document.getElementById('subGroupContainer');
+            const subGroupSelect = document.getElementById('newTestSubGroup');
+            
+            subGroupSelect.innerHTML = '<option value="">Select Sub-group...</option>';
+            let hasSubGroups = false;
+            allGroupsCache.forEach(g => {
+                if (g.parentId === parentId) { hasSubGroups = true; subGroupSelect.innerHTML += `<option value="${g.id}">${g.name}</option>`; }
+            });
+            
+            subGroupContainer.style.display = hasSubGroups ? 'block' : 'none';
+            if(!hasSubGroups) subGroupSelect.value = '';
+        }
+
+        async function createNewTest() {
+            const name = document.getElementById('newTestName').value.trim(); 
+            const mainGroup = document.getElementById('newTestGroup').value; 
+            const subGroup = document.getElementById('newTestSubGroup').value;
+            const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
+            
+            const finalGroup = subGroup ? subGroup : mainGroup;
+
+            if (!name || !finalGroup) return showToast("Please provide a test name and select a group.", 'error');
+            try {
+                const docRef = await db.collection("tests").add({ title: name, groupId: finalGroup, duration: timer * 60, marksPerQuestion: 2, negativeMarks: 0, questions: [], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                document.getElementById('newTestName').value = ''; document.getElementById('newTestTimer').value = ''; 
+                openTestEditor(docRef.id, name);
+            } catch (error) { showToast("Error creating test: " + error.message, 'error'); }
+        }
+
+        // --- QUESTION LANGUAGE LOCK UPDATES ---
+        async function addQuestionToTest() { 
+            const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; const optsEn=[], optsHi=[]; 
+            const displayLang = document.getElementById('qDisplayLang') ? document.getElementById('qDisplayLang').value : 'both';
+
+            for(let i=0;i<4;i++) { optsEn.push(document.getElementById(`opt${i}En`).value); optsHi.push(document.getElementById(`opt${i}Hi`).value); } 
+            if(!qEn && !qHi) return showToast("Fill at least one question field.", 'warning'); 
+            
+            const obj = { 
+                questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, 
+                correctIndex: parseInt(document.getElementById('correctAnswer').value), 
+                subject: "General", explanationEng: "", explanationHin: "", displayLang: displayLang 
+            }; 
+            if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; else localQuestionsBuffer.push(obj); 
+            
+            await updateTestQuestionsInDb(); renderAdminQuestionList(); cancelQuestionEdit(); 
+            showToast("Question Saved successfully!", "success");
+        }
+
+        function editQuestion(i) { 
+            const q = localQuestionsBuffer[i]; 
+            document.getElementById('qTextEn').value = q.questionEng || ''; document.getElementById('qTextHi').value = q.questionHin || ''; 
+            for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value = (q.optionsEng && q.optionsEng[j]) ? q.optionsEng[j] : ''; document.getElementById(`opt${j}Hi`).value = (q.optionsHin && q.optionsHin[j]) ? q.optionsHin[j] : ''; } 
+            document.getElementById('correctAnswer').value = q.correctIndex || 0; 
+            if(document.getElementById('qDisplayLang')) document.getElementById('qDisplayLang').value = q.displayLang || 'both';
+            
+            editingQuestionIndex = i; document.getElementById('saveQuestionBtn').innerText="Update"; document.getElementById('cancelEditBtn').classList.remove('hidden'); document.getElementById('admin-sec-question-editor').scrollIntoView();
+        }
+
+        // In the live test view
+        function renderCurrentQuestion() {
+            const container = document.getElementById('question-container'); const q = testQuestions[currentQuestionIndex]; if(!q) return;
+            document.querySelectorAll('.section-tab-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--primary)'; });
+            const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
+
+            // UPDATED: Language Locking Logic including the new displayLang setting
+            let forcedLang = null;
+            if (q.displayLang === 'english') forcedLang = 'Eng';
+            else if (q.displayLang === 'hindi') forcedLang = 'Hin';
+            else forcedLang = getForcedLanguage(q.subject);
+
+            const displayLang = forcedLang ? forcedLang : currentLanguage;
+            
+            const switchBtn = document.getElementById('btn-switch-lang');
+            if(switchBtn) {
+                switchBtn.style.display = forcedLang ? 'none' : 'inline-block';
+            }
+
+            document.getElementById('question-tracker').innerText = `Question ${currentQuestionIndex + 1} of ${testQuestions.length}`;
+            const qText = displayLang === 'Eng' ? q.questionEng : q.questionHin; 
+            const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin;
+            
+            let optionsHTML = ''; if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
+            
+            container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || 'Language translation missing'}</h4><div class="options">${optionsHTML}</div></div>`;
+
+            document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
+            const nextBtn = document.getElementById('btn-next'); if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
+            if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
+        }
+
+        async function startTest(testId) {
+            const doc = await db.collection("tests").doc(testId).get(); if (!doc.exists) return;
+            currentTest = doc.data(); activeTestId = testId; testQuestions = currentTest.questions || []; testMarks = currentTest.marksPerQuestion || 2; testNegativeMarks = currentTest.negativeMarks || 0; 
+            if(testQuestions.length === 0) return showToast("This test currently has no questions.", 'error');
+
+            userAnswers = new Array(testQuestions.length).fill(null); questionStates = new Array(testQuestions.length).fill('unanswered');
+            currentQuestionIndex = 0; timeRemaining = currentTest.duration || 1800; document.getElementById('test-title').innerText = currentTest.title;
+            
+            const subjectSet = new Set(testQuestions.map(q => q.subject || 'General')); let tabsHtml = '';
+            Array.from(subjectSet).forEach(sub => { let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub); tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn" style="white-space:nowrap; padding:6px 15px;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`; });
+            document.getElementById('section-tabs').innerHTML = tabsHtml;
+
+            isTestActive = true; 
+            navigate('view-test'); // navigate will handle hiding the bottom nav and banner
+            renderPalette(); renderCurrentQuestion(); startTimer();
+        }
+
+        function confirmPause() { 
+            isTestActive = false; 
+            clearInterval(testTimer); 
+            hideExitModal(); 
+            navigate('view-student'); // Returns to student view, restoring navs
+        }
+
+        // AUTH STATE LISTENER (Include app banner loading)
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (localStorage.getItem('adminSession') === 'active') { 
+                currentUserRole = 'admin'; 
+                navigate('view-admin', false); 
+                // Load original admin data...
+                loadAppBanner();
+            } 
+            else if (user) { 
+                currentUserRole = 'student'; 
+                
+                const userDoc = await db.collection("users").doc(user.uid).get();
+                if(userDoc.exists && userDoc.data().board) currentUserBoard = userDoc.data().board;
+                else currentUserBoard = 'college'; 
+
+                navigate('view-student', false); 
+                // Load original student data...
+                loadStudentPopup();
+                loadAppBanner();
+                
+                // NEW: Send directly to Mock Test (Groups) screen after login
+                setTimeout(() => {
+                    switchBottomTab('student-sec-groups', document.querySelector('.nav-item:first-child'));
+                }, 100);
+
+            } 
+            else { 
+                currentUserRole = null; 
+                currentUserBoard = null;
+                if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); } 
+                navigate('view-login', false); 
+            }
+        });
         // --- PORTAL BRANDING LOGIC ---
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
@@ -1193,16 +1544,6 @@
                     document.getElementById('nav-title').innerText = title; document.getElementById('page-title').innerText = title;
                     if(data.geminiKey) { storedGeminiKey = data.geminiKey; document.getElementById('adminAiKey').value = storedGeminiKey; }
                 }
-            });
-            db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
-                 if(doc.exists) {
-                     const data = doc.data();
-                     const statusEl = document.getElementById('popup-status'), audEl = document.getElementById('popup-audience'), msgEl = document.getElementById('popup-message'), colorEl = document.getElementById('popup-text-color'), fontEl = document.getElementById('popup-text-font');
-                     if(statusEl) statusEl.value = data.status || 'inactive'; 
-                     if(audEl) audEl.value = data.audience || 'all';
-                     if(msgEl) msgEl.value = data.message || '';
-                     if(colorEl) colorEl.value = data.textColor || '#ffffff'; if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
-                 }
             });
         }
         loadPortalBranding();
@@ -1272,16 +1613,6 @@
             if(type === 'register') { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; } 
             else { document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; }
         }
-                // --- NAVIGATION & MODERN BACK BUTTON INTERCEPTOR ---
-        function navigate(viewId, pushState = true) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active');
-            document.getElementById('logout-btn').style.display = (viewId === 'view-login') ? 'none' : 'block';
-            if (pushState) { window.history.pushState({ view: viewId }, "", `#${viewId}`); if(viewId === 'view-admin') openAdminSec('admin-main-menu', false); if(viewId === 'view-student') openStudentSec('student-main-menu', false); }
-            if (viewId === 'view-login') { checkDeviceLockout(); toggleAuthForm('login'); toggleForgotPassVisibility(); }
-        }
-
-        function openAdminSec(secId, pushState = true) { document.querySelectorAll('#view-admin .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-admin', sec: secId }, "", `#${secId}`); }
-        function openStudentSec(secId, pushState = true) { document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); document.getElementById(secId).classList.add('active'); if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); }
 
         window.onpopstate = function(event) {
             if (isTestActive) {
@@ -1350,10 +1681,8 @@
                 .then(async (userCred) => { 
                     clearLockoutOnSuccess(); 
                     currentUserRole = 'student'; 
-                    
                     const userDoc = await db.collection("users").doc(userCred.user.uid).get();
                     if(userDoc.exists && userDoc.data().board) { currentUserBoard = userDoc.data().board; } else { currentUserBoard = 'college'; }
-
                     navigate('view-student'); loadStudentData(); loadStudentPopup(); 
                 }).catch(e => { recordFailedAttempt(); });
             }
@@ -1442,7 +1771,7 @@
             });
         }
 
-        // --- ADMIN: GROUP SETTINGS ---
+        // --- ADMIN: GROUP SETTINGS (Updated for Sub-Groups) ---
         async function addGroup() { 
             const n = document.getElementById('new-group-name').value; 
             const b = document.getElementById('new-group-board').value; 
@@ -1461,9 +1790,7 @@
                 document.getElementById('new-group-name').value=''; 
                 document.getElementById('new-group-image-upload').value='';
                 showToast("Group Added successfully!", "success");
-            } catch(e) {
-                console.error(e);
-            }
+            } catch(e) { console.error(e); }
         }
 
         function openEditGroupModal(gid, name, board, parentId, color, font) {
@@ -1512,7 +1839,8 @@
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-                // --- ADMIN: BANNERS LOGIC ---
+
+        // --- ADMIN: BANNERS LOGIC ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
@@ -1649,16 +1977,7 @@
             }); 
         }
 
-        // --- AI QUESTION EDITOR & TEST CREATION ---
-        async function createNewTest() {
-            const name = document.getElementById('newTestName').value.trim(); const group = document.getElementById('newTestGroup').value; const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
-            if (!name || !group) return showToast("Please provide a test name and select a group.", 'error');
-            try {
-                const docRef = await db.collection("tests").add({ title: name, groupId: group, duration: timer * 60, marksPerQuestion: 2, negativeMarks: 0, questions: [], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                document.getElementById('newTestName').value = ''; document.getElementById('newTestTimer').value = ''; openTestEditor(docRef.id, name);
-            } catch (error) { showToast("Error creating test: " + error.message, 'error'); }
-        }
-
+        // --- AI QUESTION EDITOR LOGIC ---
         async function openTestEditor(testId, testTitle) {
             activeAdminTestId = testId; document.getElementById('editingTestTitle').innerText = `Adding Questions to: ${testTitle}`;
             const doc = await db.collection("tests").doc(testId).get(); localQuestionsBuffer = doc.exists && doc.data().questions ? doc.data().questions : [];
@@ -1679,32 +1998,12 @@
             }); 
         }
 
-        function editQuestion(i) { 
-            const q = localQuestionsBuffer[i]; 
-            document.getElementById('qTextEn').value = q.questionEng || ''; document.getElementById('qTextHi').value = q.questionHin || ''; 
-            for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value = (q.optionsEng && q.optionsEng[j]) ? q.optionsEng[j] : ''; document.getElementById(`opt${j}Hi`).value = (q.optionsHin && q.optionsHin[j]) ? q.optionsHin[j] : ''; } 
-            document.getElementById('correctAnswer').value = q.correctIndex || 0; 
-            
-            editingQuestionIndex = i; document.getElementById('saveQuestionBtn').innerText="Update"; document.getElementById('cancelEditBtn').classList.remove('hidden'); document.getElementById('admin-sec-question-editor').scrollIntoView();
-        }
-
         function cancelQuestionEdit() { 
             editingQuestionIndex = null; document.getElementById('saveQuestionBtn').innerText="Save Question"; document.getElementById('cancelEditBtn').classList.add('hidden'); 
             document.getElementById('qTextEn').value=''; document.getElementById('qTextHi').value=''; 
             for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value=''; document.getElementById(`opt${j}Hi`).value=''; } 
             document.getElementById('correctAnswer').value='0'; 
-        }
-
-        async function addQuestionToTest() { 
-            const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; const optsEn=[], optsHi=[]; 
-            for(let i=0;i<4;i++) { optsEn.push(document.getElementById(`opt${i}En`).value); optsHi.push(document.getElementById(`opt${i}Hi`).value); } 
-            if(!qEn && !qHi) return showToast("Fill at least one question field.", 'warning'); 
-            
-            const obj = { questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, correctIndex: parseInt(document.getElementById('correctAnswer').value), subject: "General", explanationEng: "", explanationHin: "" }; 
-            if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; else localQuestionsBuffer.push(obj); 
-            
-            await updateTestQuestionsInDb(); renderAdminQuestionList(); cancelQuestionEdit(); 
-            showToast("Question Saved successfully!", "success");
+            if(document.getElementById('qDisplayLang')) document.getElementById('qDisplayLang').value='both';
         }
 
         function deleteQuestion(i) { 
@@ -1734,7 +2033,7 @@
                 if (!response.ok) throw new Error(`Google API Error`);
                 const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
                 
-                parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20) }); });
+                parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20), displayLang: 'both' }); });
                 await updateTestQuestionsInDb(); renderAdminQuestionList(); 
                 showToast(`✨ Added ${parsedQuestions.length} bilingual questions!`, "success"); topicInput.value = '';
             } catch (error) { errorMsg.innerText = "Error: " + error.message; errorMsg.style.display = 'block'; } finally { generateBtn.innerText = "Bulk Generate"; generateBtn.disabled = false; }
@@ -1759,7 +2058,7 @@
                     if (!response.ok) throw new Error("API Request Failed");
                     const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
                     
-                    parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, subject: "Imported PDF", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "" }); });
+                    parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, subject: "Imported PDF", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", displayLang: 'both' }); });
                     await updateTestQuestionsInDb(); renderAdminQuestionList(); 
                     msgBox.innerText = `✨ Success! Extracted & Translated ${parsedQuestions.length} questions.`; msgBox.style.color = "var(--success)"; fileInput.value = ""; 
                 } catch (error) { msgBox.innerText = "Error: " + error.message; msgBox.style.color = "var(--danger)"; } finally { extractBtn.innerText = "Extract Questions"; extractBtn.disabled = false; }
@@ -1797,7 +2096,7 @@
             showToast(`✨ Successfully imported ${importedCount} question(s)!`, "success");
         }
 
-        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH SUB-GROUPS) ---
+        // --- STUDENT DASHBOARD LOGIC ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1808,7 +2107,7 @@
                         db.collection("groups").get().then((snap) => {
                             allGroupsCache = [];
                             snap.forEach(d => { let g = d.data(); g.id = d.id; allGroupsCache.push(g); });
-                            loadGroupsForStudents(""); 
+                            // Don't auto-load here, wait for auth state change to route to the Mock Test tab automatically
                         });
                     }
                 }).catch(e => console.error("Error fetching user data", e));
@@ -1857,11 +2156,11 @@
                 let parentGroup = allGroupsCache.find(g => g.id === parentId);
                 headerTitle.innerText = parentGroup ? parentGroup.name : "Sub-Categories";
                 backBtn.onclick = () => loadGroupsForStudents(parentGroup ? (parentGroup.parentId || "") : ""); 
-                backBtn.innerText = "← Back";
+                backBtn.style.opacity = '0'; // Keep it hidden but functioning for JS logic
             } else {
                 headerTitle.innerText = "Select a Test Category";
                 backBtn.onclick = () => openStudentSec('student-main-menu');
-                backBtn.innerText = "← Back to Menu";
+                backBtn.style.opacity = '0';
             }
 
             let hasVisibleGroups = false;
@@ -1972,63 +2271,13 @@
             } catch(e) { res.innerHTML = '<p style="color:red;">Error loading leaderboard data.</p>'; }
         }
 
-        // --- TEST INTERFACE LOGIC & NEW LANGUAGE LOCK HELPER ---
-        let testQuestions = [], userAnswers = [], questionStates = []; let currentLanguage = 'Eng', testMarks = 2, testNegativeMarks = 0, currentQuestionIndex = 0; let reviewLanguage = 'Eng';
-
-        // Check if the current subject forces a specific language
+        // --- TEST INTERFACE LOGIC ---
         function getForcedLanguage(subject) {
             if (!subject) return null;
             const sub = subject.toLowerCase();
             if (sub.includes('english')) return 'Eng';
             if (sub.includes('hindi')) return 'Hin';
             return null;
-        }
-
-        async function startTest(testId) {
-            const doc = await db.collection("tests").doc(testId).get(); if (!doc.exists) return;
-            currentTest = doc.data(); activeTestId = testId; testQuestions = currentTest.questions || []; testMarks = currentTest.marksPerQuestion || 2; testNegativeMarks = currentTest.negativeMarks || 0; 
-            if(testQuestions.length === 0) return showToast("This test currently has no questions.", 'error');
-
-            userAnswers = new Array(testQuestions.length).fill(null); questionStates = new Array(testQuestions.length).fill('unanswered');
-            currentQuestionIndex = 0; timeRemaining = currentTest.duration || 1800; document.getElementById('test-title').innerText = currentTest.title;
-            
-            const subjectSet = new Set(testQuestions.map(q => q.subject || 'General')); let tabsHtml = '';
-            Array.from(subjectSet).forEach(sub => { let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub); tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn" style="white-space:nowrap; padding:6px 15px;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`; });
-            document.getElementById('section-tabs').innerHTML = tabsHtml;
-
-            navigate('view-test'); isTestActive = true; renderPalette(); renderCurrentQuestion(); startTimer();
-        }
-
-        function togglePalette() { const panel = document.getElementById('side-palette'); const overlay = document.getElementById('side-overlay'); if(panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } else { panel.classList.add('open'); overlay.style.display = 'block'; } }
-        function renderPalette() { const grid = document.getElementById('palette-grid'); grid.innerHTML = ''; for(let i = 0; i < testQuestions.length; i++) { let statusClass = questionStates[i] === 'answered' ? 'answered' : (questionStates[i] === 'marked' ? 'marked' : ''); grid.innerHTML += `<button class="q-btn ${statusClass} ${i === currentQuestionIndex ? 'active' : ''}" id="p-btn-${i}" onclick="jumpToQuestion(${i})">${i + 1}</button>`; } }
-        function updatePaletteButton(index) { const btn = document.getElementById(`p-btn-${index}`); if(!btn) return; btn.className = `q-btn ${index === currentQuestionIndex ? 'active' : ''}`; if(questionStates[index] === 'answered') btn.classList.add('answered'); if(questionStates[index] === 'marked') btn.classList.add('marked'); }
-        function jumpToQuestion(index) { const oldBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(oldBtn) oldBtn.classList.remove('active'); currentQuestionIndex = index; renderCurrentQuestion(); const newBtn = document.getElementById(`p-btn-${currentQuestionIndex}`); if(newBtn) newBtn.classList.add('active'); if(document.getElementById('side-palette').classList.contains('open')) togglePalette(); }
-
-        function renderCurrentQuestion() {
-            const container = document.getElementById('question-container'); const q = testQuestions[currentQuestionIndex]; if(!q) return;
-            document.querySelectorAll('.section-tab-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--primary)'; });
-            const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
-
-            // UPDATED: Language Locking Logic
-            const forcedLang = getForcedLanguage(q.subject);
-            const displayLang = forcedLang ? forcedLang : currentLanguage;
-            
-            const switchBtn = document.getElementById('btn-switch-lang');
-            if(switchBtn) {
-                switchBtn.style.display = forcedLang ? 'none' : 'inline-block';
-            }
-
-            document.getElementById('question-tracker').innerText = `Question ${currentQuestionIndex + 1} of ${testQuestions.length}`;
-            const qText = displayLang === 'Eng' ? q.questionEng : q.questionHin; 
-            const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin;
-            
-            let optionsHTML = ''; if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
-            
-            container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || 'Language translation missing'}</h4><div class="options">${optionsHTML}</div></div>`;
-
-            document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
-            const nextBtn = document.getElementById('btn-next'); if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
-            if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
         }
 
         function setAnswer(optIndex) { userAnswers[currentQuestionIndex] = optIndex; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'answered'; updatePaletteButton(currentQuestionIndex); }
@@ -2045,8 +2294,7 @@
 
         function showExitModal() { document.getElementById('exit-modal').style.display = 'flex'; }
         function hideExitModal() { document.getElementById('exit-modal').style.display = 'none'; }
-        function confirmPause() { isTestActive = false; clearInterval(testTimer); hideExitModal(); navigate('view-student'); }
-
+        
         function showSubmitSummary() {
             hideExitModal(); let answered = 0, unanswered = 0, marked = 0;
             for(let i = 0; i < testQuestions.length; i++) { if (questionStates[i] === 'marked') marked++; else if (questionStates[i] === 'answered' || userAnswers[i] !== null) answered++; else unanswered++; }
@@ -2085,6 +2333,7 @@
             document.getElementById('res-sectional').innerHTML = secHtml; navigate('view-results');
         }
 
+        // --- TEST REVIEW LOGIC ---
         async function seePastResults(attemptId) {
             try {
                 const attDoc = await db.collection("attempts").doc(attemptId).get();
@@ -2099,9 +2348,7 @@
                 userAnswers = attData.userAnswers || new Array(testQuestions.length).fill(null);
                 
                 showReviewScreen(); 
-            } catch(e) {
-                showToast("Error loading past results: " + e.message, 'error');
-            }
+            } catch(e) { showToast("Error loading past results: " + e.message, 'error'); }
         }
 
         function showReviewScreen() { reviewLanguage = currentLanguage; renderReviewContent(); navigate('view-review', false); window.scrollTo(0, 0); }
@@ -2109,12 +2356,14 @@
 
         function renderReviewContent() {
             const container = document.getElementById('review-container'); container.innerHTML = '';
-            
             let anyUnforced = false;
 
             testQuestions.forEach((q, i) => {
-                // UPDATED: Language Locking Logic for Review
-                const forcedLang = getForcedLanguage(q.subject);
+                let forcedLang = null;
+                if (q.displayLang === 'english') forcedLang = 'Eng';
+                else if (q.displayLang === 'hindi') forcedLang = 'Hin';
+                else forcedLang = getForcedLanguage(q.subject);
+
                 const displayLang = forcedLang ? forcedLang : reviewLanguage;
                 if (!forcedLang) anyUnforced = true;
 
@@ -2145,42 +2394,9 @@
             });
             
             const switchBtnRev = document.getElementById('btn-switch-lang-review');
-            if (switchBtnRev) {
-                switchBtnRev.style.display = anyUnforced ? 'inline-block' : 'none';
-            }
-
-            if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
+            if (switchBtnRev) switchBtnRev.style.display = anyUnforced ? 'inline-block' : 'none';
+            if (window.MathJax) MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
         }
-
-        // AUTH STATE LISTENER
-        firebase.auth().onAuthStateChanged(async (user) => {
-            if (localStorage.getItem('adminSession') === 'active') { 
-                currentUserRole = 'admin'; 
-                navigate('view-admin', false); 
-                loadAdminData(); 
-            } 
-            else if (user) { 
-                currentUserRole = 'student'; 
-                
-                const userDoc = await db.collection("users").doc(user.uid).get();
-                if(userDoc.exists && userDoc.data().board) {
-                    currentUserBoard = userDoc.data().board;
-                } else {
-                    currentUserBoard = 'college'; 
-                }
-
-                navigate('view-student', false); 
-                loadStudentData(); 
-                loadStudentPopup(); 
-            } 
-            else { 
-                currentUserRole = null; 
-                currentUserBoard = null;
-                if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); } 
-                navigate('view-login', false); 
-            }
-        });
-
     </script>
 </body>
 </html>
