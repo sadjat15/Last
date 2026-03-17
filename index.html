@@ -25,7 +25,7 @@
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        <style>
+    <style>
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
@@ -81,11 +81,17 @@
         .menu-btn h3 { color: var(--primary); font-size: 1.3rem; z-index: 2; position: relative;}
         .menu-btn p { color: var(--text-muted); font-size: 0.9rem; z-index: 2; position: relative;}
         
-        /* Dynamic Uploaded Image Container */
-        .custom-bg-img {
-            width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;
-            background-color: #e2e8f0;
+        /* UPDATED: Attractive Group Cards (Image background, text at bottom) */
+        .group-card {
+            position: relative; height: 160px; border-radius: var(--radius); overflow: hidden;
+            display: flex; align-items: flex-end; box-shadow: var(--shadow-sm); cursor: pointer; transition: 0.2s;
+            border: 1px solid var(--border-color);
         }
+        .group-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+        .group-card img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: transform 0.3s; }
+        .group-card:hover img { transform: scale(1.05); }
+        .group-card-content { position: relative; z-index: 2; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 40px 15px 15px; text-align: center; }
+        .group-card h3 { color: #ffffff !important; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); font-size: 1.3rem; letter-spacing: 0.5px; }
                 /* Action Boxes & Question Cards */
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
         .action-box h3 { font-size: 1.2rem; margin-bottom: 15px; }
@@ -149,8 +155,7 @@
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover { background: #f1f5f9; }
-        
-        /* Modals & Overlays */
+                /* Modals & Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
         
@@ -161,11 +166,11 @@
         .confirm-btn-group { display: flex; gap: 15px; justify-content: center; }
         .confirm-btn-group button { flex: 1; padding: 12px; font-weight: 600; border-radius: 8px; }
 
-        /* Student Announcement Popup Styles (UPDATED FOR CENTERED TEXT) */
+        /* Student Announcement Popup Styles (UPDATED: Mic graphic removed from CSS logic) */
         #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
         .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
-        .popup-content { position: relative; text-align: center; }
+        .popup-content { position: relative; text-align: center; background: #f1f5f9; min-height: 150px; display: flex; align-items: center; justify-content: center; }
         
         /* Dynamic Uploaded Image container for Popups */
         .popup-custom-image { width: 100%; height: 300px; object-fit: cover; display: none; }
@@ -178,8 +183,9 @@
             border: 2px solid rgba(255,255,255,0.2); z-index: 10;
         }
         
-        .popup-action-area { padding: 20px; background: #fff; border-top: 3px solid var(--primary); }
-                /* --- TEST INTERFACE & REVIEW STYLES --- */
+        .popup-action-area { padding: 20px; background: #fff; border-top: 3px solid var(--primary); text-align: center; }
+        
+        /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s;}
         .options label:hover { background: #f1f5f9; border-color: #cbd5e1; }
@@ -203,8 +209,7 @@
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
 
         .test-nav-bar { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        
-        /* Side Panel (Question Palette) */
+                /* Side Panel (Question Palette) */
         .side-panel {
             position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
             background: white; box-shadow: var(--shadow-lg); z-index: 1500;
@@ -236,7 +241,7 @@
         .status-text { margin-top: 10px; font-size: 0.9rem; font-weight: 500; text-align: center; }
         .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
 
-        /* Banner Carousel Styles (UPDATED FOR CENTERED TEXT) */
+        /* Banner Carousel Styles */
         .banner-container {
             display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -249,19 +254,19 @@
             background-color: var(--primary); background-size: cover; background-position: center;
             box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
             position: relative; overflow: hidden; display: flex; 
-            align-items: center; justify-content: center; /* Centers the text box */
+            align-items: center; justify-content: center;
             border: 1px solid var(--border-color); flex-shrink: 0; scroll-snap-align: start;
         }
         .promo-banner:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
         
         .promo-banner-title {
             width: 85%; text-align: center;
-            background: rgba(0,0,0,0.5); /* Adds a dark tint behind text for readability */
-            backdrop-filter: blur(4px); /* Stylish blur */
+            background: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(4px); 
             padding: 15px; border-radius: 8px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.2);
-            color: #ffffff !important; /* Force text to be white for contrast, ignoring dynamic color if hard to read */
+            color: #ffffff !important; 
         }
 
         /* Section Tabs Styling */
@@ -389,12 +394,23 @@
                     <h3 style="color: var(--review); margin-bottom: 15px;">📢 Student Login Popup Announcement</h3>
                     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">This popup appears once every time a student logs in. They can close it by clicking the 'X'.</p>
                     
-                    <div class="input-group">
-                        <label>Popup Status</label>
-                        <select id="popup-status">
-                            <option value="active">Active (Show to students)</option>
-                            <option value="inactive">Inactive (Hide from students)</option>
-                        </select>
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Popup Status</label>
+                            <select id="popup-status">
+                                <option value="active">Active (Show to students)</option>
+                                <option value="inactive">Inactive (Hide from students)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Target Audience</label>
+                            <select id="popup-audience" style="border: 2px solid var(--review);">
+                                <option value="all">All Students</option>
+                                <option value="college">College Students Only</option>
+                                <option value="cbse">CBSE Students Only</option>
+                                <option value="hbse">HBSE Students Only</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="input-group">
@@ -405,7 +421,7 @@
                     <div class="input-group">
                         <label>Upload Photo for Popup (Optional)</label>
                         <input type="file" id="popup-image-upload" accept=".jpg,.jpeg,.png,.webp">
-                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB for Cloudinary). Recommended size: 400x400 pixels (Square).</span>
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB). Recommended size: 400x400 pixels (Square).</span>
                         <input type="hidden" id="popup-image-url">
                     </div>
                     
@@ -436,6 +452,16 @@
                     <div class="input-group">
                         <label>Stylish Banner Name (Visible to Students)</label>
                         <input type="text" id="banner-custom-title" placeholder="e.g., 🔴 LIVE NOW: RUVNL Mains Exam">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Target Audience</label>
+                        <select id="banner-audience" style="border: 2px solid var(--primary);">
+                            <option value="all">All Students</option>
+                            <option value="college">College Students Only</option>
+                            <option value="cbse">CBSE Students Only</option>
+                            <option value="hbse">HBSE Students Only</option>
+                        </select>
                     </div>
                     
                     <div class="input-group">
@@ -582,12 +608,12 @@
                     <div class="input-group">
                         <label>Upload Photo for Group Card</label>
                         <input type="file" id="new-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
-                        <span class="upload-hint">Supported: JPG, PNG, WEBP. Recommended size: 400x400 pixels (Square) to fit nicely on the dashboard.</span>
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP. Recommended size: 400x400 pixels (Landscape/Square) for the new attractive card styles.</span>
                     </div>
                     <div class="flex-row">
                         <div class="input-group">
-                            <label>Name Color</label>
-                            <input type="color" id="new-group-color" value="#0f172a" style="height: 45px; cursor: pointer;">
+                            <label>Name Color (Fallback)</label>
+                            <input type="color" id="new-group-color" value="#ffffff" style="height: 45px; cursor: pointer;">
                         </div>
                         <div class="input-group">
                             <label>Name Font</label>
@@ -655,7 +681,12 @@
                     <button class="btn-primary" onclick="createNewTest()">Create Test & Add Questions</button>
                 </div>
 
-                <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Live Cloud Tests</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <h3 style="margin: 0;">Live Cloud Tests</h3>
+                    <select id="admin-test-filter" class="group-select" style="padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); width: 200px;" onchange="renderAdminTests()">
+                        <option value="all">All Groups</option>
+                    </select>
+                </div>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
                         <div id="admin-sec-attempts" class="sub-sec">
@@ -787,8 +818,7 @@
                 <button class="btn-primary" style="width: auto; min-width: 120px;" onclick="nextQuestion()" id="btn-next">Next ➡</button>
             </div>
         </div>
-        
-        <div id="view-results" class="view">
+                <div id="view-results" class="view">
             <div class="action-box" style="text-align: center; padding: 40px 20px;">
                 <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 30px;">Test Completed! 🎉</h2>
                 <div class="grid-list" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -817,7 +847,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-review" class="view">
+        
+        <div id="view-review" class="view">
             <div class="sec-header" style="background: white; padding: 20px; position: sticky; top: 70px; z-index: 90; box-shadow: var(--shadow-sm); border-radius: 12px; margin-bottom: 20px;">
                 <button class="back-menu-btn" onclick="navigate('view-results', false)">← Back to Score</button>
                 <h2 style="margin: 0; color: var(--primary);">Detailed Solutions</h2>
@@ -828,7 +859,9 @@
             <div id="review-container"></div>
         </div>
 
-    </div> <div id="custom-confirm-modal" class="modal-overlay">
+    </div> 
+    
+    <div id="custom-confirm-modal" class="modal-overlay">
         <div class="modal">
             <h3 id="confirm-title" style="color: var(--text-main); font-size: 1.4rem; margin-bottom: 10px;">Are you sure?</h3>
             <p id="confirm-message" style="color: var(--text-muted); margin-bottom: 25px;">Do you want to proceed?</p>
@@ -843,8 +876,7 @@
         <div class="modal">
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <div class="popup-content">
-                <div id="popup-fallback" style="display:none; width:100%; height:300px; background:linear-gradient(135deg, var(--primary), #818cf8); color:white; font-size:4rem; font-weight:bold; align-items:center; justify-content:center;">📢</div>
-                <img id="popup-custom-img" class="popup-custom-image" src="" alt="Announcement Graphic" loading="eager" onerror="this.style.display='none'; document.getElementById('popup-fallback').style.display='flex';">
+                <img id="popup-custom-img" class="popup-custom-image" src="" alt="Announcement Graphic" loading="eager" onerror="this.style.display='none';">
                 
                 <div id="popup-display-msg" class="popup-message"></div>
             </div>
@@ -879,7 +911,7 @@
             </div>
             <div class="flex-row">
                 <div class="input-group">
-                    <label>Name Color</label>
+                    <label>Name Color (Fallback)</label>
                     <input type="color" id="edit-group-color" style="height: 45px; cursor: pointer;">
                 </div>
                 <div class="input-group">
@@ -1010,7 +1042,7 @@
 
         // --- GLOBAL VARIABLES ---
         let currentUserRole = null;
-        let currentUserBoard = null; // NEW: Track student board (college, cbse, hbse)
+        let currentUserBoard = null; 
         let currentTest = null;
         let testTimer = null;
         let timeRemaining = 0;
@@ -1023,7 +1055,8 @@
         let allTestsCache = []; 
         let localQuestionsBuffer = []; 
         let studentAttemptedDB = {}; 
-                // --- MODERN UI HELPERS ---
+        
+        // --- MODERN UI HELPERS ---
         function showToast(message, type = 'success') {
             const toast = document.getElementById('customToast');
             toast.innerText = message;
@@ -1048,8 +1081,7 @@
         }
 
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
-        
-        // --- CLOUDINARY IMAGE UPLOAD HELPER ---
+                // --- CLOUDINARY IMAGE UPLOAD HELPER ---
         async function uploadImageToFirebase(fileInputId, folderPath) {
             const fileInput = document.getElementById(fileInputId);
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
@@ -1101,11 +1133,12 @@
             return 'data:image/svg+xml;base64,' + btoa(svg);
         }
         
-        // --- STUDENT POPUP LOGIC ---
+        // --- STUDENT POPUP LOGIC (UPDATED WITH AUDIENCE TARGETING) ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
             const status = document.getElementById('popup-status').value;
+            const audience = document.getElementById('popup-audience').value;
             const message = document.getElementById('popup-message').value.trim();
             const textColor = document.getElementById('popup-text-color').value;
             const font = document.getElementById('popup-text-font').value;
@@ -1114,7 +1147,7 @@
             btn.disabled = true; btn.innerText = "⏳ Uploading & Saving...";
 
             try {
-                let updateData = { status: status, message: message, textColor: textColor, font: font };
+                let updateData = { status: status, audience: audience, message: message, textColor: textColor, font: font };
                 const newImageUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
                 if (newImageUrl) updateData.imageUrl = newImageUrl;
 
@@ -1130,7 +1163,9 @@
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
                 if(doc.exists) {
                     const data = doc.data();
-                    if(data.status === 'active') {
+                    const isTargeted = (!data.audience || data.audience === 'all' || data.audience === currentUserBoard);
+
+                    if(data.status === 'active' && isTargeted) {
                         const msgEl = document.getElementById('popup-display-msg');
                         const imgEl = document.getElementById('popup-custom-img');
                         msgEl.innerText = data.message || ''; msgEl.style.color = data.textColor || '#ffffff'; msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
@@ -1153,8 +1188,10 @@
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
                  if(doc.exists) {
                      const data = doc.data();
-                     const statusEl = document.getElementById('popup-status'), msgEl = document.getElementById('popup-message'), colorEl = document.getElementById('popup-text-color'), fontEl = document.getElementById('popup-text-font');
-                     if(statusEl) statusEl.value = data.status || 'inactive'; if(msgEl) msgEl.value = data.message || '';
+                     const statusEl = document.getElementById('popup-status'), audEl = document.getElementById('popup-audience'), msgEl = document.getElementById('popup-message'), colorEl = document.getElementById('popup-text-color'), fontEl = document.getElementById('popup-text-font');
+                     if(statusEl) statusEl.value = data.status || 'inactive'; 
+                     if(audEl) audEl.value = data.audience || 'all';
+                     if(msgEl) msgEl.value = data.message || '';
                      if(colorEl) colorEl.value = data.textColor || '#ffffff'; if(fontEl) fontEl.value = data.font || "'Inter', sans-serif";
                  }
             });
@@ -1226,8 +1263,7 @@
             if(type === 'register') { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; } 
             else { document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; }
         }
-
-        // --- NAVIGATION & MODERN BACK BUTTON INTERCEPTOR ---
+                // --- NAVIGATION & MODERN BACK BUTTON INTERCEPTOR ---
         function navigate(viewId, pushState = true) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active');
             document.getElementById('logout-btn').style.display = (viewId === 'view-login') ? 'none' : 'block';
@@ -1264,12 +1300,11 @@
             if(user) { user.updatePassword(newPass).then(() => { showToast("Password updated successfully!"); document.getElementById('new-student-pass').value = ''; openStudentSec('student-main-menu'); }).catch(e => { showToast(e.message, 'error'); }); }
         }
 
-        // UPDATED: Now captures the Student Board during Registration!
         function registerStudent() {
             const fullName = document.getElementById('reg-name').value.trim(); 
             const phoneId = document.getElementById('reg-phone').value.trim(); 
             const pass = document.getElementById('reg-password').value;
-            const board = document.getElementById('reg-board').value; // Get the chosen board
+            const board = document.getElementById('reg-board').value; 
             
             if(!fullName) return showToast("Please enter your full name.", 'error'); 
             if(phoneId.length < 4 || pass.length < 6) return showToast("Check inputs. Password min 6 chars.", 'error');
@@ -1280,11 +1315,11 @@
                         fullName: fullName, 
                         phone: phoneId, 
                         role: 'student', 
-                        board: board, // Save board to Firestore
+                        board: board, 
                         createdAt: firebase.firestore.FieldValue.serverTimestamp() 
                     }); 
                     currentUserRole = 'student'; 
-                    currentUserBoard = board; // Set global variable
+                    currentUserBoard = board; 
                     navigate('view-student'); 
                     loadStudentData(); 
                     loadStudentPopup(); 
@@ -1292,7 +1327,6 @@
                 .catch(e => { showToast("Error: " + e.message, 'error'); });
         }
 
-        // UPDATED: Fetches board data upon successful login!
         async function login() {
             if (checkDeviceLockout()) return;
             const role = document.getElementById('login-role').value; const idInput = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-password').value;
@@ -1308,23 +1342,17 @@
                     clearLockoutOnSuccess(); 
                     currentUserRole = 'student'; 
                     
-                    // Fetch student's board
                     const userDoc = await db.collection("users").doc(userCred.user.uid).get();
-                    if(userDoc.exists && userDoc.data().board) {
-                        currentUserBoard = userDoc.data().board;
-                    } else {
-                        currentUserBoard = 'college'; // Fallback if missing
-                    }
+                    if(userDoc.exists && userDoc.data().board) { currentUserBoard = userDoc.data().board; } else { currentUserBoard = 'college'; }
 
-                    navigate('view-student'); 
-                    loadStudentData(); 
-                    loadStudentPopup(); 
+                    navigate('view-student'); loadStudentData(); loadStudentPopup(); 
                 }).catch(e => { recordFailedAttempt(); });
             }
         }
 
         function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; currentUserBoard = null; navigate('view-login'); }); }
-                // --- ADMIN: MANAGE STUDENTS LOGIC ---
+        
+        // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1333,7 +1361,7 @@
                 
                 s.forEach(doc => {
                     let user = doc.data(); let dateJoined = user.createdAt ? new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
-                    let boardDisplay = user.board ? user.board.toUpperCase() : 'COLLEGE'; // Display board
+                    let boardDisplay = user.board ? user.board.toUpperCase() : 'COLLEGE'; 
                     
                     tbody.innerHTML += `
                         <tr>
@@ -1405,10 +1433,10 @@
             });
         }
 
-        // --- ADMIN: GROUP SETTINGS (UPDATED WITH IMAGE & BOARD) ---
+        // --- ADMIN: GROUP SETTINGS ---
         async function addGroup() { 
             const n = document.getElementById('new-group-name').value; 
-            const b = document.getElementById('new-group-board').value; // Get target board
+            const b = document.getElementById('new-group-board').value; 
             const c = document.getElementById('new-group-color').value;
             const f = document.getElementById('new-group-font').value;
             
@@ -1431,7 +1459,7 @@
         function openEditGroupModal(gid, name, board, color, font) {
             document.getElementById('edit-group-id').value = gid;
             document.getElementById('edit-group-name').value = name;
-            document.getElementById('edit-group-board').value = board || 'college'; // Set existing board
+            document.getElementById('edit-group-board').value = board || 'college'; 
             document.getElementById('edit-group-color').value = color || '#0f172a';
             document.getElementById('edit-group-font').value = font || "'Poppins', sans-serif";
             document.getElementById('edit-group-modal').style.display = 'flex';
@@ -1442,7 +1470,7 @@
         async function saveGroupEdit() {
             const gid = document.getElementById('edit-group-id').value;
             const n = document.getElementById('edit-group-name').value.trim();
-            const b = document.getElementById('edit-group-board').value; // Get updated board
+            const b = document.getElementById('edit-group-board').value; 
             const c = document.getElementById('edit-group-color').value;
             const f = document.getElementById('edit-group-font').value;
             if(!n) return showToast("Group name cannot be empty!", 'error');
@@ -1463,10 +1491,11 @@
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-                // --- ADMIN: BANNERS LOGIC ---
+                // --- ADMIN: BANNERS LOGIC (UPDATED WITH AUDIENCE) ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
+            const audience = document.getElementById('banner-audience').value;
 
             if(!customTitle) return showToast("Please enter a stylish banner name.", 'error'); if(!testSelect.value) return showToast("Please select a specific test to link to this banner.", 'error');
             
@@ -1475,7 +1504,7 @@
             try {
                 let bannerData = {
                     testId: testSelect.value, testName: testSelect.options[testSelect.selectedIndex].text,
-                    customTitle: customTitle, textColor: textColor, textFont: textFont,
+                    customTitle: customTitle, textColor: textColor, textFont: textFont, audience: audience,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
@@ -1498,15 +1527,47 @@
             }); 
         }
 
+        // --- ADMIN: MANAGE TESTS & FILTERING ---
+        function renderAdminTests() {
+            let filterVal = document.getElementById('admin-test-filter').value;
+            let c = document.getElementById('test-list-container'); 
+            c.innerHTML = ''; 
+            
+            let displayTests = filterVal === 'all' ? allTestsCache : allTestsCache.filter(t => t.groupId === filterVal);
+            
+            if(displayTests.length === 0) {
+                c.innerHTML = '<p style="color: var(--text-muted); padding: 10px; grid-column: 1/-1;">No tests found for this group.</p>';
+                return;
+            }
+
+            displayTests.forEach(t => { 
+                c.innerHTML += `
+                <div class="action-box">
+                    <h4 style="margin-bottom:5px; color: var(--primary);">${t.title}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
+                    <div style="display:flex; gap:8px; flex-wrap: wrap;">
+                        <button class="btn-success" style="flex:1; min-width: 80px; padding: 8px;" onclick="openTestEditor('${t.id}', '${t.title.replace(/'/g, "\\'")}')">➕ Add Qs</button> 
+                        <button class="btn-outline" style="flex:1; min-width: 80px; padding: 8px;" onclick="openEditModal('${t.id}')">⚙️ Setup</button> 
+                        <button class="btn-danger" style="flex:1; min-width: 80px; padding: 8px;" onclick="deleteTest('${t.id}')">🗑 Del</button>
+                    </div>
+                </div>`; 
+            }); 
+        }
+
         function loadAdminData() { 
             loadAdminStudents();
             db.collection("groups").onSnapshot(s=>{ 
                 let l=document.getElementById('admin-group-list'), sel=document.querySelectorAll('.group-select'); 
-                l.innerHTML=''; sel.forEach(x=>x.innerHTML='<option value="">Select Group...</option>'); 
+                l.innerHTML=''; 
+                
+                // Keep the initial "Select Group" options
+                document.getElementById('newTestGroup').innerHTML = '<option value="">Select Group...</option>';
+                document.getElementById('admin-test-filter').innerHTML = '<option value="all">All Groups</option>';
+
                 s.forEach(d=>{ 
                     let g=d.data(); 
                     let cStyle = g.color ? `color: ${g.color};` : ''; let fStyle = g.font ? `font-family: ${g.font};` : '';
-                    let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; // Show target board
+                    let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; 
                     
                     l.innerHTML+=`
                     <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
@@ -1516,28 +1577,20 @@
                             <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
                         </div>
                     </div>`; 
-                    sel.forEach(x=>x.innerHTML+=`<option value="${d.id}">${g.name}</option>`); 
+                    
+                    document.getElementById('newTestGroup').innerHTML += `<option value="${d.id}">${g.name}</option>`; 
+                    document.getElementById('admin-test-filter').innerHTML += `<option value="${d.id}">${g.name}</option>`;
                 }); 
             }); 
             
             db.collection("tests").onSnapshot(s=>{ 
-                let c=document.getElementById('test-list-container'); c.innerHTML=''; 
                 let bannerTestSel = document.getElementById('banner-test-select'); if(bannerTestSel) bannerTestSel.innerHTML = '<option value="">Select Specific Test...</option>';
                 allTestsCache = []; 
                 s.forEach(d=>{ 
                     let t=d.data(); allTestsCache.push({ id: d.id, ...t });
                     if(bannerTestSel) bannerTestSel.innerHTML += `<option value="${d.id}">${t.title}</option>`;
-                    c.innerHTML+=`
-                    <div class="action-box">
-                        <h4 style="margin-bottom:5px; color: var(--primary);">${t.title}</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
-                        <div style="display:flex; gap:8px; flex-wrap: wrap;">
-                            <button class="btn-success" style="flex:1; min-width: 80px; padding: 8px;" onclick="openTestEditor('${d.id}', '${t.title.replace(/'/g, "\\'")}')">➕ Add Qs</button> 
-                            <button class="btn-outline" style="flex:1; min-width: 80px; padding: 8px;" onclick="openEditModal('${d.id}')">⚙️ Setup</button> 
-                            <button class="btn-danger" style="flex:1; min-width: 80px; padding: 8px;" onclick="deleteTest('${d.id}')">🗑 Del</button>
-                        </div>
-                    </div>`; 
                 }); 
+                renderAdminTests(); // Render with current filter
             }); 
             
             db.collection("banners").onSnapshot(s => {
@@ -1545,10 +1598,15 @@
                 l.innerHTML = ''; if(s.empty) l.innerHTML = '<p style="color: gray;">No active banners.</p>';
                 s.forEach(d => {
                     let b = d.data(); let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
+                    let audienceDisplay = b.audience ? b.audience.toUpperCase() : 'ALL';
+
                     l.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
                         <div style="display:flex; align-items:center; gap:15px;">
-                            <div style="display:flex; flex-direction:column;"><span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span><span style="font-size: 0.85rem; color:var(--text-muted);">Links to test: ${b.testName || 'Unknown Test'} ${b.imageUrl ? '| Has Photo' : ''}</span></div>
+                            <div style="display:flex; flex-direction:column;">
+                                <span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span>
+                                <span style="font-size: 0.85rem; color:var(--text-muted);">Test: ${b.testName || 'Unknown Test'} | Target: <b>${audienceDisplay}</b></span>
+                            </div>
                         </div>
                         <button class="btn-danger" style="width:auto; padding:5px 12px; font-size: 0.9rem;" onclick="deleteBanner('${d.id}')">🗑 Remove</button>
                     </div>`;
@@ -1709,17 +1767,14 @@
             showToast(`✨ Successfully imported ${importedCount} question(s)!`, "success");
         }
 
-        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH BOARD FILTERING) ---
+        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH TARGETING) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
                     if (doc.exists) {
                         const data = doc.data();
                         document.getElementById('student-welcome-name').innerText = "Welcome, " + (data.fullName || "Student");
-                        // Ensure we have their latest board loaded
                         currentUserBoard = data.board || 'college'; 
-                        
-                        // NOW we load the filtered groups
                         loadGroupsForStudents();
                     }
                 }).catch(e => console.error("Error fetching user data", e));
@@ -1730,46 +1785,48 @@
             
             db.collection("banners").onSnapshot(s => {
                 let c = document.getElementById('student-banners'); if(!c) return;
-                c.innerHTML = ''; if(s.empty) { c.style.display = 'none'; return; }
-                c.style.display = 'flex';
+                c.innerHTML = ''; 
+                let hasVisibleBanners = false;
+
                 s.forEach(d => {
                     let b = d.data(); 
-                    let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; 
-                    let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
                     
-                    let bannerTitle = b.customTitle || b.testName;
-                    let fallbackUrl = getFallbackImage(bannerTitle);
-                    let finalImgUrl = b.imageUrl ? b.imageUrl : fallbackUrl;
-                    let bgStyle = `background-image: url('${finalImgUrl}'); background-size: cover; background-position: center;`;
+                    // Banner Filtering Logic
+                    let showBanner = (!b.audience || b.audience === 'all' || b.audience === currentUserBoard);
 
-                    c.innerHTML += `
-                    <div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')">
-                        <div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${bannerTitle}</div>
-                    </div>`;
+                    if(showBanner) {
+                        hasVisibleBanners = true;
+                        let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; 
+                        let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
+                        
+                        let bannerTitle = b.customTitle || b.testName;
+                        let fallbackUrl = getFallbackImage(bannerTitle);
+                        let finalImgUrl = b.imageUrl ? b.imageUrl : fallbackUrl;
+                        let bgStyle = `background-image: url('${finalImgUrl}'); background-size: cover; background-position: center;`;
+
+                        c.innerHTML += `
+                        <div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')">
+                            <div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${bannerTitle}</div>
+                        </div>`;
+                    }
                 });
+                
+                if(!hasVisibleBanners) { c.style.display = 'none'; } else { c.style.display = 'flex'; }
             });
         }
 
-        // UPDATED: Filters groups based on currentUserBoard
+        // UPDATED: Filters groups & uses the new attractive CSS layout!
         function loadGroupsForStudents() { 
             db.collection("groups").onSnapshot(s=>{ 
                 let c=document.getElementById('student-group-list'); c.innerHTML=''; 
                 s.forEach(d=>{ 
                     let g = d.data();
-                    let groupBoard = g.board || 'college'; // Assume college if no board is set on old groups
+                    let groupBoard = g.board || 'college'; 
                     
-                    // Filter Logic:
-                    // 1. College students see ALL groups.
-                    // 2. CBSE students see ONLY CBSE groups.
-                    // 3. HBSE students see ONLY HBSE groups.
                     let showGroup = false;
-                    if (currentUserBoard === 'college') {
-                        showGroup = true;
-                    } else if (currentUserBoard === 'cbse' && groupBoard === 'cbse') {
-                        showGroup = true;
-                    } else if (currentUserBoard === 'hbse' && groupBoard === 'hbse') {
-                        showGroup = true;
-                    }
+                    if (currentUserBoard === 'college') { showGroup = true; } 
+                    else if (currentUserBoard === 'cbse' && groupBoard === 'cbse') { showGroup = true; } 
+                    else if (currentUserBoard === 'hbse' && groupBoard === 'hbse') { showGroup = true; }
 
                     if(showGroup) {
                         let cStyle = g.color ? `color: ${g.color};` : ''; 
@@ -1779,9 +1836,11 @@
                         let finalImgUrl = g.imageUrl ? g.imageUrl : fallbackSrc;
                         
                         c.innerHTML+=`
-                        <div class="menu-btn" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
-                            <img src="${finalImgUrl}" class="custom-bg-img" alt="${g.name}" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';">
-                            <h3 style="margin:0; ${cStyle} ${fStyle}">${g.name}</h3>
+                        <div class="group-card" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
+                            <img src="${finalImgUrl}" alt="${g.name}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                            <div class="group-card-content">
+                                <h3 style="${cStyle} ${fStyle}">${g.name}</h3>
+                            </div>
                         </div>`; 
                     }
                 }); 
@@ -2013,7 +2072,6 @@
             else if (user) { 
                 currentUserRole = 'student'; 
                 
-                // Fetch the student's board when app loads or reloads
                 const userDoc = await db.collection("users").doc(user.uid).get();
                 if(userDoc.exists && userDoc.data().board) {
                     currentUserBoard = userDoc.data().board;
