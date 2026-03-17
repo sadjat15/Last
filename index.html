@@ -67,8 +67,7 @@
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
         .nav-btn:hover { background: rgba(255,255,255,0.2); }
-        
-        /* Dashboard Main Menu Buttons */
+                /* Dashboard Main Menu Buttons */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .menu-btn { 
             background: var(--card-bg); padding: 30px 20px; border-radius: var(--radius); 
@@ -81,7 +80,7 @@
         .menu-btn h3 { color: var(--primary); font-size: 1.3rem; z-index: 2; position: relative;}
         .menu-btn p { color: var(--text-muted); font-size: 0.9rem; z-index: 2; position: relative;}
         
-        /* UPDATED: Attractive Group Cards (Image background, text at bottom) */
+        /* Attractive Group Cards (Image background, text at bottom) */
         .group-card {
             position: relative; height: 160px; border-radius: var(--radius); overflow: hidden;
             display: flex; align-items: flex-end; box-shadow: var(--shadow-sm); cursor: pointer; transition: 0.2s;
@@ -92,7 +91,11 @@
         .group-card:hover img { transform: scale(1.05); }
         .group-card-content { position: relative; z-index: 2; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 40px 15px 15px; text-align: center; }
         .group-card h3 { color: #ffffff !important; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); font-size: 1.3rem; letter-spacing: 0.5px; }
-                /* Action Boxes & Question Cards */
+        
+        /* Sub-group indicator */
+        .sub-group-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; z-index: 3; backdrop-filter: blur(2px); }
+
+        /* Action Boxes & Question Cards */
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
         .action-box h3 { font-size: 1.2rem; margin-bottom: 15px; }
         .q-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.2s; }
@@ -129,8 +132,7 @@
         .btn-warning { background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s;}
         .btn-outline:hover { background: #e0e7ff; }
-
-        /* Modern Notification Toast */
+                /* Modern Notification Toast */
         .custom-toast {
             visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center;
             border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
@@ -155,7 +157,8 @@
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover { background: #f1f5f9; }
-                /* Modals & Overlays */
+                
+        /* Modals & Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
         
@@ -166,7 +169,7 @@
         .confirm-btn-group { display: flex; gap: 15px; justify-content: center; }
         .confirm-btn-group button { flex: 1; padding: 12px; font-weight: 600; border-radius: 8px; }
 
-        /* Student Announcement Popup Styles (UPDATED: Mic graphic removed from CSS logic) */
+        /* Student Announcement Popup Styles */
         #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
         .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
@@ -184,8 +187,7 @@
         }
         
         .popup-action-area { padding: 20px; background: #fff; border-top: 3px solid var(--primary); text-align: center; }
-        
-        /* --- TEST INTERFACE & REVIEW STYLES --- */
+                /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s;}
         .options label:hover { background: #f1f5f9; border-color: #cbd5e1; }
@@ -209,7 +211,8 @@
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
 
         .test-nav-bar { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-                /* Side Panel (Question Palette) */
+                
+        /* Side Panel (Question Palette) */
         .side-panel {
             position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
             background: white; box-shadow: var(--shadow-lg); z-index: 1500;
@@ -497,7 +500,8 @@
                     <div id="admin-banner-list" style="margin-top: 15px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-                        <div id="admin-sec-question-editor" class="sub-sec">
+
+            <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                         <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
                     <h2 id="editingTestTitle" style="color: var(--primary);">Adding Questions to: </h2>
@@ -558,8 +562,7 @@
                 <h3 style="margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 15px;"></div>
             </div>
-            
-            <div id="admin-sec-branding" class="sub-sec">
+                        <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Portal Branding & API Settings</h2>
@@ -584,7 +587,8 @@
                     <p id="aiKeyMsg" style="color: var(--success); font-weight: bold; margin-top: 10px; display: none;"></p>
                 </div>
             </div>
-                        <div id="admin-sec-groups" class="sub-sec">
+            
+            <div id="admin-sec-groups" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Test Groups</h2>
@@ -596,13 +600,21 @@
                         <input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests">
                     </div>
                     
-                    <div class="input-group">
-                        <label>Target Audience (Board / Level)</label>
-                        <select id="new-group-board" style="border: 2px solid var(--primary);">
-                            <option value="college">College Students</option>
-                            <option value="cbse">CBSE Board Students</option>
-                            <option value="hbse">HBSE Board Students</option>
-                        </select>
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Target Audience (Board / Level)</label>
+                            <select id="new-group-board" style="border: 2px solid var(--primary);">
+                                <option value="college">College Students</option>
+                                <option value="cbse">CBSE Board Students</option>
+                                <option value="hbse">HBSE Board Students</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Parent Group (Optional Sub-group)</label>
+                            <select id="new-group-parent" class="parent-group-select" style="border: 2px solid var(--review);">
+                                <option value="">None (Top Level Category)</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div class="input-group">
@@ -662,8 +674,7 @@
                 </div>
                 <div class="grid-list" id="admin-student-specific-attempts"></div>
             </div>
-
-            <div id="admin-sec-tests" class="sub-sec">
+                        <div id="admin-sec-tests" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Active Tests</h2>
@@ -689,7 +700,8 @@
                 </div>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
-                        <div id="admin-sec-attempts" class="sub-sec">
+            
+            <div id="admin-sec-attempts" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Live Student Attempts</h2>
@@ -732,11 +744,10 @@
                     <div class="menu-btn" onclick="openStudentSec('student-sec-password')"><h3>🔑 Change Password</h3><p>Update your account security</p></div>
                 </div>
             </div>
-
-            <div id="student-sec-groups" class="sub-sec">
+                        <div id="student-sec-groups" class="sub-sec">
                 <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
-                    <h2>Select a Test Category</h2>
+                    <button id="btn-back-groups" class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
+                    <h2 id="groups-header-title">Select a Test Category</h2>
                 </div>
                 <div class="grid-list" id="student-group-list"></div>
             </div>
@@ -756,7 +767,8 @@
                 </div>
                 <div class="grid-list" id="student-attempts-list"></div>
             </div>
-                        <div id="student-sec-leaderboards" class="sub-sec">
+            
+            <div id="student-sec-leaderboards" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
                     <h2>Test Leaderboards</h2>
@@ -858,7 +870,6 @@
             </div>
             <div id="review-container"></div>
         </div>
-
     </div> 
     
     <div id="custom-confirm-modal" class="modal-overlay">
@@ -877,7 +888,6 @@
             <button class="popup-close-btn" onclick="closeStudentPopup()">&times;</button>
             <div class="popup-content">
                 <img id="popup-custom-img" class="popup-custom-image" src="" alt="Announcement Graphic" loading="eager" onerror="this.style.display='none';">
-                
                 <div id="popup-display-msg" class="popup-message"></div>
             </div>
             <div class="popup-action-area">
@@ -895,23 +905,31 @@
                 <input type="text" id="edit-group-name">
             </div>
             
-            <div class="input-group">
-                <label>Target Audience (Board / Level)</label>
-                <select id="edit-group-board" style="border: 2px solid var(--primary);">
-                    <option value="college">College Students</option>
-                    <option value="cbse">CBSE Board Students</option>
-                    <option value="hbse">HBSE Board Students</option>
-                </select>
+            <div class="flex-row">
+                <div class="input-group">
+                    <label>Target Audience (Board / Level)</label>
+                    <select id="edit-group-board">
+                        <option value="college">College Students</option>
+                        <option value="cbse">CBSE Board Students</option>
+                        <option value="hbse">HBSE Board Students</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Parent Group</label>
+                    <select id="edit-group-parent" class="parent-group-select">
+                        <option value="">None (Top Level)</option>
+                    </select>
+                </div>
             </div>
 
             <div class="input-group">
                 <label>Upload New Photo (Optional)</label>
                 <input type="file" id="edit-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
-                <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB). Recommended size: 400x400 pixels (Square).</span>
+                <span class="upload-hint">Supported: JPG, PNG, WEBP.</span>
             </div>
             <div class="flex-row">
                 <div class="input-group">
-                    <label>Name Color (Fallback)</label>
+                    <label>Name Color</label>
                     <input type="color" id="edit-group-color" style="height: 45px; cursor: pointer;">
                 </div>
                 <div class="input-group">
@@ -1053,6 +1071,7 @@
         let activeAdminTestId = null; 
         let editingQuestionIndex = null;
         let allTestsCache = []; 
+        let allGroupsCache = []; // NEW: Cache for Groups to support fast edits and sub-groups
         let localQuestionsBuffer = []; 
         let studentAttemptedDB = {}; 
         
@@ -1133,7 +1152,7 @@
             return 'data:image/svg+xml;base64,' + btoa(svg);
         }
         
-        // --- STUDENT POPUP LOGIC (UPDATED WITH AUDIENCE TARGETING) ---
+        // --- STUDENT POPUP LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
 
         async function savePopupSettings() {
@@ -1437,13 +1456,14 @@
         async function addGroup() { 
             const n = document.getElementById('new-group-name').value; 
             const b = document.getElementById('new-group-board').value; 
+            const p = document.getElementById('new-group-parent').value; 
             const c = document.getElementById('new-group-color').value;
             const f = document.getElementById('new-group-font').value;
             
             if(!n) return showToast("Please enter a group name.", 'error'); 
             
             try {
-                let groupData = {name: n, board: b, color: c, font: f, createdAt: new Date()};
+                let groupData = {name: n, board: b, parentId: p, color: c, font: f, createdAt: new Date()};
                 const imageUrl = await uploadImageToFirebase('new-group-image-upload', 'groups');
                 if (imageUrl) groupData.imageUrl = imageUrl;
                 
@@ -1456,10 +1476,11 @@
             }
         }
 
-        function openEditGroupModal(gid, name, board, color, font) {
+        function openEditGroupModal(gid, name, board, parentId, color, font) {
             document.getElementById('edit-group-id').value = gid;
             document.getElementById('edit-group-name').value = name;
             document.getElementById('edit-group-board').value = board || 'college'; 
+            document.getElementById('edit-group-parent').value = parentId || ''; 
             document.getElementById('edit-group-color').value = color || '#0f172a';
             document.getElementById('edit-group-font').value = font || "'Poppins', sans-serif";
             document.getElementById('edit-group-modal').style.display = 'flex';
@@ -1467,22 +1488,35 @@
 
         function closeEditGroupModal() { document.getElementById('edit-group-modal').style.display = 'none'; }
 
+        // OPTIMISTIC UI UPDATE for faster saving
         async function saveGroupEdit() {
             const gid = document.getElementById('edit-group-id').value;
             const n = document.getElementById('edit-group-name').value.trim();
             const b = document.getElementById('edit-group-board').value; 
+            const p = document.getElementById('edit-group-parent').value;
             const c = document.getElementById('edit-group-color').value;
             const f = document.getElementById('edit-group-font').value;
+            
             if(!n) return showToast("Group name cannot be empty!", 'error');
+            if(gid === p) return showToast("A group cannot be its own parent!", 'error');
             
             try {
-                let updateData = { name: n, board: b, color: c, font: f };
-                const imageUrl = await uploadImageToFirebase('edit-group-image-upload', 'groups');
-                if (imageUrl) updateData.imageUrl = imageUrl;
-
-                await db.collection("groups").doc(gid).update(updateData);
-                showToast("Group styled and updated successfully!"); 
+                // 1. Instantly close modal and save text/colors to Firebase (Optimistic Update)
+                let updateData = { name: n, board: b, parentId: p, color: c, font: f };
+                db.collection("groups").doc(gid).update(updateData);
                 closeEditGroupModal();
+                showToast("Group details saved!"); 
+
+                // 2. Handle image upload in the background silently
+                const imageInput = document.getElementById('edit-group-image-upload');
+                if (imageInput.files && imageInput.files.length > 0) {
+                    showToast("Uploading new group image in background...", "warning");
+                    const imageUrl = await uploadImageToFirebase('edit-group-image-upload', 'groups');
+                    if (imageUrl) {
+                        await db.collection("groups").doc(gid).update({ imageUrl: imageUrl });
+                        showToast("Group image updated!", "success");
+                    }
+                }
             } catch(e) { console.error(e); }
         }
         
@@ -1491,7 +1525,7 @@
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-                // --- ADMIN: BANNERS LOGIC (UPDATED WITH AUDIENCE) ---
+                // --- ADMIN: BANNERS LOGIC ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
@@ -1557,29 +1591,38 @@
         function loadAdminData() { 
             loadAdminStudents();
             db.collection("groups").onSnapshot(s=>{ 
-                let l=document.getElementById('admin-group-list'), sel=document.querySelectorAll('.group-select'); 
+                let l=document.getElementById('admin-group-list'); 
                 l.innerHTML=''; 
                 
-                // Keep the initial "Select Group" options
                 document.getElementById('newTestGroup').innerHTML = '<option value="">Select Group...</option>';
                 document.getElementById('admin-test-filter').innerHTML = '<option value="all">All Groups</option>';
+                
+                let parentDropdowns = document.querySelectorAll('.parent-group-select');
+                parentDropdowns.forEach(dd => dd.innerHTML = '<option value="">None (Top Level Category)</option>');
+
+                allGroupsCache = []; 
 
                 s.forEach(d=>{ 
                     let g=d.data(); 
+                    g.id = d.id;
+                    allGroupsCache.push(g);
+
                     let cStyle = g.color ? `color: ${g.color};` : ''; let fStyle = g.font ? `font-family: ${g.font};` : '';
                     let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; 
+                    let parentText = g.parentId ? `<span style="font-size:0.75rem; background:#fef08a; padding:2px 6px; border-radius:4px; margin-left:5px;">Sub-Group</span>` : '';
                     
                     l.innerHTML+=`
                     <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:bold; ${cStyle} ${fStyle}">📁 ${g.name} <span style="font-size:0.75rem; background:#cbd5e1; padding:2px 6px; border-radius:4px; margin-left:10px;">${boardDisplay}</span></span>
+                        <span style="font-weight:bold; ${cStyle} ${fStyle}">📁 ${g.name} <span style="font-size:0.75rem; background:#cbd5e1; padding:2px 6px; border-radius:4px; margin-left:10px;">${boardDisplay}</span> ${parentText}</span>
                         <div>
-                            <button class="btn-outline" style="width:auto; padding:5px 10px; font-size:0.8rem; margin-right: 5px;" onclick="openEditGroupModal('${d.id}', '${g.name.replace(/'/g, "\\'")}', '${g.board || 'college'}', '${g.color || '#000000'}', '${g.font || ''}')">✏️ Edit</button>
+                            <button class="btn-outline" style="width:auto; padding:5px 10px; font-size:0.8rem; margin-right: 5px;" onclick="openEditGroupModal('${d.id}', '${g.name.replace(/'/g, "\\'")}', '${g.board || 'college'}', '${g.parentId || ''}', '${g.color || '#000000'}', '${g.font || ''}')">✏️ Edit</button>
                             <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
                         </div>
                     </div>`; 
                     
                     document.getElementById('newTestGroup').innerHTML += `<option value="${d.id}">${g.name}</option>`; 
                     document.getElementById('admin-test-filter').innerHTML += `<option value="${d.id}">${g.name}</option>`;
+                    parentDropdowns.forEach(dd => dd.innerHTML += `<option value="${d.id}">${g.name}</option>`);
                 }); 
             }); 
             
@@ -1590,7 +1633,7 @@
                     let t=d.data(); allTestsCache.push({ id: d.id, ...t });
                     if(bannerTestSel) bannerTestSel.innerHTML += `<option value="${d.id}">${t.title}</option>`;
                 }); 
-                renderAdminTests(); // Render with current filter
+                renderAdminTests();
             }); 
             
             db.collection("banners").onSnapshot(s => {
@@ -1767,7 +1810,7 @@
             showToast(`✨ Successfully imported ${importedCount} question(s)!`, "success");
         }
 
-        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH TARGETING) ---
+        // --- STUDENT DASHBOARD LOGIC (UPDATED WITH SUB-GROUPS) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1775,7 +1818,11 @@
                         const data = doc.data();
                         document.getElementById('student-welcome-name').innerText = "Welcome, " + (data.fullName || "Student");
                         currentUserBoard = data.board || 'college'; 
-                        loadGroupsForStudents();
+                        db.collection("groups").get().then((snap) => {
+                            allGroupsCache = [];
+                            snap.forEach(d => { let g = d.data(); g.id = d.id; allGroupsCache.push(g); });
+                            loadGroupsForStudents(""); 
+                        });
                     }
                 }).catch(e => console.error("Error fetching user data", e));
             }
@@ -1790,8 +1837,6 @@
 
                 s.forEach(d => {
                     let b = d.data(); 
-                    
-                    // Banner Filtering Logic
                     let showBanner = (!b.audience || b.audience === 'all' || b.audience === currentUserBoard);
 
                     if(showBanner) {
@@ -1815,40 +1860,62 @@
             });
         }
 
-        // UPDATED: Filters groups & uses the new attractive CSS layout!
-        function loadGroupsForStudents() { 
-            db.collection("groups").onSnapshot(s=>{ 
-                let c=document.getElementById('student-group-list'); c.innerHTML=''; 
-                s.forEach(d=>{ 
-                    let g = d.data();
-                    let groupBoard = g.board || 'college'; 
-                    
-                    let showGroup = false;
-                    if (currentUserBoard === 'college') { showGroup = true; } 
-                    else if (currentUserBoard === 'cbse' && groupBoard === 'cbse') { showGroup = true; } 
-                    else if (currentUserBoard === 'hbse' && groupBoard === 'hbse') { showGroup = true; }
+        function loadGroupsForStudents(parentId = "") { 
+            let c=document.getElementById('student-group-list'); c.innerHTML=''; 
+            
+            let backBtn = document.getElementById('btn-back-groups');
+            let headerTitle = document.getElementById('groups-header-title');
+            
+            if(parentId) {
+                let parentGroup = allGroupsCache.find(g => g.id === parentId);
+                headerTitle.innerText = parentGroup ? parentGroup.name : "Sub-Categories";
+                backBtn.onclick = () => loadGroupsForStudents(parentGroup ? (parentGroup.parentId || "") : ""); 
+                backBtn.innerText = "← Back";
+            } else {
+                headerTitle.innerText = "Select a Test Category";
+                backBtn.onclick = () => openStudentSec('student-main-menu');
+                backBtn.innerText = "← Back to Menu";
+            }
 
-                    if(showGroup) {
-                        let cStyle = g.color ? `color: ${g.color};` : ''; 
-                        let fStyle = g.font ? `font-family: ${g.font};` : '';
-                        
-                        let fallbackSrc = getFallbackImage(g.name);
-                        let finalImgUrl = g.imageUrl ? g.imageUrl : fallbackSrc;
-                        
-                        c.innerHTML+=`
-                        <div class="group-card" onclick="viewGroupTests('${d.id}','${g.name.replace(/'/g, "\\'")}')">
-                            <img src="${finalImgUrl}" alt="${g.name}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
-                            <div class="group-card-content">
-                                <h3 style="${cStyle} ${fStyle}">${g.name}</h3>
-                            </div>
-                        </div>`; 
-                    }
-                }); 
+            let hasVisibleGroups = false;
+
+            allGroupsCache.forEach(g=>{ 
+                let groupBoard = g.board || 'college'; 
+                let groupParent = g.parentId || "";
                 
-                if(c.innerHTML === '') {
-                    c.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">No tests available for your current board/level.</p>';
+                let showGroup = false;
+                if (currentUserBoard === 'college') { showGroup = true; } 
+                else if (currentUserBoard === 'cbse' && groupBoard === 'cbse') { showGroup = true; } 
+                else if (currentUserBoard === 'hbse' && groupBoard === 'hbse') { showGroup = true; }
+
+                if(showGroup && groupParent === parentId) {
+                    hasVisibleGroups = true;
+                    let cStyle = g.color ? `color: ${g.color};` : ''; 
+                    let fStyle = g.font ? `font-family: ${g.font};` : '';
+                    
+                    let fallbackSrc = getFallbackImage(g.name);
+                    let finalImgUrl = g.imageUrl ? g.imageUrl : fallbackSrc;
+                    
+                    let hasChildren = allGroupsCache.some(child => child.parentId === g.id);
+                    let badgeHtml = hasChildren ? `<div class="sub-group-badge">📁 Sub-groups</div>` : ``;
+
+                    c.innerHTML+=`
+                    <div class="group-card" onclick="handleGroupClick('${g.id}','${g.name.replace(/'/g, "\\'")}', ${hasChildren})">
+                        ${badgeHtml}
+                        <img src="${finalImgUrl}" alt="${g.name}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                        <div class="group-card-content">
+                            <h3 style="${cStyle} ${fStyle}">${g.name}</h3>
+                        </div>
+                    </div>`; 
                 }
             }); 
+            
+            if(!hasVisibleGroups) { c.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">No categories available here.</p>'; }
+            openStudentSec('student-sec-groups');
+        }
+
+        function handleGroupClick(gid, gn, hasChildren) {
+            if(hasChildren) { loadGroupsForStudents(gid); } else { viewGroupTests(gid, gn); }
         }
         
         function viewGroupTests(gid, gn) { 
