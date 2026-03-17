@@ -135,8 +135,7 @@
         
         /* Invisible but working student back buttons */
         .student-back-btn { opacity: 0; position: absolute; left: -9999px; width: 0; height: 0; overflow: hidden; }
-        
-        /* Admin back buttons - visible */
+                /* Admin back buttons - visible */
         .back-menu-btn { background: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .back-menu-btn:hover { background: #cbd5e1; }
         
@@ -203,8 +202,7 @@
         #custom-confirm-modal p { color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
         .confirm-btn-group { display: flex; gap: 15px; justify-content: center; }
         .confirm-btn-group button { flex: 1; padding: 12px; font-weight: 600; border-radius: 8px; }
-
-        /* Student Announcement Popup Styles */
+                /* Student Announcement Popup Styles */
         #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
         .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
@@ -361,8 +359,7 @@
             <div class="legend-item"><div class="legend-dot" style="background: var(--review);"></div> Marked for Review</div>
         </div>
     </div>
-    
-    <div class="container">
+        <div class="container">
         <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -430,8 +427,7 @@
                 </div>
             </div>
         </div>
-
-        <div id="view-admin" class="view">
+                <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
                 <h2 style="margin-bottom: 20px;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
@@ -535,8 +531,7 @@
                 </div>
 
                 <hr style="border: 0; height: 2px; background: var(--border-color); margin: 30px 0;">
-
-                <div class="action-box">
+                                <div class="action-box">
                     <h3 style="margin-bottom: 15px;">🖼️ Create New Promo Banner</h3>
                     <div class="input-group">
                         <label>Stylish Banner Name (Visible to Students)</label>
@@ -618,8 +613,7 @@
                         <button id="pdfExtractBtn" class="btn-primary" style="background: #4f46e5; margin: 0; width: auto; padding: 10px 20px;" onclick="extractQuestionsFromPDF()">Extract Questions</button>
                     </div><p id="pdfExtractMsg" style="font-size: 13px; font-weight: 600; margin-top: 10px; display: none;"></p>
                 </div>
-                
-                <div class="action-box" style="margin-top: 25px;">
+                                <div class="action-box" style="margin-top: 25px;">
                     <h3 style="margin-bottom: 15px;">Manual Question Entry</h3>
                     
                     <div class="input-group" style="margin-bottom: 15px;">
@@ -671,8 +665,7 @@
                     </div>
                     <button class="btn-primary" onclick="updatePortalBranding()" id="btn-save-branding">Save Branding Changes</button>
                 </div>
-
-                <div class="action-box" style="margin-top: 20px; border-left: 4px solid #10b981;">
+                                <div class="action-box" style="margin-top: 20px; border-left: 4px solid #10b981;">
                     <h3 style="margin-bottom: 10px; color: #059669;">✨ AI Integration (Gemini API)</h3>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Enter your Gemini API Key to enable AI bulk question generation and auto-extraction from PDFs.</p>
                     <div class="input-group">
@@ -740,7 +733,7 @@
                     <div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
-                        <div id="admin-sec-students" class="sub-sec">
+                                    <div id="admin-sec-students" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Registered Students</h2>
@@ -822,8 +815,7 @@
                 </div>
                 <div id="admin-attempts-list" class="grid-list"></div>
             </div>
-
-            <div id="admin-sec-creds" class="sub-sec">
+                        <div id="admin-sec-creds" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Change Admin Credentials</h2>
@@ -911,8 +903,7 @@
                 </div>
             </div>
         </div>
-        
-        <div id="view-test" class="view">
+                <div id="view-test" class="view">
             <div class="action-box" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 90; padding: 15px 24px; margin-bottom: 0; border-radius: 0; border-bottom: 2px solid var(--border-color);">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button class="btn-outline" style="padding: 6px 12px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button>
@@ -1011,8 +1002,7 @@
             </div>
         </div>
     </div>
-    
-    <div id="edit-group-modal" class="modal-overlay">
+        <div id="edit-group-modal" class="modal-overlay">
         <div class="modal">
             <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Group Styling</h2>
             <input type="hidden" id="edit-group-id">
@@ -1161,8 +1151,7 @@
             </div>
         </div>
     </div>
-    
-    <script>
+        <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -1385,8 +1374,7 @@
             document.getElementById(secId).classList.add('active'); 
             if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); 
         }
-
-        // --- ADMIN TEST & GROUP CASCADING ---
+                // --- ADMIN TEST & GROUP CASCADING ---
         function handleAdminTestGroupChange() {
             const parentId = document.getElementById('newTestGroup').value;
             const subGroupContainer = document.getElementById('subGroupContainer');
@@ -1818,7 +1806,9 @@
             
             try {
                 let updateData = { name: n, board: b, parentId: p, color: c, font: f };
-                db.collection("groups").doc(gid).update(updateData);
+                
+                // IMPORTANT BUG FIX: Added 'await' here so it successfully saves to database!
+                await db.collection("groups").doc(gid).update(updateData); 
                 closeEditGroupModal();
                 showToast("Group details saved!"); 
 
@@ -1839,8 +1829,7 @@
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-
-        // --- ADMIN: BANNERS LOGIC ---
+                // --- ADMIN: BANNERS LOGIC ---
         async function addBanner() {
             const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
             const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
@@ -2097,6 +2086,7 @@
         }
 
         // --- STUDENT DASHBOARD LOGIC ---
+        // IMPORTANT FIX: Replaced .get() with .onSnapshot() to instantly update UI and fix the blank loading screen!
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -2104,10 +2094,15 @@
                         const data = doc.data();
                         document.getElementById('student-welcome-name').innerText = "Welcome, " + (data.fullName || "Student");
                         currentUserBoard = data.board || 'college'; 
-                        db.collection("groups").get().then((snap) => {
+                        
+                        db.collection("groups").onSnapshot((snap) => {
                             allGroupsCache = [];
                             snap.forEach(d => { let g = d.data(); g.id = d.id; allGroupsCache.push(g); });
-                            // Don't auto-load here, wait for auth state change to route to the Mock Test tab automatically
+                            
+                            // Re-render instantly if the student is currently viewing the groups page
+                            if(document.getElementById('student-sec-groups').classList.contains('active')) {
+                                loadGroupsForStudents("");
+                            }
                         });
                     }
                 }).catch(e => console.error("Error fetching user data", e));
@@ -2279,6 +2274,29 @@
             if (sub.includes('hindi')) return 'Hin';
             return null;
         }
+
+        function togglePalette() { 
+            const panel = document.getElementById('side-palette');
+            const overlay = document.getElementById('side-overlay');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } 
+            else { panel.classList.add('open'); overlay.style.display = 'block'; }
+        }
+
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid'); grid.innerHTML = '';
+            testQuestions.forEach((_, i) => { grid.innerHTML += `<button id="pal-btn-${i}" class="q-btn" onclick="jumpToQuestion(${i}); togglePalette();">${i + 1}</button>`; });
+            updatePaletteButton(0);
+        }
+
+        function jumpToQuestion(i) { currentQuestionIndex = i; renderCurrentQuestion(); document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active')); document.getElementById(`pal-btn-${i}`).classList.add('active'); }
+
+        function updatePaletteButton(i) {
+            const btn = document.getElementById(`pal-btn-${i}`); btn.className = 'q-btn';
+            if (i === currentQuestionIndex) btn.classList.add('active');
+            if (questionStates[i] === 'answered') btn.classList.add('answered'); else if (questionStates[i] === 'marked') btn.classList.add('marked');
+        }
+
+        let currentLanguage = 'Eng'; let reviewLanguage = 'Eng';
 
         function setAnswer(optIndex) { userAnswers[currentQuestionIndex] = optIndex; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'answered'; updatePaletteButton(currentQuestionIndex); }
         function clearResponse() { userAnswers[currentQuestionIndex] = null; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'unanswered'; document.getElementsByName('active_q').forEach(r => r.checked = false); updatePaletteButton(currentQuestionIndex); }
