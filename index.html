@@ -79,8 +79,7 @@
         .menu-btn:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--primary); }
         .menu-btn h3 { color: var(--primary); font-size: 1.3rem; z-index: 2; position: relative;}
         .menu-btn p { color: var(--text-muted); font-size: 0.9rem; z-index: 2; position: relative;}
-        
-        /* Attractive Group Cards (Image background, text at bottom) */
+                /* Attractive Group Cards (Image background, text at bottom) */
         .group-card {
             position: relative; height: 160px; border-radius: var(--radius); overflow: hidden;
             display: flex; align-items: flex-end; box-shadow: var(--shadow-sm); cursor: pointer; transition: 0.2s;
@@ -142,8 +141,7 @@
         .custom-toast.show { visibility: visible; bottom: 50px; opacity: 1; }
         .custom-toast.error { background-color: var(--danger); }
         .custom-toast.success { background-color: var(--success); }
-        
-        /* Modern Register & Forgot Password Portal */
+                /* Modern Register & Forgot Password Portal */
         .modern-card { background: white; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow: hidden; }
         .modern-header { background: linear-gradient(135deg, var(--primary), #818cf8); padding: 30px; color: white; text-align: center; }
 
@@ -187,7 +185,7 @@
         }
         
         .popup-action-area { padding: 20px; background: #fff; border-top: 3px solid var(--primary); text-align: center; }
-                /* --- TEST INTERFACE & REVIEW STYLES --- */
+                        /* --- TEST INTERFACE & REVIEW STYLES --- */
         .question-card { margin-bottom: 24px; padding: 24px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 14px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s;}
         .options label:hover { background: #f1f5f9; border-color: #cbd5e1; }
@@ -243,8 +241,7 @@
 
         .status-text { margin-top: 10px; font-size: 0.9rem; font-weight: 500; text-align: center; }
         .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-
-        /* Banner Carousel Styles */
+                /* Banner Carousel Styles */
         .banner-container {
             display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -309,8 +306,7 @@
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 1.8rem; color: var(--primary);">Login Portal</h2>
                 </div>
-                
-                <div id="lockout-warning" style="display:none; background: #fee2e2; color: var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; text-align: center;">
+                                <div id="lockout-warning" style="display:none; background: #fee2e2; color: var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; text-align: center;">
                     Device Locked. Try again later.
                 </div>
 
@@ -386,8 +382,7 @@
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-creds')" style="border-color: var(--danger);"><h3 style="color: var(--danger);">🔐 Admin Credentials</h3><p>Change Admin ID & Password</p></div>
                 </div>
             </div>
-            
-            <div id="admin-sec-banners" class="sub-sec">
+                        <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Text Banners & Student Popup</h2>
@@ -466,8 +461,7 @@
                             <option value="hbse">HBSE Students Only</option>
                         </select>
                     </div>
-                    
-                    <div class="input-group">
+                                        <div class="input-group">
                         <label>Upload Photo for Banner Background</label>
                         <input type="file" id="banner-image-upload" accept=".jpg,.jpeg,.png,.webp">
                         <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB). Recommended size: 600x300 pixels (Landscape) for fast load times.</span>
@@ -533,8 +527,7 @@
                         <button id="pdfExtractBtn" class="btn-primary" style="background: #4f46e5; margin: 0; width: auto; padding: 10px 20px;" onclick="extractQuestionsFromPDF()">Extract Questions</button>
                     </div><p id="pdfExtractMsg" style="font-size: 13px; font-weight: 600; margin-top: 10px; display: none;"></p>
                 </div>
-
-                <div class="action-box" style="margin-top: 25px;">
+                                <div class="action-box" style="margin-top: 25px;">
                     <h3 style="margin-bottom: 15px;">Manual Question Entry</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                         <input type="text" id="qTextEn" placeholder="Question (English)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
@@ -599,8 +592,7 @@
                         <label>Stylish Group Name</label>
                         <input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests">
                     </div>
-                    
-                    <div class="flex-row">
+                                        <div class="flex-row">
                         <div class="input-group">
                             <label>Target Audience (Board / Level)</label>
                             <select id="new-group-board" style="border: 2px solid var(--primary);">
@@ -679,8 +671,7 @@
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Manage Active Tests</h2>
                 </div>
-                
-                <div class="action-box" style="border-left: 4px solid var(--primary);">
+                                <div class="action-box" style="border-left: 4px solid var(--primary);">
                     <h3 style="margin-bottom: 15px; color: var(--primary);">Create a New Test</h3>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                         <input type="text" id="newTestName" placeholder="Test Name (e.g., Mock Test 1)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); flex-grow: 1; min-width: 200px;">
@@ -744,7 +735,7 @@
                     <div class="menu-btn" onclick="openStudentSec('student-sec-password')"><h3>🔑 Change Password</h3><p>Update your account security</p></div>
                 </div>
             </div>
-                        <div id="student-sec-groups" class="sub-sec">
+                                    <div id="student-sec-groups" class="sub-sec">
                 <div class="sec-header">
                     <button id="btn-back-groups" class="back-menu-btn" onclick="openStudentSec('student-main-menu')">← Back to Menu</button>
                     <h2 id="groups-header-title">Select a Test Category</h2>
@@ -816,7 +807,7 @@
 
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                 <span id="question-tracker" style="font-weight: 600; color: var(--primary);">Question 1 of 30</span>
-                <button class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleLanguage()">🌐 Switch Lang (Eng/Hin)</button>
+                <button id="btn-switch-lang" class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleLanguage()">🌐 Switch Lang (Eng/Hin)</button>
             </div>
 
             <div id="question-container"></div>
@@ -830,7 +821,7 @@
                 <button class="btn-primary" style="width: auto; min-width: 120px;" onclick="nextQuestion()" id="btn-next">Next ➡</button>
             </div>
         </div>
-                <div id="view-results" class="view">
+                        <div id="view-results" class="view">
             <div class="action-box" style="text-align: center; padding: 40px 20px;">
                 <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 30px;">Test Completed! 🎉</h2>
                 <div class="grid-list" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -865,7 +856,7 @@
                 <button class="back-menu-btn" onclick="navigate('view-results', false)">← Back to Score</button>
                 <h2 style="margin: 0; color: var(--primary);">Detailed Solutions</h2>
                 <div style="margin-left: auto;">
-                    <button class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleReviewLanguage()">🌐 Lang (Eng/Hin)</button>
+                    <button id="btn-switch-lang-review" class="btn-outline" style="border-color: #475569; color: #475569; padding: 4px 10px;" onclick="toggleReviewLanguage()">🌐 Lang (Eng/Hin)</button>
                 </div>
             </div>
             <div id="review-container"></div>
@@ -1045,8 +1036,7 @@
             </div>
         </div>
     </div>
-    
-    <script>
+        <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -1071,7 +1061,7 @@
         let activeAdminTestId = null; 
         let editingQuestionIndex = null;
         let allTestsCache = []; 
-        let allGroupsCache = []; // NEW: Cache for Groups to support fast edits and sub-groups
+        let allGroupsCache = []; 
         let localQuestionsBuffer = []; 
         let studentAttemptedDB = {}; 
         
@@ -1488,7 +1478,6 @@
 
         function closeEditGroupModal() { document.getElementById('edit-group-modal').style.display = 'none'; }
 
-        // OPTIMISTIC UI UPDATE for faster saving
         async function saveGroupEdit() {
             const gid = document.getElementById('edit-group-id').value;
             const n = document.getElementById('edit-group-name').value.trim();
@@ -1501,13 +1490,11 @@
             if(gid === p) return showToast("A group cannot be its own parent!", 'error');
             
             try {
-                // 1. Instantly close modal and save text/colors to Firebase (Optimistic Update)
                 let updateData = { name: n, board: b, parentId: p, color: c, font: f };
                 db.collection("groups").doc(gid).update(updateData);
                 closeEditGroupModal();
                 showToast("Group details saved!"); 
 
-                // 2. Handle image upload in the background silently
                 const imageInput = document.getElementById('edit-group-image-upload');
                 if (imageInput.files && imageInput.files.length > 0) {
                     showToast("Uploading new group image in background...", "warning");
@@ -1727,7 +1714,7 @@
             }); 
         }
 
-        function checkIfLanguageSubject(text) { const t = text.toLowerCase(); return t.includes('english grammar') || t.includes('hindi grammar') || t.includes('hindi sahitya') || t.includes('english literature'); }
+        function checkIfLanguageSubject(text) { const t = text.toLowerCase(); return t.includes('english') || t.includes('hindi'); }
 
         async function generateBulkQuestionsWithAI() { 
             const topicInput = document.getElementById('aiTopicInput'); const difficultySelect = document.getElementById('aiDifficultySelect'); const countInput = document.getElementById('aiQuestionCount'); const generateBtn = document.getElementById('aiGenerateBtn'); const errorMsg = document.getElementById('aiGenError');
@@ -1985,8 +1972,17 @@
             } catch(e) { res.innerHTML = '<p style="color:red;">Error loading leaderboard data.</p>'; }
         }
 
-        // --- TEST INTERFACE LOGIC ---
+        // --- TEST INTERFACE LOGIC & NEW LANGUAGE LOCK HELPER ---
         let testQuestions = [], userAnswers = [], questionStates = []; let currentLanguage = 'Eng', testMarks = 2, testNegativeMarks = 0, currentQuestionIndex = 0; let reviewLanguage = 'Eng';
+
+        // Check if the current subject forces a specific language
+        function getForcedLanguage(subject) {
+            if (!subject) return null;
+            const sub = subject.toLowerCase();
+            if (sub.includes('english')) return 'Eng';
+            if (sub.includes('hindi')) return 'Hin';
+            return null;
+        }
 
         async function startTest(testId) {
             const doc = await db.collection("tests").doc(testId).get(); if (!doc.exists) return;
@@ -2013,8 +2009,18 @@
             document.querySelectorAll('.section-tab-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--primary)'; });
             const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
 
+            // UPDATED: Language Locking Logic
+            const forcedLang = getForcedLanguage(q.subject);
+            const displayLang = forcedLang ? forcedLang : currentLanguage;
+            
+            const switchBtn = document.getElementById('btn-switch-lang');
+            if(switchBtn) {
+                switchBtn.style.display = forcedLang ? 'none' : 'inline-block';
+            }
+
             document.getElementById('question-tracker').innerText = `Question ${currentQuestionIndex + 1} of ${testQuestions.length}`;
-            const qText = currentLanguage === 'Eng' ? q.questionEng : q.questionHin; const opts = currentLanguage === 'Eng' ? q.optionsEng : q.optionsHin;
+            const qText = displayLang === 'Eng' ? q.questionEng : q.questionHin; 
+            const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin;
             
             let optionsHTML = ''; if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
             
@@ -2103,8 +2109,19 @@
 
         function renderReviewContent() {
             const container = document.getElementById('review-container'); container.innerHTML = '';
+            
+            let anyUnforced = false;
+
             testQuestions.forEach((q, i) => {
-                const qText = reviewLanguage === 'Eng' ? q.questionEng : q.questionHin; const opts = reviewLanguage === 'Eng' ? q.optionsEng : q.optionsHin; const exp = reviewLanguage === 'Eng' ? q.explanationEng : q.explanationHin;
+                // UPDATED: Language Locking Logic for Review
+                const forcedLang = getForcedLanguage(q.subject);
+                const displayLang = forcedLang ? forcedLang : reviewLanguage;
+                if (!forcedLang) anyUnforced = true;
+
+                const qText = displayLang === 'Eng' ? q.questionEng : q.questionHin; 
+                const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin; 
+                const exp = displayLang === 'Eng' ? q.explanationEng : q.explanationHin;
+                
                 let optionsHTML = '';
                 if(opts) {
                     opts.forEach((opt, optIndex) => {
@@ -2126,6 +2143,12 @@
                         <div style="display:flex; flex-direction:column; gap:8px;">${optionsHTML}</div> ${expHTML}
                     </div>`;
             });
+            
+            const switchBtnRev = document.getElementById('btn-switch-lang-review');
+            if (switchBtnRev) {
+                switchBtnRev.style.display = anyUnforced ? 'inline-block' : 'none';
+            }
+
             if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
         }
 
