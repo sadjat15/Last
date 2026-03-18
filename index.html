@@ -59,7 +59,8 @@
         .sub-sec.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-                /* App Download Banner */
+        
+        /* App Download Banner */
         #app-download-banner {
             display: none; background: linear-gradient(90deg, #1e293b, var(--primary));
             color: white; padding: 12px 20px; align-items: center; justify-content: space-between;
@@ -71,13 +72,14 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s;
         }
         .download-btn:active { transform: scale(0.95); }
-                /* Bottom Navigation (Student App UI) */
+        
+        /* Bottom Navigation (Student App UI) */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: var(--bottom-nav-height);
             background: #ffffff; display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 999; border-top: 1px solid var(--border-color);
-            padding-bottom: env(safe-area-inset-bottom); /* iOS support */
-            display: none; /* Hidden by default, shown for students */
+            padding-bottom: env(safe-area-inset-bottom);
+            display: none; 
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -94,8 +96,7 @@
         nav h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
         .nav-btn:hover { background: rgba(255,255,255,0.2); }
-                
-        /* Dashboard Main Menu Buttons */
+                /* Dashboard Main Menu Buttons */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .menu-btn { 
             background: var(--card-bg); padding: 30px 20px; border-radius: var(--radius); 
@@ -108,48 +109,119 @@
         .menu-btn h3 { color: var(--primary); font-size: 1.3rem; z-index: 2; position: relative;}
         .menu-btn p { color: var(--text-muted); font-size: 0.9rem; z-index: 2; position: relative;}
                 
-        /* Simplified Group Cards (Replaced heavy background/gradients with simple text) */
+        /* Topic 4: Updated Group Cards - Fixed Size with Image Background support */
         .group-card {
-            background: var(--card-bg); padding: 24px 20px; border-radius: var(--radius);
-            box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
-            text-align: center; cursor: pointer; transition: 0.2s;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+            background-color: var(--card-bg);
+            /* Fixed dimensions to act as a proper banner */
+            width: 100%;
+            height: 160px; 
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: 0.2s;
             position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Support for background image uploaded by admin */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
+
         .group-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--primary); }
-        .group-card-content { width: 100%; }
-        .group-card h3 { color: var(--text-main); font-size: 1.15rem; margin: 0; font-weight: 600; }
+
+        /* Scrim/Overlay for text readability over the image */
+        .group-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+            z-index: 1;
+        }
+
+        /* Container for text inside the fixed-size card */
+        .group-card-content { 
+            position: relative;
+            z-index: 2; /* Sits above the gradient background */
+            width: 90%; 
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* Group name styling - bold and modern over the photo */
+        .group-card h3 { 
+            color: #ffffff; /* White text for background images */
+            font-size: 1.3rem; 
+            margin: 0; 
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Prevents washout on light images */
+        }
         
-        /* Sub-group indicator */
-        .sub-group-badge { position: absolute; top: 10px; right: 10px; background: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        /* Sub-group indicator inside the card */
+        .sub-group-badge { 
+            position: absolute; 
+            top: 12px; 
+            right: 12px; 
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            z-index: 3;
+            box-shadow: var(--shadow-sm);
+        }
 
         /* Action Boxes & Question Cards */
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
         .action-box h3 { font-size: 1.2rem; margin-bottom: 15px; }
+        
+        /* Topic 3: Updated Question Card for compact Images */
         .q-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.2s; }
         .q-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         
+        /* Standard styling for compact images in questions/options on admin side list */
+        .q-card-img {
+            max-width: 150px;
+            max-height: 100px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: block;
+            border: 1px solid #cbd5e1;
+        }
+
         /* Section Header & Invisible Back Buttons */
         .sec-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
-        
-        /* Invisible but working student back buttons */
+                /* Invisible but working student back buttons */
         .student-back-btn { opacity: 0; position: absolute; left: -9999px; width: 0; height: 0; overflow: hidden; }
-                /* Admin back buttons - visible */
+        
+        /* Admin back buttons - visible */
         .back-menu-btn { background: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .back-menu-btn:hover { background: #cbd5e1; }
-                /* Inputs & Buttons */
+        
+        /* Inputs & Buttons */
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #475569; }
         .input-group input, .input-group select, .input-group textarea { 
             width: 100%; padding: 12px; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 1rem; background: #f8fafc; transition: 0.2s; box-sizing: border-box;
         }
-        .input-group input[type="file"] { padding: 8px; background: white; cursor: pointer; }
+        
+        /* Updated File Input Styling */
+        .input-group input[type="file"] { 
+            padding: 8px; background: white; cursor: pointer; 
+            border: 1px dashed var(--primary);
+        }
+        
         .input-group input[type="color"] { background: white; padding: 8px; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
         
-        /* Updated Upload Hint */
-        .upload-hint { font-size: 0.85rem; color: var(--warning); font-weight: 500; margin-top: 6px; display: block; }
+        /* Topic 2: Updated Upload Hint emphasizing 500 KB limit */
+        .upload-hint { font-size: 0.85rem; color: var(--danger); font-weight: 600; margin-top: 6px; display: block; }
 
         /* Custom UI Tools for Admins */
         .flex-row { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
@@ -189,11 +261,11 @@
         .student-table th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: #475569; }
         .student-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover { background: #f1f5f9; }
-                
-        /* Modals & Overlays */
+                /* Modals & Overlays */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
         .modal { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease-out;}
-                /* Custom Confirm Modal */
+        
+        /* Custom Confirm Modal */
         #custom-confirm-modal .modal { max-width: 400px; text-align: center; padding: 40px 25px; border-radius: 16px; }
         #custom-confirm-modal h3 { color: var(--text-main); margin-bottom: 15px; font-size: 1.4rem; }
         #custom-confirm-modal p { color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
@@ -204,13 +276,14 @@
         #student-popup-modal .modal { padding: 0; overflow: hidden; position: relative; max-width: 450px; border-radius: 16px; background: #ffffff; }
         .popup-close-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .popup-close-btn:hover { background: var(--danger); transform: scale(1.1); }
-        .popup-content { position: relative; text-align: center; background: #f1f5f9; min-height: 150px; display: flex; align-items: center; justify-content: center; }
+        .popup-content { position: relative; text-align: center; background: #f1f5f9; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;}
         
         /* Dynamic Uploaded Image container for Popups */
-        .popup-custom-image { width: 100%; height: 300px; object-fit: cover; display: none; }
+        .popup-custom-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; z-index: 1; }
         
+        /* Message layered OVER the popup image */
         .popup-message { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: relative;
             width: 85%; margin: 0; padding: 20px; font-size: 1.3rem; line-height: 1.4; font-weight: 800;
             background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(5px); border-radius: 12px; 
             color: #ffffff !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
@@ -243,8 +316,7 @@
         .explanation-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px; margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; line-height: 1.6;}
 
         .test-nav-bar { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        
-        /* Side Panel (Question Palette) */
+                /* Side Panel (Question Palette) */
         .side-panel {
             position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
             background: white; box-shadow: var(--shadow-lg); z-index: 1500;
@@ -325,7 +397,8 @@
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
-        <div id="bottom-nav-student" class="bottom-nav">
+        
+    <div id="bottom-nav-student" class="bottom-nav">
         <a href="javascript:void(0)" class="nav-item active" onclick="switchBottomTab('student-sec-groups', this)">
             <span class="nav-icon">📝</span>
             <span>Mock Test</span>
@@ -345,8 +418,7 @@
     </div>
 
     <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
-
-    <div id="side-palette" class="side-panel">
+        <div id="side-palette" class="side-panel">
         <div class="side-panel-header">
             <h3 style="font-size: 1.2rem;">Question Palette</h3>
             <button onclick="togglePalette()" style="background:none; border:none; color:white; font-size:1.8rem; cursor:pointer; line-height: 1;">&times;</button>
@@ -508,11 +580,10 @@
                     <div class="input-group">
                         <label>Upload Photo for Popup (Optional)</label>
                         <input type="file" id="popup-image-upload" accept=".jpg,.jpeg,.png,.webp">
-                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB). Recommended size: 400x400 pixels (Square).</span>
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB). Recommended size: 400x400 pixels (Square).</span>
                         <input type="hidden" id="popup-image-url">
                     </div>
-                    
-                    <div class="flex-row">
+                                        <div class="flex-row">
                         <div class="input-group">
                             <label>Text Color</label>
                             <input type="color" id="popup-text-color" value="#ffffff" style="height: 45px; cursor: pointer;">
@@ -531,7 +602,8 @@
 
                     <button class="btn-primary" id="btn-save-popup" style="background: var(--review);" onclick="savePopupSettings()">Save Popup Settings</button>
                 </div>
-                                <hr style="border: 0; height: 2px; background: var(--border-color); margin: 30px 0;">
+                
+                <hr style="border: 0; height: 2px; background: var(--border-color); margin: 30px 0;">
                 
                 <div class="action-box">
                     <h3 style="margin-bottom: 15px;">🖼️ Create New Promo Banner</h3>
@@ -553,7 +625,7 @@
                     <div class="input-group">
                         <label>Upload Photo for Banner Background</label>
                         <input type="file" id="banner-image-upload" accept=".jpg,.jpeg,.png,.webp">
-                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB). Recommended size: 600x300 pixels (Landscape) for fast load times.</span>
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB). Recommended size: 600x300 pixels (Landscape).</span>
                     </div>
                     <div class="flex-row">
                         <div class="input-group">
@@ -598,6 +670,13 @@
                             <option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option>
                         </select>
                         <input type="number" id="aiQuestionCount" placeholder="Qty" value="3" min="1" max="10" style="margin: 0; width: 80px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        
+                        <select id="aiLanguageChoice" style="margin: 0; width: 140px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <option value="both" selected>Both (Eng & Hin)</option>
+                            <option value="english">English Only</option>
+                            <option value="hindi">Hindi Only</option>
+                        </select>
+                        
                         <button id="aiGenerateBtn" class="btn-success" style="margin: 0; width: auto; padding: 10px 20px;" onclick="generateBulkQuestionsWithAI()">Bulk Generate</button>
                     </div><p id="aiGenError" style="color: var(--danger); font-size: 14px; margin-top: 10px; display: none;"></p>
                 </div>
@@ -626,27 +705,57 @@
                             <option value="english">English Only</option>
                             <option value="hindi">Hindi Only</option>
                         </select>
-                        <span class="upload-hint">If set to 'English Only' or 'Hindi Only', the language switch button will be hidden for students on this question.</span>
+                        <span class="upload-hint" style="color: var(--warning);">If set to 'English Only' or 'Hindi Only', the language switch button will be hidden for students on this question.</span>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <input type="text" id="qTextEn" placeholder="Question (English)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
                         <input type="text" id="qTextHi" placeholder="Question (Hindi)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <input type="text" id="opt0En" placeholder="Opt 1 (Eng)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);"><input type="text" id="opt0Hi" placeholder="Opt 1 (Hin)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
-                        <input type="text" id="opt1En" placeholder="Opt 2 (Eng)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);"><input type="text" id="opt1Hi" placeholder="Opt 2 (Hin)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
-                        <input type="text" id="opt2En" placeholder="Opt 3 (Eng)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);"><input type="text" id="opt2Hi" placeholder="Opt 3 (Hin)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
-                        <input type="text" id="opt3En" placeholder="Opt 4 (Eng)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);"><input type="text" id="opt3Hi" placeholder="Opt 4 (Hin)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+
+                    <div class="input-group" style="margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                        <label style="font-size: 0.85rem;">Upload Diagram/Photo for Question (Optional, Max 500KB)</label>
+                        <input type="file" id="qImageUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 4px; font-size: 0.85rem; background: white;">
+                        <input type="hidden" id="qImageUrl">
                     </div>
-                    
-                    <label style="display: block; margin-top: 15px; font-weight: bold; color: #475569;">Correct Answer:</label>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; background: #fff;">
+                            <label style="font-size: 0.85rem; font-weight: bold;">Option 1</label>
+                            <input type="text" id="opt0En" placeholder="Opt 1 (Eng)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="text" id="opt0Hi" placeholder="Opt 1 (Hin)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="file" id="opt0ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 4px; font-size: 0.75rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc;">
+                            <input type="hidden" id="opt0ImgUrl">
+                        </div>
+                        <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; background: #fff;">
+                            <label style="font-size: 0.85rem; font-weight: bold;">Option 2</label>
+                            <input type="text" id="opt1En" placeholder="Opt 2 (Eng)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="text" id="opt1Hi" placeholder="Opt 2 (Hin)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="file" id="opt1ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 4px; font-size: 0.75rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc;">
+                            <input type="hidden" id="opt1ImgUrl">
+                        </div>
+                        <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; background: #fff;">
+                            <label style="font-size: 0.85rem; font-weight: bold;">Option 3</label>
+                            <input type="text" id="opt2En" placeholder="Opt 3 (Eng)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="text" id="opt2Hi" placeholder="Opt 3 (Hin)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="file" id="opt2ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 4px; font-size: 0.75rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc;">
+                            <input type="hidden" id="opt2ImgUrl">
+                        </div>
+                        <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; background: #fff;">
+                            <label style="font-size: 0.85rem; font-weight: bold;">Option 4</label>
+                            <input type="text" id="opt3En" placeholder="Opt 4 (Eng)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="text" id="opt3Hi" placeholder="Opt 4 (Hin)" style="padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <input type="file" id="opt3ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 4px; font-size: 0.75rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc;">
+                            <input type="hidden" id="opt3ImgUrl">
+                        </div>
+                    </div>
+                                        <label style="display: block; margin-top: 15px; font-weight: bold; color: #475569;">Correct Answer:</label>
                     <select id="correctAnswer" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; margin-top: 5px; box-sizing: border-box;">
                         <option value="0">Option 1</option><option value="1">Option 2</option><option value="2">Option 3</option><option value="3">Option 4</option>
                     </select>
                     
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button id="saveQuestionBtn" class="btn-success" style="margin: 0;" onclick="addQuestionToTest()">Save Question</button>
+                        <button id="saveQuestionBtn" class="btn-success" style="margin: 0;" onclick="addQuestionToTest()">Save Question (Uploads may take time)</button>
                         <button id="cancelEditBtn" class="btn-outline hidden" style="margin: 0; width: auto;" onclick="cancelQuestionEdit()">Cancel</button>
                     </div>
                     <p id="adminMessage" style="color: var(--success); font-weight: bold; margin-top: 10px; display: none;"></p>
@@ -655,7 +764,8 @@
                 <h3 style="margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 15px;"></div>
             </div>
-                        <div id="admin-sec-branding" class="sub-sec">
+
+            <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Portal Branding & API Settings</h2>
@@ -668,7 +778,7 @@
                     </div>
                     <button class="btn-primary" onclick="updatePortalBranding()" id="btn-save-branding">Save Branding Changes</button>
                 </div>
-                                <div class="action-box" style="margin-top: 20px; border-left: 4px solid #10b981;">
+                <div class="action-box" style="margin-top: 20px; border-left: 4px solid #10b981;">
                     <h3 style="margin-bottom: 10px; color: #059669;">✨ AI Integration (Gemini API)</h3>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Enter your Gemini API Key to enable AI bulk question generation and auto-extraction from PDFs.</p>
                     <div class="input-group">
@@ -691,6 +801,12 @@
                         <label>Simple Group Name</label>
                         <input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests">
                     </div>
+
+                    <div class="input-group">
+                        <label>Group Banner/Photo (Optional)</label>
+                        <input type="file" id="new-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB). This photo will appear as a background behind the group name on the dashboard.</span>
+                    </div>
                                         
                     <div class="flex-row">
                         <div class="input-group">
@@ -709,9 +825,8 @@
                         </div>
                     </div>
                     
-                    <button class="btn-primary" onclick="addGroup()">Add New Group</button>
-                    
-                    <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Groups & Sub-groups</h3>
+                    <button class="btn-primary" id="btn-add-group" onclick="addGroup()">Add New Group</button>
+                                        <h3 style="margin-top: 30px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Active Groups & Sub-groups</h3>
                     <div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
@@ -737,7 +852,8 @@
                     </table>
                 </div>
             </div>
-                        <div id="admin-sec-student-records" class="sub-sec">
+            
+            <div id="admin-sec-student-records" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-sec-students')">← Back to Students List</button>
                     <h2 id="view-student-name">Student Records</h2>
@@ -759,18 +875,10 @@
                         <input type="text" id="newTestName" placeholder="e.g., Mock Test 1">
                     </div>
 
-                    <div class="flex-row">
-                        <div class="input-group">
-                            <label>Select Main Group</label>
-                            <select id="newTestGroup" class="group-select" onchange="handleAdminTestGroupChange()">
-                                <option value="">Select Group...</option>
-                            </select>
-                        </div>
-                        <div class="input-group" id="subGroupContainer" style="display: none;">
-                            <label>Select Sub-Group</label>
-                            <select id="newTestSubGroup" class="group-select">
-                                <option value="">Select Sub-group...</option>
-                            </select>
+                    <div class="input-group">
+                        <label>Select Groups (Check one or more)</label>
+                        <div id="newTestGroupsContainer" style="max-height: 150px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: #f8fafc; display: flex; flex-direction: column; gap: 8px;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Loading groups...</span>
                         </div>
                     </div>
 
@@ -790,8 +898,7 @@
                 </div>
                 <div id="test-list-container" class="grid-list"></div>
             </div>
-            
-            <div id="admin-sec-attempts" class="sub-sec">
+                        <div id="admin-sec-attempts" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
                     <h2>Live Student Attempts</h2>
@@ -817,7 +924,8 @@
                 </div>
             </div>
         </div>
-                <div id="view-student" class="view">
+        
+        <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Student Dashboard</h2>
@@ -930,7 +1038,7 @@
                         <h3 style="color: #166534; margin: 0;">Total Score</h3>
                         <p id="res-score" style="font-size: 3rem; font-weight: 700; color: var(--success); margin: 10px 0;"></p>
                     </div>
-                                        <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); text-align: left;">
+                    <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); text-align: left;">
                         <h3 style="border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Accuracy Breakdown</h3>
                         <div style="font-size: 1.1rem; line-height: 2;">
                             <div style="display: flex; justify-content: space-between;"><span>✅ Correct:</span> <strong id="res-correct" style="color: var(--success);">0</strong></div>
@@ -963,7 +1071,7 @@
             <div id="review-container" style="padding: 0 20px;"></div>
         </div>
     </div>
-        <div id="custom-confirm-modal" class="modal-overlay">
+            <div id="custom-confirm-modal" class="modal-overlay">
         <div class="modal">
             <h3 id="confirm-title" style="color: var(--text-main); font-size: 1.4rem; margin-bottom: 10px;">Are you sure?</h3>
             <p id="confirm-message" style="color: var(--text-muted); margin-bottom: 25px;">Do you want to proceed?</p>
@@ -995,6 +1103,13 @@
                 <label>Simple Group Name</label>
                 <input type="text" id="edit-group-name">
             </div>
+
+            <div class="input-group">
+                <label>Update Group Banner/Photo (Optional)</label>
+                <input type="file" id="edit-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB).</span>
+                <input type="hidden" id="edit-group-image-url">
+            </div>
             
             <div class="flex-row">
                 <div class="input-group">
@@ -1015,7 +1130,7 @@
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button onclick="closeEditGroupModal()" class="btn-outline" style="flex:1;">Cancel</button>
-                <button onclick="saveGroupEdit()" class="btn-success" style="flex:1;">Save Changes</button>
+                <button onclick="saveGroupEdit()" class="btn-success" id="btn-save-group-edit" style="flex:1;">Save Changes</button>
             </div>
         </div>
     </div>
@@ -1049,7 +1164,8 @@
             </div>
         </div>
     </div>
-        <div id="done-popup-modal" class="modal-overlay">
+        
+    <div id="done-popup-modal" class="modal-overlay">
         <div class="modal" style="max-width: 400px; padding: 0; overflow: hidden;">
             <div class="modern-done-popup">
                 <div class="check-circle">✓</div>
@@ -1059,7 +1175,8 @@
             </div>
         </div>
     </div>
-        <div id="edit-modal" class="modal-overlay">
+        
+    <div id="edit-modal" class="modal-overlay">
         <div class="modal">
             <h2 style="margin-bottom: 20px; color: var(--primary);">Edit Test Settings</h2>
             <input type="hidden" id="edit-test-id">
@@ -1067,6 +1184,14 @@
                 <label>Test Title</label>
                 <input type="text" id="edit-title">
             </div>
+            
+            <div class="input-group">
+                <label>Select Groups (Check one or more)</label>
+                <div id="editTestGroupsContainer" style="max-height: 150px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: #f8fafc; display: flex; flex-direction: column; gap: 8px;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Loading groups...</span>
+                </div>
+            </div>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                 <div class="input-group" style="margin: 0;">
                     <label>Timer (Mins)</label>
@@ -1077,7 +1202,7 @@
                     <input type="number" id="edit-marks" step="0.5">
                 </div>
                 <div class="input-group" style="margin: 0;">
-                    <label>Negative Marks</label>
+                    <label>Negative</label>
                     <input type="number" id="edit-negative" step="0.25" placeholder="e.g. 0.25">
                 </div>
             </div>
@@ -1115,8 +1240,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+        <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
@@ -1173,26 +1297,25 @@
         
         // --- BOTTOM NAV SWITCH HELPER (STUDENTS) ---
         function switchBottomTab(secId, element) {
-            // Update active styling
             document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
             
-            // If they click "Mock Test", open groups
             if(secId === 'student-sec-groups') {
                 loadGroupsForStudents(""); 
             } else {
                 openStudentSec(secId);
             }
         }
-                // --- CLOUDINARY IMAGE UPLOAD HELPER ---
+        
+        // --- CLOUDINARY IMAGE UPLOAD HELPER (Updated to 500 KB limit) ---
         async function uploadImageToFirebase(fileInputId, folderPath) {
             const fileInput = document.getElementById(fileInputId);
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
             
             const file = fileInput.files[0];
-            const maxSizeInBytes = 5 * 1024 * 1024; 
+            const maxSizeInBytes = 500 * 1024; // 500 KB Limit
             if (file.size > maxSizeInBytes) {
-                showToast(`File is too large! Max is 5MB. Yours is ${(file.size/1024/1024).toFixed(1)}MB.`, 'error');
+                showToast(`File is too large! Max is 500 KB. Yours is ${(file.size/1024).toFixed(1)} KB.`, 'error');
                 throw new Error("File too large"); 
             }
 
@@ -1258,7 +1381,6 @@
                 if(doc.exists) {
                     const data = doc.data();
                     
-                    // Update admin inputs if they exist
                     const statusInput = document.getElementById('app-banner-status');
                     if(statusInput) statusInput.value = data.status || 'hidden';
                     const textInput = document.getElementById('app-banner-text');
@@ -1266,7 +1388,6 @@
                     const linkInput = document.getElementById('app-banner-link');
                     if(linkInput) linkInput.value = data.link || '';
 
-                    // Update student view
                     if(data.status === 'visible' && currentUserRole === 'student' && !isTestActive) {
                         document.getElementById('app-download-text').innerText = data.text || 'Download our official App for the best experience!';
                         document.getElementById('app-download-link').href = data.link || '#';
@@ -1280,7 +1401,37 @@
             });
         }
         
-        // --- STUDENT POPUP LOGIC ---
+        // --- NEW: STUDENT POPUP SAVE LOGIC ---
+        async function savePopupSettings() {
+            const status = document.getElementById('popup-status').value;
+            const audience = document.getElementById('popup-audience').value;
+            const message = document.getElementById('popup-message').value.trim();
+            const textColor = document.getElementById('popup-text-color').value;
+            const textFont = document.getElementById('popup-text-font').value;
+            const btn = document.getElementById('btn-save-popup');
+
+            if(status === 'active' && !message) return showToast("Please enter a custom announcement message.", "error");
+
+            btn.disabled = true; btn.innerText = "⏳ Saving Popup... Please wait";
+
+            try {
+                let popupData = { status, audience, message, textColor, font: textFont, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+                
+                // Handle optional image upload
+                const fileInput = document.getElementById('popup-image-upload');
+                if(fileInput.files.length > 0) {
+                    const imageUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
+                    if(imageUrl) popupData.imageUrl = imageUrl;
+                }
+
+                await db.collection("adminSettings").doc("studentPopup").set(popupData, { merge: true });
+                showToast("Popup Settings saved successfully!", "success");
+                fileInput.value = ''; // clear input
+            } catch (e) { console.error(e); showToast("Failed to save popup.", "error"); } 
+            finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
+        }
+
+        // --- STUDENT POPUP LOAD LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
         
         function loadStudentPopup() {
@@ -1288,9 +1439,19 @@
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => {
                 if(doc.exists) {
                     const data = doc.data();
+                    
+                    // Pre-fill admin fields if viewing as admin
+                    if(document.getElementById('popup-status')) {
+                        document.getElementById('popup-status').value = data.status || 'inactive';
+                        document.getElementById('popup-audience').value = data.audience || 'all';
+                        document.getElementById('popup-message').value = data.message || '';
+                        document.getElementById('popup-text-color').value = data.textColor || '#ffffff';
+                        if(data.font) document.getElementById('popup-text-font').value = data.font;
+                    }
+
                     const isTargeted = (!data.audience || data.audience === 'all' || data.audience === currentUserBoard);
 
-                    if(data.status === 'active' && isTargeted) {
+                    if(data.status === 'active' && isTargeted && currentUserRole === 'student') {
                         const msgEl = document.getElementById('popup-display-msg');
                         const imgEl = document.getElementById('popup-custom-img');
                         msgEl.innerText = data.message || ''; msgEl.style.color = data.textColor || '#ffffff'; msgEl.style.fontFamily = data.font || "'Inter', sans-serif";
@@ -1300,15 +1461,13 @@
                 }
             }).catch(e => console.error("Error loading popup: ", e));
         }
-
-        // --- NAVIGATION & VISIBILITY CONTROLS ---
+                // --- NAVIGATION & VISIBILITY CONTROLS ---
         function updateUIVisibility() {
             const bottomNav = document.getElementById('bottom-nav-student');
             const appBanner = document.getElementById('app-download-banner');
             
             if (currentUserRole === 'student' && !isTestActive) {
                 bottomNav.style.display = 'flex';
-                // Trigger banner check
                 db.collection("adminSettings").doc("appBanner").get().then(doc => {
                     if(doc.exists && doc.data().status === 'visible') appBanner.style.display = 'flex';
                     else appBanner.style.display = 'none';
@@ -1464,16 +1623,15 @@
 
         function logout() { localStorage.removeItem('adminSession'); sessionStorage.removeItem('popupShown'); auth.signOut().then(() => { currentUserRole = null; currentUserBoard = null; navigate('view-login'); }); }
         
-        // AUTH STATE LISTENER
         firebase.auth().onAuthStateChanged(async (user) => {
             if (localStorage.getItem('adminSession') === 'active') { 
                 currentUserRole = 'admin'; 
                 navigate('view-admin', false); 
                 loadAppBanner();
+                loadAdminData();
             } 
             else if (user) { 
                 currentUserRole = 'student'; 
-                
                 const userDoc = await db.collection("users").doc(user.uid).get();
                 if(userDoc.exists && userDoc.data().board) currentUserBoard = userDoc.data().board;
                 else currentUserBoard = 'college'; 
@@ -1481,6 +1639,7 @@
                 navigate('view-student', false); 
                 loadStudentPopup();
                 loadAppBanner();
+                loadStudentData();
                 
                 setTimeout(() => {
                     switchBottomTab('student-sec-groups', document.querySelector('.nav-item:first-child'));
@@ -1494,6 +1653,79 @@
                 navigate('view-login', false); 
             }
         });
+
+        // --- ADMIN: GROUP SETTINGS (With Image Upload logic) ---
+        async function addGroup() { 
+            const n = document.getElementById('new-group-name').value.trim(); 
+            const b = document.getElementById('new-group-board').value; 
+            const p = document.getElementById('new-group-parent').value; 
+            const btn = document.getElementById('btn-add-group');
+            
+            if(!n) return showToast("Please enter a group name.", 'error'); 
+            btn.disabled = true; btn.innerText = "⏳ Adding Group...";
+
+            try {
+                let groupData = {name: n, board: b, parentId: p, createdAt: new Date()};
+                
+                const fileInput = document.getElementById('new-group-image-upload');
+                if(fileInput.files.length > 0) {
+                    const imageUrl = await uploadImageToFirebase('new-group-image-upload', 'groups');
+                    if(imageUrl) groupData.imageUrl = imageUrl;
+                }
+                
+                await db.collection("groups").add(groupData);
+                document.getElementById('new-group-name').value=''; 
+                fileInput.value = '';
+                showToast("Group Added successfully!", "success");
+            } catch(e) { console.error(e); showToast("Failed to add group.", "error"); }
+            finally { btn.disabled = false; btn.innerText = "Add New Group"; }
+        }
+
+        function openEditGroupModal(gid, name, board, parentId, imageUrl) {
+            document.getElementById('edit-group-id').value = gid;
+            document.getElementById('edit-group-name').value = name;
+            document.getElementById('edit-group-board').value = board || 'college'; 
+            document.getElementById('edit-group-parent').value = parentId || ''; 
+            document.getElementById('edit-group-image-url').value = imageUrl || '';
+            document.getElementById('edit-group-modal').style.display = 'flex';
+        }
+
+        function closeEditGroupModal() { document.getElementById('edit-group-modal').style.display = 'none'; }
+
+        async function saveGroupEdit() {
+            const gid = document.getElementById('edit-group-id').value;
+            const n = document.getElementById('edit-group-name').value.trim();
+            const b = document.getElementById('edit-group-board').value; 
+            const p = document.getElementById('edit-group-parent').value;
+            const btn = document.getElementById('btn-save-group-edit');
+            
+            if(!n) return showToast("Group name cannot be empty!", 'error');
+            if(gid === p) return showToast("A group cannot be its own parent!", 'error');
+            
+            btn.disabled = true; btn.innerText = "⏳ Saving Changes...";
+
+            try {
+                let updateData = { name: n, board: b, parentId: p };
+                
+                const fileInput = document.getElementById('edit-group-image-upload');
+                if(fileInput.files.length > 0) {
+                    const newImageUrl = await uploadImageToFirebase('edit-group-image-upload', 'groups');
+                    if(newImageUrl) updateData.imageUrl = newImageUrl;
+                }
+                
+                await db.collection("groups").doc(gid).update(updateData); 
+                closeEditGroupModal();
+                showToast("Group details saved!", "success"); 
+                fileInput.value = '';
+            } catch(e) { console.error(e); showToast("Failed to update group.", "error"); }
+            finally { btn.disabled = false; btn.innerText = "Save Changes"; }
+        }
+        
+        function deleteGroup(gid) {
+            showCustomConfirm("Delete Group?", "Are you sure you want to delete this group? Tests inside this group will not be deleted but will lose their category.", async () => {
+                try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
+            });
+        }
                 // --- PORTAL BRANDING LOGIC ---
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
@@ -1523,8 +1755,167 @@
             const msg = document.getElementById('aiKeyMsg'); msg.innerText = "API Key Saved Successfully!";
             msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000);
         }
+
+        // --- ADMIN: MANAGE TESTS & FILTERING (MULTIPLE GROUPS LOGIC) ---
+        async function createNewTest() {
+            const name = document.getElementById('newTestName').value.trim(); 
+            const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
+            
+            // Get all checked groups
+            const checkedGroups = Array.from(document.querySelectorAll('#newTestGroupsContainer input:checked')).map(cb => cb.value);
+
+            if (!name) return showToast("Please provide a test name.", 'error');
+            if (checkedGroups.length === 0) return showToast("Please select at least one group.", 'error');
+
+            try {
+                // Use 'groupIDs' array instead of single 'groupId'
+                const docRef = await db.collection("tests").add({ 
+                    title: name, 
+                    groupIDs: checkedGroups, 
+                    duration: timer * 60, 
+                    marksPerQuestion: 2, 
+                    negativeMarks: 0, 
+                    questions: [], 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+                });
+                
+                document.getElementById('newTestName').value = ''; 
+                document.getElementById('newTestTimer').value = ''; 
+                document.querySelectorAll('#newTestGroupsContainer input').forEach(cb => cb.checked = false);
+                
+                openTestEditor(docRef.id, name);
+            } catch (error) { showToast("Error creating test: " + error.message, 'error'); }
+        }
+
+        function renderAdminTests() {
+            let filterVal = document.getElementById('admin-test-filter').value;
+            let c = document.getElementById('test-list-container'); 
+            c.innerHTML = ''; 
+            
+            let displayTests = filterVal === 'all' ? allTestsCache : allTestsCache.filter(t => {
+                // Support both new array format and old string format
+                if(t.groupIDs && Array.isArray(t.groupIDs)) return t.groupIDs.includes(filterVal);
+                return t.groupId === filterVal;
+            });
+            
+            if(displayTests.length === 0) {
+                c.innerHTML = '<p style="color: var(--text-muted); padding: 10px; grid-column: 1/-1;">No tests found for this filter.</p>';
+                return;
+            }
+
+            displayTests.forEach(t => { 
+                c.innerHTML += `
+                <div class="action-box">
+                    <h4 style="margin-bottom:5px; color: var(--primary);">${t.title}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
+                    <div style="display:flex; gap:8px; flex-wrap: wrap;">
+                        <button class="btn-success" style="flex:1; min-width: 80px; padding: 8px;" onclick="openTestEditor('${t.id}', '${t.title.replace(/'/g, "\\'")}')">➕ Add Qs</button> 
+                        <button class="btn-outline" style="flex:1; min-width: 80px; padding: 8px;" onclick="openEditModal('${t.id}')">⚙️ Setup</button> 
+                        <button class="btn-danger" style="flex:1; min-width: 80px; padding: 8px;" onclick="deleteTest('${t.id}')">🗑 Del</button>
+                    </div>
+                </div>`; 
+            }); 
+        }
+
+        async function openEditModal(testId) {
+            const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return;
+            const test = doc.data(); 
+            document.getElementById('edit-test-id').value = testId; 
+            document.getElementById('edit-title').value = test.title || '';
+            document.getElementById('edit-timer').value = Math.floor((test.duration || 0) / 60); 
+            document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
+            document.getElementById('edit-negative').value = test.negativeMarks || 0; 
+            
+            // Populate check boxes
+            const testGroups = test.groupIDs || (test.groupId ? [test.groupId] : []);
+            document.querySelectorAll('#editTestGroupsContainer input').forEach(cb => {
+                cb.checked = testGroups.includes(cb.value);
+            });
+
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+
+        async function saveTestEdit() {
+            const testId = document.getElementById('edit-test-id').value; 
+            const newTitle = document.getElementById('edit-title').value.trim();
+            const newDuration = parseInt(document.getElementById('edit-timer').value) * 60; 
+            const newMarks = parseFloat(document.getElementById('edit-marks').value);
+            const newNegative = parseFloat(document.getElementById('edit-negative').value);
+            
+            const checkedGroups = Array.from(document.querySelectorAll('#editTestGroupsContainer input:checked')).map(cb => cb.value);
+
+            if(!newTitle) return showToast("Test title cannot be empty!", 'error');
+            if(checkedGroups.length === 0) return showToast("Must select at least one group!", 'error');
+
+            try { 
+                await db.collection("tests").doc(testId).update({ 
+                    title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative, groupIDs: checkedGroups 
+                }); 
+                showToast("Test settings saved successfully!"); 
+                closeEditModal(); 
+            } catch(e) { showToast("Error saving test settings: " + e.message, 'error'); }
+        }
+
+        function deleteTest(tid) { 
+            showCustomConfirm("Delete Test?", "Are you sure you want to completely delete this test and all its questions?", async () => {
+                try { await db.collection("tests").doc(tid).delete(); showToast("Test deleted successfully!"); } catch(e) { showToast("Error deleting test: " + e.message, 'error'); } 
+            });
+        }
+
+        function loadAdminData() { 
+            loadAdminStudents();
+            db.collection("groups").onSnapshot(s=>{ 
+                let l=document.getElementById('admin-group-list'); l.innerHTML=''; 
+                
+                let newTestGrpCont = document.getElementById('newTestGroupsContainer'); newTestGrpCont.innerHTML = '';
+                let editTestGrpCont = document.getElementById('editTestGroupsContainer'); editTestGrpCont.innerHTML = '';
+                
+                document.getElementById('admin-test-filter').innerHTML = '<option value="all">All Groups</option>';
+                let parentDropdowns = document.querySelectorAll('.parent-group-select');
+                parentDropdowns.forEach(dd => dd.innerHTML = '<option value="">None (Top Level Category)</option>');
+
+                allGroupsCache = []; 
+
+                s.forEach(d=>{ 
+                    let g=d.data(); g.id = d.id; allGroupsCache.push(g);
+
+                    let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; 
+                    let parentText = g.parentId ? `<span style="font-size:0.75rem; background:#fef08a; padding:2px 6px; border-radius:4px; margin-left:5px;">Sub-Group</span>` : '';
+                    let imageBadge = g.imageUrl ? `<span style="font-size:0.75rem; background:#bbf7d0; padding:2px 6px; border-radius:4px; margin-left:5px;">🖼️ Image</span>` : '';
+                    
+                    l.innerHTML+=`
+                    <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:bold; color: var(--text-main);">📁 ${g.name} <span style="font-size:0.75rem; background:#cbd5e1; padding:2px 6px; border-radius:4px; margin-left:10px;">${boardDisplay}</span> ${parentText} ${imageBadge}</span>
+                        <div>
+                            <button class="btn-outline" style="width:auto; padding:5px 10px; font-size:0.8rem; margin-right: 5px;" onclick="openEditGroupModal('${d.id}', '${g.name.replace(/'/g, "\\'")}', '${g.board || 'college'}', '${g.parentId || ''}', '${g.imageUrl || ''}')">✏️ Edit</button>
+                            <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
+                        </div>
+                    </div>`; 
+                    
+                    // Checkbox list for multiple groups selection
+                    let cbHTML = `<label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" value="${d.id}" style="width:16px; height:16px;"> <span>${g.name}</span></label>`;
+                    newTestGrpCont.innerHTML += cbHTML;
+                    editTestGrpCont.innerHTML += cbHTML;
+
+                    document.getElementById('admin-test-filter').innerHTML += `<option value="${d.id}">${g.name}</option>`;
+                    parentDropdowns.forEach(dd => dd.innerHTML += `<option value="${d.id}">${g.name}</option>`);
+                }); 
+            }); 
+            
+            db.collection("tests").onSnapshot(s=>{ 
+                let bannerTestSel = document.getElementById('banner-test-select'); if(bannerTestSel) bannerTestSel.innerHTML = '<option value="">Select Specific Test...</option>';
+                allTestsCache = []; 
+                s.forEach(d=>{ 
+                    let t=d.data(); allTestsCache.push({ id: d.id, ...t });
+                    if(bannerTestSel) bannerTestSel.innerHTML += `<option value="${d.id}">${t.title}</option>`;
+                }); 
+                renderAdminTests();
+            }); 
+        }
         
-        // --- ADMIN: MANAGE STUDENTS LOGIC ---
+        // --- ADMIN: MANAGE STUDENTS LOGIC (continued) ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1548,6 +1939,11 @@
                         </tr>`;
                 });
             });
+            
+            db.collection("attempts").orderBy("timestamp","desc").limit(30).onSnapshot(s=>{ 
+                let c=document.getElementById('admin-attempts-list'); c.innerHTML=''; 
+                s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; }); 
+            }); 
         }
 
         function viewStudentAttempts(uid, name) {
@@ -1580,250 +1976,7 @@
             });
         }
 
-        // --- ADMIN: TEST SETTINGS ---
-        async function openEditModal(testId) {
-            const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return;
-            const test = doc.data(); document.getElementById('edit-test-id').value = testId; document.getElementById('edit-title').value = test.title || '';
-            document.getElementById('edit-timer').value = Math.floor((test.duration || 0) / 60); document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
-            document.getElementById('edit-negative').value = test.negativeMarks || 0; document.getElementById('edit-modal').style.display = 'flex';
-        }
-
-        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
-
-        async function saveTestEdit() {
-            const testId = document.getElementById('edit-test-id').value; const newTitle = document.getElementById('edit-title').value.trim();
-            const newDuration = parseInt(document.getElementById('edit-timer').value) * 60; const newMarks = parseFloat(document.getElementById('edit-marks').value);
-            const newNegative = parseFloat(document.getElementById('edit-negative').value);
-            if(!newTitle) return showToast("Test title cannot be empty!", 'error');
-            try { await db.collection("tests").doc(testId).update({ title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative }); showToast("Test settings saved successfully!"); closeEditModal(); } 
-            catch(e) { showToast("Error saving test settings: " + e.message, 'error'); }
-        }
-
-        function deleteTest(tid) { 
-            showCustomConfirm("Delete Test?", "Are you sure you want to completely delete this test and all its questions?", async () => {
-                try { await db.collection("tests").doc(tid).delete(); showToast("Test deleted successfully!"); } catch(e) { showToast("Error deleting test: " + e.message, 'error'); } 
-            });
-        }
-
-        // --- ADMIN: GROUP SETTINGS (Clean Text Only) ---
-        async function addGroup() { 
-            const n = document.getElementById('new-group-name').value.trim(); 
-            const b = document.getElementById('new-group-board').value; 
-            const p = document.getElementById('new-group-parent').value; 
-            
-            if(!n) return showToast("Please enter a group name.", 'error'); 
-            
-            try {
-                let groupData = {name: n, board: b, parentId: p, createdAt: new Date()};
-                
-                await db.collection("groups").add(groupData);
-                document.getElementById('new-group-name').value=''; 
-                showToast("Group Added successfully!", "success");
-            } catch(e) { console.error(e); showToast("Failed to add group.", "error"); }
-        }
-
-        function openEditGroupModal(gid, name, board, parentId) {
-            document.getElementById('edit-group-id').value = gid;
-            document.getElementById('edit-group-name').value = name;
-            document.getElementById('edit-group-board').value = board || 'college'; 
-            document.getElementById('edit-group-parent').value = parentId || ''; 
-            document.getElementById('edit-group-modal').style.display = 'flex';
-        }
-
-        function closeEditGroupModal() { document.getElementById('edit-group-modal').style.display = 'none'; }
-
-        async function saveGroupEdit() {
-            const gid = document.getElementById('edit-group-id').value;
-            const n = document.getElementById('edit-group-name').value.trim();
-            const b = document.getElementById('edit-group-board').value; 
-            const p = document.getElementById('edit-group-parent').value;
-            
-            if(!n) return showToast("Group name cannot be empty!", 'error');
-            if(gid === p) return showToast("A group cannot be its own parent!", 'error');
-            
-            try {
-                let updateData = { name: n, board: b, parentId: p };
-                
-                await db.collection("groups").doc(gid).update(updateData); 
-                closeEditGroupModal();
-                showToast("Group details saved!", "success"); 
-            } catch(e) { console.error(e); showToast("Failed to update group.", "error"); }
-        }
-        
-        function deleteGroup(gid) {
-            showCustomConfirm("Delete Group?", "Are you sure you want to delete this group? Tests inside this group will not be deleted but will lose their category.", async () => {
-                try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
-            });
-        }
-
-        // --- ADMIN: BANNERS LOGIC ---
-        async function addBanner() {
-            const customTitle = document.getElementById('banner-custom-title').value.trim(); const testSelect = document.getElementById('banner-test-select');
-            const textColor = document.getElementById('banner-text-color').value; const textFont = document.getElementById('banner-text-font').value;
-            const audience = document.getElementById('banner-audience').value;
-
-            if(!customTitle) return showToast("Please enter a stylish banner name.", 'error'); if(!testSelect.value) return showToast("Please select a specific test to link to this banner.", 'error');
-            
-            const btn = document.getElementById('btn-publish-banner'); btn.disabled = true; btn.innerText = "⏳ Publishing Banner... Please wait";
-            
-            try {
-                let bannerData = {
-                    testId: testSelect.value, testName: testSelect.options[testSelect.selectedIndex].text,
-                    customTitle: customTitle, textColor: textColor, textFont: textFont, audience: audience,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                const imageUrl = await uploadImageToFirebase('banner-image-upload', 'banners');
-                if (imageUrl) bannerData.imageUrl = imageUrl;
-
-                await db.collection("banners").add(bannerData);
-                
-                document.getElementById('banner-custom-title').value = '';
-                document.getElementById('banner-image-upload').value = '';
-                showToast("Banner successfully published!", "success");
-            } catch (error) { console.error(error); } 
-            finally { btn.disabled = false; btn.innerText = "Publish Banner to Student Dashboard"; }
-        }
-
-        function deleteBanner(id) { 
-            showCustomConfirm("Remove Banner?", "Are you sure you want to remove this banner?", async () => {
-                await db.collection("banners").doc(id).delete(); 
-                showToast("Banner removed.");
-            }); 
-        }
-
-        // --- ADMIN: MANAGE TESTS & FILTERING ---
-        function handleAdminTestGroupChange() {
-            const parentId = document.getElementById('newTestGroup').value;
-            const subGroupContainer = document.getElementById('subGroupContainer');
-            const subGroupSelect = document.getElementById('newTestSubGroup');
-            
-            subGroupSelect.innerHTML = '<option value="">Select Sub-group...</option>';
-            let hasSubGroups = false;
-            allGroupsCache.forEach(g => {
-                if (g.parentId === parentId) { hasSubGroups = true; subGroupSelect.innerHTML += `<option value="${g.id}">${g.name}</option>`; }
-            });
-            
-            subGroupContainer.style.display = hasSubGroups ? 'block' : 'none';
-            if(!hasSubGroups) subGroupSelect.value = '';
-        }
-
-        async function createNewTest() {
-            const name = document.getElementById('newTestName').value.trim(); 
-            const mainGroup = document.getElementById('newTestGroup').value; 
-            const subGroup = document.getElementById('newTestSubGroup').value;
-            const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
-            
-            const finalGroup = subGroup ? subGroup : mainGroup;
-
-            if (!name || !finalGroup) return showToast("Please provide a test name and select a group.", 'error');
-            try {
-                const docRef = await db.collection("tests").add({ title: name, groupId: finalGroup, duration: timer * 60, marksPerQuestion: 2, negativeMarks: 0, questions: [], createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                document.getElementById('newTestName').value = ''; document.getElementById('newTestTimer').value = ''; 
-                openTestEditor(docRef.id, name);
-            } catch (error) { showToast("Error creating test: " + error.message, 'error'); }
-        }
-
-        function renderAdminTests() {
-            let filterVal = document.getElementById('admin-test-filter').value;
-            let c = document.getElementById('test-list-container'); 
-            c.innerHTML = ''; 
-            
-            let displayTests = filterVal === 'all' ? allTestsCache : allTestsCache.filter(t => t.groupId === filterVal);
-            
-            if(displayTests.length === 0) {
-                c.innerHTML = '<p style="color: var(--text-muted); padding: 10px; grid-column: 1/-1;">No tests found for this group.</p>';
-                return;
-            }
-
-            displayTests.forEach(t => { 
-                c.innerHTML += `
-                <div class="action-box">
-                    <h4 style="margin-bottom:5px; color: var(--primary);">${t.title}</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
-                    <div style="display:flex; gap:8px; flex-wrap: wrap;">
-                        <button class="btn-success" style="flex:1; min-width: 80px; padding: 8px;" onclick="openTestEditor('${t.id}', '${t.title.replace(/'/g, "\\'")}')">➕ Add Qs</button> 
-                        <button class="btn-outline" style="flex:1; min-width: 80px; padding: 8px;" onclick="openEditModal('${t.id}')">⚙️ Setup</button> 
-                        <button class="btn-danger" style="flex:1; min-width: 80px; padding: 8px;" onclick="deleteTest('${t.id}')">🗑 Del</button>
-                    </div>
-                </div>`; 
-            }); 
-        }
-
-        function loadAdminData() { 
-            loadAdminStudents();
-            db.collection("groups").onSnapshot(s=>{ 
-                let l=document.getElementById('admin-group-list'); 
-                l.innerHTML=''; 
-                
-                document.getElementById('newTestGroup').innerHTML = '<option value="">Select Group...</option>';
-                document.getElementById('admin-test-filter').innerHTML = '<option value="all">All Groups</option>';
-                
-                let parentDropdowns = document.querySelectorAll('.parent-group-select');
-                parentDropdowns.forEach(dd => dd.innerHTML = '<option value="">None (Top Level Category)</option>');
-
-                allGroupsCache = []; 
-
-                s.forEach(d=>{ 
-                    let g=d.data(); 
-                    g.id = d.id;
-                    allGroupsCache.push(g);
-
-                    let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; 
-                    let parentText = g.parentId ? `<span style="font-size:0.75rem; background:#fef08a; padding:2px 6px; border-radius:4px; margin-left:5px;">Sub-Group</span>` : '';
-                    
-                    l.innerHTML+=`
-                    <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:bold; color: var(--text-main);">📁 ${g.name} <span style="font-size:0.75rem; background:#cbd5e1; padding:2px 6px; border-radius:4px; margin-left:10px;">${boardDisplay}</span> ${parentText}</span>
-                        <div>
-                            <button class="btn-outline" style="width:auto; padding:5px 10px; font-size:0.8rem; margin-right: 5px;" onclick="openEditGroupModal('${d.id}', '${g.name.replace(/'/g, "\\'")}', '${g.board || 'college'}', '${g.parentId || ''}')">✏️ Edit</button>
-                            <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
-                        </div>
-                    </div>`; 
-                    
-                    document.getElementById('newTestGroup').innerHTML += `<option value="${d.id}">${g.name}</option>`; 
-                    document.getElementById('admin-test-filter').innerHTML += `<option value="${d.id}">${g.name}</option>`;
-                    parentDropdowns.forEach(dd => dd.innerHTML += `<option value="${d.id}">${g.name}</option>`);
-                }); 
-            }); 
-            
-            db.collection("tests").onSnapshot(s=>{ 
-                let bannerTestSel = document.getElementById('banner-test-select'); if(bannerTestSel) bannerTestSel.innerHTML = '<option value="">Select Specific Test...</option>';
-                allTestsCache = []; 
-                s.forEach(d=>{ 
-                    let t=d.data(); allTestsCache.push({ id: d.id, ...t });
-                    if(bannerTestSel) bannerTestSel.innerHTML += `<option value="${d.id}">${t.title}</option>`;
-                }); 
-                renderAdminTests();
-            }); 
-            
-            db.collection("banners").onSnapshot(s => {
-                let l = document.getElementById('admin-banner-list'); if(!l) return;
-                l.innerHTML = ''; if(s.empty) l.innerHTML = '<p style="color: gray;">No active banners.</p>';
-                s.forEach(d => {
-                    let b = d.data(); let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
-                    let audienceDisplay = b.audience ? b.audience.toUpperCase() : 'ALL';
-
-                    l.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
-                        <div style="display:flex; align-items:center; gap:15px;">
-                            <div style="display:flex; flex-direction:column;">
-                                <span style="font-weight: 700; ${colorStyle} ${fontStyle}">${b.customTitle || 'Promo Banner'}</span>
-                                <span style="font-size: 0.85rem; color:var(--text-muted);">Test: ${b.testName || 'Unknown Test'} | Target: <b>${audienceDisplay}</b></span>
-                            </div>
-                        </div>
-                        <button class="btn-danger" style="width:auto; padding:5px 12px; font-size: 0.9rem;" onclick="deleteBanner('${d.id}')">🗑 Remove</button>
-                    </div>`;
-                });
-            });
-
-            db.collection("attempts").orderBy("timestamp","desc").limit(30).onSnapshot(s=>{ 
-                let c=document.getElementById('admin-attempts-list'); c.innerHTML=''; 
-                s.forEach(d=>{ let a=d.data(); c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><b>${a.userIdEmail.split('@')[0]}</b><br>${a.testTitle}<br><span style="color:var(--success); font-weight:bold;">Score: ${a.score}/${a.totalMarks}</span></div>`; }); 
-            }); 
-        }
-
-        // --- AI QUESTION EDITOR LOGIC ---
+        // --- AI QUESTION EDITOR LOGIC (WITH IMAGES) ---
         async function openTestEditor(testId, testTitle) {
             activeAdminTestId = testId; document.getElementById('editingTestTitle').innerText = `Adding Questions to: ${testTitle}`;
             const doc = await db.collection("tests").doc(testId).get(); localQuestionsBuffer = doc.exists && doc.data().questions ? doc.data().questions : [];
@@ -1836,18 +1989,27 @@
             const div = document.getElementById('adminExistingQuestionsList'); div.innerHTML=''; 
             if(localQuestionsBuffer.length === 0) { div.innerHTML = '<p style="color:var(--text-muted);">No questions added yet.</p>'; return; }
             localQuestionsBuffer.forEach((q,i) => { 
+                let imgIndicator = q.qImgUrl || (q.optImgUrls && q.optImgUrls.some(u => u)) ? ' 🖼️' : '';
                 div.innerHTML += `
                 <div class="list-item">
-                    <div><strong>Q${i+1}:</strong> ${(q.questionEng || q.questionHin || '').substring(0,40)}...</div>
+                    <div><strong>Q${i+1}:</strong> ${(q.questionEng || q.questionHin || '').substring(0,40)}... ${imgIndicator}</div>
                     <div class="action-buttons"><button class="btn-outline" onclick="editQuestion(${i})">Edit</button><button class="btn-danger" onclick="deleteQuestion(${i})">Del</button></div>
                 </div>`; 
             }); 
         }
 
         function cancelQuestionEdit() { 
-            editingQuestionIndex = null; document.getElementById('saveQuestionBtn').innerText="Save Question"; document.getElementById('cancelEditBtn').classList.add('hidden'); 
+            editingQuestionIndex = null; document.getElementById('saveQuestionBtn').innerText="Save Question (Uploads may take time)"; document.getElementById('cancelEditBtn').classList.add('hidden'); 
             document.getElementById('qTextEn').value=''; document.getElementById('qTextHi').value=''; 
-            for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value=''; document.getElementById(`opt${j}Hi`).value=''; } 
+            
+            // clear image values
+            document.getElementById('qImageUpload').value=''; document.getElementById('qImageUrl').value='';
+            
+            for(let j=0; j<4; j++){ 
+                document.getElementById(`opt${j}En`).value=''; document.getElementById(`opt${j}Hi`).value=''; 
+                document.getElementById(`opt${j}ImgUpload`).value=''; document.getElementById(`opt${j}ImgUrl`).value=''; 
+            } 
+            
             document.getElementById('correctAnswer').value='0'; 
             if(document.getElementById('qDisplayLang')) document.getElementById('qDisplayLang').value='both';
         }
@@ -1860,31 +2022,71 @@
         }
 
         async function addQuestionToTest() { 
-            const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; const optsEn=[], optsHi=[]; 
-            const displayLang = document.getElementById('qDisplayLang') ? document.getElementById('qDisplayLang').value : 'both';
+            const btn = document.getElementById('saveQuestionBtn');
+            btn.disabled = true; btn.innerText = "⏳ Uploading Images & Saving...";
 
-            for(let i=0;i<4;i++) { optsEn.push(document.getElementById(`opt${i}En`).value); optsHi.push(document.getElementById(`opt${i}Hi`).value); } 
-            if(!qEn && !qHi) return showToast("Fill at least one question field.", 'warning'); 
-            
-            const obj = { 
-                questionEng: qEn, questionHin: qHi, optionsEng: optsEn, optionsHin: optsHi, 
-                correctIndex: parseInt(document.getElementById('correctAnswer').value), 
-                subject: "General", explanationEng: "", explanationHin: "", displayLang: displayLang 
-            }; 
-            if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; else localQuestionsBuffer.push(obj); 
-            
-            await updateTestQuestionsInDb(); renderAdminQuestionList(); cancelQuestionEdit(); 
-            showToast("Question Saved successfully!", "success");
+            try {
+                const qEn=document.getElementById('qTextEn').value, qHi=document.getElementById('qTextHi').value; 
+                const displayLang = document.getElementById('qDisplayLang') ? document.getElementById('qDisplayLang').value : 'both';
+                const optsEn=[], optsHi=[]; 
+                
+                if(!qEn && !qHi && document.getElementById('qImageUpload').files.length === 0) {
+                    showToast("Provide some text or an image for the question.", 'warning');
+                    btn.disabled = false; btn.innerText = "Save Question";
+                    return;
+                }
+
+                // Handle Question Image Upload
+                let qImgUrl = document.getElementById('qImageUrl').value;
+                if(document.getElementById('qImageUpload').files.length > 0) {
+                    qImgUrl = await uploadImageToFirebase('qImageUpload', 'questions') || qImgUrl;
+                }
+
+                // Handle Options & Images
+                let optImgUrls = [];
+                for(let i=0;i<4;i++) { 
+                    optsEn.push(document.getElementById(`opt${i}En`).value); 
+                    optsHi.push(document.getElementById(`opt${i}Hi`).value); 
+                    
+                    let optUrl = document.getElementById(`opt${i}ImgUrl`).value;
+                    if(document.getElementById(`opt${i}ImgUpload`).files.length > 0) {
+                        optUrl = await uploadImageToFirebase(`opt${i}ImgUpload`, 'questions') || optUrl;
+                    }
+                    optImgUrls.push(optUrl);
+                } 
+                
+                const obj = { 
+                    questionEng: qEn, questionHin: qHi, qImgUrl: qImgUrl,
+                    optionsEng: optsEn, optionsHin: optsHi, optImgUrls: optImgUrls,
+                    correctIndex: parseInt(document.getElementById('correctAnswer').value), 
+                    subject: "General", explanationEng: "", explanationHin: "", displayLang: displayLang 
+                }; 
+
+                if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; else localQuestionsBuffer.push(obj); 
+                
+                await updateTestQuestionsInDb(); renderAdminQuestionList(); cancelQuestionEdit(); 
+                showToast("Question Saved successfully!", "success");
+
+            } catch(e) { console.error(e); } 
+            finally { btn.disabled = false; btn.innerText = "Save Question"; }
         }
 
         function editQuestion(i) { 
             const q = localQuestionsBuffer[i]; 
             document.getElementById('qTextEn').value = q.questionEng || ''; document.getElementById('qTextHi').value = q.questionHin || ''; 
-            for(let j=0; j<4; j++){ document.getElementById(`opt${j}En`).value = (q.optionsEng && q.optionsEng[j]) ? q.optionsEng[j] : ''; document.getElementById(`opt${j}Hi`).value = (q.optionsHin && q.optionsHin[j]) ? q.optionsHin[j] : ''; } 
+            document.getElementById('qImageUrl').value = q.qImgUrl || ''; document.getElementById('qImageUpload').value = '';
+            
+            for(let j=0; j<4; j++){ 
+                document.getElementById(`opt${j}En`).value = (q.optionsEng && q.optionsEng[j]) ? q.optionsEng[j] : ''; 
+                document.getElementById(`opt${j}Hi`).value = (q.optionsHin && q.optionsHin[j]) ? q.optionsHin[j] : ''; 
+                document.getElementById(`opt${j}ImgUrl`).value = (q.optImgUrls && q.optImgUrls[j]) ? q.optImgUrls[j] : '';
+                document.getElementById(`opt${j}ImgUpload`).value = '';
+            } 
+            
             document.getElementById('correctAnswer').value = q.correctIndex || 0; 
             if(document.getElementById('qDisplayLang')) document.getElementById('qDisplayLang').value = q.displayLang || 'both';
             
-            editingQuestionIndex = i; document.getElementById('saveQuestionBtn').innerText="Update"; document.getElementById('cancelEditBtn').classList.remove('hidden'); document.getElementById('admin-sec-question-editor').scrollIntoView();
+            editingQuestionIndex = i; document.getElementById('saveQuestionBtn').innerText="Update (Uploads may take time)"; document.getElementById('cancelEditBtn').classList.remove('hidden'); document.getElementById('admin-sec-question-editor').scrollIntoView();
         }
 
         function checkIfLanguageSubject(text) { const t = text.toLowerCase(); return t.includes('english') || t.includes('hindi'); }
@@ -1893,84 +2095,43 @@
             const topicInput = document.getElementById('aiTopicInput'); const difficultySelect = document.getElementById('aiDifficultySelect'); const countInput = document.getElementById('aiQuestionCount'); const generateBtn = document.getElementById('aiGenerateBtn'); const errorMsg = document.getElementById('aiGenError');
             const topic = topicInput.value.trim(); const difficulty = difficultySelect.value; const count = parseInt(countInput.value) || 1;
             
+            // NEW Language Dropdown Logic
+            const langChoice = document.getElementById('aiLanguageChoice').value; // 'both', 'english', 'hindi'
+
             if (!storedGeminiKey) { errorMsg.innerText = "Please configure the API Key in Portal Settings first."; errorMsg.style.display = 'block'; return; }
             if (!topic) { errorMsg.innerText = "Enter a topic."; errorMsg.style.display = 'block'; return; }
             
             errorMsg.style.display = 'none'; generateBtn.innerText = `Generating ${count}...`; generateBtn.disabled = true;
 
-            const isLangSubject = checkIfLanguageSubject(topic); let promptText = "";
-            if(isLangSubject) { promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. Since this is a language subject, keep the question and options in their native language (do not translate). Map the text to BOTH English and Hindi fields identically. Return ONLY a valid JSON ARRAY. Structure: [{"questionEng":"...","questionHin":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"..."}]`; } 
-            else { promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. You MUST provide the question, options, and explanation in BOTH English and Hindi. Return ONLY a valid JSON ARRAY. Structure: [{"questionEng":"[English Text]","questionHin":"[Hindi Translation]","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"..."}]`; }
+            let promptText = "";
+            if(langChoice === 'english') {
+                promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. You MUST provide the question, options, and explanation in ENGLISH ONLY. Map the text to BOTH the English and Hindi JSON fields identically so the system doesn't break. Return ONLY a valid JSON ARRAY. Structure: [{"questionEng":"[English Text]","questionHin":"[English Text]","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"..."}]`;
+            } else if (langChoice === 'hindi') {
+                promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. You MUST provide the question, options, and explanation in HINDI ONLY. Map the text to BOTH the English and Hindi JSON fields identically. Return ONLY a valid JSON ARRAY. Structure: [{"questionEng":"[Hindi Text]","questionHin":"[Hindi Text]","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"..."}]`;
+            } else {
+                promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. You MUST provide the question, options, and explanation in BOTH English and Hindi. Return ONLY a valid JSON ARRAY. Structure: [{"questionEng":"[English Text]","questionHin":"[Hindi Translation]","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"..."}]`;
+            }
 
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${storedGeminiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }], generationConfig: { responseMimeType: "application/json" } }) });
                 if (!response.ok) throw new Error(`Google API Error`);
                 const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
                 
-                parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", subject: topic.substring(0, 20), displayLang: 'both' }); });
+                parsedQuestions.forEach(qData => { 
+                    localQuestionsBuffer.push({ 
+                        questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", 
+                        optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], 
+                        correctIndex: parseInt(qData.correctIndex) || 0, 
+                        explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", 
+                        subject: topic.substring(0, 20), displayLang: langChoice 
+                    }); 
+                });
                 await updateTestQuestionsInDb(); renderAdminQuestionList(); 
-                showToast(`✨ Added ${parsedQuestions.length} bilingual questions!`, "success"); topicInput.value = '';
+                showToast(`✨ Added ${parsedQuestions.length} questions!`, "success"); topicInput.value = '';
             } catch (error) { errorMsg.innerText = "Error: " + error.message; errorMsg.style.display = 'block'; } finally { generateBtn.innerText = "Bulk Generate"; generateBtn.disabled = false; }
         }
 
-        function extractQuestionsFromPDF() {
-            const fileInput = document.getElementById('pdfUploadInput'); const extractBtn = document.getElementById('pdfExtractBtn'); const msgBox = document.getElementById('pdfExtractMsg');
-            if (!storedGeminiKey) { msgBox.innerText = "Configure API Key in Settings first."; msgBox.style.color = "var(--danger)"; msgBox.style.display = 'block'; return; }
-            if (!fileInput.files || fileInput.files.length === 0) { msgBox.innerText = "Select a PDF."; msgBox.style.color = "var(--danger)"; msgBox.style.display = 'block'; return; }
-            
-            const currentTest = allTestsCache.find(t => t.id === activeAdminTestId); const isLangSubject = checkIfLanguageSubject(currentTest ? currentTest.title : "");
-            const file = fileInput.files[0]; msgBox.style.color = "var(--primary)"; msgBox.innerText = "Reading & Translating PDF..."; msgBox.style.display = 'block'; extractBtn.disabled = true; extractBtn.innerText = "Extracting...";
-            
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64String = e.target.result.split(',')[1]; let promptText = "";
-                if(isLangSubject) { promptText = `Extract ALL multiple-choice questions from this PDF. Do NOT translate the text. Put the exact extracted text into BOTH Eng and Hin fields. Deduce correctIndex if answer key is present, else 0. Return ONLY JSON ARRAY: [{"questionEng":"...","questionHin":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"","explanationHin":""}]`; } 
-                else { promptText = `Extract ALL multiple-choice questions from this PDF. You MUST translate the questions and options so they are in BOTH English and Hindi. Deduce correctIndex if answer key is present, else 0. Return ONLY JSON ARRAY: [{"questionEng":"...","questionHin":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"correctIndex":0,"explanationEng":"","explanationHin":""}]`; }
-
-                try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${storedGeminiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [ { text: promptText }, { inlineData: { mimeType: "application/pdf", data: base64String } } ] }], generationConfig: { responseMimeType: "application/json" } }) });
-                    if (!response.ok) throw new Error("API Request Failed");
-                    const data = await response.json(); const aiText = data.candidates[0].content.parts[0].text; const parsedQuestions = JSON.parse(aiText);
-                    
-                    parsedQuestions.forEach(qData => { localQuestionsBuffer.push({ questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], correctIndex: parseInt(qData.correctIndex) || 0, subject: "Imported PDF", explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", displayLang: 'both' }); });
-                    await updateTestQuestionsInDb(); renderAdminQuestionList(); 
-                    msgBox.innerText = `✨ Success! Extracted & Translated ${parsedQuestions.length} questions.`; msgBox.style.color = "var(--success)"; fileInput.value = ""; 
-                } catch (error) { msgBox.innerText = "Error: " + error.message; msgBox.style.color = "var(--danger)"; } finally { extractBtn.innerText = "Extract Questions"; extractBtn.disabled = false; }
-            }; reader.readAsDataURL(file);
-        }
-
-        function openQuestionBankModal() {
-            const sel = document.getElementById('qbTestFilter'); sel.innerHTML = '<option value="all">All Other Tests</option>';
-            allTestsCache.forEach(t => { if (t.id !== activeAdminTestId && t.questions && t.questions.length > 0) { sel.innerHTML += `<option value="${t.id}">${t.title} (${t.questions.length} Qs)</option>`; } });
-            renderQuestionBankList(); document.getElementById('questionBankModal').style.display = 'flex';
-        }
-
-        function renderQuestionBankList() {
-            const div = document.getElementById('questionBankList'); div.innerHTML = '';
-            const filterId = document.getElementById('qbTestFilter').value; let count = 0;
-            allTestsCache.forEach(t => {
-                if (t.id === activeAdminTestId) return; if (filterId !== 'all' && t.id !== filterId) return; 
-                (t.questions || []).forEach((q, i) => {
-                    const qText = q.questionEng || q.questionHin || '';
-                    div.innerHTML += `<label style="display: flex; align-items: flex-start; gap: 12px; background: #fff; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: background 0.2s;"><input type="checkbox" class="qb-checkbox" value="${t.id}_${i}" style="margin-top: 2px; width: 18px; height: 18px;"><div><span style="font-size: 14px; color: var(--text-main); font-weight: 500;">${qText.substring(0, 100)}...</span><br><span style="font-size: 11px; color: var(--text-muted); font-weight:bold; background:#f1f5f9; padding:2px 6px; border-radius:4px; margin-top:4px; display:inline-block;">Source: ${t.title}</span></div></label>`;
-                    count++;
-                });
-            });
-            if (count === 0) div.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding: 20px; font-weight:bold;">No questions available in other tests.</p>';
-        }
-
-        async function importSelectedQuestions() {
-            const checkboxes = document.querySelectorAll('.qb-checkbox:checked'); if (checkboxes.length === 0) return showToast("Select at least one question.", 'error');
-            let importedCount = 0;
-            checkboxes.forEach(cb => {
-                const [tId, qIdxStr] = cb.value.split('_'); const sourceTest = allTestsCache.find(t => t.id === tId);
-                if (sourceTest && sourceTest.questions && sourceTest.questions[parseInt(qIdxStr)]) { const qCopy = JSON.parse(JSON.stringify(sourceTest.questions[parseInt(qIdxStr)])); localQuestionsBuffer.push(qCopy); importedCount++; }
-            });
-            await updateTestQuestionsInDb(); renderAdminQuestionList(); closeModals();
-            showToast(`✨ Successfully imported ${importedCount} question(s)!`, "success");
-        }
-
-        // --- STUDENT DASHBOARD LOGIC (Clean Groups Only) ---
+        // --- STUDENT DASHBOARD LOGIC (IMAGE BANNERS ENABLED) ---
         function loadStudentData() {
             if(auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
@@ -1982,10 +2143,7 @@
                         db.collection("groups").onSnapshot((snap) => {
                             allGroupsCache = [];
                             snap.forEach(d => { let g = d.data(); g.id = d.id; allGroupsCache.push(g); });
-                            
-                            if(document.getElementById('student-sec-groups').classList.contains('active')) {
-                                loadGroupsForStudents("");
-                            }
+                            if(document.getElementById('student-sec-groups').classList.contains('active')) { loadGroupsForStudents(""); }
                         });
                     }
                 }).catch(e => console.error("Error fetching user data", e));
@@ -1996,37 +2154,25 @@
             
             db.collection("banners").onSnapshot(s => {
                 let c = document.getElementById('student-banners'); if(!c) return;
-                c.innerHTML = ''; 
-                let hasVisibleBanners = false;
+                c.innerHTML = ''; let hasVisibleBanners = false;
 
                 s.forEach(d => {
-                    let b = d.data(); 
-                    let showBanner = (!b.audience || b.audience === 'all' || b.audience === currentUserBoard);
-
+                    let b = d.data(); let showBanner = (!b.audience || b.audience === 'all' || b.audience === currentUserBoard);
                     if(showBanner) {
                         hasVisibleBanners = true;
-                        let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; 
-                        let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
-                        
-                        let bannerTitle = b.customTitle || b.testName;
-                        let fallbackUrl = getFallbackImage(bannerTitle);
-                        let finalImgUrl = b.imageUrl ? b.imageUrl : fallbackUrl;
+                        let colorStyle = b.textColor ? `color: ${b.textColor};` : ''; let fontStyle = b.textFont ? `font-family: ${b.textFont};` : '';
+                        let bannerTitle = b.customTitle || b.testName; let fallbackUrl = getFallbackImage(bannerTitle); let finalImgUrl = b.imageUrl ? b.imageUrl : fallbackUrl;
                         let bgStyle = `background-image: url('${finalImgUrl}'); background-size: cover; background-position: center;`;
 
-                        c.innerHTML += `
-                        <div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')">
-                            <div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${bannerTitle}</div>
-                        </div>`;
+                        c.innerHTML += `<div class="promo-banner" style="${bgStyle}" onclick="startTest('${b.testId}')"><div class="promo-banner-title" style="${colorStyle} ${fontStyle}">${bannerTitle}</div></div>`;
                     }
                 });
-                
                 if(!hasVisibleBanners) { c.style.display = 'none'; } else { c.style.display = 'flex'; }
             });
         }
 
         function loadGroupsForStudents(parentId = "") { 
             let c=document.getElementById('student-group-list'); c.innerHTML=''; 
-            
             let backBtn = document.getElementById('btn-back-groups');
             let headerTitle = document.getElementById('groups-header-title');
             
@@ -2034,32 +2180,30 @@
                 let parentGroup = allGroupsCache.find(g => g.id === parentId);
                 headerTitle.innerText = parentGroup ? parentGroup.name : "Sub-Categories";
                 backBtn.onclick = () => loadGroupsForStudents(parentGroup ? (parentGroup.parentId || "") : ""); 
-                backBtn.style.opacity = '0'; 
+                backBtn.style.opacity = '1'; backBtn.style.position = 'static';
             } else {
                 headerTitle.innerText = "Select a Test Category";
                 backBtn.onclick = () => openStudentSec('student-main-menu');
-                backBtn.style.opacity = '0';
+                backBtn.style.opacity = '0'; backBtn.style.position = 'absolute';
             }
 
             let hasVisibleGroups = false;
 
             allGroupsCache.forEach(g=>{ 
-                let groupBoard = g.board || 'college'; 
-                let groupParent = g.parentId || "";
-                
+                let groupBoard = g.board || 'college'; let groupParent = g.parentId || "";
                 let showGroup = false;
-                if (currentUserBoard === 'college') { showGroup = true; } 
-                else if (currentUserBoard === 'cbse' && groupBoard === 'cbse') { showGroup = true; } 
-                else if (currentUserBoard === 'hbse' && groupBoard === 'hbse') { showGroup = true; }
+                if (currentUserBoard === 'college') { showGroup = true; } else if (currentUserBoard === 'cbse' && groupBoard === 'cbse') { showGroup = true; } else if (currentUserBoard === 'hbse' && groupBoard === 'hbse') { showGroup = true; }
 
                 if(showGroup && groupParent === parentId) {
                     hasVisibleGroups = true;
-                    
                     let hasChildren = allGroupsCache.some(child => child.parentId === g.id);
                     let badgeHtml = hasChildren ? `<div class="sub-group-badge">📁 Sub-groups</div>` : ``;
 
+                    // Render background image if available
+                    let bgStyle = g.imageUrl ? `background-image: url('${g.imageUrl}');` : `background-color: var(--primary);`;
+
                     c.innerHTML+=`
-                    <div class="group-card" onclick="handleGroupClick('${g.id}','${g.name.replace(/'/g, "\\'")}', ${hasChildren})">
+                    <div class="group-card" style="${bgStyle}" onclick="handleGroupClick('${g.id}','${g.name.replace(/'/g, "\\'")}', ${hasChildren})">
                         ${badgeHtml}
                         <div class="group-card-content">
                             <h3>${g.name}</h3>
@@ -2072,36 +2216,31 @@
             openStudentSec('student-sec-groups');
         }
 
-        function handleGroupClick(gid, gn, hasChildren) {
-            if(hasChildren) { loadGroupsForStudents(gid); } else { viewGroupTests(gid, gn); }
-        }
+        function handleGroupClick(gid, gn, hasChildren) { if(hasChildren) { loadGroupsForStudents(gid); } else { viewGroupTests(gid, gn); } }
         
         function viewGroupTests(gid, gn) { 
             document.getElementById('current-group-title').innerText=gn; 
-            db.collection("tests").where("groupId","==",gid).onSnapshot(s=>{ 
+            db.collection("tests").onSnapshot(s=>{ 
                 let c=document.getElementById('student-test-list'); c.innerHTML=''; 
-                if(s.empty) c.innerHTML='<p>No tests found.</p>'; 
+                let count = 0;
                 s.forEach(d=>{ 
                     let t=d.data(); 
-                    let actionHtml = '';
-                    if(studentAttemptedDB[d.id]) {
-                        actionHtml = `
-                            <div style="display:flex; gap:10px; margin-top:10px;">
-                                <button class="btn-primary" style="flex:1;" onclick="startTest('${d.id}')">Retake Test</button>
-                                <button class="btn-outline" style="flex:1; border-color:var(--primary); color:var(--primary);" onclick="seePastResults('${studentAttemptedDB[d.id]}')">See Results</button>
-                            </div>`;
-                    } else {
-                        actionHtml = `<button class="btn-primary" style="margin-top:10px;" onclick="startTest('${d.id}')">Start Attempt 🚀</button>`;
-                    }
+                    // Check if test belongs to the group (array check or old string check)
+                    let belongsToGroup = (t.groupIDs && Array.isArray(t.groupIDs) && t.groupIDs.includes(gid)) || t.groupId === gid;
+                    
+                    if(belongsToGroup) {
+                        count++;
+                        let actionHtml = '';
+                        if(studentAttemptedDB[d.id]) {
+                            actionHtml = `<div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-primary" style="flex:1;" onclick="startTest('${d.id}')">Retake</button><button class="btn-outline" style="flex:1; border-color:var(--primary); color:var(--primary);" onclick="seePastResults('${studentAttemptedDB[d.id]}')">Results</button></div>`;
+                        } else {
+                            actionHtml = `<button class="btn-primary" style="margin-top:10px;" onclick="startTest('${d.id}')">Start Attempt 🚀</button>`;
+                        }
 
-                    c.innerHTML+=`
-                    <div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;">
-                        <h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>
-                        ${actionHtml}
-                    </div>
-                    `; 
+                        c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4><p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>${actionHtml}</div>`; 
+                    }
                 }); 
+                if(count === 0) c.innerHTML='<p>No tests found.</p>';
             }); 
             openStudentSec('student-sec-tests-list'); 
         }
@@ -2109,17 +2248,11 @@
         function loadStudentAttempts() { 
             if(!auth.currentUser)return; 
             db.collection("attempts").where("userId","==",auth.currentUser.uid).onSnapshot(s=>{ 
-                let c=document.getElementById('student-attempts-list'); c.innerHTML=''; 
-                studentAttemptedDB = {}; 
+                let c=document.getElementById('student-attempts-list'); c.innerHTML=''; studentAttemptedDB = {}; 
                 if(s.empty) c.innerHTML='<p>No attempts yet.</p>'; 
                 s.forEach(d=>{ 
-                    let a=d.data(); 
-                    studentAttemptedDB[a.testId] = d.id; 
-                    c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)">
-                        <h4 style="margin-bottom:10px">${a.testTitle}</h4>
-                        <div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold; margin-bottom: 10px;">Score: ${a.score}/${a.totalMarks}</div>
-                        <button class="btn-outline" style="width: 100%; border-color: var(--primary); color: var(--primary);" onclick="seePastResults('${d.id}')">Review Solutions</button>
-                    </div>`; 
+                    let a=d.data(); studentAttemptedDB[a.testId] = d.id; 
+                    c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><h4 style="margin-bottom:10px">${a.testTitle}</h4><div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold; margin-bottom: 10px;">Score: ${a.score}/${a.totalMarks}</div><button class="btn-outline" style="width: 100%; border-color: var(--primary); color: var(--primary);" onclick="seePastResults('${d.id}')">Review Solutions</button></div>`; 
                 }); 
             }); 
         }
@@ -2133,7 +2266,6 @@
                 const snapshot = await db.collection("attempts").where("testId", "==", tid).get();
                 if(snapshot.empty) { res.innerHTML = '<p style="color:var(--text-muted); padding:20px;">No attempts for this test yet. Be the first!</p>'; return; }
                 let attempts = []; snapshot.forEach(doc => attempts.push(doc.data())); attempts.sort((a, b) => b.score - a.score);
-                
                 let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
                 attempts.forEach((att, idx) => {
                     let isMe = (auth.currentUser && att.userId === auth.currentUser.uid); let rowStyle = isMe ? 'background: #e0e7ff; border-color: var(--primary);' : 'background: #f8fafc; border-color: var(--border-color);';
@@ -2144,34 +2276,11 @@
         }
 
         // --- TEST INTERFACE LOGIC ---
-        function getForcedLanguage(subject) {
-            if (!subject) return null;
-            const sub = subject.toLowerCase();
-            if (sub.includes('english')) return 'Eng';
-            if (sub.includes('hindi')) return 'Hin';
-            return null;
-        }
-
-        function togglePalette() { 
-            const panel = document.getElementById('side-palette');
-            const overlay = document.getElementById('side-overlay');
-            if (panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } 
-            else { panel.classList.add('open'); overlay.style.display = 'block'; }
-        }
-
-        function renderPalette() {
-            const grid = document.getElementById('palette-grid'); grid.innerHTML = '';
-            testQuestions.forEach((_, i) => { grid.innerHTML += `<button id="pal-btn-${i}" class="q-btn" onclick="jumpToQuestion(${i}); togglePalette();">${i + 1}</button>`; });
-            updatePaletteButton(0);
-        }
-
+        function getForcedLanguage(subject) { if (!subject) return null; const sub = subject.toLowerCase(); if (sub.includes('english')) return 'Eng'; if (sub.includes('hindi')) return 'Hin'; return null; }
+        function togglePalette() { const panel = document.getElementById('side-palette'); const overlay = document.getElementById('side-overlay'); if (panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } else { panel.classList.add('open'); overlay.style.display = 'block'; } }
+        function renderPalette() { const grid = document.getElementById('palette-grid'); grid.innerHTML = ''; testQuestions.forEach((_, i) => { grid.innerHTML += `<button id="pal-btn-${i}" class="q-btn" onclick="jumpToQuestion(${i}); togglePalette();">${i + 1}</button>`; }); updatePaletteButton(0); }
         function jumpToQuestion(i) { currentQuestionIndex = i; renderCurrentQuestion(); document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active')); document.getElementById(`pal-btn-${i}`).classList.add('active'); }
-
-        function updatePaletteButton(i) {
-            const btn = document.getElementById(`pal-btn-${i}`); btn.className = 'q-btn';
-            if (i === currentQuestionIndex) btn.classList.add('active');
-            if (questionStates[i] === 'answered') btn.classList.add('answered'); else if (questionStates[i] === 'marked') btn.classList.add('marked');
-        }
+        function updatePaletteButton(i) { const btn = document.getElementById(`pal-btn-${i}`); btn.className = 'q-btn'; if (i === currentQuestionIndex) btn.classList.add('active'); if (questionStates[i] === 'answered') btn.classList.add('answered'); else if (questionStates[i] === 'marked') btn.classList.add('marked'); }
 
         let currentLanguage = 'Eng'; let reviewLanguage = 'Eng';
 
@@ -2181,24 +2290,29 @@
             const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
 
             let forcedLang = null;
-            if (q.displayLang === 'english') forcedLang = 'Eng';
-            else if (q.displayLang === 'hindi') forcedLang = 'Hin';
-            else forcedLang = getForcedLanguage(q.subject);
-
+            if (q.displayLang === 'english') forcedLang = 'Eng'; else if (q.displayLang === 'hindi') forcedLang = 'Hin'; else forcedLang = getForcedLanguage(q.subject);
             const displayLang = forcedLang ? forcedLang : currentLanguage;
             
             const switchBtn = document.getElementById('btn-switch-lang');
-            if(switchBtn) {
-                switchBtn.style.display = forcedLang ? 'none' : 'inline-block';
-            }
+            if(switchBtn) { switchBtn.style.display = forcedLang ? 'none' : 'inline-block'; }
 
             document.getElementById('question-tracker').innerText = `Question ${currentQuestionIndex + 1} of ${testQuestions.length}`;
             const qText = displayLang === 'Eng' ? q.questionEng : q.questionHin; 
             const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin;
             
-            let optionsHTML = ''; if(opts) { opts.forEach((opt, optIndex) => { optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <span>${opt}</span></label>`; }); }
+            // Render Question Image if exists
+            const qImgHtml = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" alt="Question Diagram" style="margin-bottom: 10px; max-width: 100%; height: auto;">` : '';
+
+            let optionsHTML = ''; 
+            if(opts) { 
+                opts.forEach((opt, optIndex) => { 
+                    // Render Option Image if exists
+                    const optImgHtml = (q.optImgUrls && q.optImgUrls[optIndex]) ? `<br><img src="${q.optImgUrls[optIndex]}" class="q-card-img" alt="Option Image" style="margin-top: 5px;">` : '';
+                    optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <div style="display:flex; flex-direction:column;"><span>${opt}</span>${optImgHtml}</div></label>`; 
+                }); 
+            }
             
-            container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || 'Language translation missing'}</h4><div class="options">${optionsHTML}</div></div>`;
+            container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.2rem; margin-bottom: 10px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || ''}</h4>${qImgHtml}<div class="options">${optionsHTML}</div></div>`;
 
             document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
             const nextBtn = document.getElementById('btn-next'); if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
@@ -2217,18 +2331,10 @@
             Array.from(subjectSet).forEach(sub => { let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub); tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn" style="white-space:nowrap; padding:6px 15px;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`; });
             document.getElementById('section-tabs').innerHTML = tabsHtml;
 
-            isTestActive = true; 
-            navigate('view-test');
-            renderPalette(); renderCurrentQuestion(); startTimer();
+            isTestActive = true; navigate('view-test'); renderPalette(); renderCurrentQuestion(); startTimer();
         }
 
-        function confirmPause() { 
-            isTestActive = false; 
-            clearInterval(testTimer); 
-            hideExitModal(); 
-            navigate('view-student'); 
-        }
-
+        function confirmPause() { isTestActive = false; clearInterval(testTimer); hideExitModal(); navigate('view-student'); }
         function setAnswer(optIndex) { userAnswers[currentQuestionIndex] = optIndex; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'answered'; updatePaletteButton(currentQuestionIndex); }
         function clearResponse() { userAnswers[currentQuestionIndex] = null; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'unanswered'; document.getElementsByName('active_q').forEach(r => r.checked = false); updatePaletteButton(currentQuestionIndex); }
         function markForReview() { questionStates[currentQuestionIndex] = questionStates[currentQuestionIndex] === 'marked' ? (userAnswers[currentQuestionIndex] !== null ? 'answered' : 'unanswered') : 'marked'; updatePaletteButton(currentQuestionIndex); nextQuestion(); }
@@ -2243,7 +2349,6 @@
 
         function showExitModal() { document.getElementById('exit-modal').style.display = 'flex'; }
         function hideExitModal() { document.getElementById('exit-modal').style.display = 'none'; }
-        
         function showSubmitSummary() {
             hideExitModal(); let answered = 0, unanswered = 0, marked = 0;
             for(let i = 0; i < testQuestions.length; i++) { if (questionStates[i] === 'marked') marked++; else if (questionStates[i] === 'answered' || userAnswers[i] !== null) answered++; else unanswered++; }
@@ -2254,12 +2359,10 @@
         function finalSubmitTest() {
             hideSubmitSummary(); clearInterval(testTimer); isTestActive = false; 
             let correct = 0, wrong = 0, left = 0, sectionStats = {}; 
-            
             testQuestions.forEach((q, i) => { 
                 let sub = q.subject || 'General'; if (!sectionStats[sub]) sectionStats[sub] = { total: 0, correct: 0, wrong: 0, left: 0 }; sectionStats[sub].total++;
                 if (userAnswers[i] === null) { left++; sectionStats[sub].left++; } else if (userAnswers[i] === q.correctIndex) { correct++; sectionStats[sub].correct++; } else { wrong++; sectionStats[sub].wrong++; }
             });
-
             let finalScore = Math.round(((correct * testMarks) - (wrong * testNegativeMarks)) * 100) / 100; 
 
             if(auth.currentUser) {
@@ -2268,34 +2371,21 @@
                     correct: correct, wrong: wrong, left: left, userAnswers: userAnswers, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
             }
-
             document.getElementById('res-score').innerText = finalScore; document.getElementById('res-correct').innerText = correct; document.getElementById('res-wrong').innerText = wrong; document.getElementById('res-left').innerText = left;
-
             let secHtml = '';
             for (let sub in sectionStats) {
                 let st = sectionStats[sub]; let attempted = st.total - st.left; let accuracy = attempted > 0 ? Math.round((st.correct / attempted) * 100) : 0;
                 let scoreColor = accuracy >= 75 ? 'var(--success)' : (accuracy >= 40 ? 'var(--warning)' : 'var(--danger)');
-                secHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-color);">
-                    <div><strong style="display:block; color:var(--text-main);">${sub}</strong><span style="font-size: 0.85rem; color:var(--text-muted);">${st.correct} Correct, ${st.wrong} Wrong, ${st.left} Skipped</span></div>
-                    <div style="font-weight: 700; color: ${scoreColor}; font-size: 1.1rem;">${accuracy}% Acc.</div></div>`;
+                secHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-color);"><div><strong style="display:block; color:var(--text-main);">${sub}</strong><span style="font-size: 0.85rem; color:var(--text-muted);">${st.correct} Correct, ${st.wrong} Wrong, ${st.left} Skipped</span></div><div style="font-weight: 700; color: ${scoreColor}; font-size: 1.1rem;">${accuracy}% Acc.</div></div>`;
             }
             document.getElementById('res-sectional').innerHTML = secHtml; navigate('view-results');
         }
 
-        // --- TEST REVIEW LOGIC ---
         async function seePastResults(attemptId) {
             try {
-                const attDoc = await db.collection("attempts").doc(attemptId).get();
-                if(!attDoc.exists) return showToast("Record not found.", 'error');
-                const attData = attDoc.data();
-                
-                const testDoc = await db.collection("tests").doc(attData.testId).get();
-                if(!testDoc.exists) return showToast("This test no longer exists.", 'error');
-                
-                currentTest = testDoc.data();
-                testQuestions = currentTest.questions || [];
-                userAnswers = attData.userAnswers || new Array(testQuestions.length).fill(null);
-                
+                const attDoc = await db.collection("attempts").doc(attemptId).get(); if(!attDoc.exists) return showToast("Record not found.", 'error'); const attData = attDoc.data();
+                const testDoc = await db.collection("tests").doc(attData.testId).get(); if(!testDoc.exists) return showToast("This test no longer exists.", 'error');
+                currentTest = testDoc.data(); testQuestions = currentTest.questions || []; userAnswers = attData.userAnswers || new Array(testQuestions.length).fill(null);
                 showReviewScreen(); 
             } catch(e) { showToast("Error loading past results: " + e.message, 'error'); }
         }
@@ -2304,15 +2394,10 @@
         function toggleReviewLanguage() { reviewLanguage = reviewLanguage === 'Eng' ? 'Hin' : 'Eng'; renderReviewContent(); }
 
         function renderReviewContent() {
-            const container = document.getElementById('review-container'); container.innerHTML = '';
-            let anyUnforced = false;
-
+            const container = document.getElementById('review-container'); container.innerHTML = ''; let anyUnforced = false;
             testQuestions.forEach((q, i) => {
                 let forcedLang = null;
-                if (q.displayLang === 'english') forcedLang = 'Eng';
-                else if (q.displayLang === 'hindi') forcedLang = 'Hin';
-                else forcedLang = getForcedLanguage(q.subject);
-
+                if (q.displayLang === 'english') forcedLang = 'Eng'; else if (q.displayLang === 'hindi') forcedLang = 'Hin'; else forcedLang = getForcedLanguage(q.subject);
                 const displayLang = forcedLang ? forcedLang : reviewLanguage;
                 if (!forcedLang) anyUnforced = true;
 
@@ -2320,12 +2405,15 @@
                 const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin; 
                 const exp = displayLang === 'Eng' ? q.explanationEng : q.explanationHin;
                 
+                const qImgHtml = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" alt="Question Diagram" style="margin-bottom: 10px; max-width: 100%; height: auto;">` : '';
+
                 let optionsHTML = '';
                 if(opts) {
                     opts.forEach((opt, optIndex) => {
                         let optClass = '', label = '';
                         if (optIndex === q.correctIndex) { optClass = 'opt-correct'; label = '✅ '; } else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) { optClass = 'opt-wrong'; label = '❌ (Your Answer) '; }
-                        optionsHTML += `<div class="options" style="margin: 0;"><label class="${optClass}" style="cursor: default;">${label}${opt}</label></div>`;
+                        const optImgHtml = (q.optImgUrls && q.optImgUrls[optIndex]) ? `<br><img src="${q.optImgUrls[optIndex]}" class="q-card-img" alt="Option Image" style="margin-top: 5px;">` : '';
+                        optionsHTML += `<div class="options" style="margin: 0;"><label class="${optClass}" style="cursor: default;"><div style="display:flex; flex-direction:column;"><span>${label}${opt}</span>${optImgHtml}</div></label></div>`;
                     });
                 }
                 
@@ -2333,11 +2421,8 @@
 
                 container.innerHTML += `
                     <div class="question-card" style="min-height: auto; border-top: 4px solid ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#cbd5e1' : 'var(--danger)')};">
-                        <div style="display:flex; justify-content:space-between; margin-bottom: 10px;">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#64748b' : 'var(--danger)')};">${userAnswers[i] === q.correctIndex ? 'Correctly Answered' : (userAnswers[i] === null ? 'Not Answered' : 'Incorrectly Answered')}</span>
-                            <span style="background:#f1f5f9; padding:2px 8px; border-radius:12px; font-size:0.75rem; color:#475569; font-weight:bold;">${q.subject || 'General'}</span>
-                        </div>
-                        <h4 style="font-size: 1.15rem; margin-bottom: 20px;"><span style="color: var(--primary);">Q${i + 1}.</span> ${qText || 'Language translation missing'}</h4>
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 10px;"><span style="font-size: 0.85rem; font-weight: 600; color: ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#64748b' : 'var(--danger)')};">${userAnswers[i] === q.correctIndex ? 'Correctly Answered' : (userAnswers[i] === null ? 'Not Answered' : 'Incorrectly Answered')}</span><span style="background:#f1f5f9; padding:2px 8px; border-radius:12px; font-size:0.75rem; color:#475569; font-weight:bold;">${q.subject || 'General'}</span></div>
+                        <h4 style="font-size: 1.15rem; margin-bottom: 10px;"><span style="color: var(--primary);">Q${i + 1}.</span> ${qText || ''}</h4>${qImgHtml}
                         <div style="display:flex; flex-direction:column; gap:8px;">${optionsHTML}</div> ${expHTML}
                     </div>`;
             });
