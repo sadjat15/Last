@@ -889,7 +889,20 @@
 
                     <button class="btn-primary" onclick="createNewTest()">Create Test & Add Questions</button>
                 </div>
-
+                <div class="action-box" style="border-left: 4px solid var(--review); margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px; color: var(--review);">🔄 Combine Multiple Tests</h3>
+                    <div class="input-group">
+                        <label>New Combined Test Name</label>
+                        <input type="text" id="combinedTestName" placeholder="e.g., Mega Mock Test (Combined)">
+                    </div>
+                    <div class="input-group">
+                        <label>Select Tests to Combine (Check 2 or more)</label>
+                        <div id="combineTestsContainer" style="max-height: 150px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: #f8fafc; display: flex; flex-direction: column; gap: 8px;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Loading tests...</span>
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: var(--review);" onclick="combineSelectedTests()">Combine Tests & Save</button>
+                </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                     <h3 style="margin: 0;">Live Cloud Tests</h3>
                     <select id="admin-test-filter" class="group-select" style="padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); width: 200px;" onchange="renderAdminTests()">
@@ -1307,7 +1320,7 @@
             }
         }
         
-        // --- CLOUDINARY IMAGE UPLOAD HELPER (Updated to 500 KB limit) ---
+        // --- CLOUDINARY IMAGE UPLOAD HELPER ---
         async function uploadImageToFirebase(fileInputId, folderPath) {
             const fileInput = document.getElementById(fileInputId);
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
@@ -1401,7 +1414,7 @@
             });
         }
         
-        // --- NEW: STUDENT POPUP SAVE LOGIC ---
+        // --- STUDENT POPUP LOGIC ---
         async function savePopupSettings() {
             const status = document.getElementById('popup-status').value;
             const audience = document.getElementById('popup-audience').value;
@@ -1417,7 +1430,6 @@
             try {
                 let popupData = { status, audience, message, textColor, font: textFont, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
                 
-                // Handle optional image upload
                 const fileInput = document.getElementById('popup-image-upload');
                 if(fileInput.files.length > 0) {
                     const imageUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
@@ -1426,12 +1438,11 @@
 
                 await db.collection("adminSettings").doc("studentPopup").set(popupData, { merge: true });
                 showToast("Popup Settings saved successfully!", "success");
-                fileInput.value = ''; // clear input
+                fileInput.value = ''; 
             } catch (e) { console.error(e); showToast("Failed to save popup.", "error"); } 
             finally { btn.disabled = false; btn.innerText = "Save Popup Settings"; }
         }
 
-        // --- STUDENT POPUP LOAD LOGIC ---
         function closeStudentPopup() { document.getElementById('student-popup-modal').style.display = 'none'; }
         
         function loadStudentPopup() {
@@ -1440,7 +1451,6 @@
                 if(doc.exists) {
                     const data = doc.data();
                     
-                    // Pre-fill admin fields if viewing as admin
                     if(document.getElementById('popup-status')) {
                         document.getElementById('popup-status').value = data.status || 'inactive';
                         document.getElementById('popup-audience').value = data.audience || 'all';
@@ -1461,7 +1471,8 @@
                 }
             }).catch(e => console.error("Error loading popup: ", e));
         }
-                // --- NAVIGATION & VISIBILITY CONTROLS ---
+        
+        // --- NAVIGATION & VISIBILITY CONTROLS ---
         function updateUIVisibility() {
             const bottomNav = document.getElementById('bottom-nav-student');
             const appBanner = document.getElementById('app-download-banner');
@@ -1499,10 +1510,9 @@
             if (pushState) window.history.pushState({ view: 'view-student', sec: secId }, "", `#${secId}`); 
         }
 
-        // --- ANTI-REFRESH PROTECTION ---
+        // --- ANTI-REFRESH & DEVICE LOCKOUT ---
         window.addEventListener('beforeunload', function (e) { if (isTestActive) { e.preventDefault(); e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.'; } });
 
-        // --- SECURITY: 5 ATTEMPTS LOCKOUT ---
         const MAX_FAILED_ATTEMPTS = 5; const LOCKOUT_DURATION_MS = 12 * 60 * 60 * 1000;
         function checkDeviceLockout() {
             const lockoutDataStr = localStorage.getItem('deviceLockoutData'); if (!lockoutDataStr) return false;
@@ -1653,8 +1663,7 @@
                 navigate('view-login', false); 
             }
         });
-
-        // --- ADMIN: GROUP SETTINGS (With Image Upload logic) ---
+                // --- ADMIN: GROUP SETTINGS (With Image Upload logic) ---
         async function addGroup() { 
             const n = document.getElementById('new-group-name').value.trim(); 
             const b = document.getElementById('new-group-board').value; 
@@ -1726,7 +1735,8 @@
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-                // --- PORTAL BRANDING LOGIC ---
+        
+        // --- PORTAL BRANDING LOGIC ---
         function loadPortalBranding() {
             db.collection("adminSettings").doc("branding").onSnapshot((doc) => {
                 if(doc.exists) {
@@ -1761,14 +1771,12 @@
             const name = document.getElementById('newTestName').value.trim(); 
             const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
             
-            // Get all checked groups
             const checkedGroups = Array.from(document.querySelectorAll('#newTestGroupsContainer input:checked')).map(cb => cb.value);
 
             if (!name) return showToast("Please provide a test name.", 'error');
             if (checkedGroups.length === 0) return showToast("Please select at least one group.", 'error');
 
             try {
-                // Use 'groupIDs' array instead of single 'groupId'
                 const docRef = await db.collection("tests").add({ 
                     title: name, 
                     groupIDs: checkedGroups, 
@@ -1793,7 +1801,6 @@
             c.innerHTML = ''; 
             
             let displayTests = filterVal === 'all' ? allTestsCache : allTestsCache.filter(t => {
-                // Support both new array format and old string format
                 if(t.groupIDs && Array.isArray(t.groupIDs)) return t.groupIDs.includes(filterVal);
                 return t.groupId === filterVal;
             });
@@ -1826,7 +1833,6 @@
             document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
             document.getElementById('edit-negative').value = test.negativeMarks || 0; 
             
-            // Populate check boxes
             const testGroups = test.groupIDs || (test.groupId ? [test.groupId] : []);
             document.querySelectorAll('#editTestGroupsContainer input').forEach(cb => {
                 cb.checked = testGroups.includes(cb.value);
@@ -1877,9 +1883,12 @@
                 parentDropdowns.forEach(dd => dd.innerHTML = '<option value="">None (Top Level Category)</option>');
 
                 allGroupsCache = []; 
+                let parents = [];
+                let children = [];
 
                 s.forEach(d=>{ 
                     let g=d.data(); g.id = d.id; allGroupsCache.push(g);
+                    if (g.parentId) children.push(g); else parents.push(g);
 
                     let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; 
                     let parentText = g.parentId ? `<span style="font-size:0.75rem; background:#fef08a; padding:2px 6px; border-radius:4px; margin-left:5px;">Sub-Group</span>` : '';
@@ -1893,29 +1902,51 @@
                             <button class="btn-danger" style="width:auto; padding:5px 10px; font-size:0.8rem;" onclick="deleteGroup('${d.id}')">Delete</button>
                         </div>
                     </div>`; 
-                    
-                    // Checkbox list for multiple groups selection
-                    let cbHTML = `<label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" value="${d.id}" style="width:16px; height:16px;"> <span>${g.name}</span></label>`;
-                    newTestGrpCont.innerHTML += cbHTML;
-                    editTestGrpCont.innerHTML += cbHTML;
 
                     document.getElementById('admin-test-filter').innerHTML += `<option value="${d.id}">${g.name}</option>`;
                     parentDropdowns.forEach(dd => dd.innerHTML += `<option value="${d.id}">${g.name}</option>`);
                 }); 
+
+                // Render Checkboxes: Group -> Sub-Group Hierarchy
+                parents.forEach(p => {
+                    let boardTag = p.board ? p.board.toUpperCase() : 'COLLEGE';
+                    let cbHTML = `<div style="margin-bottom: 8px; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; background: #ffffff;">
+                                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:bold;">
+                                        <input type="checkbox" value="${p.id}" style="width:16px; height:16px;"> 
+                                        <span>${p.name} <span style="font-size:0.7rem; color:#64748b; margin-left:5px;">(${boardTag})</span></span>
+                                    </label>`;
+                    
+                    let myChildren = children.filter(c => c.parentId === p.id);
+                    if (myChildren.length > 0) {
+                        cbHTML += `<div style="margin-left: 24px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px; border-left: 2px solid var(--primary); padding-left: 10px;">`;
+                        myChildren.forEach(c => {
+                            cbHTML += `<label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                        <input type="checkbox" value="${c.id}" style="width:14px; height:14px; accent-color: var(--review);"> 
+                                        <span style="color:var(--text-muted); font-size:0.9rem;">${c.name}</span>
+                                       </label>`;
+                        });
+                        cbHTML += `</div>`;
+                    }
+                    cbHTML += `</div>`;
+                    newTestGrpCont.innerHTML += cbHTML;
+                    editTestGrpCont.innerHTML += cbHTML;
+                });
             }); 
             
             db.collection("tests").onSnapshot(s=>{ 
                 let bannerTestSel = document.getElementById('banner-test-select'); if(bannerTestSel) bannerTestSel.innerHTML = '<option value="">Select Specific Test...</option>';
+                let combineCont = document.getElementById('combineTestsContainer'); if(combineCont) combineCont.innerHTML = '';
                 allTestsCache = []; 
                 s.forEach(d=>{ 
                     let t=d.data(); allTestsCache.push({ id: d.id, ...t });
                     if(bannerTestSel) bannerTestSel.innerHTML += `<option value="${d.id}">${t.title}</option>`;
+                    if(combineCont && t.groupId !== 'QUESTION_BANK') combineCont.innerHTML += `<label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" value="${d.id}" style="width:16px; height:16px;"> <span>${t.title}</span></label>`;
                 }); 
                 renderAdminTests();
             }); 
         }
         
-        // --- ADMIN: MANAGE STUDENTS LOGIC (continued) ---
+        // --- ADMIN: MANAGE STUDENTS LOGIC ---
         function loadAdminStudents() {
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
@@ -1975,8 +2006,7 @@
                 } catch (error) { showToast("Error deleting student: " + error.message, 'error'); }
             });
         }
-
-        // --- AI QUESTION EDITOR LOGIC (WITH IMAGES) ---
+                // --- AI QUESTION EDITOR LOGIC (WITH IMAGES) ---
         async function openTestEditor(testId, testTitle) {
             activeAdminTestId = testId; document.getElementById('editingTestTitle').innerText = `Adding Questions to: ${testTitle}`;
             const doc = await db.collection("tests").doc(testId).get(); localQuestionsBuffer = doc.exists && doc.data().questions ? doc.data().questions : [];
@@ -2002,7 +2032,6 @@
             editingQuestionIndex = null; document.getElementById('saveQuestionBtn').innerText="Save Question (Uploads may take time)"; document.getElementById('cancelEditBtn').classList.add('hidden'); 
             document.getElementById('qTextEn').value=''; document.getElementById('qTextHi').value=''; 
             
-            // clear image values
             document.getElementById('qImageUpload').value=''; document.getElementById('qImageUrl').value='';
             
             for(let j=0; j<4; j++){ 
@@ -2036,13 +2065,11 @@
                     return;
                 }
 
-                // Handle Question Image Upload
                 let qImgUrl = document.getElementById('qImageUrl').value;
                 if(document.getElementById('qImageUpload').files.length > 0) {
                     qImgUrl = await uploadImageToFirebase('qImageUpload', 'questions') || qImgUrl;
                 }
 
-                // Handle Options & Images
                 let optImgUrls = [];
                 for(let i=0;i<4;i++) { 
                     optsEn.push(document.getElementById(`opt${i}En`).value); 
@@ -2089,14 +2116,11 @@
             editingQuestionIndex = i; document.getElementById('saveQuestionBtn').innerText="Update (Uploads may take time)"; document.getElementById('cancelEditBtn').classList.remove('hidden'); document.getElementById('admin-sec-question-editor').scrollIntoView();
         }
 
-        function checkIfLanguageSubject(text) { const t = text.toLowerCase(); return t.includes('english') || t.includes('hindi'); }
-
         async function generateBulkQuestionsWithAI() { 
             const topicInput = document.getElementById('aiTopicInput'); const difficultySelect = document.getElementById('aiDifficultySelect'); const countInput = document.getElementById('aiQuestionCount'); const generateBtn = document.getElementById('aiGenerateBtn'); const errorMsg = document.getElementById('aiGenError');
             const topic = topicInput.value.trim(); const difficulty = difficultySelect.value; const count = parseInt(countInput.value) || 1;
             
-            // NEW Language Dropdown Logic
-            const langChoice = document.getElementById('aiLanguageChoice').value; // 'both', 'english', 'hindi'
+            const langChoice = document.getElementById('aiLanguageChoice').value; 
 
             if (!storedGeminiKey) { errorMsg.innerText = "Please configure the API Key in Portal Settings first."; errorMsg.style.display = 'block'; return; }
             if (!topic) { errorMsg.innerText = "Enter a topic."; errorMsg.style.display = 'block'; return; }
@@ -2199,7 +2223,6 @@
                     let hasChildren = allGroupsCache.some(child => child.parentId === g.id);
                     let badgeHtml = hasChildren ? `<div class="sub-group-badge">📁 Sub-groups</div>` : ``;
 
-                    // Render background image if available
                     let bgStyle = g.imageUrl ? `background-image: url('${g.imageUrl}');` : `background-color: var(--primary);`;
 
                     c.innerHTML+=`
@@ -2225,7 +2248,6 @@
                 let count = 0;
                 s.forEach(d=>{ 
                     let t=d.data(); 
-                    // Check if test belongs to the group (array check or old string check)
                     let belongsToGroup = (t.groupIDs && Array.isArray(t.groupIDs) && t.groupIDs.includes(gid)) || t.groupId === gid;
                     
                     if(belongsToGroup) {
@@ -2300,13 +2322,11 @@
             const qText = displayLang === 'Eng' ? q.questionEng : q.questionHin; 
             const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin;
             
-            // Render Question Image if exists
             const qImgHtml = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" alt="Question Diagram" style="margin-bottom: 10px; max-width: 100%; height: auto;">` : '';
 
             let optionsHTML = ''; 
             if(opts) { 
                 opts.forEach((opt, optIndex) => { 
-                    // Render Option Image if exists
                     const optImgHtml = (q.optImgUrls && q.optImgUrls[optIndex]) ? `<br><img src="${q.optImgUrls[optIndex]}" class="q-card-img" alt="Option Image" style="margin-top: 5px;">` : '';
                     optionsHTML += `<label><input type="radio" name="active_q" value="${optIndex}" ${userAnswers[currentQuestionIndex] === optIndex ? 'checked' : ''} onchange="setAnswer(${optIndex})"> <div style="display:flex; flex-direction:column;"><span>${opt}</span>${optImgHtml}</div></label>`; 
                 }); 
@@ -2336,7 +2356,7 @@
 
         function confirmPause() { isTestActive = false; clearInterval(testTimer); hideExitModal(); navigate('view-student'); }
         function setAnswer(optIndex) { userAnswers[currentQuestionIndex] = optIndex; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'answered'; updatePaletteButton(currentQuestionIndex); }
-        function clearResponse() { userAnswers[currentQuestionIndex] = null; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'unanswered'; document.getElementsByName('active_q').forEach(r => r.checked = false); updatePaletteButton(currentQuestionIndex); }
+        function clearResponse() { userAnswers[currentQuestionIndex] = null; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'unanswered'; document.getElementById('question-container').querySelectorAll('input[type="radio"]').forEach(r => r.checked = false); updatePaletteButton(currentQuestionIndex); }
         function markForReview() { questionStates[currentQuestionIndex] = questionStates[currentQuestionIndex] === 'marked' ? (userAnswers[currentQuestionIndex] !== null ? 'answered' : 'unanswered') : 'marked'; updatePaletteButton(currentQuestionIndex); nextQuestion(); }
         function prevQuestion() { if(currentQuestionIndex > 0) jumpToQuestion(currentQuestionIndex - 1); }
         function nextQuestion() { if(currentQuestionIndex < testQuestions.length - 1) jumpToQuestion(currentQuestionIndex + 1); else showSubmitSummary(); }
@@ -2430,6 +2450,64 @@
             const switchBtnRev = document.getElementById('btn-switch-lang-review');
             if (switchBtnRev) switchBtnRev.style.display = anyUnforced ? 'inline-block' : 'none';
             if (window.MathJax) MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
+        }
+
+        async function combineSelectedTests() {
+            const newTitle = document.getElementById('combinedTestName').value.trim();
+            const checkedTests = Array.from(document.querySelectorAll('#combineTestsContainer input:checked')).map(cb => cb.value);
+
+            if (!newTitle) return showToast("Please provide a name for the combined test.", 'error');
+            if (checkedTests.length < 2) return showToast("Please select at least 2 tests to combine.", 'error');
+
+            const btn = document.querySelector('button[onclick="combineSelectedTests()"]');
+            btn.disabled = true; btn.innerText = "⏳ Combining...";
+
+            try {
+                let combinedQuestions = [];
+                let totalDuration = 0;
+                let combinedGroupIDs = new Set();
+                
+                let finalMarksPerQ = 2; 
+                let finalNegative = 0;  
+
+                for (let i = 0; i < checkedTests.length; i++) {
+                    const testId = checkedTests[i];
+                    const doc = await db.collection("tests").doc(testId).get();
+                    
+                    if (doc.exists) {
+                        const tData = doc.data();
+                        
+                        if (tData.questions) combinedQuestions = combinedQuestions.concat(tData.questions);
+                        if (tData.duration) totalDuration += tData.duration;
+                        
+                        if (i === 0) {
+                            if (tData.marksPerQuestion !== undefined) finalMarksPerQ = tData.marksPerQuestion;
+                            if (tData.negativeMarks !== undefined) finalNegative = tData.negativeMarks;
+                        }
+                        
+                        if (tData.groupIDs) tData.groupIDs.forEach(g => combinedGroupIDs.add(g));
+                        if (tData.groupId) combinedGroupIDs.add(tData.groupId); 
+                    }
+                }
+
+                await db.collection("tests").add({
+                    title: newTitle,
+                    groupIDs: Array.from(combinedGroupIDs),
+                    duration: totalDuration,
+                    marksPerQuestion: finalMarksPerQ, 
+                    negativeMarks: finalNegative,     
+                    questions: combinedQuestions,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                document.getElementById('combinedTestName').value = '';
+                document.querySelectorAll('#combineTestsContainer input').forEach(cb => cb.checked = false);
+                showToast("Tests combined successfully!", "success");
+            } catch (error) {
+                showToast("Error combining tests: " + error.message, 'error');
+            } finally {
+                btn.disabled = false; btn.innerText = "Combine Tests & Save";
+            }
         }
     </script>
 </body>
