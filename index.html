@@ -2547,7 +2547,10 @@ function closeEditModal() { document.getElementById('edit-modal').style.display 
 
             document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
             const nextBtn = document.getElementById('btn-next'); if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
-            if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
+   if (window.MathJax) { 
+    MathJax.typesetClear(); 
+    MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); 
+}
             
             for (let j = 0; j < testQuestions.length; j++) updatePaletteButton(j);
         }
@@ -2738,8 +2741,11 @@ function closeEditModal() { document.getElementById('edit-modal').style.display 
             
             const switchBtnRev = document.getElementById('btn-switch-lang-review');
             if (switchBtnRev) switchBtnRev.style.display = anyUnforced ? 'inline-block' : 'none';
-            if (window.MathJax) MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
-        }
+           if (window.MathJax) { 
+    MathJax.typesetClear(); 
+    MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); 
+}
+
 
                 // ==========================================
         // --- 1. PROMO BANNER MANAGEMENT LOGIC ---
