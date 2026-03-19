@@ -379,6 +379,28 @@
         /* Section Tabs Styling */
         #section-tabs::-webkit-scrollbar { height: 6px; }
         #section-tabs::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+                /* --- NEW: Review Filters & Sticky Header --- */
+        .sticky-review-header {
+            position: sticky; top: 0; z-index: 2000; background: #ffffff;
+            padding: 15px 20px; box-shadow: var(--shadow-md); border-bottom: 2px solid var(--border-color);
+            display: flex; flex-direction: column; gap: 15px; margin: -20px -20px 20px -20px;
+        }
+        .review-filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .filter-btn {
+            padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border-color);
+            cursor: pointer; background: #f8fafc; font-weight: 600; font-size: 0.85rem; color: var(--text-muted);
+            white-space: nowrap; transition: 0.2s;
+        }
+        .filter-btn:hover { border-color: var(--primary); }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .filter-btn.correct.active { background: var(--success); border-color: var(--success); }
+        .filter-btn.wrong.active { background: var(--danger); border-color: var(--danger); }
+        .filter-btn.unanswered.active { background: var(--text-muted); border-color: var(--text-muted); }
+
+        /* --- NEW: Sectional Timer UI --- */
+        #admin-section-timers-container { margin-top: 10px; padding: 10px; background: #f0fdf4; border: 1px dashed #10b981; border-radius: 8px; display: none;}
+        .section-timer-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .section-timer-row input { width: 80px; padding: 5px; border-radius: 4px; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
@@ -1247,6 +1269,12 @@
                 </div>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <div id="admin-section-timers-container">
+                <p style="font-size: 0.85rem; font-weight: bold; color: #059669; margin-bottom: 8px;">⏳ Set Individual Section Timers (Mins)</p>
+                <div id="section-timer-list"></div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">*If left blank, it will use the global timer above.</p>
+            </div>
+
                 <button onclick="closeEditModal()" class="btn-outline" style="flex:1;">Cancel</button>
                 <button onclick="saveTestEdit()" class="btn-success" style="flex:1;">Save Setup</button>
             </div>
@@ -1996,7 +2024,7 @@
                 </div>`; 
             }); 
         }
-                async function openEditModal(testId) {
+                       async function openEditModal(testId) {
             const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return;
             const test = doc.data(); 
             document.getElementById('edit-test-id').value = testId; 
@@ -2006,14 +2034,32 @@
             document.getElementById('edit-negative').value = test.negativeMarks || 0; 
             
             const testGroups = test.groupIDs || (test.groupId ? [test.groupId] : []);
-            document.querySelectorAll('#editTestGroupsContainer input').forEach(cb => {
-                cb.checked = testGroups.includes(cb.value);
-            });
+            document.querySelectorAll('#editTestGroupsContainer input').forEach(cb => { cb.checked = testGroups.includes(cb.value); });
+
+            // Detect subjects from questions for Sectional Timers
+            const secContainer = document.getElementById('admin-section-timers-container');
+            const secList = document.getElementById('section-timer-list');
+            secList.innerHTML = '';
+            
+            if (test.questions && test.questions.length > 0) {
+                secContainer.style.display = 'block';
+                const subjects = [...new Set(test.questions.map(q => q.subject || 'General'))];
+                const existingTimers = test.sectionTimers || {};
+                
+                subjects.forEach(sub => {
+                    let val = existingTimers[sub] ? existingTimers[sub] / 60 : '';
+                    secList.innerHTML += `
+                        <div class="section-timer-row">
+                            <span style="font-size: 0.9rem; font-weight: 500;">${sub}</span>
+                            <input type="number" class="sec-time-input" data-subject="${sub}" placeholder="Mins" value="${val}" min="0">
+                        </div>`;
+                });
+            } else {
+                secContainer.style.display = 'none';
+            }
 
             document.getElementById('edit-modal').style.display = 'flex';
         }
-
-        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
 
         async function saveTestEdit() {
             const testId = document.getElementById('edit-test-id').value; 
@@ -2022,6 +2068,12 @@
             const newMarks = parseFloat(document.getElementById('edit-marks').value);
             const newNegative = parseFloat(document.getElementById('edit-negative').value);
             
+            // Gather Sectional Timers
+            let sectionTimers = {};
+            document.querySelectorAll('.sec-time-input').forEach(input => {
+                if(input.value) sectionTimers[input.getAttribute('data-subject')] = parseInt(input.value) * 60;
+            });
+            
             const checkedGroups = Array.from(document.querySelectorAll('#editTestGroupsContainer input:checked')).map(cb => cb.value);
 
             if(!newTitle) return showToast("Test title cannot be empty!", 'error');
@@ -2029,12 +2081,13 @@
 
             try { 
                 await db.collection("tests").doc(testId).update({ 
-                    title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative, groupIDs: checkedGroups 
+                    title: newTitle, duration: newDuration, marksPerQuestion: newMarks, negativeMarks: newNegative, groupIDs: checkedGroups, sectionTimers: sectionTimers 
                 }); 
                 showToast("Test settings saved successfully!"); 
                 closeEditModal(); 
             } catch(e) { showToast("Error saving test settings: " + e.message, 'error'); }
         }
+
 
         function deleteTest(tid) { 
             showCustomConfirm("Delete Test?", "Are you sure you want to completely delete this test and all its questions?", async () => {
@@ -2338,7 +2391,7 @@
 
         function handleGroupClick(gid, gn, hasChildren) { if(hasChildren) { loadGroupsForStudents(gid); } else { viewGroupTests(gid, gn); } }
         
-        function viewGroupTests(gid, gn) { 
+                function viewGroupTests(gid, gn) { 
             document.getElementById('current-group-title').innerText=gn; 
             db.collection("tests").onSnapshot(s=>{ 
                 let c=document.getElementById('student-test-list'); c.innerHTML=''; 
@@ -2350,19 +2403,22 @@
                     if(belongsToGroup) {
                         count++;
                         let actionHtml = '';
-                        
-                        // Check if test has saved progress (Pause feature)
                         const savedStr = localStorage.getItem(`testProgress_${auth.currentUser.uid}_${d.id}`);
                         
                         if(savedStr) {
                             actionHtml = `<div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-warning" style="flex:1;" onclick="startTest('${d.id}')">Resume Saved ⏱️</button></div>`;
                         } else if(studentAttemptedDB[d.id]) {
-                            actionHtml = `<div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-primary" style="flex:1;" onclick="startTest('${d.id}')">Retake</button><button class="btn-outline" style="flex:1; border-color:var(--primary); color:var(--primary);" onclick="seePastResults('${studentAttemptedDB[d.id]}')">Results</button></div>`;
+                            // NEW: Exactly 2 options for already taken tests
+                            actionHtml = `
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                <button class="btn-primary" style="flex:1;" onclick="startTest('${d.id}')">🔄 Retake Test</button>
+                                <button class="btn-outline" style="flex:1; border-color:var(--success); color:var(--success);" onclick="seePastResults('${studentAttemptedDB[d.id]}')">📊 View Previous Results</button>
+                            </div>`;
                         } else {
                             actionHtml = `<button class="btn-primary" style="margin-top:10px;" onclick="startTest('${d.id}')">Start Attempt 🚀</button>`;
                         }
 
-                        c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4><p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration ? t.duration/60 + ' mins' : 'No Limit'}</p>${actionHtml}</div>`; 
+                        c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4><p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions</p>${actionHtml}</div>`; 
                     }
                 }); 
                 if(count === 0) c.innerHTML='<p>No tests found.</p>';
@@ -2412,6 +2468,7 @@
         function updatePaletteButton(i) { const btn = document.getElementById(`pal-btn-${i}`); btn.className = 'q-btn'; if (i === currentQuestionIndex) btn.classList.add('active'); if (questionStates[i] === 'answered') btn.classList.add('answered'); else if (questionStates[i] === 'marked') btn.classList.add('marked'); }
 
         let currentLanguage = 'Eng'; let reviewLanguage = 'Eng';
+        let currentReviewFilter = 'all';
 
         function renderCurrentQuestion() {
             const container = document.getElementById('question-container'); const q = testQuestions[currentQuestionIndex]; if(!q) return;
@@ -2558,9 +2615,43 @@
         function showReviewScreen() { reviewLanguage = currentLanguage; renderReviewContent(); navigate('view-review', false); window.scrollTo(0, 0); }
         function toggleReviewLanguage() { reviewLanguage = reviewLanguage === 'Eng' ? 'Hin' : 'Eng'; renderReviewContent(); }
 
+                function setReviewFilter(filterType) {
+            currentReviewFilter = filterType;
+            renderReviewContent();
+        }
+
         function renderReviewContent() {
-            const container = document.getElementById('review-container'); container.innerHTML = ''; let anyUnforced = false;
+            const container = document.getElementById('review-container'); 
+            container.innerHTML = ''; let anyUnforced = false;
+
+            // 1. Build the Sticky Header with Language Toggle and Filters
+            let stickyHeaderHTML = `
+                <div class="sticky-review-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <button class="student-back-btn" onclick="navigate('view-results', false)" style="padding: 6px 12px;">← Back</button>
+                        <button id="btn-switch-lang-review" class="btn-outline" style="border-color: var(--primary); color: var(--primary); padding: 4px 10px;" onclick="toggleReviewLanguage()">🌐 Switch Language</button>
+                    </div>
+                    <div class="review-filters">
+                        <button class="filter-btn ${currentReviewFilter === 'all' ? 'active' : ''}" onclick="setReviewFilter('all')">All Questions</button>
+                        <button class="filter-btn correct ${currentReviewFilter === 'correct' ? 'active' : ''}" onclick="setReviewFilter('correct')">✅ Correct</button>
+                        <button class="filter-btn wrong ${currentReviewFilter === 'wrong' ? 'active' : ''}" onclick="setReviewFilter('wrong')">❌ Wrong</button>
+                        <button class="filter-btn unanswered ${currentReviewFilter === 'unanswered' ? 'active' : ''}" onclick="setReviewFilter('unanswered')">⚪ Unanswered</button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += stickyHeaderHTML;
+
+            // 2. Render Questions based on the filter
             testQuestions.forEach((q, i) => {
+                let isCorrect = userAnswers[i] === q.correctIndex;
+                let isUnanswered = userAnswers[i] === null;
+                let isWrong = !isCorrect && !isUnanswered;
+
+                // Apply Filter Logic
+                if (currentReviewFilter === 'correct' && !isCorrect) return;
+                if (currentReviewFilter === 'wrong' && !isWrong) return;
+                if (currentReviewFilter === 'unanswered' && !isUnanswered) return;
+
                 let forcedLang = null;
                 if (q.displayLang === 'english') forcedLang = 'Eng'; else if (q.displayLang === 'hindi') forcedLang = 'Hin'; else forcedLang = getForcedLanguage(q.subject);
                 const displayLang = forcedLang ? forcedLang : reviewLanguage;
@@ -2569,24 +2660,30 @@
                 const qText = displayLang === 'Eng' ? q.questionEng : q.questionHin; 
                 const opts = displayLang === 'Eng' ? q.optionsEng : q.optionsHin; 
                 const exp = displayLang === 'Eng' ? q.explanationEng : q.explanationHin;
-                
-                const qImgHtml = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" alt="Question Diagram" style="margin-bottom: 10px; max-width: 100%; height: auto;">` : '';
+                const qImgHtml = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" style="margin-bottom:10px; max-width:100%;">` : '';
 
                 let optionsHTML = '';
                 if(opts) {
                     opts.forEach((opt, optIndex) => {
                         let optClass = '', label = '';
-                        if (optIndex === q.correctIndex) { optClass = 'opt-correct'; label = '✅ '; } else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) { optClass = 'opt-wrong'; label = '❌ (Your Answer) '; }
-                        const optImgHtml = (q.optImgUrls && q.optImgUrls[optIndex]) ? `<br><img src="${q.optImgUrls[optIndex]}" class="q-card-img" alt="Option Image" style="margin-top: 5px;">` : '';
+                        if (optIndex === q.correctIndex) { optClass = 'opt-correct'; label = '✅ '; } 
+                        else if (optIndex === userAnswers[i] && userAnswers[i] !== q.correctIndex) { optClass = 'opt-wrong'; label = '❌ (Your Answer) '; }
+                        const optImgHtml = (q.optImgUrls && q.optImgUrls[optIndex]) ? `<br><img src="${q.optImgUrls[optIndex]}" class="q-card-img" style="margin-top:5px;">` : '';
                         optionsHTML += `<div class="options" style="margin: 0;"><label class="${optClass}" style="cursor: default;"><div style="display:flex; flex-direction:column;"><span>${label}${opt}</span>${optImgHtml}</div></label></div>`;
                     });
                 }
                 
-                let expHTML = exp && exp.trim() !== '' ? `<div class="explanation-box"><strong>💡 Solution / Explanation:</strong><br>${exp}</div>` : `<div class="explanation-box" style="color: var(--text-muted);"><em>No explanation provided for this question.</em></div>`;
+                let expHTML = exp && exp.trim() !== '' ? `<div class="explanation-box"><strong>💡 Solution / Explanation:</strong><br>${exp}</div>` : `<div class="explanation-box" style="color: var(--text-muted);"><em>No explanation provided.</em></div>`;
+
+                let statusColor = isCorrect ? 'var(--success)' : (isUnanswered ? '#cbd5e1' : 'var(--danger)');
+                let statusText = isCorrect ? 'Correctly Answered' : (isUnanswered ? 'Not Answered' : 'Incorrectly Answered');
 
                 container.innerHTML += `
-                    <div class="question-card" style="min-height: auto; border-top: 4px solid ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#cbd5e1' : 'var(--danger)')};">
-                        <div style="display:flex; justify-content:space-between; margin-bottom: 10px;"><span style="font-size: 0.85rem; font-weight: 600; color: ${userAnswers[i] === q.correctIndex ? 'var(--success)' : (userAnswers[i] === null ? '#64748b' : 'var(--danger)')};">${userAnswers[i] === q.correctIndex ? 'Correctly Answered' : (userAnswers[i] === null ? 'Not Answered' : 'Incorrectly Answered')}</span><span style="background:#f1f5f9; padding:2px 8px; border-radius:12px; font-size:0.75rem; color:#475569; font-weight:bold;">${q.subject || 'General'}</span></div>
+                    <div class="question-card" style="border-top: 4px solid ${statusColor}; margin-top: 15px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 10px;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: ${statusColor};">${statusText}</span>
+                            <span style="background:#f1f5f9; padding:2px 8px; border-radius:12px; font-size:0.75rem; color:#475569; font-weight:bold;">${q.subject || 'General'}</span>
+                        </div>
                         <h4 style="font-size: 1.15rem; margin-bottom: 10px;"><span style="color: var(--primary);">Q${i + 1}.</span> ${qText || ''}</h4>${qImgHtml}
                         <div style="display:flex; flex-direction:column; gap:8px;">${optionsHTML}</div> ${expHTML}
                     </div>`;
@@ -2596,6 +2693,7 @@
             if (switchBtnRev) switchBtnRev.style.display = anyUnforced ? 'inline-block' : 'none';
             if (window.MathJax) MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
         }
+
                 // ==========================================
         // --- 1. PROMO BANNER MANAGEMENT LOGIC ---
         // ==========================================
