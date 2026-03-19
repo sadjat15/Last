@@ -2060,6 +2060,7 @@
 
             document.getElementById('edit-modal').style.display = 'flex';
         }
+function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
 
         async function saveTestEdit() {
             const testId = document.getElementById('edit-test-id').value; 
@@ -2391,13 +2392,16 @@
 
         function handleGroupClick(gid, gn, hasChildren) { if(hasChildren) { loadGroupsForStudents(gid); } else { viewGroupTests(gid, gn); } }
         
-                function viewGroupTests(gid, gn) { 
-            document.getElementById('current-group-title').innerText=gn; 
-            db.collection("tests").onSnapshot(s=>{ 
-                let c=document.getElementById('student-test-list'); c.innerHTML=''; 
+                     function viewGroupTests(gid, gn) { 
+            document.getElementById('current-group-title').innerText = gn; 
+            
+            db.collection("tests").onSnapshot(s => { 
+                let c = document.getElementById('student-test-list'); 
+                c.innerHTML = ''; 
                 let count = 0;
-                s.forEach(d=>{ 
-                    let t=d.data(); 
+                
+                s.forEach(d => { 
+                    let t = d.data(); 
                     let belongsToGroup = (t.groupIDs && Array.isArray(t.groupIDs) && t.groupIDs.includes(gid)) || t.groupId === gid;
                     
                     if(belongsToGroup) {
@@ -2405,24 +2409,35 @@
                         let actionHtml = '';
                         const savedStr = localStorage.getItem(`testProgress_${auth.currentUser.uid}_${d.id}`);
                         
+                        // 1. If they paused the test, show Resume
                         if(savedStr) {
                             actionHtml = `<div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-warning" style="flex:1;" onclick="startTest('${d.id}')">Resume Saved ⏱️</button></div>`;
-                        } else if(studentAttemptedDB[d.id]) {
-                            // NEW: Exactly 2 options for already taken tests
+                        } 
+                        // 2. If they already submitted the test, show Retake and Results
+                        else if(studentAttemptedDB && studentAttemptedDB[d.id]) {
                             actionHtml = `
                             <div style="display:flex; gap:10px; margin-top:10px;">
-                                <button class="btn-primary" style="flex:1;" onclick="startTest('${d.id}')">🔄 Retake Test</button>
-                                <button class="btn-outline" style="flex:1; border-color:var(--success); color:var(--success);" onclick="seePastResults('${studentAttemptedDB[d.id]}')">📊 View Previous Results</button>
+                                <button class="btn-primary" style="flex:1;" onclick="startTest('${d.id}')">🔄 Retake</button>
+                                <button class="btn-outline" style="flex:1; border-color:var(--success); color:var(--success);" onclick="seePastResults('${studentAttemptedDB[d.id]}')">📊 View Results</button>
                             </div>`;
-                        } else {
+                        } 
+                        // 3. If it's a brand new test for them, show Start Attempt
+                        else {
                             actionHtml = `<button class="btn-primary" style="margin-top:10px;" onclick="startTest('${d.id}')">Start Attempt 🚀</button>`;
                         }
 
-                        c.innerHTML+=`<div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;"><h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4><p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions</p>${actionHtml}</div>`; 
+                        c.innerHTML += `
+                        <div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between;">
+                            <h4 style="margin-bottom:15px; color:var(--primary);">📝 ${t.title}</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">${t.questions ? t.questions.length : 0} Questions</p>
+                            ${actionHtml}
+                        </div>`; 
                     }
                 }); 
-                if(count === 0) c.innerHTML='<p>No tests found.</p>';
+                
+                if(count === 0) c.innerHTML = '<p>No tests found.</p>';
             }); 
+            
             openStudentSec('student-sec-tests-list'); 
         }
 
