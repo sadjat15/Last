@@ -1951,23 +1951,38 @@
         }
 
         function viewStudentAttempts(uid, name) {
-            document.getElementById('view-student-name').innerText = `Records for ${name}`; openAdminSec('admin-sec-student-records');
-            db.collection("attempts").where("userId", "==", uid).orderBy("timestamp", "desc").onSnapshot(s => {
-                let container = document.getElementById('admin-student-specific-attempts'); container.innerHTML = '';
-                if(s.empty) { container.innerHTML = '<p style="padding: 20px; color: var(--text-muted); grid-column: 1 / -1;">No test attempts found for this student.</p>'; return; }
-                s.forEach(d => {
-                    let a = d.data(); let date = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleString() : 'N/A';
-                    container.innerHTML += `
-                        <div class="action-box" style="border-left: 4px solid var(--success); margin-bottom: 0;">
-                            <h4 style="margin-bottom: 5px;">${a.testTitle}</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Attempted on: ${date}</p>
-                            <div style="background: #f0fdf4; padding: 10px; border-radius: 8px; color: #166534; font-weight: bold; display: flex; justify-content: space-between;">
-                                <span>Score: ${a.score} / ${a.totalMarks}</span><span>🎯 ${a.correct} Correct</span>
-                            </div>
-                        </div>`;
-                });
-            });
-        }
+    document.getElementById('view-student-name').innerText = `Records for ${name}`; 
+    openAdminSec('admin-sec-student-records');
+    
+    // Removed .orderBy() here too!
+    db.collection("attempts").where("userId", "==", uid).onSnapshot(s => {
+        let container = document.getElementById('admin-student-specific-attempts'); container.innerHTML = '';
+        if(s.empty) { container.innerHTML = '<p style="padding: 20px; color: var(--text-muted); grid-column: 1 / -1;">No test attempts found for this student.</p>'; return; }
+        
+        let attemptsArray = [];
+        s.forEach(d => attemptsArray.push(d.data()));
+        
+        // Sort in JavaScript
+        attemptsArray.sort((a,b) => {
+            let timeA = a.timestamp ? a.timestamp.toMillis() : Date.now();
+            let timeB = b.timestamp ? b.timestamp.toMillis() : Date.now();
+            return timeB - timeA;
+        });
+        
+        attemptsArray.forEach(a => {
+            let date = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleString() : 'N/A';
+            container.innerHTML += `
+                <div class="action-box" style="border-left: 4px solid var(--success); margin-bottom: 0;">
+                    <h4 style="margin-bottom: 5px;">${a.testTitle}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Attempted on: ${date}</p>
+                    <div style="background: #f0fdf4; padding: 10px; border-radius: 8px; color: #166534; font-weight: bold; display: flex; justify-content: space-between;">
+                        <span>Score: ${a.score} / ${a.totalMarks}</span><span>🎯 ${a.correct} Correct</span>
+                    </div>
+                </div>`;
+        });
+    });
+}
+
 
         function deleteStudentAccount(uid) {
             showCustomConfirm("Delete Student?", "Are you sure you want to remove this student? This will permanently delete their profile data and test attempts.", async () => {
@@ -2474,38 +2489,78 @@ function closeEditModal() { document.getElementById('edit-modal').style.display 
         }
 
         function loadStudentAttempts() { 
-            if(!auth.currentUser)return; 
-            db.collection("attempts").where("userId","==",auth.currentUser.uid).orderBy("timestamp", "desc").onSnapshot(s=>{ 
-                let c = document.getElementById('student-attempts-list'); c.innerHTML=''; 
-                let latestWorkContainer = document.getElementById('acc-latest-work');
-                studentAttemptedDB = {}; 
-                
-                if(s.empty) {
-                    c.innerHTML='<p>No attempts yet.</p>'; 
-                    if(latestWorkContainer) latestWorkContainer.innerHTML = '<span style="color: var(--text-muted);">No tests taken yet.</span>';
-                } else {
-                    let first = true;
-                    s.forEach(d=>{ 
-                        let a=d.data(); studentAttemptedDB[a.testId] = d.id; 
-                        let dateStr = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleString() : 'Recently';
-                        
-                        c.innerHTML+=`<div class="action-box" style="border-left:4px solid var(--success)"><h4 style="margin-bottom:10px">${a.testTitle}</h4><div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold; margin-bottom: 10px;">Score: ${a.score}/${a.totalMarks}</div><button class="btn-outline" style="width: 100%; border-color: var(--primary); color: var(--primary);" onclick="seePastResults('${d.id}')">Review Solutions</button></div>`; 
-                        
-                        // Populate latest work in Account section
-                        if(first && latestWorkContainer) {
-                            latestWorkContainer.innerHTML = `
-                                <div style="font-weight: bold; color: var(--primary); margin-bottom: 5px;">${a.testTitle}</div>
-                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                                    <span>Score: <strong style="color: var(--success);">${a.score}/${a.totalMarks}</strong></span>
-                                    <span style="color: var(--text-muted);">${dateStr}</span>
-                                </div>
-                            `;
-                            first = false;
-                        }
-                    }); 
-                }
-            }); 
-        }
+    if(!auth.currentUser) return; 
+    
+    db.collection("attempts").where("userId", "==", auth.currentUser.uid).onSnapshot(s => { 
+        let c = document.getElementById('student-attempts-list'); 
+        let latestWorkContainer = document.getElementById('acc-latest-work');
+        
+        // Clear the tracking DB on every fresh read
+        studentAttemptedDB = {}; 
+        
+        if(s.empty) {
+            if(c) c.innerHTML = '<p style="color:var(--text-muted); padding:20px;">No attempts yet. Go take a mock test!</p>'; 
+            if(latestWorkContainer) latestWorkContainer.innerHTML = '<span style="color: var(--text-muted);">No tests taken yet.</span>';
+            return; // Stop here if empty!
+        } 
+        
+        // 1. Gather all attempts into an array
+        let attemptsArray = [];
+        s.forEach(d => { attemptsArray.push({ id: d.id, data: d.data() }); });
+        
+        // 2. Fortified Sort: Handle immediate local writes where timestamp is temporarily null
+        attemptsArray.sort((a, b) => {
+            let timeA = a.data.timestamp ? a.data.timestamp.toMillis() : Number.MAX_SAFE_INTEGER;
+            let timeB = b.data.timestamp ? b.data.timestamp.toMillis() : Number.MAX_SAFE_INTEGER;
+            return timeB - timeA; // Descending (Newest first)
+        });
+        
+        if(c) c.innerHTML = '';
+        let first = true;
+        
+        attemptsArray.forEach(item => { 
+            let a = item.data; 
+            
+            // CRITICAL FIX: Only map the NEWEST attempt to the Retake/Results button
+            // Since the array is sorted newest to oldest, we only save the first one we see per test.
+            if (!studentAttemptedDB[a.testId]) {
+                studentAttemptedDB[a.testId] = item.id; 
+            }
+            
+            let dateStr = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleString() : 'Just now';
+            
+            if(c) {
+                c.innerHTML += `
+                <div class="action-box" style="border-left:4px solid var(--success)">
+                    <h4 style="margin-bottom:10px">${a.testTitle}</h4>
+                    <div style="background:#f0fdf4; padding:10px; border-radius:8px; color:#166534; font-weight:bold; margin-bottom: 5px;">
+                        Score: ${a.score}/${a.totalMarks}
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Attempted: ${dateStr}</div>
+                    <button class="btn-outline" style="width: 100%; border-color: var(--primary); color: var(--primary);" onclick="seePastResults('${item.id}')">Review Solutions</button>
+                </div>`; 
+            }
+            
+            // Populate Account Tab latest work
+            if(first && latestWorkContainer) {
+                latestWorkContainer.innerHTML = `
+                    <div style="font-weight: bold; color: var(--primary); margin-bottom: 5px;">${a.testTitle}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                        <span>Score: <strong style="color: var(--success);">${a.score}/${a.totalMarks}</strong></span>
+                        <span style="color: var(--text-muted);">${dateStr}</span>
+                    </div>
+                `;
+                first = false;
+            }
+        }); 
+    }, (error) => {
+        // This will catch any Firebase Permission or Connection Errors
+        console.error("Firebase Error loading attempts:", error);
+        if(c) c.innerHTML = '<p style="color:var(--danger); padding:20px;">Failed to load history. Check console.</p>';
+    }); 
+}
+
+
 
         // --- UPDATED TEST INTERFACE LOGIC (PAUSE/RESUME) ---
         function getForcedLanguage(subject) { if (!subject) return null; const sub = subject.toLowerCase(); if (sub.includes('english')) return 'Eng'; if (sub.includes('hindi')) return 'Hin'; return null; }
