@@ -201,7 +201,9 @@
         .section-timer-row input { width: 90px; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold;}
 
         /* COMPACT TEST RESULTS PAGE CSS */
-        #view-results { height: 100vh; overflow-y: hidden; display: flex; flex-direction: column; justify-content: center; padding-bottom: var(--bottom-nav-height); }
+        #view-results { height: 100vh; overflow-y: hidden; flex-direction: column; justify-content: center; padding-bottom: var(--bottom-nav-height); }
+#view-results.active { display: flex; }
+
         #view-results .action-box { margin: auto; padding: 25px 20px; max-height: 90vh; overflow-y: auto; width: 100%; max-width: 850px; box-sizing: border-box; }
         #view-results h2 { margin-bottom: 15px !important; font-size: 2rem !important; }
         .results-grid-compact { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
