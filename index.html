@@ -73,7 +73,7 @@
         .group-card-content { position: relative; z-index: 2; width: 90%; text-align: center; padding: 15px; transform: translateY(10px); transition: transform 0.3s; }
         .group-card:hover .group-card-content { transform: translateY(0); }
         .group-card h3 { color: #ffffff; font-size: 1.4rem; margin: 0; font-weight: 800; font-family: 'Poppins', sans-serif; text-shadow: 0 4px 6px rgba(0,0,0,0.5); letter-spacing: 0.5px; }
-        .sub-group-badge { position: absolute; top: 12px; right: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); color: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; z-index: 3; box-shadow: var(--shadow-sm); }
+                .sub-group-badge { position: absolute; top: 12px; right: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); color: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; z-index: 3; box-shadow: var(--shadow-sm); }
 
         .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); margin-bottom: 24px; transition: all 0.2s ease; }
         .action-box:hover { box-shadow: var(--shadow-lg); }
@@ -84,7 +84,9 @@
         .q-card-img { max-width: 150px; max-height: 100px; border-radius: 8px; margin-top: 10px; display: block; border: 1px solid #cbd5e1; box-shadow: var(--shadow-sm);}
 
         .sec-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
-        .student-back-btn, .back-menu-btn { background: var(--primary-light); color: var(--primary); border: none; padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 700; transition: all 0.2s; }
+        
+        /* Updated back button styles to ensure they remain visible and functional for students */
+        .student-back-btn, .back-menu-btn { background: var(--primary-light); color: var(--primary); border: none; padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 700; transition: all 0.2s; display: inline-block !important; visibility: visible !important; }
         .student-back-btn:hover, .back-menu-btn:hover { background: var(--primary); color: white; transform: translateX(-2px);}
         
         .input-group { margin-bottom: 18px; }
@@ -145,8 +147,7 @@
         .popup-custom-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; z-index: 1; }
         .popup-message { position: relative; width: 85%; margin: 0; padding: 25px; font-size: 1.35rem; line-height: 1.4; font-weight: 800; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); border-radius: var(--radius-sm); color: #ffffff !important; text-shadow: 0 2px 4px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); z-index: 10; }
         .popup-action-area { padding: 25px; background: #fff; border-top: 4px solid var(--primary); text-align: center; }
-
-        .question-card { margin-bottom: 24px; padding: 30px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); min-height: 300px;}
+                .question-card { margin-bottom: 24px; padding: 30px; border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); min-height: 300px;}
         .options label { display: flex; align-items: center; margin: 12px 0; padding: 16px; background: var(--bg-color); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; font-weight: 500;}
         .options label:hover { background: white; border-color: var(--primary-light); box-shadow: var(--shadow-sm); transform: translateX(5px); }
         .options input[type="radio"] { margin-right: 18px; transform: scale(1.4); accent-color: var(--primary); }
@@ -198,6 +199,24 @@
         #admin-section-timers-container { margin-top: 15px; padding: 15px; background: #f0fdf4; border: 2px dashed #10b981; border-radius: var(--radius-sm); display: none;}
         .section-timer-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;}
         .section-timer-row input { width: 90px; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold;}
+
+        /* COMPACT TEST RESULTS PAGE CSS */
+        #view-results { height: 100vh; overflow-y: hidden; display: flex; flex-direction: column; justify-content: center; padding-bottom: var(--bottom-nav-height); }
+        #view-results .action-box { margin: auto; padding: 25px 20px; max-height: 90vh; overflow-y: auto; width: 100%; max-width: 850px; box-sizing: border-box; }
+        #view-results h2 { margin-bottom: 15px !important; font-size: 2rem !important; }
+        .results-grid-compact { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .results-card-compact { padding: 20px !important; }
+        .results-card-compact h3 { font-size: 1.1rem !important; margin-bottom: 10px !important; padding-bottom: 8px !important; }
+        .results-card-compact p { font-size: 2.8rem !important; margin: 10px 0 !important; }
+        .results-card-compact div { line-height: 1.8 !important; font-size: 1.05rem !important; }
+        #res-sectional { max-height: 150px; overflow-y: auto; padding-right: 10px; }
+        .results-actions-compact { margin-top: 20px !important; flex-direction: row !important; justify-content: center; gap: 15px; }
+        .results-actions-compact button { max-width: 250px !important; width: 100%; margin: 0; padding: 12px; font-size: 1rem; }
+        
+        @media (max-width: 600px) {
+            .results-actions-compact { flex-direction: column !important; }
+            .results-actions-compact button { max-width: 100% !important; }
+        }
     </style>
 </head>
 <body>
@@ -217,8 +236,7 @@
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
-        
-    <div id="bottom-nav-student" class="bottom-nav">
+            <div id="bottom-nav-student" class="bottom-nav">
         <a href="javascript:void(0)" class="nav-item active" onclick="switchBottomTab('student-sec-groups', this)"><span class="nav-icon">📝</span><span>Mock Test</span></a>
         <a href="javascript:void(0)" class="nav-item" onclick="switchBottomTab('student-sec-leaderboards', this)"><span class="nav-icon">🏆</span><span>Ranking</span></a>
         <a href="javascript:void(0)" class="nav-item" onclick="switchBottomTab('student-sec-attempts', this)"><span class="nav-icon">📜</span><span>Results</span></a>
@@ -651,14 +669,34 @@
         </div>
         
         <div id="view-results" class="view">
-            <div class="action-box" style="text-align: center; padding: 50px 20px; margin-top: 20px;">
-                <h2 style="font-size: 2.5rem; font-family: 'Poppins', sans-serif; color: var(--primary); margin-bottom: 35px;">Test Completed! 🎉</h2>
-                <div class="grid-list" style="max-width: 850px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
-                    <div style="background: #f0fdf4; border: 2px solid #bbf7d0; padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow-sm);"><h3 style="color: #166534; margin: 0; font-size: 1.2rem;">Total Score</h3><p id="res-score" style="font-size: 3.5rem; font-weight: 800; color: var(--success); margin: 15px 0; text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);"></p></div>
-                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 30px; border-radius: var(--radius); text-align: left; box-shadow: var(--shadow-sm);"><h3 style="border-bottom: 2px solid var(--border-color); padding-bottom: 12px; margin-bottom: 15px; font-family: 'Poppins', sans-serif;">Accuracy Breakdown</h3><div style="font-size: 1.15rem; line-height: 2.2; font-weight: 600;"><div style="display: flex; justify-content: space-between;"><span>✅ Correct:</span> <strong id="res-correct" style="color: var(--success);">0</strong></div><div style="display: flex; justify-content: space-between;"><span>❌ Wrong:</span> <strong id="res-wrong" style="color: var(--danger);">0</strong></div><div style="display: flex; justify-content: space-between;"><span>⚪ Skipped:</span> <strong id="res-left" style="color: var(--text-muted);">0</strong></div></div></div>
+            <div class="action-box" style="text-align: center;">
+                <h2 style="color: var(--primary); font-family: 'Poppins', sans-serif;">Test Completed! 🎉</h2>
+                
+                <div class="results-grid-compact">
+                    <div class="results-card-compact" style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: var(--radius); box-shadow: var(--shadow-sm);">
+                        <h3 style="color: #166534; margin: 0;">Total Score</h3>
+                        <p id="res-score" style="font-weight: 800; color: var(--success); text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);"></p>
+                    </div>
+                    
+                    <div class="results-card-compact" style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius); text-align: left; box-shadow: var(--shadow-sm);">
+                        <h3 style="border-bottom: 2px solid var(--border-color);">Accuracy Breakdown</h3>
+                        <div>
+                            <div style="display: flex; justify-content: space-between;"><span>✅ Correct:</span> <strong id="res-correct" style="color: var(--success);">0</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>❌ Wrong:</span> <strong id="res-wrong" style="color: var(--danger);">0</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>⚪ Skipped:</span> <strong id="res-left" style="color: var(--text-muted);">0</strong></div>
+                        </div>
+                    </div>
                 </div>
-                <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 30px; border-radius: var(--radius); text-align: left; max-width: 850px; margin: 25px auto 0; box-shadow: var(--shadow-sm);"><h3 style="border-bottom: 2px solid var(--border-color); padding-bottom: 12px; margin-bottom: 15px; font-family: 'Poppins', sans-serif;">📊 Sectional Performance</h3><div id="res-sectional" style="font-size: 1.05rem; line-height: 1.8; margin-top: 15px;"></div></div>
-                <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;"><button class="btn-outline" onclick="showReviewScreen()" style="max-width: 350px; padding: 14px; font-size: 1.15rem; border-width: 2px;">📖 Review Explanations</button><button class="btn-primary" onclick="navigate('view-student');" style="max-width: 350px;">Return to Dashboard</button></div>
+                
+                <div class="results-card-compact" style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius); text-align: left; box-shadow: var(--shadow-sm);">
+                    <h3 style="border-bottom: 2px solid var(--border-color); font-family: 'Poppins', sans-serif;">📊 Sectional Performance</h3>
+                    <div id="res-sectional"></div>
+                </div>
+                
+                <div class="results-actions-compact" style="display: flex;">
+                    <button class="btn-outline" onclick="showReviewScreen()">📖 Review Explanations</button>
+                    <button class="btn-primary" onclick="navigate('view-student');">Return to Dashboard</button>
+                </div>
             </div>
         </div>
         
@@ -776,6 +814,7 @@
             <div style="display: flex; gap: 15px;"><button onclick="hideSubmitSummary()" class="btn-outline" style="flex: 1; padding: 14px;">Return to Test</button><button onclick="finalSubmitTest()" class="btn-success" style="flex: 1; padding: 14px;">Confirm Submit</button></div>
         </div>
     </div>
+
         <script>
         // ==========================================
         // --- FIREBASE CONFIGURATION ---
@@ -785,8 +824,8 @@
             authDomain: "test2-672e5.firebaseapp.com",
             databaseURL: "https://test2-672e5-default-rtdb.firebaseio.com",
             projectId: "test2-672e5",
-            messagingSenderId: "250226237572", // Update this from your Firebase console
-            appId: "1:250226237572:web:d3f794d00f22a703faa2d1"                 // Update this from your Firebase console
+            messagingSenderId: "250226237572", 
+            appId: "1:250226237572:web:d3f794d00f22a703faa2d1"                 
         };
         
         if (!firebase.apps.length) {
@@ -795,7 +834,7 @@
         
         const auth = firebase.auth();
         const db = firebase.firestore();
-db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
+        db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
         let messaging;
         
         if (firebase.messaging.isSupported()) {
@@ -897,7 +936,7 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
         }
 
         // ==========================================
-        // --- NEW: PUSH NOTIFICATIONS LOGIC ---
+        // --- PUSH NOTIFICATIONS LOGIC ---
         // ==========================================
         function requestNotificationPermission() {
             if (!messaging) return;
@@ -947,8 +986,7 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
                 showToast("Error queuing notification: " + error.message, "error");
             }
         }
-
-        // ==========================================
+                // ==========================================
         // --- CLOUDINARY IMAGE UPLOAD HELPER ---
         // ==========================================
         async function uploadImageToFirebase(fileInputId, folderPath) {
@@ -1238,8 +1276,7 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
             if (event.state) { navigate(event.state.view, false); if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); } 
             else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
         };
-
-        // ==========================================
+                // ==========================================
         // --- AUTHENTICATION LOGIC ---
         // ==========================================
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
@@ -1585,8 +1622,7 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-        
-        // ==========================================
+                // ==========================================
         // --- ADMIN: DATA LOADING LOGIC ---
         // ==========================================
         function loadAdminData() { 
@@ -1692,7 +1728,7 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
             db.collection("users").where("role", "==", "student").onSnapshot(s => {
                 let tbody = document.getElementById('admin-students-list'); if(!tbody) return;
                 tbody.innerHTML = '';
-                if(s.empty) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No students found.</td></tr>'; return; }
+                if(s.empty) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:25px;">No students found.</td></tr>'; return; }
                 
                 s.forEach(doc => {
                     let user = doc.data(); let dateJoined = user.createdAt ? new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
@@ -2075,8 +2111,7 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
             await updateTestQuestionsInDb(); renderAdminQuestionList(); closeModals();
             showToast(`✅ ${checkboxes.length} questions imported successfully!`, "success");
         }
-
-        // ==========================================
+                // ==========================================
         // --- STUDENT DASHBOARD DATA LOADERS ---
         // ==========================================
         function loadStudentData() {
@@ -2115,24 +2150,27 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
             });
         }
 
+        // --- FIXED BACK BUTTON HIERARCHY LOGIC ---
         function loadGroupsForStudents(parentId = "") { 
-            let c=document.getElementById('student-group-list'); c.innerHTML=''; 
+            let c = document.getElementById('student-group-list'); c.innerHTML=''; 
             let backBtn = document.getElementById('btn-back-groups');
             let headerTitle = document.getElementById('groups-header-title');
             
             if(parentId) {
                 let parentGroup = allGroupsCache.find(g => g.id === parentId);
                 headerTitle.innerText = parentGroup ? parentGroup.name : "Sub-Categories";
-                backBtn.onclick = () => loadGroupsForStudents(parentGroup ? (parentGroup.parentId || "") : ""); 
-                backBtn.style.opacity = '1'; backBtn.style.position = 'static';
+                // Go up one level in the hierarchy
+                let grandParentId = parentGroup && parentGroup.parentId ? parentGroup.parentId : "";
+                backBtn.onclick = () => loadGroupsForStudents(grandParentId); 
+                backBtn.style.display = 'inline-block'; 
             } else {
                 headerTitle.innerText = "Select a Test Category";
-                backBtn.onclick = () => openStudentSec('student-main-menu');
-                backBtn.style.opacity = '0'; backBtn.style.position = 'absolute';
+                // Stop here, hide back button on the root level
+                backBtn.style.display = 'none'; 
             }
 
             let hasVisibleGroups = false;
-            allGroupsCache.forEach(g=>{ 
+            allGroupsCache.forEach(g => { 
                 let groupParent = g.parentId || "";
                 if(groupParent === parentId) {
                     hasVisibleGroups = true;
@@ -2156,6 +2194,15 @@ db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
         
         function viewGroupTests(gid, gn) { 
             document.getElementById('current-group-title').innerText = gn; 
+            
+            // Set dynamic back button to return to the parent group/sub-group
+            let currentGroup = allGroupsCache.find(g => g.id === gid);
+            let returnToParentId = currentGroup && currentGroup.parentId ? currentGroup.parentId : "";
+            const testListBackBtn = document.querySelector('#student-sec-tests-list .student-back-btn');
+            if(testListBackBtn) {
+                testListBackBtn.onclick = () => loadGroupsForStudents(returnToParentId);
+            }
+
             db.collection("tests").onSnapshot(s => { 
                 let c = document.getElementById('student-test-list'); c.innerHTML = ''; let count = 0;
                 
