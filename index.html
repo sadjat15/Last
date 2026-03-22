@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="page-title">KD JAAT Test Portal</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&family=Oswald:wght@500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -57,10 +56,9 @@
         nav { background: linear-gradient(135deg, var(--primary), #6366f1); color: white; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 100; }
         .portal-brand { display: flex; align-items: center; gap: 12px; }
         nav h1 { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; font-family: 'Poppins', sans-serif;}
-        .nav-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 18px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s ease; font-weight: 600; backdrop-filter: blur(5px); }
+        .nav-btn { font-family: 'Inter', sans-serif; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 18px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s ease; font-weight: 600; backdrop-filter: blur(5px); }
         .nav-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
-
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+                .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .menu-btn { background: var(--card-bg); padding: 30px 20px; border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; position: relative; overflow: hidden; }
         .menu-btn:hover { box-shadow: var(--shadow-lg); transform: translateY(-5px); border-color: var(--primary-light); }
         .menu-btn h3 { color: var(--primary); font-size: 1.35rem; font-weight: 700; z-index: 2; font-family: 'Poppins', sans-serif; }
@@ -74,7 +72,8 @@
         .group-card:hover .group-card-content { transform: translateY(0); }
         .group-card h3 { color: #ffffff; font-size: 1.4rem; margin: 0; font-weight: 800; font-family: 'Poppins', sans-serif; text-shadow: 0 4px 6px rgba(0,0,0,0.5); letter-spacing: 0.5px; }
         .sub-group-badge { position: absolute; top: 12px; right: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); color: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; z-index: 3; box-shadow: var(--shadow-sm); }
-                .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); margin-bottom: 24px; transition: all 0.2s ease; }
+        
+        .action-box { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); margin-bottom: 24px; transition: all 0.2s ease; }
         .action-box:hover { box-shadow: var(--shadow-lg); }
         .action-box h3 { font-size: 1.25rem; font-weight: 700; font-family: 'Poppins', sans-serif; margin-bottom: 16px; }
         
@@ -84,8 +83,8 @@
 
         .sec-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
         
-        /* Updated back button styles with Poppins Font */
-        .student-back-btn, .back-menu-btn { font-family: 'Poppins', sans-serif; background: var(--primary-light); color: var(--primary); border: none; padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 700; transition: all 0.2s; display: inline-block !important; visibility: visible !important; }
+        /* Updated back button styles to simple font */
+        .student-back-btn, .back-menu-btn { font-family: 'Inter', sans-serif; background: var(--primary-light); color: var(--primary); border: none; padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 700; transition: all 0.2s; display: inline-block !important; visibility: visible !important; }
         .student-back-btn:hover, .back-menu-btn:hover { background: var(--primary); color: white; transform: translateX(-2px);}
         
         .input-group { margin-bottom: 18px; }
@@ -104,29 +103,28 @@
         .flex-row { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
         .flex-row .input-group { margin-bottom: 0; flex: 1; }
         
-        /* Updated Main Buttons with Poppins Font */
-        .btn-primary { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, var(--primary), #6366f1); color: white; border: none; padding: 14px 24px; border-radius: var(--radius-sm); cursor: pointer; font-size: 1.05rem; font-weight: 700; transition: all 0.2s; width: 100%; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2); }
+        /* Updated Main Buttons with simple Inter Font */
+        .btn-primary { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--primary), #6366f1); color: white; border: none; padding: 14px 24px; border-radius: var(--radius-sm); cursor: pointer; font-size: 1.05rem; font-weight: 700; transition: all 0.2s; width: 100%; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2); }
         .btn-primary:hover { background: linear-gradient(135deg, var(--primary-hover), var(--primary)); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
         .btn-primary:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; transform: none; }
         
-        .btn-danger { font-family: 'Poppins', sans-serif; background: var(--danger); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; width: 100%; font-weight: 600; transition: 0.2s;}
+        .btn-danger { font-family: 'Inter', sans-serif; background: var(--danger); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; width: 100%; font-weight: 600; transition: 0.2s;}
         .btn-danger:hover { background: #dc2626; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); transform: translateY(-1px);}
         
-        .btn-success { font-family: 'Poppins', sans-serif; background: var(--success); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; width: 100%; font-weight: 600; transition: 0.2s;}
+        .btn-success { font-family: 'Inter', sans-serif; background: var(--success); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; width: 100%; font-weight: 600; transition: 0.2s;}
         .btn-success:hover { background: #059669; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); transform: translateY(-1px);}
         
-        .btn-warning { font-family: 'Poppins', sans-serif; background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; width: 100%; font-weight: 600; transition: 0.2s;}
+        .btn-warning { font-family: 'Inter', sans-serif; background: var(--warning); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm); cursor: pointer; width: 100%; font-weight: 600; transition: 0.2s;}
         .btn-warning:hover { background: #d97706; transform: translateY(-1px);}
         
-        .btn-outline { font-family: 'Poppins', sans-serif; background: transparent; border: 2px solid var(--primary); color: var(--primary); padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 700; transition: all 0.2s;}
+        .btn-outline { font-family: 'Inter', sans-serif; background: transparent; border: 2px solid var(--primary); color: var(--primary); padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 700; transition: all 0.2s;}
         .btn-outline:hover { background: var(--primary-light); transform: translateY(-1px); }
 
         .custom-toast { visibility: hidden; min-width: 280px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: #fff; text-align: center; border-radius: var(--radius-sm); padding: 16px 24px; position: fixed; z-index: 4000; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(20px); font-size: 1rem; font-weight: 600; box-shadow: var(--shadow-lg); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0; border: 1px solid rgba(255,255,255,0.1); }
         .custom-toast.show { visibility: visible; bottom: 90px; opacity: 1; transform: translateX(-50%) translateY(0); }
         .custom-toast.error { border-left: 4px solid var(--danger); }
         .custom-toast.success { border-left: 4px solid var(--success); }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+                .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal { background: white; padding: 35px; border-radius: var(--radius); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: slideFadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);}
         
         .modern-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden; border: 1px solid var(--border-color);}
@@ -139,7 +137,8 @@
         .student-table th { background: var(--bg-color); text-align: left; padding: 16px; border-bottom: 2px solid var(--border-color); color: var(--text-main); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;}
         .student-table td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .student-table tr:hover td { background: var(--bg-color); }
-                #custom-confirm-modal .modal { max-width: 400px; text-align: center; padding: 40px 25px; border-radius: var(--radius); }
+                
+        #custom-confirm-modal .modal { max-width: 400px; text-align: center; padding: 40px 25px; border-radius: var(--radius); }
         #custom-confirm-modal h3 { font-family: 'Poppins', sans-serif; color: var(--text-main); margin-bottom: 15px; font-size: 1.5rem; font-weight: 800;}
         .confirm-btn-group { display: flex; gap: 15px; justify-content: center; margin-top: 25px;}
 
@@ -152,7 +151,7 @@
         .popup-action-area { padding: 25px; background: #fff; border-top: 4px solid var(--primary); text-align: center; }
         
         /* --------------------------------------------------- */
-        /* --- NEW: RESPONSIVE & FULL-SCREEN TEST CSS --- */
+        /* --- RESPONSIVE & FULL-SCREEN TEST CSS --- */
         /* --------------------------------------------------- */
         #view-test { height: 100vh; overflow: hidden; display: none; flex-direction: column; background: var(--bg-color); position: fixed; top: 0; left: 0; width: 100%; z-index: 2500; }
         #view-test.active { display: flex !important; }
@@ -161,15 +160,15 @@
         
         .question-card { margin-bottom: 24px; padding: clamp(15px, 4vw, 30px); border-radius: var(--radius); background: white; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
         
-        /* Using clamp() for responsive text sizing */
-        .question-card h4 { font-size: clamp(1.1rem, 2.5vw, 1.4rem) !important; font-family: 'Poppins', sans-serif; line-height: 1.6; }
+        /* Using clamp() for responsive text sizing - Simple Font */
+        .question-card h4 { font-size: clamp(1.1rem, 2.5vw, 1.4rem) !important; font-family: 'Inter', sans-serif; line-height: 1.6; font-weight: 600; }
         
         .options { margin-top: 15px; }
         .options label { font-size: clamp(0.95rem, 2vw, 1.15rem); display: flex; align-items: center; margin: 10px 0; padding: clamp(12px, 2.5vw, 18px); background: var(--bg-color); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; font-weight: 500;}
         .options label:hover { background: white; border-color: var(--primary-light); box-shadow: var(--shadow-sm); transform: translateX(5px); }
         .options input[type="radio"] { margin-right: 18px; transform: scale(1.4); accent-color: var(--primary); flex-shrink: 0; }
         
-        /* NEW: Locked Section Tab Style */
+        /* Locked Section Tab Style */
         .section-tab-btn.locked { opacity: 0.5; pointer-events: none; border-color: var(--danger) !important; color: var(--danger) !important; background: #fee2e2 !important; text-decoration: line-through; }
         /* --------------------------------------------------- */
 
@@ -190,13 +189,13 @@
         .side-panel-header { padding: 24px; background: linear-gradient(135deg, var(--primary), #6366f1); color: white; display: flex; justify-content: space-between; align-items: center; }
         .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 24px; overflow-y: auto; align-content: start; }
         
-        .q-btn { font-family: 'Poppins', sans-serif; width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--border-color); background: white; color: var(--text-main); cursor: pointer; font-weight: 700; transition: all 0.2s; display: flex; justify-content: center; align-items: center; font-size: 1rem;}
+        .q-btn { font-family: 'Inter', sans-serif; width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--border-color); background: white; color: var(--text-main); cursor: pointer; font-weight: 700; transition: all 0.2s; display: flex; justify-content: center; align-items: center; font-size: 1rem;}
         .q-btn:hover { background: var(--bg-color); transform: scale(1.1); }
         .q-btn.active { box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2); border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
         .q-btn.answered { background: var(--success); color: white; border-color: var(--success); }
         .q-btn.marked { background: var(--review); color: white; border-color: var(--review); }
         
-        /* NEW: Palette button locked state */
+        /* Palette button locked state */
         .q-btn.locked { opacity: 0.3; pointer-events: none; background: #e2e8f0; border-color: #cbd5e1; }
 
         .palette-legend { padding: 20px 24px; border-top: 1px solid var(--border-color); background: var(--bg-color); font-size: 0.9rem; font-weight: 500;}
@@ -210,11 +209,11 @@
         
         .promo-banner { min-width: 300px; width: 100%; max-width: 550px; height: 180px; border-radius: var(--radius); background-color: var(--primary); background-size: cover; background-position: center; box-shadow: var(--shadow-md); cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; scroll-snap-align: start; }
         .promo-banner:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
-        .promo-banner-title { width: 85%; text-align: center; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); padding: 18px; border-radius: var(--radius-sm); text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.2); color: #ffffff !important; font-family: 'Poppins', sans-serif;}
+        .promo-banner-title { width: 85%; text-align: center; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); padding: 18px; border-radius: var(--radius-sm); text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.2); color: #ffffff !important; font-family: 'Inter', sans-serif;}
 
         .sticky-review-header { position: sticky; top: 0; z-index: 2000; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 20px; box-shadow: var(--shadow-sm); border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; margin: -20px -20px 25px -20px; }
         .review-filters { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 5px; }
-        .filter-btn { padding: 8px 18px; border-radius: 25px; border: 2px solid var(--border-color); cursor: pointer; background: var(--bg-color); font-weight: 700; font-size: 0.9rem; color: var(--text-muted); white-space: nowrap; transition: all 0.2s; font-family: 'Poppins', sans-serif;}
+        .filter-btn { padding: 8px 18px; border-radius: 25px; border: 2px solid var(--border-color); cursor: pointer; background: var(--bg-color); font-weight: 700; font-size: 0.9rem; color: var(--text-muted); white-space: nowrap; transition: all 0.2s; font-family: 'Inter', sans-serif;}
         .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
         .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: var(--shadow-glow);}
         .filter-btn.correct.active { background: var(--success); border-color: var(--success); box-shadow: 0 0 15px rgba(16,185,129,0.3);}
@@ -232,7 +231,7 @@
         #view-results h2 { margin-bottom: 15px !important; font-size: 2rem !important; }
         .results-grid-compact { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
         .results-card-compact { padding: 20px !important; }
-        .results-card-compact h3 { font-size: 1.1rem !important; margin-bottom: 10px !important; padding-bottom: 8px !important; font-family: 'Poppins', sans-serif; }
+        .results-card-compact h3 { font-size: 1.1rem !important; margin-bottom: 10px !important; padding-bottom: 8px !important; font-family: 'Inter', sans-serif; }
         .results-card-compact p { font-size: 2.8rem !important; margin: 10px 0 !important; }
         .results-card-compact div { line-height: 1.8 !important; font-size: 1.05rem !important; }
         #res-sectional { max-height: 150px; overflow-y: auto; padding-right: 10px; }
@@ -259,10 +258,11 @@
             <h1 id="nav-title">KD JAAT Test Portal</h1>
         </div>
         <div id="nav-actions" style="display: flex; gap: 10px;">
-            <button id="logout-btn" class="nav-btn" style="display:none; font-family: 'Poppins', sans-serif;" onclick="logout()">Logout</button>
+            <button id="logout-btn" class="nav-btn" style="display:none; font-family: 'Inter', sans-serif;" onclick="logout()">Logout</button>
         </div>
     </nav>
-            <div id="bottom-nav-student" class="bottom-nav">
+    
+    <div id="bottom-nav-student" class="bottom-nav">
         <a href="javascript:void(0)" class="nav-item active" onclick="switchBottomTab('student-sec-groups', this)"><span class="nav-icon">📝</span><span>Mock Test</span></a>
         <a href="javascript:void(0)" class="nav-item" onclick="switchBottomTab('student-sec-leaderboards', this)"><span class="nav-icon">🏆</span><span>Ranking</span></a>
         <a href="javascript:void(0)" class="nav-item" onclick="switchBottomTab('student-sec-attempts', this)"><span class="nav-icon">📜</span><span>Results</span></a>
@@ -272,7 +272,7 @@
     <div id="side-overlay" class="side-panel-overlay" onclick="togglePalette()"></div>
     <div id="side-palette" class="side-panel">
         <div class="side-panel-header">
-            <h3 style="font-size: 1.25rem; font-family: 'Poppins', sans-serif;">Question Palette</h3>
+            <h3 style="font-size: 1.25rem; font-family: 'Inter', sans-serif;">Question Palette</h3>
             <button onclick="togglePalette()" style="background:none; border:none; color:white; font-size:2rem; cursor:pointer; line-height: 1; transition: transform 0.2s;">&times;</button>
         </div>
         <div class="palette-grid" id="palette-grid"></div>
@@ -288,7 +288,7 @@
         <div id="view-login" class="view active">
             <div id="login-form" class="action-box" style="max-width: 420px; margin: 60px auto; border-radius: 20px;">
                 <div style="text-align: center; margin-bottom: 30px;">
-                    <h2 style="font-size: 2rem; color: var(--primary); font-family: 'Poppins', sans-serif; font-weight: 800;">Login Portal</h2>
+                    <h2 style="font-size: 2rem; color: var(--primary); font-family: 'Inter', sans-serif; font-weight: 800;">Login Portal</h2>
                 </div>
                 <div id="lockout-warning" style="display:none; background: #fee2e2; color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid #fecaca;">
                     Device Locked. Try again later.
@@ -325,7 +325,7 @@
 
             <div id="register-form" class="modern-card" style="max-width: 450px; margin: 60px auto; display: none;">
                 <div class="modern-header">
-                    <h2 style="font-size: 2.2rem; margin-bottom: 5px; font-family: 'Poppins', sans-serif; font-weight: 800;">Join Portal</h2>
+                    <h2 style="font-size: 2.2rem; margin-bottom: 5px; font-family: 'Inter', sans-serif; font-weight: 800;">Join Portal</h2>
                     <p style="opacity: 0.9; font-size: 1rem; font-weight: 500;">Create your student account to take mock tests</p>
                 </div>
                 <div style="padding: 35px;">
@@ -365,7 +365,7 @@
 
         <div id="view-admin" class="view">
              <div id="admin-main-menu" class="sub-sec active">
-                <h2 style="margin-bottom: 25px; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.8rem;">Admin Dashboard Menu</h2>
+                <h2 style="margin-bottom: 25px; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1.8rem;">Admin Dashboard Menu</h2>
                 <div class="menu-grid">
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-groups')"><h3>📁 Manage Groups</h3><p>Create, edit, or delete test categories</p></div>
                     <div class="menu-btn" onclick="openAdminSec('admin-sec-tests')"><h3>📚 Manage Active Tests</h3><p>Create tests, edit timer, marks, and delete</p></div>
@@ -384,7 +384,7 @@
                     <h2>Send Push Notifications</h2>
                 </div>
                 <div class="action-box" style="border-left: 4px solid var(--review);">
-                    <h3 style="color: var(--review); margin-bottom: 15px; font-family: 'Poppins', sans-serif;">🔔 Broadcast Alert to Students</h3>
+                    <h3 style="color: var(--review); margin-bottom: 15px; font-family: 'Inter', sans-serif;">🔔 Broadcast Alert to Students</h3>
                     <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px;">This will send a notification to students' devices. They must have allowed notifications in their browser/app for this to work.</p>
                     <div class="input-group"><label>Notification Title</label><input type="text" id="notif-title" placeholder="e.g. New Mock Test Live!"></div>
                     <div class="input-group"><label>Notification Message</label><textarea id="notif-body" rows="3" placeholder="e.g. Haryana CET Mock Test 5 is now available. Click to attempt!"></textarea></div>
@@ -401,7 +401,7 @@
             <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Banners & App Download</h2></div>
                 <div class="action-box" style="border-left: 4px solid var(--success);">
-                    <h3 style="color: var(--success); margin-bottom: 15px; font-family: 'Poppins', sans-serif;">📱 Top App Download Banner</h3>
+                    <h3 style="color: var(--success); margin-bottom: 15px; font-family: 'Inter', sans-serif;">📱 Top App Download Banner</h3>
                     <div class="flex-row"><div class="input-group"><label>Banner Visibility</label><select id="app-banner-status"><option value="visible">Visible to Students</option><option value="hidden">Hidden</option></select></div></div>
                     <div class="input-group"><label>Banner Text Message</label><input type="text" id="app-banner-text" placeholder="e.g., Download our official App for the best experience!"></div>
                     <div class="input-group"><label>App Download Link (URL)</label><input type="url" id="app-banner-link" placeholder="https://play.google.com/store/apps/details?id=..."></div>
@@ -409,7 +409,7 @@
                 </div>
                 <hr style="border: 0; height: 2px; background: var(--border-color); margin: 35px 0;">
                 <div class="action-box" style="border-left: 4px solid var(--review);">
-                    <h3 style="color: var(--review); margin-bottom: 15px; font-family: 'Poppins', sans-serif;">📢 Student Login Popup Announcement</h3>
+                    <h3 style="color: var(--review); margin-bottom: 15px; font-family: 'Inter', sans-serif;">📢 Student Login Popup Announcement</h3>
                     <div class="flex-row">
                         <div class="input-group"><label>Popup Status</label><select id="popup-status"><option value="active">Active (Show to students)</option><option value="inactive">Inactive (Hide from students)</option></select></div>
                         <div class="input-group"><label>Target Audience</label><select id="popup-audience" style="border: 2px solid var(--review);"><option value="all">All Students</option><option value="college">College Students Only</option><option value="cbse">CBSE Students Only</option><option value="hbse">HBSE Students Only</option></select></div>
@@ -420,14 +420,14 @@
                         <div class="input-group"><label>Text Color</label><input type="color" id="popup-text-color" value="#ffffff" style="height: 50px; cursor: pointer; padding: 5px;"></div>
                         <div class="input-group">
                             <label>Text Font</label>
-                            <select id="popup-text-font"><option value="'Inter', sans-serif">Inter (Default)</option><option value="'Poppins', sans-serif">Poppins (Bold & Modern)</option><option value="'Roboto', sans-serif">Roboto (Clean)</option><option value="'Oswald', sans-serif">Oswald (Tall & Impactful)</option><option value="'Montserrat', sans-serif">Montserrat (Elegant)</option></select>
+                            <select id="popup-text-font"><option value="'Inter', sans-serif">Inter (Default)</option><option value="'Roboto', sans-serif">Roboto (Clean)</option><option value="'Oswald', sans-serif">Oswald (Tall & Impactful)</option><option value="'Montserrat', sans-serif">Montserrat (Elegant)</option></select>
                         </div>
                     </div>
                     <button class="btn-primary" id="btn-save-popup" style="background: var(--review);" onclick="savePopupSettings()">Save Popup Settings</button>
                 </div>
                 <hr style="border: 0; height: 2px; background: var(--border-color); margin: 35px 0;">
                 <div class="action-box">
-                    <h3 style="margin-bottom: 15px; font-family: 'Poppins', sans-serif;">🖼️ Create New Promo Banner</h3>
+                    <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">🖼️ Create New Promo Banner</h3>
                     <div class="input-group"><label>Stylish Banner Name (Visible to Students)</label><input type="text" id="banner-custom-title" placeholder="e.g., 🔴 LIVE NOW: RUVNL Mains Exam"></div>
                     <div class="input-group"><label>Target Audience</label><select id="banner-audience" style="border: 2px solid var(--primary);"><option value="all">All Students</option><option value="college">College Students Only</option><option value="cbse">CBSE Students Only</option><option value="hbse">HBSE Students Only</option></select></div>
                     <div class="input-group"><label>Upload Photo for Banner Background</label><input type="file" id="banner-image-upload" accept=".jpg,.jpeg,.png,.webp"><span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB). Recommended size: 600x300 pixels (Landscape).</span></div>
@@ -435,20 +435,20 @@
                         <div class="input-group"><label>Title Color</label><input type="color" id="banner-text-color" value="#ffffff" style="height: 50px; cursor: pointer; padding: 5px;"></div>
                         <div class="input-group">
                             <label>Title Font</label>
-                            <select id="banner-text-font"><option value="'Poppins', sans-serif">Poppins (Default)</option><option value="'Inter', sans-serif">Inter</option><option value="'Roboto', sans-serif">Roboto</option><option value="'Oswald', sans-serif">Oswald</option><option value="'Montserrat', sans-serif">Montserrat</option></select>
+                            <select id="banner-text-font"><option value="'Inter', sans-serif">Inter (Default)</option><option value="'Roboto', sans-serif">Roboto (Clean)</option><option value="'Oswald', sans-serif">Oswald (Tall & Impactful)</option><option value="'Montserrat', sans-serif">Montserrat (Elegant)</option></select>
                         </div>
                     </div>
                     <div class="input-group"><label>Select Specific Test to Link to Banner</label><select class="test-select" id="banner-test-select"><option value="">Loading Tests...</option></select></div>
                     <button class="btn-primary" id="btn-publish-banner" onclick="addBanner()">Publish Banner to Student Dashboard</button>
-                    <h3 style="margin-top: 35px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; font-family: 'Poppins', sans-serif;">Active Banners</h3>
+                    <h3 style="margin-top: 35px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; font-family: 'Inter', sans-serif;">Active Banners</h3>
                     <div id="admin-banner-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:12px;"></div>
                 </div>
             </div>
 
             <div id="admin-sec-question-editor" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button><h2 id="editingTestTitle" style="color: var(--primary); font-family: 'Poppins', sans-serif;">Adding Questions to: </h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button><h2 id="editingTestTitle" style="color: var(--primary); font-family: 'Inter', sans-serif;">Adding Questions to: </h2></div>
                 <div class="ai-panel">
-                    <p style="font-size: 15px; font-weight: 800; color: #059669; margin: 0 0 12px 0; font-family: 'Poppins', sans-serif;">✨ Bulk Generate Questions with AI</p>
+                    <p style="font-size: 15px; font-weight: 800; color: #059669; margin: 0 0 12px 0; font-family: 'Inter', sans-serif;">✨ Bulk Generate Questions with AI</p>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <input type="text" id="aiTopicInput" placeholder="e.g. Basic Electricity..." style="margin: 0; flex-grow: 1; min-width: 220px; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--border-color);">
                         <select id="aiDifficultySelect" style="margin: 0; width: 120px; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--border-color);"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select>
@@ -458,12 +458,12 @@
                     </div><p id="aiGenError" style="color: var(--danger); font-size: 14px; margin-top: 12px; font-weight: 600; display: none;"></p>
                 </div>
                 <div class="ai-panel" style="background: #fffbeb; border-color: #f59e0b; margin-top: 20px;">
-                    <p style="font-size: 15px; font-weight: 800; color: #d97706; margin: 0 0 8px 0; font-family: 'Poppins', sans-serif;">📚 Import from Question Bank</p>
+                    <p style="font-size: 15px; font-weight: 800; color: #d97706; margin: 0 0 8px 0; font-family: 'Inter', sans-serif;">📚 Import from Question Bank</p>
                     <p style="font-size: 0.95rem; color: #64748b; margin-top: 0; margin-bottom: 15px;">Reuse questions you have already added to other tests across the app.</p>
                     <button class="btn-warning" style="margin: 0; width: auto; padding: 12px 24px; font-size: 1rem;" onclick="openQuestionBankModal()">Browse Question Bank</button>
                 </div>
                 <div class="ai-panel" style="background: #eef2ff; border-color: #6366f1; margin-top: 20px;">
-                    <p style="font-size: 15px; font-weight: 800; color: #4338ca; margin: 0 0 8px 0; font-family: 'Poppins', sans-serif;">📄 Auto-Extract from PDF (AI)</p>
+                    <p style="font-size: 15px; font-weight: 800; color: #4338ca; margin: 0 0 8px 0; font-family: 'Inter', sans-serif;">📄 Auto-Extract from PDF (AI)</p>
                     <p style="font-size: 0.95rem; color: #64748b; margin-top: 0; margin-bottom: 15px;">Upload a PDF test. The AI will extract up to 100 questions and format them automatically.</p>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" style="margin: 0; flex-grow: 1; padding: 12px; background: #fff; border-radius: var(--radius-sm); border: 2px solid var(--border-color);">
@@ -472,7 +472,7 @@
                 </div>
                 
                 <div class="action-box" style="margin-top: 30px;">
-                    <h3 style="margin-bottom: 20px; font-family: 'Poppins', sans-serif;">Manual Question Entry</h3>
+                    <h3 style="margin-bottom: 20px; font-family: 'Inter', sans-serif;">Manual Question Entry</h3>
                     <div class="input-group" style="margin-bottom: 20px;">
                         <label>Student Display Language</label>
                         <select id="qDisplayLang" style="border: 2px solid var(--primary);"><option value="both">Both (English & Hindi) - Student can switch</option><option value="english">English Only</option><option value="hindi">Hindi Only</option></select>
@@ -521,19 +521,19 @@
                     </div>
                     <p id="adminMessage" style="color: var(--success); font-weight: bold; margin-top: 15px; display: none;"></p>
                 </div>
-                <h3 style="margin-top: 45px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; font-family: 'Poppins', sans-serif;">Questions in this Test</h3>
+                <h3 style="margin-top: 45px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; font-family: 'Inter', sans-serif;">Questions in this Test</h3>
                 <div id="adminExistingQuestionsList" style="margin-top: 20px;"></div>
             </div>
 
             <div id="admin-sec-branding" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Portal Branding & API Settings</h2></div>
                 <div class="action-box">
-                    <h3 style="margin-bottom: 15px; font-family: 'Poppins', sans-serif;">Portal Appearance</h3>
+                    <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">Portal Appearance</h3>
                     <div class="input-group"><label>Portal Title / Name</label><input type="text" id="portal-name-input" placeholder="e.g., KD JAAT Test Portal"></div>
                     <button class="btn-primary" onclick="updatePortalBranding()" id="btn-save-branding">Save Branding Changes</button>
                 </div>
                 <div class="action-box" style="margin-top: 25px; border-left: 4px solid #10b981;">
-                    <h3 style="margin-bottom: 12px; color: #059669; font-family: 'Poppins', sans-serif;">✨ AI Integration (Gemini API)</h3>
+                    <h3 style="margin-bottom: 12px; color: #059669; font-family: 'Inter', sans-serif;">✨ AI Integration (Gemini API)</h3>
                     <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">Enter your Gemini API Key to enable AI bulk question generation and auto-extraction from PDFs.</p>
                     <div class="input-group">
                         <label>API Key</label>
@@ -550,7 +550,7 @@
             <div id="admin-sec-groups" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Test Groups</h2></div>
                 <div class="action-box">
-                    <h3 style="margin-bottom: 20px; font-family: 'Poppins', sans-serif;">Create a New Group</h3>
+                    <h3 style="margin-bottom: 20px; font-family: 'Inter', sans-serif;">Create a New Group</h3>
                     <div class="input-group"><label>Simple Group Name</label><input type="text" id="new-group-name" placeholder="e.g., Haryana CET Mock Tests"></div>
                     <div class="input-group"><label>Group Banner/Photo (Optional)</label><input type="file" id="new-group-image-upload" accept=".jpg,.jpeg,.png,.webp"><span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB).</span></div>
                     <div class="flex-row">
@@ -559,7 +559,7 @@
                         <div class="input-group" style="max-width: 100px;"><label>Order (1,2..)</label><input type="number" id="new-group-order" placeholder="0" value="0" min="0" style="border: 2px solid var(--success);"></div>
                     </div>
                     <button class="btn-primary" id="btn-add-group" onclick="addGroup()">Add New Group</button>
-                    <h3 style="margin-top: 35px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; font-family: 'Poppins', sans-serif;">Active Groups & Sub-groups</h3>
+                    <h3 style="margin-top: 35px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; font-family: 'Inter', sans-serif;">Active Groups & Sub-groups</h3>
                     <div id="admin-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:12px;"></div>
                 </div>
             </div>
@@ -575,27 +575,27 @@
             </div>
             
             <div id="admin-sec-student-records" class="sub-sec">
-                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-students')">← Back to Students List</button><h2 id="view-student-name" style="font-family: 'Poppins', sans-serif;">Student Records</h2></div>
+                <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-sec-students')">← Back to Students List</button><h2 id="view-student-name" style="font-family: 'Inter', sans-serif;">Student Records</h2></div>
                 <div class="grid-list" id="admin-student-specific-attempts"></div>
             </div>
             
             <div id="admin-sec-tests" class="sub-sec">
                 <div class="sec-header"><button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button><h2>Manage Active Tests</h2></div>
                 <div class="action-box" style="border-left: 4px solid var(--primary);">
-                    <h3 style="margin-bottom: 15px; color: var(--primary); font-family: 'Poppins', sans-serif;">Create a New Test</h3>
+                    <h3 style="margin-bottom: 15px; color: var(--primary); font-family: 'Inter', sans-serif;">Create a New Test</h3>
                     <div class="input-group"><label>Test Name</label><input type="text" id="newTestName" placeholder="e.g., Mock Test 1"></div>
                     <div class="input-group"><label>Select Groups (Check one or more)</label><div id="newTestGroupsContainer" style="max-height: 180px; overflow-y: auto; border: 2px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; background: var(--bg-color); display: flex; flex-direction: column; gap: 10px;"><span style="font-size: 0.9rem; color: var(--text-muted);">Loading groups...</span></div></div>
                     <div class="input-group" style="max-width: 220px;"><label>Timer</label><input type="number" id="newTestTimer" placeholder="Mins (0=No Limit)" min="0"></div>
                     <button class="btn-primary" onclick="createNewTest()">Create Test & Add Questions</button>
                 </div>
                 <div class="action-box" style="border-left: 4px solid var(--review); margin-top: 25px;">
-                    <h3 style="margin-bottom: 15px; color: var(--review); font-family: 'Poppins', sans-serif;">🔄 Combine Multiple Tests</h3>
+                    <h3 style="margin-bottom: 15px; color: var(--review); font-family: 'Inter', sans-serif;">🔄 Combine Multiple Tests</h3>
                     <div class="input-group"><label>New Combined Test Name</label><input type="text" id="combinedTestName" placeholder="e.g., Mega Mock Test (Combined)"></div>
                     <div class="input-group"><label>Select Tests to Combine (Check 2 or more)</label><div id="combineTestsContainer" style="max-height: 180px; overflow-y: auto; border: 2px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; background: var(--bg-color); display: flex; flex-direction: column; gap: 10px;"><span style="font-size: 0.9rem; color: var(--text-muted);">Loading tests...</span></div></div>
                     <button class="btn-primary" style="background: var(--review);" onclick="combineSelectedTests()">Combine Tests & Save</button>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px;">
-                    <h3 style="margin: 0; font-family: 'Poppins', sans-serif;">Live Cloud Tests</h3>
+                    <h3 style="margin: 0; font-family: 'Inter', sans-serif;">Live Cloud Tests</h3>
                     <select id="admin-test-filter" class="group-select" style="padding: 10px; border-radius: var(--radius-sm); border: 2px solid var(--border-color); width: 220px; font-weight: 600;" onchange="renderAdminTests()"><option value="all">All Groups</option></select>
                 </div>
                 <div id="test-list-container" class="grid-list"></div>
@@ -619,7 +619,7 @@
         <div id="view-student" class="view">
             <div id="student-main-menu" class="sub-sec active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2 style="font-family: 'Poppins', sans-serif; font-size: 1.8rem; font-weight: 800;">Dashboard</h2><h3 id="student-welcome-name" style="color: var(--primary); font-size: 1.15rem; font-weight: 700;"></h3>
+                    <h2 style="font-family: 'Inter', sans-serif; font-size: 1.8rem; font-weight: 800;">Dashboard</h2><h3 id="student-welcome-name" style="color: var(--primary); font-size: 1.15rem; font-weight: 700;"></h3>
                 </div>
                 <div id="student-banners" class="banner-container"></div>
                 <div class="menu-grid" style="display: none;"> 
@@ -631,22 +631,22 @@
             </div>
 
             <div id="student-sec-groups" class="sub-sec">
-                <div class="sec-header"><button id="btn-back-groups" class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 id="groups-header-title" style="font-family: 'Poppins', sans-serif;">Select a Test Category</h2></div>
+                <div class="sec-header"><button id="btn-back-groups" class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 id="groups-header-title" style="font-family: 'Inter', sans-serif;">Select a Test Category</h2></div>
                 <div class="grid-list" id="student-group-list"></div>
             </div>
             
             <div id="student-sec-tests-list" class="sub-sec">
-                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-sec-groups')">← Back</button><h2 id="current-group-title" style="font-family: 'Poppins', sans-serif;">Available Tests</h2></div>
+                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-sec-groups')">← Back</button><h2 id="current-group-title" style="font-family: 'Inter', sans-serif;">Available Tests</h2></div>
                 <div class="grid-list" id="student-test-list"></div>
             </div>
             
             <div id="student-sec-attempts" class="sub-sec">
-                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 style="font-family: 'Poppins', sans-serif;">My Attempt History</h2></div>
+                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 style="font-family: 'Inter', sans-serif;">My Attempt History</h2></div>
                 <div class="grid-list" id="student-attempts-list"></div>
             </div>
             
             <div id="student-sec-leaderboards" class="sub-sec">
-                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 style="font-family: 'Poppins', sans-serif;">Test Leaderboards</h2></div>
+                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 style="font-family: 'Inter', sans-serif;">Test Leaderboards</h2></div>
                 <div class="action-box">
                     <div class="input-group"><label>Select Test to View Rankings</label><select id="leaderboard-test-select" onchange="fetchLeaderboard(this.value)"><option value="">Loading tests...</option></select></div>
                     <div id="leaderboard-results" style="margin-top: 25px;"></div>
@@ -654,18 +654,18 @@
             </div>
 
             <div id="student-sec-account" class="sub-sec">
-                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 style="font-family: 'Poppins', sans-serif;">My Account</h2></div>
+                <div class="sec-header"><button class="student-back-btn" onclick="openStudentSec('student-main-menu')">← Back</button><h2 style="font-family: 'Inter', sans-serif;">My Account</h2></div>
                 <div class="action-box" style="border-left: 4px solid var(--primary);">
-                    <h3 style="margin-bottom: 20px; color: var(--primary); font-family: 'Poppins', sans-serif;">👤 Profile Details</h3>
+                    <h3 style="margin-bottom: 20px; color: var(--primary); font-family: 'Inter', sans-serif;">👤 Profile Details</h3>
                     <div class="input-group"><label>Full Name</label><div style="display: flex; gap: 10px;"><input type="text" id="acc-student-name" style="flex: 1;"><button class="btn-primary" style="width: auto; padding: 14px 20px;" onclick="updateStudentName()">Save Name</button></div></div>
                     <div class="input-group"><label>Registered Phone / ID</label><input type="text" id="acc-student-phone" readonly style="background: #e2e8f0; cursor: not-allowed; border-color: transparent; opacity: 0.7;"></div>
                 </div>
                 <div class="action-box" style="border-left: 4px solid var(--success);">
-                    <h3 style="margin-bottom: 20px; color: var(--success); font-family: 'Poppins', sans-serif;">📊 Latest Work</h3>
+                    <h3 style="margin-bottom: 20px; color: var(--success); font-family: 'Inter', sans-serif;">📊 Latest Work</h3>
                     <div id="acc-latest-work" style="padding: 20px; background: var(--bg-color); border: 2px dashed #cbd5e1; border-radius: var(--radius-sm);"><span style="color: var(--text-muted);">Fetching your latest test record...</span></div>
                 </div>
                 <div class="action-box" style="border-left: 4px solid var(--danger);">
-                    <h3 style="margin-bottom: 20px; color: var(--danger); font-family: 'Poppins', sans-serif;">🔐 Security</h3>
+                    <h3 style="margin-bottom: 20px; color: var(--danger); font-family: 'Inter', sans-serif;">🔐 Security</h3>
                     <div class="input-group"><label>New Password</label><div class="password-container"><input type="password" id="new-student-pass" placeholder="Minimum 6 characters"><span class="password-toggle" onclick="togglePasswordVisibility('new-student-pass', this)">👁️</span></div></div>
                     <button class="btn-primary" style="background: var(--text-main); margin-top: 10px;" onclick="updateStudentPassword()">Update Password</button>
                 </div>
@@ -674,9 +674,9 @@
                 
         <div id="view-test" class="view">
             <div class="action-box glass-panel" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 24px; margin-bottom: 0; border-radius: 0; border-bottom: 2px solid var(--border-color); flex-shrink: 0;">
-                <div style="display: flex; align-items: center; gap: 15px;"><button class="btn-outline" style="padding: 8px 16px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button><h2 id="test-title" style="margin: 0; color: var(--primary); font-size: 1.3rem; display: none; font-family: 'Poppins', sans-serif;">Test</h2></div>
+                <div style="display: flex; align-items: center; gap: 15px;"><button class="btn-outline" style="padding: 8px 16px; font-weight: bold;" onclick="togglePalette()">☰ Grid</button><h2 id="test-title" style="margin: 0; color: var(--primary); font-size: 1.3rem; display: none; font-family: 'Inter', sans-serif;">Test</h2></div>
                 <div style="font-size: 1.3rem; font-weight: 800; color: var(--danger); background: #fee2e2; padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid #fecaca; box-shadow: var(--shadow-sm);">⏱ <span id="timer">00:00</span></div>
-                <div style="display: flex; gap: 10px;"><button class="btn-outline" style="border-color: #94a3b8; color: #475569;" onclick="showExitModal()">⏸ Pause</button><button class="btn-success" style="padding: 8px 16px; font-weight: bold;" onclick="showSubmitSummary()">✅ Submit</button></div>
+                <div style="display: flex; gap: 10px;"><button class="btn-outline" style="border-color: #94a3b8; color: #475569;" onclick="showExitModal()">⏸ Pause / Exit</button></div>
             </div>
             
             <div id="test-scroll-area">
@@ -702,7 +702,7 @@
         
         <div id="view-results" class="view">
             <div class="action-box" style="text-align: center;">
-                <h2 style="color: var(--primary); font-family: 'Poppins', sans-serif;">Test Completed! 🎉</h2>
+                <h2 style="color: var(--primary); font-family: 'Inter', sans-serif;">Test Completed! 🎉</h2>
                 
                 <div class="results-grid-compact">
                     <div class="results-card-compact" style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: var(--radius); box-shadow: var(--shadow-sm);">
@@ -721,7 +721,7 @@
                 </div>
                 
                 <div class="results-card-compact" style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius); text-align: left; box-shadow: var(--shadow-sm);">
-                    <h3 style="border-bottom: 2px solid var(--border-color); font-family: 'Poppins', sans-serif;">📊 Sectional Performance</h3>
+                    <h3 style="border-bottom: 2px solid var(--border-color); font-family: 'Inter', sans-serif;">📊 Sectional Performance</h3>
                     <div id="res-sectional"></div>
                 </div>
                 
@@ -734,7 +734,7 @@
         
         <div id="view-review" class="view">
             <div class="sec-header glass-panel" style="padding: 20px 25px; position: sticky; top: 0; z-index: 90; box-shadow: var(--shadow-sm); border-radius: 0 0 var(--radius) var(--radius); margin-bottom: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><button class="student-back-btn" onclick="navigate('view-results', false)" style="margin: 0;">← Back</button><h2 style="margin: 0; color: var(--primary); font-family: 'Poppins', sans-serif; font-size: 1.5rem;">Detailed Solutions</h2></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><button class="student-back-btn" onclick="navigate('view-results', false)" style="margin: 0;">← Back</button><h2 style="margin: 0; color: var(--primary); font-family: 'Inter', sans-serif; font-size: 1.5rem;">Detailed Solutions</h2></div>
             </div>
             <div id="review-container" style="padding: 0 25px 40px 25px; max-width: 1000px; margin: 0 auto;"></div>
         </div>
@@ -758,7 +758,7 @@
     
     <div id="edit-group-modal" class="modal-overlay">
         <div class="modal">
-            <h2 style="margin-bottom: 25px; color: var(--primary); font-family: 'Poppins', sans-serif;">Edit Group Details</h2>
+            <h2 style="margin-bottom: 25px; color: var(--primary); font-family: 'Inter', sans-serif;">Edit Group Details</h2>
             <input type="hidden" id="edit-group-id">
             <div class="input-group"><label>Simple Group Name</label><input type="text" id="edit-group-name"></div>
             <div class="input-group"><label>Update Group Banner/Photo (Optional)</label><input type="file" id="edit-group-image-upload" accept=".jpg,.jpeg,.png,.webp"><span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB).</span><input type="hidden" id="edit-group-image-url"></div>
@@ -773,7 +773,7 @@
 
     <div id="questionBankModal" class="modal-overlay">
         <div class="modal" style="width: 750px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h3 style="color: var(--warning); margin: 0; font-size: 1.6rem; font-family: 'Poppins', sans-serif;">📚 Question Bank</h3><button class="btn-outline" style="border-color: var(--danger); color: var(--danger); padding: 6px 14px;" onclick="closeModals()">Close</button></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h3 style="color: var(--warning); margin: 0; font-size: 1.6rem; font-family: 'Inter', sans-serif;">📚 Question Bank</h3><button class="btn-outline" style="border-color: var(--danger); color: var(--danger); padding: 6px 14px;" onclick="closeModals()">Close</button></div>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">Select questions from other tests to import into your current test.</p>
             <select id="qbTestFilter" onchange="renderQuestionBankList()" style="margin-bottom: 20px; padding: 14px; width: 100%; border-radius: var(--radius-sm); border: 2px solid var(--border-color);"></select>
             <div id="questionBankList" style="flex-grow: 1; overflow-y: auto; text-align: left; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 15px; background: var(--bg-color);"></div>
@@ -783,7 +783,7 @@
 
     <div id="forgot-pass-modal" class="modal-overlay">
         <div class="modal" style="max-width: 480px; padding: 0; overflow: hidden;">
-            <div class="modern-header"><h2 style="font-size: 1.8rem; margin: 0; font-family: 'Poppins', sans-serif;">Reset Password</h2></div>
+            <div class="modern-header"><h2 style="font-size: 1.8rem; margin: 0; font-family: 'Inter', sans-serif;">Reset Password</h2></div>
             <div style="padding: 30px;">
                 <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 1rem; line-height: 1.5;">Enter your registered phone number. A reset link will be sent to your email ID associated with this phone number.</p>
                 <div class="input-group"><label>Phone Number</label><input type="tel" id="forgot-pass-phone" placeholder="Enter your 10-digit number"></div>
@@ -796,7 +796,7 @@
         <div class="modal" style="max-width: 420px; padding: 0; overflow: hidden;">
             <div class="modern-done-popup">
                 <div class="check-circle">✓</div>
-                <h2 style="color: var(--text-main); margin-bottom: 12px; font-family: 'Poppins', sans-serif;">Request Sent!</h2>
+                <h2 style="color: var(--text-main); margin-bottom: 12px; font-family: 'Inter', sans-serif;">Request Sent!</h2>
                 <p id="done-popup-msg" style="color: var(--text-muted); margin-bottom: 30px; font-size: 1.05rem;">If this number is registered, you will receive password reset instructions.</p>
                 <button onclick="closeDonePopup()" class="btn-primary" style="width: 100%; border-radius: 25px;">Okay</button>
             </div>
@@ -805,7 +805,7 @@
         
     <div id="edit-modal" class="modal-overlay">
         <div class="modal">
-            <h2 style="margin-bottom: 25px; color: var(--primary); font-family: 'Poppins', sans-serif;">Edit Test Settings</h2>
+            <h2 style="margin-bottom: 25px; color: var(--primary); font-family: 'Inter', sans-serif;">Edit Test Settings</h2>
             <input type="hidden" id="edit-test-id">
             <div class="input-group"><label>Test Title</label><input type="text" id="edit-title"></div>
             <div class="input-group"><label>Select Groups (Check one or more)</label><div id="editTestGroupsContainer" style="max-height: 180px; overflow-y: auto; border: 2px solid var(--border-color); border-radius: var(--radius-sm); padding: 15px; background: var(--bg-color); display: flex; flex-direction: column; gap: 10px;"><span style="font-size: 0.9rem; color: var(--text-muted);">Loading groups...</span></div></div>
@@ -824,10 +824,11 @@
 
     <div id="exit-modal" class="modal-overlay">
         <div class="modal" style="max-width: 480px; text-align: center;">
-            <h2 style="margin-bottom: 15px; color: var(--text-main); font-family: 'Poppins', sans-serif;">Pause Test?</h2>
-            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 1.05rem; line-height: 1.6;">Are you sure you want to pause? Your time, selected answers, and current question will be saved. You can resume exactly where you left off later.</p>
+            <h2 style="margin-bottom: 15px; color: var(--text-main); font-family: 'Inter', sans-serif;">Exit Test?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 1.05rem; line-height: 1.6;">You are attempting to leave an active test. What would you like to do?</p>
             <div style="display: flex; flex-direction: column; gap: 15px;">
-                <button onclick="confirmPause()" class="btn-warning" style="font-size: 1.15rem; padding: 16px;">⏸ Pause & Save Progress</button>
+                <button onclick="confirmPause()" class="btn-warning" style="font-size: 1.05rem; padding: 14px;">⏸ Pause & Go to Dashboard</button>
+                <button onclick="showSubmitSummary()" class="btn-success" style="font-size: 1.05rem; padding: 14px;">✅ Submit Test & View Results</button>
                 <button onclick="hideExitModal()" class="btn-outline" style="margin-top: 10px; border: none; color: var(--text-muted);">Cancel, return to test</button>
             </div>
         </div>
@@ -835,7 +836,7 @@
 
     <div id="summary-modal" class="modal-overlay">
         <div class="modal" style="max-width: 550px; text-align: center;">
-            <h2 style="margin-bottom: 20px; color: var(--text-main); font-family: 'Poppins', sans-serif;">Test Summary</h2>
+            <h2 style="margin-bottom: 20px; color: var(--text-main); font-family: 'Inter', sans-serif;">Test Summary</h2>
             <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 1.05rem;">Please review your progress before making the final submission.</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; text-align: left;">
                 <div style="background: var(--bg-color); padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);"><span style="font-size: 2.2rem; display: block; color: var(--primary); font-weight: 800;" id="sum-total">0</span><span style="color: var(--text-muted); font-size: 0.95rem; font-weight: 600;">Total Questions</span></div>
@@ -1242,7 +1243,7 @@
             if (isTestActive) {
                 // Instantly push the test state back into history so they don't escape
                 window.history.pushState({ view: 'view-test' }, "", `#view-test`);
-                showExitModal(); // Show the pause modal instead
+                showExitModal(); // Show the pause/submit modal instead
                 return; 
             }
             if (event.state) { 
@@ -2195,6 +2196,7 @@
             });
         }
 
+        // Display ALL categories by default when parentId is empty
         function loadGroupsForStudents(parentId = "") { 
             let c = document.getElementById('student-group-list'); c.innerHTML=''; 
             let backBtn = document.getElementById('btn-back-groups');
@@ -2223,7 +2225,7 @@
                     c.innerHTML+=`
                     <div class="group-card" style="${bgStyle}" onclick="handleGroupClick('${g.id}','${g.name.replace(/'/g, "\\'")}', ${hasChildren})">
                         ${badgeHtml}
-                        <div class="group-card-content"><h3>${g.name}</h3></div>
+                        <div class="group-card-content"><h3 style="font-family: 'Inter', sans-serif;">${g.name}</h3></div>
                     </div>`; 
                 }
             }); 
@@ -2265,7 +2267,7 @@
 
                         c.innerHTML += `
                         <div class="action-box" style="display:flex; flex-direction:column; justify-content:space-between; border-radius: var(--radius);">
-                            <h4 style="margin-bottom:15px; color:var(--primary); font-size: 1.25rem;">📝 ${t.title}</h4>
+                            <h4 style="margin-bottom:15px; color:var(--primary); font-size: 1.25rem; font-family: 'Inter', sans-serif;">📝 ${t.title}</h4>
                             <p style="font-size: 1rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600;">${t.questions ? t.questions.length : 0} Questions</p>
                             ${actionHtml}
                         </div>`; 
@@ -2300,7 +2302,7 @@
                     if(c) {
                         c.innerHTML += `
                         <div class="action-box" style="border-left:5px solid var(--success); box-shadow: var(--shadow-sm);">
-                            <h4 style="margin-bottom:12px; font-size: 1.2rem; color: var(--text-main);">${a.testTitle}</h4>
+                            <h4 style="margin-bottom:12px; font-size: 1.2rem; color: var(--text-main); font-family: 'Inter', sans-serif;">${a.testTitle}</h4>
                             <div style="background:#f0fdf4; padding:12px; border-radius:var(--radius-sm); color:#166534; font-weight:800; font-size: 1.1rem; margin-bottom: 10px; border: 1px solid #bbf7d0;">
                                 Score: ${a.score}/${a.totalMarks}
                             </div>
@@ -2356,7 +2358,7 @@
                 let btnClass = isLocked ? 'locked' : (isActive ? 'active-tab' : '');
                 let bgStyle = isActive && !isLocked ? 'background: var(--primary); color: white;' : '';
                 
-                // Prevent clicking locked or future sections if sectional timer is active
+                // Block clicking on locked sections or future sections if sectional timer is active
                 let onclick = (isLocked || (isSectionalTimer && sub !== testSections[currentSectionIndex])) ? '' : `onclick="jumpToQuestion(${firstIdx})"`;
 
                 tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn ${btnClass}" style="white-space:nowrap; padding:8px 18px; font-weight:700; ${bgStyle}" ${onclick}>${sub} ${isLocked?'🔒':''}</button>`;
@@ -2418,7 +2420,7 @@
                 }); 
             }
             
-            container.innerHTML = `<div class="question-card"><h4 style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-bottom: 15px; font-weight: 700; line-height: 1.6; font-family: 'Poppins', sans-serif;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || ''}</h4>${qImgHtml}<div class="options">${optionsHTML}</div></div>`;
+            container.innerHTML = `<div class="question-card"><h4 style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-bottom: 15px; font-weight: 700; line-height: 1.6; font-family: 'Inter', sans-serif;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || ''}</h4>${qImgHtml}<div class="options">${optionsHTML}</div></div>`;
 
             // Backwards Nav Logic
             let hidePrev = false;
@@ -2571,6 +2573,7 @@
             document.getElementById('timer').innerText = `${m}:${s}`;
         }
 
+        // Section lock down logic triggers here
         function handleSectionTimeout() {
             clearInterval(testTimer);
             let currentSec = testSections[currentSectionIndex];
@@ -2579,7 +2582,7 @@
 
             currentSectionIndex++;
             if (currentSectionIndex >= testSections.length) {
-                finalSubmitTest();
+                finalSubmitTest(); // Submits the whole test if it was the last section
             } else {
                 let nextSec = testSections[currentSectionIndex];
                 currentSectionTimeRemaining = currentTest.sectionTimers[nextSec] || (currentTest.duration || 1800);
@@ -2598,8 +2601,6 @@
         function showSubmitSummary() {
             hideExitModal(); let answered = 0, unanswered = 0, marked = 0;
             
-            // If sectional, only show summary for current section OR just force submit.
-            // Let's keep it simple: Show full summary.
             for(let i = 0; i < testQuestions.length; i++) { if (questionStates[i] === 'marked') marked++; else if (questionStates[i] === 'answered' || userAnswers[i] !== null) answered++; else unanswered++; }
             document.getElementById('sum-total').innerText = testQuestions.length; document.getElementById('sum-answered').innerText = answered; document.getElementById('sum-unanswered').innerText = unanswered; document.getElementById('sum-marked').innerText = marked; document.getElementById('summary-modal').style.display = 'flex';
         }
@@ -2627,7 +2628,7 @@
             for (let sub in sectionStats) {
                 let st = sectionStats[sub]; let attempted = st.total - st.left; let accuracy = attempted > 0 ? Math.round((st.correct / attempted) * 100) : 0;
                 let scoreColor = accuracy >= 75 ? 'var(--success)' : (accuracy >= 40 ? 'var(--warning)' : 'var(--danger)');
-                secHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--border-color);"><div><strong style="display:block; color:var(--text-main); font-size:1.1rem;">${sub}</strong><span style="font-size: 0.95rem; color:var(--text-muted); font-weight:500;">${st.correct} Correct, ${st.wrong} Wrong, ${st.left} Skipped</span></div><div style="font-weight: 800; color: ${scoreColor}; font-size: 1.25rem;">${accuracy}% Acc.</div></div>`;
+                secHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--border-color);"><div><strong style="display:block; color:var(--text-main); font-size:1.1rem; font-family: 'Inter', sans-serif;">${sub}</strong><span style="font-size: 0.95rem; color:var(--text-muted); font-weight:500;">${st.correct} Correct, ${st.wrong} Wrong, ${st.left} Skipped</span></div><div style="font-weight: 800; color: ${scoreColor}; font-size: 1.25rem;">${accuracy}% Acc.</div></div>`;
             }
             document.getElementById('res-sectional').innerHTML = secHtml; navigate('view-results');
         }
@@ -2692,7 +2693,7 @@
                             <span style="font-size: 0.95rem; font-weight: 800; color: ${statusColor}; text-transform: uppercase;">${statusText}</span>
                             <span style="background:var(--bg-color); padding:4px 12px; border-radius:20px; font-size:0.85rem; color:var(--text-main); font-weight:800; border: 1px solid var(--border-color);">${q.subject || 'General'}</span>
                         </div>
-                        <h4 style="font-size: 1.25rem; margin-bottom: 15px; font-weight: 700; line-height: 1.5;"><span style="color: var(--primary);">Q${i + 1}.</span> ${qText || ''}</h4>${qImgHtml}
+                        <h4 style="font-size: 1.25rem; margin-bottom: 15px; font-weight: 700; line-height: 1.5; font-family: 'Inter', sans-serif;"><span style="color: var(--primary);">Q${i + 1}.</span> ${qText || ''}</h4>${qImgHtml}
                         <div style="display:flex; flex-direction:column; gap:12px;">${optionsHTML}</div> ${expHTML}
                     </div>`;
             });
