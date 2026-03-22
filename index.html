@@ -168,6 +168,9 @@
         .options label { font-size: clamp(0.95rem, 2vw, 1.15rem); display: flex; align-items: center; margin: 10px 0; padding: clamp(12px, 2.5vw, 18px); background: var(--bg-color); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; font-weight: 500;}
         .options label:hover { background: white; border-color: var(--primary-light); box-shadow: var(--shadow-sm); transform: translateX(5px); }
         .options input[type="radio"] { margin-right: 18px; transform: scale(1.4); accent-color: var(--primary); flex-shrink: 0; }
+        
+        /* NEW: Locked Section Tab Style */
+        .section-tab-btn.locked { opacity: 0.5; pointer-events: none; border-color: var(--danger) !important; color: var(--danger) !important; background: #fee2e2 !important; text-decoration: line-through; }
         /* --------------------------------------------------- */
 
         .ai-panel { background: #f0fdf4; border: 2px dashed #10b981; padding: 24px; border-radius: var(--radius); margin-bottom: 25px; }
@@ -192,6 +195,9 @@
         .q-btn.active { box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2); border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
         .q-btn.answered { background: var(--success); color: white; border-color: var(--success); }
         .q-btn.marked { background: var(--review); color: white; border-color: var(--review); }
+        
+        /* NEW: Palette button locked state */
+        .q-btn.locked { opacity: 0.3; pointer-events: none; background: #e2e8f0; border-color: #cbd5e1; }
 
         .palette-legend { padding: 20px 24px; border-top: 1px solid var(--border-color); background: var(--bg-color); font-size: 0.9rem; font-weight: 500;}
         .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -867,7 +873,7 @@
         }
 
         // ==========================================
-        // --- GLOBAL VARIABLES ---
+        // --- GLOBAL VARIABLES (UPDATED) ---
         // ==========================================
         let currentUserRole = null;
         let currentUserBoard = null; 
@@ -884,6 +890,13 @@
         let testMarks = 2;
         let testNegativeMarks = 0;
         
+        // --- NEW VARIABLES FOR SECTION TIMEOUT & LOCKDOWN ---
+        let testSections = []; // Array of section names in order
+        let currentSectionIndex = 0; 
+        let lockedSections = []; // Array to track which sections are timed out and locked
+        let isSectionalTimer = false; 
+        let currentSectionTimeRemaining = 0;
+
         let storedGeminiKey = ""; 
         let activeAdminTestId = null; 
         let editingQuestionIndex = null;
@@ -1170,7 +1183,7 @@
         }
         
         // ==========================================
-        // --- NAVIGATION & VISIBILITY CONTROLS ---
+        // --- NAVIGATION, VISIBILITY & BACK BUTTON FIX ---
         // ==========================================
         function updateUIVisibility() {
             const bottomNav = document.getElementById('bottom-nav-student');
@@ -1223,6 +1236,23 @@
                 e.returnValue = 'You have an active test. Your progress will be lost if you leave this page.'; 
             } 
         });
+
+        // FIXED BACK BUTTON INTERCEPTOR
+        window.onpopstate = function(event) {
+            if (isTestActive) {
+                // Instantly push the test state back into history so they don't escape
+                window.history.pushState({ view: 'view-test' }, "", `#view-test`);
+                showExitModal(); // Show the pause modal instead
+                return; 
+            }
+            if (event.state) { 
+                navigate(event.state.view, false); 
+                if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); 
+                else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); 
+            } else { 
+                navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); 
+            }
+        };
 
         const MAX_FAILED_ATTEMPTS = 5; 
         const LOCKOUT_DURATION_MS = 12 * 60 * 60 * 1000;
@@ -1291,18 +1321,7 @@
             if(type === 'register') { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; } 
             else { document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; }
         }
-
-        window.onpopstate = function(event) {
-            if (isTestActive) {
-                window.history.pushState({ view: 'view-test' }, "", `#view-test`);
-                showExitModal(); 
-                return; 
-            }
-            if (event.state) { navigate(event.state.view, false); if (event.state.view === 'view-admin') openAdminSec(event.state.sec || 'admin-main-menu', false); else if (event.state.view === 'view-student') openStudentSec(event.state.sec || 'student-main-menu', false); } 
-            else { navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); }
-        };
-
-        // ==========================================
+                // ==========================================
         // --- AUTHENTICATION LOGIC ---
         // ==========================================
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
@@ -1395,7 +1414,8 @@
                 navigate('view-login', false); 
             }
         });
-                // ==========================================
+
+        // ==========================================
         // --- PORTAL BRANDING LOGIC ---
         // ==========================================
         function loadPortalBranding() {
@@ -1569,8 +1589,7 @@
             } catch(e) { msg.style.color = 'var(--danger)'; msg.innerText = "Error: " + e.message; } 
             finally { btn.disabled = false; btn.innerText = "Extract Questions"; }
         }
-
-        // ==========================================
+                // ==========================================
         // --- ADMIN: GROUP SETTINGS ---
         // ==========================================
         async function addGroup() { 
@@ -1647,7 +1666,8 @@
                 try { await db.collection("groups").doc(gid).delete(); showToast("Group deleted successfully."); } catch(e) { showToast("Error deleting group: " + e.message, 'error'); }
             });
         }
-                // ==========================================
+        
+        // ==========================================
         // --- ADMIN: DATA LOADING LOGIC ---
         // ==========================================
         function loadAdminData() { 
@@ -2175,7 +2195,6 @@
             });
         }
 
-        // --- FIXED BACK BUTTON HIERARCHY LOGIC ---
         function loadGroupsForStudents(parentId = "") { 
             let c = document.getElementById('student-group-list'); c.innerHTML=''; 
             let backBtn = document.getElementById('btn-back-groups');
@@ -2184,13 +2203,11 @@
             if(parentId) {
                 let parentGroup = allGroupsCache.find(g => g.id === parentId);
                 headerTitle.innerText = parentGroup ? parentGroup.name : "Sub-Categories";
-                // Go up one level in the hierarchy
                 let grandParentId = parentGroup && parentGroup.parentId ? parentGroup.parentId : "";
                 backBtn.onclick = () => loadGroupsForStudents(grandParentId); 
                 backBtn.style.display = 'inline-block'; 
             } else {
                 headerTitle.innerText = "Select a Test Category";
-                // Stop here, hide back button on the root level
                 backBtn.style.display = 'none'; 
             }
 
@@ -2220,7 +2237,6 @@
         function viewGroupTests(gid, gn) { 
             document.getElementById('current-group-title').innerText = gn; 
             
-            // Set dynamic back button to return to the parent group/sub-group
             let currentGroup = allGroupsCache.find(g => g.id === gid);
             let returnToParentId = currentGroup && currentGroup.parentId ? currentGroup.parentId : "";
             const testListBackBtn = document.querySelector('#student-sec-tests-list .student-back-btn');
@@ -2326,20 +2342,64 @@
         }
 
         // ==========================================
-        // --- TEST ENGINE (LIVE & REVIEW) ---
+        // --- UPGRADED TEST ENGINE (LOCKDOWNS & TIMERS) ---
         // ==========================================
         function getForcedLanguage(subject) { if (!subject) return null; const sub = subject.toLowerCase(); if (sub.includes('english')) return 'Eng'; if (sub.includes('hindi')) return 'Hin'; return null; }
         function togglePalette() { const panel = document.getElementById('side-palette'); const overlay = document.getElementById('side-overlay'); if (panel.classList.contains('open')) { panel.classList.remove('open'); overlay.style.display = 'none'; } else { panel.classList.add('open'); overlay.style.display = 'block'; } }
-        function renderPalette() { const grid = document.getElementById('palette-grid'); grid.innerHTML = ''; testQuestions.forEach((_, i) => { grid.innerHTML += `<button id="pal-btn-${i}" class="q-btn" onclick="jumpToQuestion(${i}); togglePalette();">${i + 1}</button>`; }); updatePaletteButton(0); }
-        function jumpToQuestion(i) { currentQuestionIndex = i; renderCurrentQuestion(); document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active')); document.getElementById(`pal-btn-${i}`).classList.add('active'); }
-        function updatePaletteButton(i) { const btn = document.getElementById(`pal-btn-${i}`); btn.className = 'q-btn'; if (i === currentQuestionIndex) btn.classList.add('active'); if (questionStates[i] === 'answered') btn.classList.add('answered'); else if (questionStates[i] === 'marked') btn.classList.add('marked'); }
+        
+        function renderTabs() {
+            let tabsHtml = '';
+            testSections.forEach(sub => {
+                let isLocked = lockedSections.includes(sub);
+                let isActive = isSectionalTimer ? (sub === testSections[currentSectionIndex]) : false;
+                let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub);
+                let btnClass = isLocked ? 'locked' : (isActive ? 'active-tab' : '');
+                let bgStyle = isActive && !isLocked ? 'background: var(--primary); color: white;' : '';
+                
+                // Prevent clicking locked or future sections if sectional timer is active
+                let onclick = (isLocked || (isSectionalTimer && sub !== testSections[currentSectionIndex])) ? '' : `onclick="jumpToQuestion(${firstIdx})"`;
+
+                tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn ${btnClass}" style="white-space:nowrap; padding:8px 18px; font-weight:700; ${bgStyle}" ${onclick}>${sub} ${isLocked?'🔒':''}</button>`;
+            });
+            document.getElementById('section-tabs').innerHTML = tabsHtml;
+        }
+
+        function renderPalette() { 
+            const grid = document.getElementById('palette-grid'); grid.innerHTML = ''; 
+            testQuestions.forEach((q, i) => { 
+                let sub = q.subject || 'General';
+                let isLocked = lockedSections.includes(sub);
+                let isFutureSection = isSectionalTimer && testSections.indexOf(sub) > currentSectionIndex;
+                let btnLockedClass = (isLocked || isFutureSection) ? 'locked' : '';
+                let onclick = (isLocked || isFutureSection) ? '' : `onclick="jumpToQuestion(${i}); togglePalette();"`;
+
+                grid.innerHTML += `<button id="pal-btn-${i}" class="q-btn ${btnLockedClass}" ${onclick}>${i + 1}</button>`; 
+            }); 
+            if(testQuestions.length > 0) updatePaletteButton(currentQuestionIndex); 
+        }
+
+        function jumpToQuestion(i) { currentQuestionIndex = i; renderCurrentQuestion(); document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active')); const btn = document.getElementById(`pal-btn-${i}`); if(btn) btn.classList.add('active'); }
+        
+        function updatePaletteButton(i) { 
+            const btn = document.getElementById(`pal-btn-${i}`); 
+            if(!btn || btn.classList.contains('locked')) return;
+            
+            btn.className = 'q-btn'; 
+            if (i === currentQuestionIndex) btn.classList.add('active'); 
+            if (questionStates[i] === 'answered') btn.classList.add('answered'); 
+            else if (questionStates[i] === 'marked') btn.classList.add('marked'); 
+        }
 
         let currentLanguage = 'Eng'; let reviewLanguage = 'Eng'; let currentReviewFilter = 'all';
 
         function renderCurrentQuestion() {
             const container = document.getElementById('question-container'); const q = testQuestions[currentQuestionIndex]; if(!q) return;
-            document.querySelectorAll('.section-tab-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--primary)'; });
-            const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); if(activeTab) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
+            
+            if(!isSectionalTimer) {
+                document.querySelectorAll('.section-tab-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--primary)'; });
+                const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); 
+                if(activeTab && !activeTab.classList.contains('locked')) { activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; }
+            }
 
             let forcedLang = null; if (q.displayLang === 'english') forcedLang = 'Eng'; else if (q.displayLang === 'hindi') forcedLang = 'Hin'; else forcedLang = getForcedLanguage(q.subject);
             const displayLang = forcedLang ? forcedLang : currentLanguage;
@@ -2358,10 +2418,35 @@
                 }); 
             }
             
-            container.innerHTML = `<div class="question-card"><h4 style="font-size: 1.3rem; margin-bottom: 15px; font-weight: 700; line-height: 1.5;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || ''}</h4>${qImgHtml}<div class="options">${optionsHTML}</div></div>`;
+            container.innerHTML = `<div class="question-card"><h4 style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-bottom: 15px; font-weight: 700; line-height: 1.6; font-family: 'Poppins', sans-serif;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText || ''}</h4>${qImgHtml}<div class="options">${optionsHTML}</div></div>`;
 
-            document.getElementById('btn-prev').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
-            const nextBtn = document.getElementById('btn-next'); if (currentQuestionIndex === testQuestions.length - 1) { nextBtn.innerText = "Finish ✅"; nextBtn.classList.replace('btn-primary', 'btn-success'); } else { nextBtn.innerText = "Next ➡"; nextBtn.classList.replace('btn-success', 'btn-primary'); }
+            // Backwards Nav Logic
+            let hidePrev = false;
+            if (currentQuestionIndex === 0) hidePrev = true;
+            if (isSectionalTimer && currentQuestionIndex > 0) {
+                let prevSub = testQuestions[currentQuestionIndex - 1].subject || 'General';
+                if (prevSub !== testSections[currentSectionIndex]) hidePrev = true;
+            }
+            document.getElementById('btn-prev').style.display = hidePrev ? 'none' : 'block';
+
+            // Forwards Nav Logic
+            const nextBtn = document.getElementById('btn-next'); 
+            let isLastInTest = currentQuestionIndex === testQuestions.length - 1;
+            let isLastInSection = false;
+            
+            if (!isLastInTest && isSectionalTimer) {
+                let nextSub = testQuestions[currentQuestionIndex + 1].subject || 'General';
+                if (nextSub !== testSections[currentSectionIndex]) isLastInSection = true;
+            }
+
+            if (isLastInTest || (isSectionalTimer && isLastInSection)) { 
+                nextBtn.innerText = isSectionalTimer && !isLastInTest ? "Submit Section 🔒" : "Finish Test ✅"; 
+                nextBtn.classList.replace('btn-primary', 'btn-success'); 
+            } else { 
+                nextBtn.innerText = "Next ➡"; 
+                nextBtn.classList.replace('btn-success', 'btn-primary'); 
+            }
+            
             if (window.MathJax) { MathJax.typesetClear(); MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
             for (let j = 0; j < testQuestions.length; j++) updatePaletteButton(j);
         }
@@ -2371,24 +2456,56 @@
             currentTest = doc.data(); activeTestId = testId; testQuestions = currentTest.questions || []; testMarks = currentTest.marksPerQuestion || 2; testNegativeMarks = currentTest.negativeMarks || 0; 
             if(testQuestions.length === 0) return showToast("This test currently has no questions.", 'error');
 
+            testSections = [...new Set(testQuestions.map(q => q.subject || 'General'))];
+            isSectionalTimer = currentTest.sectionTimers && Object.keys(currentTest.sectionTimers).length > 0;
+
             const savedProgressStr = localStorage.getItem(`testProgress_${auth.currentUser.uid}_${testId}`);
             if (savedProgressStr) {
-                const savedProgress = JSON.parse(savedProgressStr); userAnswers = savedProgress.userAnswers; questionStates = savedProgress.questionStates; currentQuestionIndex = savedProgress.currentQuestionIndex; timeRemaining = savedProgress.timeRemaining; showToast("Resuming test from where you left off!", "success");
+                const savedProgress = JSON.parse(savedProgressStr); 
+                userAnswers = savedProgress.userAnswers; 
+                questionStates = savedProgress.questionStates; 
+                currentQuestionIndex = savedProgress.currentQuestionIndex; 
+                timeRemaining = savedProgress.timeRemaining; 
+                lockedSections = savedProgress.lockedSections || [];
+                currentSectionIndex = savedProgress.currentSectionIndex || 0;
+                currentSectionTimeRemaining = savedProgress.currentSectionTimeRemaining || 0;
+                showToast("Resuming test from where you left off!", "success");
             } else {
-                userAnswers = new Array(testQuestions.length).fill(null); questionStates = new Array(testQuestions.length).fill('unanswered'); currentQuestionIndex = 0; timeRemaining = currentTest.duration || 1800; 
+                userAnswers = new Array(testQuestions.length).fill(null); 
+                questionStates = new Array(testQuestions.length).fill('unanswered'); 
+                lockedSections = [];
+                currentSectionIndex = 0;
+                
+                if (isSectionalTimer) {
+                    let firstSec = testSections[0];
+                    currentSectionTimeRemaining = currentTest.sectionTimers[firstSec] || (currentTest.duration || 1800);
+                    currentQuestionIndex = testQuestions.findIndex(q => (q.subject || 'General') === firstSec);
+                } else {
+                    timeRemaining = currentTest.duration || 1800; 
+                    currentQuestionIndex = 0;
+                }
             }
             
             document.getElementById('test-title').innerText = currentTest.title;
-            const subjectSet = new Set(testQuestions.map(q => q.subject || 'General')); let tabsHtml = '';
-            Array.from(subjectSet).forEach(sub => { let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub); tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn" style="white-space:nowrap; padding:8px 18px; font-weight:700;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`; });
-            document.getElementById('section-tabs').innerHTML = tabsHtml;
-
-            isTestActive = true; navigate('view-test'); renderPalette(); renderCurrentQuestion(); startTimer();
+            renderTabs();
+            isTestActive = true; 
+            navigate('view-test'); 
+            renderPalette(); 
+            renderCurrentQuestion(); 
+            startTimer();
         }
 
         function confirmPause() { 
             if(!isTestActive) return; isTestActive = false; clearInterval(testTimer); 
-            const progress = { timeRemaining: timeRemaining, currentQuestionIndex: currentQuestionIndex, userAnswers: userAnswers, questionStates: questionStates };
+            const progress = { 
+                timeRemaining: timeRemaining, 
+                currentQuestionIndex: currentQuestionIndex, 
+                userAnswers: userAnswers, 
+                questionStates: questionStates,
+                lockedSections: lockedSections,
+                currentSectionIndex: currentSectionIndex,
+                currentSectionTimeRemaining: currentSectionTimeRemaining
+            };
             localStorage.setItem(`testProgress_${auth.currentUser.uid}_${activeTestId}`, JSON.stringify(progress));
             hideExitModal(); showToast("Test paused! Your progress has been saved.", "success"); navigate('view-student'); 
         }
@@ -2396,19 +2513,93 @@
         function setAnswer(optIndex) { userAnswers[currentQuestionIndex] = optIndex; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'answered'; updatePaletteButton(currentQuestionIndex); }
         function clearResponse() { userAnswers[currentQuestionIndex] = null; if(questionStates[currentQuestionIndex] !== 'marked') questionStates[currentQuestionIndex] = 'unanswered'; document.getElementById('question-container').querySelectorAll('input[type="radio"]').forEach(r => r.checked = false); updatePaletteButton(currentQuestionIndex); }
         function markForReview() { questionStates[currentQuestionIndex] = questionStates[currentQuestionIndex] === 'marked' ? (userAnswers[currentQuestionIndex] !== null ? 'answered' : 'unanswered') : 'marked'; updatePaletteButton(currentQuestionIndex); nextQuestion(); }
-        function prevQuestion() { if(currentQuestionIndex > 0) jumpToQuestion(currentQuestionIndex - 1); }
-        function nextQuestion() { if(currentQuestionIndex < testQuestions.length - 1) jumpToQuestion(currentQuestionIndex + 1); else showSubmitSummary(); }
+        
+        function prevQuestion() { 
+            let target = currentQuestionIndex - 1;
+            if (target < 0) return;
+            if (isSectionalTimer && (testQuestions[target].subject || 'General') !== testSections[currentSectionIndex]) return; // Block going back past section
+            jumpToQuestion(target); 
+        }
+        
+        function nextQuestion() { 
+            let target = currentQuestionIndex + 1;
+            if (target >= testQuestions.length) {
+                showSubmitSummary();
+                return;
+            }
+            
+            if (isSectionalTimer && (testQuestions[target].subject || 'General') !== testSections[currentSectionIndex]) {
+                showCustomConfirm("Submit Section?", "Are you sure you want to submit this section early? You will NOT be able to return to these questions.", () => {
+                    currentSectionTimeRemaining = 0; 
+                    handleSectionTimeout();
+                });
+                return;
+            }
+            
+            jumpToQuestion(target); 
+        }
+        
         function toggleLanguage() { currentLanguage = currentLanguage === 'Eng' ? 'Hin' : 'Eng'; renderCurrentQuestion(); }
 
         function startTimer() {
-            clearInterval(testTimer); if(timeRemaining <= 0) { document.getElementById('timer').innerText = "No Limit"; return; }
-            testTimer = setInterval(() => { timeRemaining--; document.getElementById('timer').innerText = `${Math.floor(timeRemaining/60).toString().padStart(2,'0')}:${(timeRemaining%60).toString().padStart(2,'0')}`; if (timeRemaining <= 0) { hideSubmitSummary(); hideExitModal(); finalSubmitTest(); } }, 1000);
+            clearInterval(testTimer); 
+            if(!isSectionalTimer && timeRemaining <= 0) { document.getElementById('timer').innerText = "No Limit"; return; }
+            
+            testTimer = setInterval(() => { 
+                if (isSectionalTimer) {
+                    if (currentSectionTimeRemaining <= 0) {
+                        handleSectionTimeout();
+                        return;
+                    }
+                    currentSectionTimeRemaining--;
+                    updateTimerDisplay(currentSectionTimeRemaining);
+                } else {
+                    if (timeRemaining <= 0) { 
+                        document.getElementById('timer').innerText = "00:00";
+                        hideSubmitSummary(); hideExitModal(); finalSubmitTest(); 
+                        return;
+                    }
+                    timeRemaining--; 
+                    updateTimerDisplay(timeRemaining);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay(time) {
+            let m = Math.floor(time / 60).toString().padStart(2, '0');
+            let s = (time % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${m}:${s}`;
+        }
+
+        function handleSectionTimeout() {
+            clearInterval(testTimer);
+            let currentSec = testSections[currentSectionIndex];
+            lockedSections.push(currentSec);
+            showToast(`⏳ ${currentSec} locked! Moving to next section.`, "warning");
+
+            currentSectionIndex++;
+            if (currentSectionIndex >= testSections.length) {
+                finalSubmitTest();
+            } else {
+                let nextSec = testSections[currentSectionIndex];
+                currentSectionTimeRemaining = currentTest.sectionTimers[nextSec] || (currentTest.duration || 1800);
+                currentQuestionIndex = testQuestions.findIndex(q => (q.subject || 'General') === nextSec);
+                
+                renderTabs();
+                renderPalette();
+                renderCurrentQuestion();
+                startTimer();
+            }
         }
 
         function showExitModal() { document.getElementById('exit-modal').style.display = 'flex'; }
         function hideExitModal() { document.getElementById('exit-modal').style.display = 'none'; }
+        
         function showSubmitSummary() {
             hideExitModal(); let answered = 0, unanswered = 0, marked = 0;
+            
+            // If sectional, only show summary for current section OR just force submit.
+            // Let's keep it simple: Show full summary.
             for(let i = 0; i < testQuestions.length; i++) { if (questionStates[i] === 'marked') marked++; else if (questionStates[i] === 'answered' || userAnswers[i] !== null) answered++; else unanswered++; }
             document.getElementById('sum-total').innerText = testQuestions.length; document.getElementById('sum-answered').innerText = answered; document.getElementById('sum-unanswered').innerText = unanswered; document.getElementById('sum-marked').innerText = marked; document.getElementById('summary-modal').style.display = 'flex';
         }
