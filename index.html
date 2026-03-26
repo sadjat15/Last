@@ -3449,7 +3449,7 @@
         }
         function hideSubmitSummary() { document.getElementById('summary-modal').style.display = 'none'; }
 
-              // ==========================================
+                             // ==========================================
         // --- UPDATED SUBMIT FUNCTION WITH LIVE RANK ---
         // ==========================================
         async function finalSubmitTest() {
@@ -3463,29 +3463,46 @@
             });
             let finalScore = Math.round(((correct * testMarks) - (wrong * testNegativeMarks)) * 100) / 100; 
 
-            document.getElementById('res-rank-container').innerHTML = '<p style="text-align:center; color: var(--primary); font-weight: 800; padding: 20px;">Fetching Live Rankings... ⏳</p>';
+            // 1. Safely update the Score UI immediately
+            if(document.getElementById('res-score')) document.getElementById('res-score').innerText = finalScore; 
+            if(document.getElementById('res-correct')) document.getElementById('res-correct').innerText = correct; 
+            if(document.getElementById('res-wrong')) document.getElementById('res-wrong').innerText = wrong; 
+            if(document.getElementById('res-left')) document.getElementById('res-left').innerText = left;
 
+            // 2. Safely handle Sectional Stats
+            let secHtml = '';
+            for (let sub in sectionStats) {
+                let st = sectionStats[sub]; let attempted = st.total - st.left; let accuracy = attempted > 0 ? Math.round((st.correct / attempted) * 100) : 0;
+                let scoreColor = accuracy >= 75 ? 'var(--success)' : (accuracy >= 40 ? 'var(--warning)' : 'var(--danger)');
+                secHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(226, 232, 240, 0.8);"><div><strong style="display:block; color:var(--text-main); font-size:1.2rem; font-weight:800;">${sub}</strong><span style="font-size: 1rem; color:var(--text-muted); font-weight:600;">${st.correct} Correct, ${st.wrong} Wrong, ${st.left} Skipped</span></div><div style="font-weight: 900; color: ${scoreColor}; font-size: 1.4rem; text-shadow: 0 2px 4px rgba(0,0,0,0.05);">${accuracy}% Acc.</div></div>`;
+            }
+            if(document.getElementById('res-sectional')) document.getElementById('res-sectional').innerHTML = secHtml; 
+
+            // 3. Set loading state for rank
+            if(document.getElementById('res-rank-container')) {
+                document.getElementById('res-rank-container').innerHTML = '<p style="text-align:center; color: var(--text-muted); font-weight: 600; padding: 10px; margin: 0;">Calculating Rank...</p>';
+            }
+
+            // 4. NAVIGATE IMMEDIATELY so the user doesn't wait
+            navigate('view-results');
+
+            // 5. Save to database and calculate rank
             if(auth.currentUser) {
                 try {
-                    // 1. Save the new attempt to database
                     const newAttemptRef = await db.collection("attempts").add({
                         userId: auth.currentUser.uid, userIdEmail: auth.currentUser.email, testId: activeTestId, testTitle: currentTest.title, score: finalScore, totalMarks: testQuestions.length * testMarks,
                         correct: correct, wrong: wrong, left: left, userAnswers: userAnswers, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    // 2. Immediately fetch ALL attempts for this test to calculate rank
                     const snapshot = await db.collection("attempts").where("testId", "==", activeTestId).get();
                     let attempts = [];
                     snapshot.forEach(doc => attempts.push({ id: doc.id, ...doc.data() }));
                     
-                    // Sort descending by score
                     attempts.sort((a, b) => b.score - a.score);
 
-                    // 3. Find this user's rank
                     let userRankIndex = attempts.findIndex(a => a.id === newAttemptRef.id);
                     let userRank = userRankIndex !== -1 ? userRankIndex + 1 : '-';
 
-                                       // 4. Build Top 3 List UI (Compact Version)
                     let top3Html = '';
                     let medals = ['🥇', '🥈', '🥉'];
 
@@ -3502,7 +3519,6 @@
                         </div>`;
                     }
 
-                    // 5. Inject into the DOM (Tight Spacing)
                     let rankHtml = `
                         <div style="text-align: center; margin: 10px 0; padding: 8px; background: rgba(224, 231, 255, 0.4); border-radius: var(--radius-sm);">
                             <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Your Rank: ${userRank}</div>
@@ -3511,26 +3527,20 @@
                             ${top3Html}
                         </div>
                         <div style="text-align: center; margin-top: 12px;">
-                            <a href="javascript:void(0)" onclick="viewFullLeaderboard('${activeTestId}')" style="color: var(--text-main); font-weight: 700; text-decoration: none; font-size: 0.95rem;">See All Students</a>
+                            <a href="javascript:void(0)" onclick="viewFullLeaderboard('${activeTestId}')" style="color: var(--primary); font-weight: 800; text-decoration: none; font-size: 0.95rem;">See All Students</a>
                         </div>
                     `;
-                    document.getElementById('res-rank-container').innerHTML = rankHtml;
-
+                    
+                    if(document.getElementById('res-rank-container')) {
+                        document.getElementById('res-rank-container').innerHTML = rankHtml;
+                    }
                 } catch (error) {
-                    console.error(error);
-                    document.getElementById('res-rank-container').innerHTML = '<p style="color:var(--danger); text-align:center; font-weight:bold;">Error fetching live rank.</p>';
+                    console.error("Rank calculation error:", error);
+                    if(document.getElementById('res-rank-container')) {
+                        document.getElementById('res-rank-container').innerHTML = '<p style="color:var(--danger); text-align:center; font-weight:bold; font-size: 0.9rem;">Rank fetch failed.</p>';
+                    }
                 }
             }
-
-            // Populate the rest of the results UI
-            document.getElementById('res-score').innerText = finalScore; document.getElementById('res-correct').innerText = correct; document.getElementById('res-wrong').innerText = wrong; document.getElementById('res-left').innerText = left;
-            let secHtml = '';
-            for (let sub in sectionStats) {
-                let st = sectionStats[sub]; let attempted = st.total - st.left; let accuracy = attempted > 0 ? Math.round((st.correct / attempted) * 100) : 0;
-                let scoreColor = accuracy >= 75 ? 'var(--success)' : (accuracy >= 40 ? 'var(--warning)' : 'var(--danger)');
-                secHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(226, 232, 240, 0.8);"><div><strong style="display:block; color:var(--text-main); font-size:1.2rem; font-weight:800;">${sub}</strong><span style="font-size: 1rem; color:var(--text-muted); font-weight:600;">${st.correct} Correct, ${st.wrong} Wrong, ${st.left} Skipped</span></div><div style="font-weight: 900; color: ${scoreColor}; font-size: 1.4rem; text-shadow: 0 2px 4px rgba(0,0,0,0.05);">${accuracy}% Acc.</div></div>`;
-            }
-            document.getElementById('res-sectional').innerHTML = secHtml; navigate('view-results');
         }
 
         // Helper function to jump to leaderboard tab
@@ -3540,11 +3550,11 @@
             
             // Manually switch Bottom Nav to Leaderboards
             document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
-            // The Rank tab is the 3rd item in your bottom nav
             document.querySelectorAll('.bottom-nav .nav-item')[2].classList.add('active'); 
             
             openStudentSec('student-sec-leaderboards');
         }
+
         async function seePastResults(attemptId) {
             try {
                 const attDoc = await db.collection("attempts").doc(attemptId).get(); if(!attDoc.exists) return showToast("Record not found.", 'error'); const attData = attDoc.data();
