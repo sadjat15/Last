@@ -3201,10 +3201,12 @@
                         if(m.type === 'video') { 
                             iconHtml = '▶️'; btnText = 'Watch Video'; 
                             actionAction = `onclick="openVideoModal('${m.url}', '${m.title.replace(/'/g, "\\'")}')"`; 
-                        } else if (m.type === 'pdf') { 
-                            iconHtml = '📄'; btnText = 'Open PDF'; 
-                            actionAction = `onclick="window.open('${m.url}', '_blank')"`; 
-                        } else { 
+                        }  else if (m.type === 'pdf') { 
+    iconHtml = '📄'; btnText = 'Open PDF'; 
+    // Wrap the Cloudinary URL in Google Docs Viewer to ensure it opens on mobile
+    actionAction = `onclick="window.open('https://docs.google.com/viewer?url=' + encodeURIComponent('${m.url}') + '&embedded=true', '_blank')"`; 
+}
+ else { 
                             iconHtml = '🖼️'; btnText = 'View Image'; 
                             actionAction = `onclick="window.open('${m.url}', '_blank')"`; 
                         }
