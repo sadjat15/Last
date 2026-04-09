@@ -2531,111 +2531,163 @@
         // --- AI GENERATION & PDF EXTRACTION ---
         // ==========================================
         async function generateBulkQuestionsWithAI() { 
-            const topicInput = document.getElementById('aiTopicInput'); 
-            const difficultySelect = document.getElementById('aiDifficultySelect'); 
-            const countInput = document.getElementById('aiQuestionCount'); 
-            const generateBtn = document.getElementById('aiGenerateBtn'); 
-            const errorMsg = document.getElementById('aiGenError');
-            
-            const topic = topicInput.value.trim(); const difficulty = difficultySelect.value; 
-            const count = parseInt(countInput.value) || 1; const langChoice = document.getElementById('aiLanguageChoice').value; 
+    const topicInput = document.getElementById('aiTopicInput'); 
+    const difficultySelect = document.getElementById('aiDifficultySelect'); 
+    const countInput = document.getElementById('aiQuestionCount'); 
+    const generateBtn = document.getElementById('aiGenerateBtn'); 
+    const errorMsg = document.getElementById('aiGenError');
+    
+    const topic = topicInput.value.trim(); 
+    const difficulty = difficultySelect.value; 
+    const count = parseInt(countInput.value) || 1; 
+    const langChoice = document.getElementById('aiLanguageChoice').value; 
 
-            if (!storedGeminiKey) { errorMsg.innerText = "Please configure the API Key in Portal Settings first."; errorMsg.style.display = 'block'; return; }
-            if (!topic) { errorMsg.innerText = "Enter a topic."; errorMsg.style.display = 'block'; return; }
-            
-            errorMsg.style.display = 'none'; generateBtn.innerText = `Generating ${count}...`; generateBtn.disabled = true;
+    if (!storedGeminiKey) { errorMsg.innerText = "Please configure the API Key in Portal Settings first."; errorMsg.style.display = 'block'; return; }
+    if (!topic) { errorMsg.innerText = "Enter a topic."; errorMsg.style.display = 'block'; return; }
+    
+    errorMsg.style.display = 'none'; 
+    generateBtn.innerText = `Generating ${count}...`; 
+    generateBtn.disabled = true;
 
-            const mathInstructions = `CRITICAL MATH INSTRUCTIONS: If the topic involves math, physics, equations, fractions, or scientific symbols, you MUST format them using LaTeX for MathJax. 1. Use \\\\( and \\\\) for inline equations. 2. Use $$$$and$$$$ for block equations. 3. JSON ESCAPING: You MUST double-escape all backslashes in the JSON string. For example, write \\\\frac{1}{2} instead of \\frac{1}{2}.`;
+    const mathInstructions = `CRITICAL MATH INSTRUCTIONS: If the topic involves math, physics, equations, fractions, or scientific symbols, you MUST format them using LaTeX for MathJax. 1. Use \\\\( and \\\\) for inline equations. 2. Use $$$$and$$$$ for block equations. 3. JSON ESCAPING: You MUST double-escape all backslashes in the JSON string. For example, write \\\\frac{1}{2} instead of \\frac{1}{2}.`;
 
-            // Dynamically build the prompt based on selected languages
-            let langInstructions = "";
-            if (langChoice === 'english') langInstructions = "Provide content in ENGLISH ONLY.";
-            else if (langChoice === 'hindi') langInstructions = "Provide content in HINDI ONLY.";
-            else if (langChoice === 'punjabi') langInstructions = "Provide content in PUNJABI ONLY.";
-            else if (langChoice === 'en_hi') langInstructions = "Provide content in BOTH English and Hindi.";
-            else if (langChoice === 'en_pa') langInstructions = "Provide content in BOTH English and Punjabi.";
-            else langInstructions = "Provide content in ALL 3 languages: English, Hindi, and Punjabi.";
+    let langInstructions = "";
+    if (langChoice === 'english') langInstructions = "Provide content in ENGLISH ONLY.";
+    else if (langChoice === 'hindi') langInstructions = "Provide content in HINDI ONLY.";
+    else if (langChoice === 'punjabi') langInstructions = "Provide content in PUNJABI ONLY.";
+    else if (langChoice === 'en_hi') langInstructions = "Provide content in BOTH English and Hindi.";
+    else if (langChoice === 'en_pa') langInstructions = "Provide content in BOTH English and Punjabi.";
+    else langInstructions = "Provide content in ALL 3 languages: English, Hindi, and Punjabi.";
 
-            const promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. 
-            ${langInstructions} 
-            ${mathInstructions} 
-            Return ONLY a valid JSON ARRAY. Structure exactly like this (leave fields empty string "" if that language wasn't requested): 
-            [{"questionEng":"...","questionHin":"...","questionPa":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"optionsPa":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"...","explanationPa":"..."}]`;
+    const promptText = `Generate ${count} multiple-choice question(s) about: "${topic}". Difficulty: ${difficulty.toUpperCase()}. 
+    ${langInstructions} 
+    ${mathInstructions} 
+    Return ONLY a valid JSON ARRAY. Structure exactly like this (leave fields empty string "" if that language wasn't requested): 
+    [{"questionEng":"...","questionHin":"...","questionPa":"...","optionsEng":["...","...","...","..."],"optionsHin":["...","...","...","..."],"optionsPa":["...","...","...","..."],"correctIndex":0,"explanationEng":"...","explanationHin":"...","explanationPa":"..."}]`;
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${storedGeminiKey}`, { 
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }], generationConfig: { responseMimeType: "application/json" } }) 
-                });
-                if (!response.ok) throw new Error(`Google API Error`);
-                const data = await response.json(); 
-                
-                let aiText = data.candidates[0].content.parts[0].text; 
-                const parsedQuestions = extractSafeJSON(aiText);
-                
-                parsedQuestions.forEach(qData => { 
-                    localQuestionsBuffer.push({ 
-                        questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", questionPa: qData.questionPa || "",
-                        optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], optionsPa: qData.optionsPa || ["A","B","C","D"],
-                        correctIndex: parseInt(qData.correctIndex) || 0, 
-                        explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", explanationPa: qData.explanationPa || "",
-                        subject: topic.substring(0, 20), displayLang: langChoice 
-                    }); 
-                });
-                await updateTestQuestionsInDb(); renderAdminQuestionList(); 
-                showToast(`✨ Added ${parsedQuestions.length} questions!`, "success"); topicInput.value = '';
-                if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
-                
-            } catch (error) { errorMsg.innerText = "Error: " + error.message + " (AI may have generated bad text. Please retry)."; errorMsg.style.display = 'block'; } 
-            finally { generateBtn.innerText = "Bulk Generate"; generateBtn.disabled = false; }
+    try {
+        // USING GEMINI 2.0 FLASH MODEL
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${storedGeminiKey}`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ 
+                contents: [{ parts: [{ text: promptText }] }], 
+                generationConfig: { responseMimeType: "application/json" } 
+            }) 
+        });
+        
+        if (!response.ok) {
+            const errorDetails = await response.text();
+            console.error("Google AI API Details:", errorDetails);
+            throw new Error("Failed to communicate with Google AI API. Check console for details.");
         }
+        
+        const data = await response.json(); 
+        let aiText = data.candidates[0].content.parts[0].text; 
+        const parsedQuestions = extractSafeJSON(aiText);
+        
+        parsedQuestions.forEach(qData => { 
+            localQuestionsBuffer.push({ 
+                questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", questionPa: qData.questionPa || "",
+                optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], optionsPa: qData.optionsPa || ["A","B","C","D"],
+                correctIndex: parseInt(qData.correctIndex) || 0, 
+                explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", explanationPa: qData.explanationPa || "",
+                subject: topic.substring(0, 20), displayLang: langChoice 
+            }); 
+        });
+        
+        await updateTestQuestionsInDb(); 
+        renderAdminQuestionList(); 
+        showToast(`✨ Added ${parsedQuestions.length} questions!`, "success"); 
+        topicInput.value = '';
+        if (window.MathJax) { MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
+        
+    } catch (error) { 
+        errorMsg.innerText = "Error: " + error.message + " (AI may have generated bad text. Please retry)."; 
+        errorMsg.style.display = 'block'; 
+    } finally { 
+        generateBtn.innerText = "Bulk Generate"; 
+        generateBtn.disabled = false; 
+    }
+}
+
 
         async function extractQuestionsFromPDF() {
-            const fileInput = document.getElementById('pdfUploadInput'); const msg = document.getElementById('pdfExtractMsg'); const btn = document.getElementById('pdfExtractBtn');
-            if(!storedGeminiKey) return showToast("Please configure your Gemini API Key in Portal Settings first.", "error");
-            if(fileInput.files.length === 0) return showToast("Please select a PDF file.", "error");
+    const fileInput = document.getElementById('pdfUploadInput'); 
+    const msg = document.getElementById('pdfExtractMsg'); 
+    const btn = document.getElementById('pdfExtractBtn');
+    
+    if(!storedGeminiKey) return showToast("Please configure your Gemini API Key in Portal Settings first.", "error");
+    if(fileInput.files.length === 0) return showToast("Please select a PDF file.", "error");
+    
+    const file = fileInput.files[0];
+    if(file.type !== "application/pdf") return showToast("Only PDF files are supported.", "error");
+    if(file.size > 5 * 1024 * 1024) return showToast("PDF is too large. Max 5MB allowed.", "error");
+
+    btn.disabled = true; 
+    btn.innerText = "⏳ Extracting... (May take a minute)";
+    msg.style.display = 'block'; 
+    msg.style.color = 'var(--primary)'; 
+    msg.innerText = "Reading PDF and analyzing with AI...";
+
+    try {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async function () {
+            const base64Data = reader.result.split(',')[1];
+            const promptText = `Extract all multiple-choice questions from this PDF document. You must read the file and convert the test into a strict JSON Array format. Structure: [{"questionEng":"[English Text]","questionHin":"[Hindi Text]","questionPa":"","optionsEng":["A","B","C","D"],"optionsHin":["A","B","C","D"],"optionsPa":["","","",""],"correctIndex":0,"explanationEng":"...","explanationHin":"...","explanationPa":""}]. Return ONLY the raw JSON array.`;
             
-            const file = fileInput.files[0];
-            if(file.type !== "application/pdf") return showToast("Only PDF files are supported.", "error");
-            if(file.size > 5 * 1024 * 1024) return showToast("PDF is too large. Max 5MB allowed.", "error");
+            // USING GEMINI 2.0 FLASH MODEL
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${storedGeminiKey}`, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    contents: [{ 
+                        parts: [ 
+                            { text: promptText }, 
+                            { inlineData: { mimeType: "application/pdf", data: base64Data } } 
+                        ] 
+                    }], 
+                    generationConfig: { responseMimeType: "application/json" } 
+                })
+            });
+            
+            if (!response.ok) {
+                const errorDetails = await response.text();
+                console.error("Google AI API Details:", errorDetails);
+                throw new Error("Failed to communicate with Google AI API. Check console for details.");
+            }
+            
+            const data = await response.json();
+            
+            let aiText = data.candidates[0].content.parts[0].text;
+            const parsedQuestions = extractSafeJSON(aiText);
+            
+            parsedQuestions.forEach(qData => { 
+                localQuestionsBuffer.push({ 
+                    questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", questionPa: qData.questionPa || "",
+                    optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], optionsPa: qData.optionsPa || ["A","B","C","D"],
+                    correctIndex: parseInt(qData.correctIndex) || 0, 
+                    explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", explanationPa: qData.explanationPa || "",
+                    subject: "PDF Import", displayLang: "all" 
+                }); 
+            });
+            
+            await updateTestQuestionsInDb(); 
+            renderAdminQuestionList();
+            msg.style.color = 'var(--success)'; 
+            msg.innerText = `✨ Successfully extracted ${parsedQuestions.length} questions!`; 
+            fileInput.value = '';
+        };
+    } catch(e) { 
+        msg.style.color = 'var(--danger)'; 
+        msg.innerText = "Error: " + e.message; 
+    } finally { 
+        btn.disabled = false; 
+        btn.innerText = "Extract Questions 🚀"; 
+    }
+}
 
-            btn.disabled = true; btn.innerText = "⏳ Extracting... (May take a minute)";
-            msg.style.display = 'block'; msg.style.color = 'var(--primary)'; msg.innerText = "Reading PDF and analyzing with AI...";
-
-            try {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = async function () {
-                    const base64Data = reader.result.split(',')[1];
-                    const promptText = `Extract all multiple-choice questions from this PDF document. You must read the file and convert the test into a strict JSON Array format. Structure: [{"questionEng":"[English Text]","questionHin":"[Hindi Text]","questionPa":"","optionsEng":["A","B","C","D"],"optionsHin":["A","B","C","D"],"optionsPa":["","","",""],"correctIndex":0,"explanationEng":"...","explanationHin":"...","explanationPa":""}]. Return ONLY the raw JSON array.`;
-                    
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${storedGeminiKey}`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [ { text: promptText }, { inlineData: { mimeType: "application/pdf", data: base64Data } } ] }], generationConfig: { responseMimeType: "application/json" } })
-                    });
-                    
-                    if (!response.ok) throw new Error("Failed to communicate with Google AI API.");
-                    const data = await response.json();
-                    
-                    let aiText = data.candidates[0].content.parts[0].text;
-                    const parsedQuestions = extractSafeJSON(aiText);
-                    
-                    parsedQuestions.forEach(qData => { 
-                        localQuestionsBuffer.push({ 
-                            questionEng: qData.questionEng || "", questionHin: qData.questionHin || "", questionPa: qData.questionPa || "",
-                            optionsEng: qData.optionsEng || ["A","B","C","D"], optionsHin: qData.optionsHin || ["A","B","C","D"], optionsPa: qData.optionsPa || ["A","B","C","D"],
-                            correctIndex: parseInt(qData.correctIndex) || 0, 
-                            explanationEng: qData.explanationEng || "", explanationHin: qData.explanationHin || "", explanationPa: qData.explanationPa || "",
-                            subject: "PDF Import", displayLang: "all" 
-                        }); 
-                    });
-                    
-                    await updateTestQuestionsInDb(); renderAdminQuestionList();
-                    msg.style.color = 'var(--success)'; msg.innerText = `✨ Successfully extracted ${parsedQuestions.length} questions!`; fileInput.value = '';
-                };
-            } catch(e) { msg.style.color = 'var(--danger)'; msg.innerText = "Error: " + e.message; } 
-            finally { btn.disabled = false; btn.innerText = "Extract Questions 🚀"; }
-        }
         // ==========================================
         // --- ADMIN: GROUP SETTINGS ---
         // ==========================================
