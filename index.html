@@ -3206,27 +3206,26 @@
             showToast(`✅ ${checkboxes.length} questions imported successfully!`, "success");
         }
         
-        // ==========================================
+         // ==========================================
         // --- STUDENT DASHBOARD DATA LOADERS ---
         // ==========================================
         function loadStudentData() {
-            if(auth.currentUser) {
-                db.collection("users").doc(auth.currentUser.uid).get().then(doc => {
-                    if (doc.exists) {
-                        const data = doc.data(); 
-                        document.getElementById('student-welcome-name').innerText = (data.fullName || "Student"); 
-                        currentUserBoard = data.board || 'college'; 
-                        
-                        db.collection("groups").onSnapshot((snap) => {
-                            let rawGroups = []; snap.forEach(d => { let g = d.data(); g.id = d.id; rawGroups.push(g); });
-                            rawGroups.sort((a, b) => (a.order || 0) - (b.order || 0)); allGroupsCache = rawGroups;
-                            if(document.getElementById('student-sec-groups').classList.contains('active')) { loadGroupsForStudents(""); }
-                        });
-                    }
-                }).catch(e => console.error("Error fetching user data", e));
-            }
+            // Attach the listener directly for instant loading
+            db.collection("groups").onSnapshot((snap) => {
+                let rawGroups = []; 
+                snap.forEach(d => { let g = d.data(); g.id = d.id; rawGroups.push(g); });
+                rawGroups.sort((a, b) => (a.order || 0) - (b.order || 0)); 
+                allGroupsCache = rawGroups;
+                
+                // If the student is currently on the groups tab, refresh it immediately
+                if(document.getElementById('student-sec-groups').classList.contains('active')) { 
+                    loadGroupsForStudents(""); 
+                }
+            });
 
-            loadStudentAttempts(); loadLeaderboardTests(); loadStudyMaterialsForStudent();
+            loadStudentAttempts(); 
+            loadLeaderboardTests(); 
+            loadStudyMaterialsForStudent();
             
             db.collection("banners").onSnapshot(s => {
                 let c = document.getElementById('student-banners'); if(!c) return; c.innerHTML = ''; let hasVisibleBanners = false;
@@ -3304,7 +3303,11 @@
             let hasVisibleGroups = false;
             allGroupsCache.forEach(g => { 
                 let groupParent = g.parentId || "";
-                if(groupParent === parentId) {
+                
+                // Make sure the student only sees groups for their board (or 'college' sees all)
+                let showGroup = (!g.board || g.board === 'college' || currentUserBoard === 'college' || g.board === currentUserBoard);
+
+                if(groupParent === parentId && showGroup) {
                     hasVisibleGroups = true;
                     let hasChildren = allGroupsCache.some(child => child.parentId === g.id);
                     let badgeHtml = hasChildren ? `<div class="sub-group-badge">📁 Sub-groups</div>` : ``;
@@ -3313,7 +3316,6 @@
                     if(g.imageUrl) {
                         bgStyle = `background-image: url('${g.imageUrl}');`;
                     } else {
-                        // Fallback color if no photo is uploaded
                         bgStyle = `background-color: var(--primary);`;
                     }
 
