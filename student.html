@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>KD Student Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&family=Oswald:wght@500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true },
+            startup: { typeset: false }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        /* 2040 UI: Neon Accents, Glassmorphism, Deep Shadows */
+        :root {
+            --primary: #4338ca; --primary-hover: #3730a3; --primary-light: #e0e7ff;
+            --neon-glow: 0 0 15px rgba(67, 56, 202, 0.5);
+            --bg-color: #f1f5f9; --card-bg: rgba(255, 255, 255, 0.85); 
+            --text-main: #0f172a; --text-muted: #475569;
+            --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --review: #8b5cf6; 
+            --border-color: rgba(226, 232, 240, 0.8);
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 25px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 25px 50px -12px rgba(0,0,0,0.15);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+            --bottom-nav-height: 80px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        html { overflow-x: hidden !important; width: 100%; max-width: 100vw; }
+        body { background-color: var(--bg-color); background-image: radial-gradient(circle at top right, rgba(67, 56, 202, 0.05), transparent 40%), radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent 40%); color: var(--text-main); line-height: 1.6; height: 100vh; overflow: hidden; display: flex; flex-direction: column; font-size: 0.9rem; }
+        
+        nav { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); border-bottom: var(--glass-border); padding: calc(15px + env(safe-area-inset-top)) 30px 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); z-index: 100; flex-shrink: 0; }
+        nav h1 { font-size: 1.4rem; font-weight: 900; margin: 0; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Outfit', sans-serif;}
+        
+        .container { flex: 1; overflow-y: auto; width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; padding-bottom: calc(var(--bottom-nav-height) + 40px + env(safe-area-inset-bottom)); scrollbar-width: none; }
+        .container::-webkit-scrollbar { display: none; }
+        
+        .view { display: none; animation: slideFadeUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .view.active { display: block; }
+        @keyframes slideFadeUp { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: var(--glass-border); box-shadow: var(--shadow-md); }
+        .action-box { background: var(--card-bg); padding: 25px; border-radius: 0px; box-shadow: var(--shadow-md); border: var(--glass-border); margin-bottom: 25px; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+        .action-box:hover { box-shadow: var(--shadow-lg); }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.85rem; color: var(--text-main); } 
+        .input-group input, .input-group select { width: 100%; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 0px; font-size: 0.95rem; background: rgba(255,255,255,0.9); transition: all 0.3s ease; font-weight: 500; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--primary); background: #ffffff; box-shadow: var(--neon-glow); transform: translateY(-2px); }
+
+        .password-container { position: relative; width: 100%; display: flex; align-items: center; }
+        .password-container input { padding-right: 55px; width: 100%; }
+        .password-toggle { position: absolute; right: 20px; cursor: pointer; font-size: 1.1rem; color: var(--text-muted); transition: all 0.3s; user-select: none; z-index: 10; } 
+        .password-toggle:hover { color: var(--primary); transform: scale(1.15); }
+
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #6366f1, #8b5cf6); background-size: 200% auto; color: white; border: none; padding: 14px 24px; border-radius: 0px; cursor: pointer; font-size: 0.95rem; font-weight: 800; transition: all 0.4s ease; width: 100%; box-shadow: 0 4px 15px rgba(67, 56, 202, 0.3); }
+        .btn-primary:hover { background-position: right center; transform: translateY(-4px); box-shadow: var(--neon-glow); }
+        .btn-success { background: linear-gradient(135deg, var(--success), #34d399); color: white; border: none; padding: 12px 20px; border-radius: 0px; cursor: pointer; font-weight: 800; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-warning { background: linear-gradient(135deg, var(--warning), #fbbf24); color: white; border: none; padding: 12px 20px; border-radius: 0px; cursor: pointer; font-weight: 800; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        .btn-outline { background: rgba(255,255,255,0.7); border: 2px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 0px; cursor: pointer; font-weight: 800; transition: all 0.3s ease; } 
+
+        /* Promo Banners */
+        .banner-container { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; margin-bottom: 30px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .promo-banner { min-width: 280px; width: 100%; max-width: 500px; height: 180px; border-radius: 0px; background-color: var(--primary); background-size: cover; background-position: center; box-shadow: var(--shadow-md); cursor: pointer; transition: all 0.4s ease; position: relative; display: flex; align-items: center; justify-content: center; border: var(--glass-border); flex-shrink: 0; scroll-snap-align: start; }
+        .promo-banner::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(15, 23, 42, 0.6) 100%); z-index: 1;}
+        .promo-banner-title { width: 85%; text-align: center; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px); padding: 15px; text-shadow: 0 4px 10px rgba(0,0,0,0.9); font-weight: 900; font-size: 1.15rem; border: 1px solid rgba(255,255,255,0.3); color: #ffffff; z-index: 2; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+
+        /* Test Engine UI */
+        .question-card { margin-bottom: 25px; padding: 25px; border-radius: 0px; background: rgba(255, 255, 255, 0.85); border: var(--glass-border); box-shadow: var(--shadow-md); min-height: 300px; backdrop-filter: blur(15px); }
+        .options label { display: flex; align-items: center; margin: 12px 0; padding: 15px; background: rgba(248, 250, 252, 0.7); border: 2px solid var(--border-color); border-radius: 0px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; font-size: 1rem; }
+        .options label:hover { background: #ffffff; border-color: var(--primary-light); box-shadow: var(--shadow-md), 0 0 15px rgba(67, 56, 202, 0.1); transform: translateX(5px); }
+        .options input[type="radio"] { margin-right: 15px; transform: scale(1.4); accent-color: var(--primary); cursor: pointer; }
+
+        .side-panel { position: fixed; top: 0; left: -360px; width: 350px; height: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px); box-shadow: var(--shadow-lg), 5px 0 25px rgba(0,0,0,0.1); z-index: 1500; transition: left 0.5s ease; display: flex; flex-direction: column; border-right: var(--glass-border); }
+        .side-panel.open { left: 0; }
+        .side-panel-header { padding: calc(25px + env(safe-area-inset-top)) 20px 25px 20px; background: linear-gradient(135deg, var(--primary), #8b5cf6); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 25px 20px; overflow-y: auto; align-content: start; }
+        
+        .q-btn { width: 45px; height: 45px; border-radius: 0px; border: 2px solid var(--border-color); background: rgba(255, 255, 255, 0.6); color: var(--text-main); cursor: pointer; font-weight: 800; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 1rem; }
+        .q-btn.active { box-shadow: 0 0 0 4px rgba(67, 56, 202, 0.2), var(--neon-glow); border-color: var(--primary); background: var(--primary); color: white; transform: scale(1.05); }
+        .q-btn.answered { background: linear-gradient(135deg, var(--success), #34d399); color: white; border-color: var(--success); }
+        .q-btn.marked { background: linear-gradient(135deg, var(--review), #a78bfa); color: white; border-color: var(--review); }
+
+        .test-nav-bar { display: flex; justify-content: space-between; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; } 
+
+        .custom-toast { visibility: hidden; min-width: 320px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); color: #fff; text-align: center; border-radius: 0px; padding: 16px 24px; position: fixed; z-index: 4000; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(30px) scale(0.9); font-size: 0.95rem; font-weight: 700; box-shadow: 0 10px 40px rgba(0,0,0,0.3); transition: all 0.5s ease; opacity: 0; }
+        .custom-toast.show { visibility: visible; bottom: 100px; opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        .custom-toast.error { border-left: 5px solid var(--danger); }
+        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(12px); }
+        .modal { background: rgba(255, 255, 255, 0.95); padding: 35px; border-radius: 0px; width: 90%; max-width: 650px; box-shadow: var(--shadow-lg); animation: slideFadeUp 0.5s ease; border: var(--glass-border); }
+
+        .test-header-timer { font-size: 1.2rem; font-weight: 900; font-family: 'Oswald', sans-serif; color: var(--danger); background: rgba(254, 226, 226, 0.8); padding: 5px 15px; border: 2px solid var(--danger); display: flex; align-items: center; gap: 8px;}
+        .part-indicator { font-size: 0.85rem; background: var(--primary); color: white; padding: 3px 8px; font-weight: 800; margin-bottom: 10px; display: inline-block; }
+
+        @media (max-width: 768px) {
+            :root { --bottom-nav-height: 70px; } 
+            .container { padding: 12px; margin-bottom: calc(var(--bottom-nav-height) + 15px); }
+            nav h1 { font-size: 1.2rem; }
+            .test-nav-bar { flex-direction: column; align-items: stretch; }
+            .test-nav-bar > div { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+            .test-nav-bar button { width: 100% !important; margin-bottom: 10px; }
+            .side-panel { width: 300px; left: -310px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="customToast" class="custom-toast">Notification</div>
+    <nav id="main-nav">
+        <div class="portal-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#nav-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="nav-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#4338ca" />
+                        <stop offset="100%" stop-color="#8b5cf6" />
+                    </linearGradient>
+                </defs>
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+            </svg>
+            <h1 id="nav-title">KD Student Portal</h1>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span id="student-name-display" style="font-weight: 800; color: var(--primary); display: none;"></span>
+            <button id="logout-btn" class="btn-outline" style="display: none; padding: 6px 12px; font-size: 0.85rem;" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- LOGIN VIEW -->
+        <div id="view-login" class="view active">
+            <div id="login-form" class="action-box glass-panel" style="max-width: 400px; margin: 40px auto; border-radius: 0px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="font-size: 2rem; color: var(--primary); font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Student Login</h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin-top: 5px;">Welcome to your preparation hub</p>
+                </div>
+                
+                <div class="input-group">
+                    <label id="login-id-label">Phone Number / ID</label>
+                    <input type="text" id="login-email" placeholder="Enter your registered number">
+                </div>
+                
+                <div class="input-group" id="password-group">
+                    <label>Password</label>
+                    <div class="password-container">
+                        <input type="password" id="login-password" placeholder="••••••••">
+                        <span class="password-toggle" onclick="togglePasswordVisibility('login-password', this)">👁️</span>
+                    </div>
+                    <div style="text-align: right; margin-top: 8px;">
+                        <span style="color: var(--primary); font-size: 0.85rem; font-weight: 700; cursor: pointer;" onclick="openForgotPassModal()">Forgot Password?</span>
+                    </div>
+                </div>
+
+                <div class="input-group" id="name-only-group" style="display: none;">
+                    <label>Your Full Name</label>
+                    <input type="text" id="login-guest-name" placeholder="Enter your name to begin">
+                </div>
+                
+                <button id="login-submit-btn" class="btn-primary" onclick="login()" style="margin-top: 10px; font-size: 1.1rem; padding: 15px; border-radius: 0px;">Enter Dashboard 🚀</button>
+            </div>
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dash" class="view">
+            <!-- App Download Banner -->
+            <div id="student-app-banner" style="display: none; background: linear-gradient(135deg, var(--success), #34d399); color: white; padding: 15px 20px; border-radius: 0px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="window.open(document.getElementById('hidden-app-link').value, '_blank')">
+                <span id="student-app-text" style="font-weight: 800; font-size: 0.95rem;">Download our App!</span>
+                <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 0px; font-size: 0.8rem; font-weight: 900;">INSTALL ⬇️</span>
+                <input type="hidden" id="hidden-app-link">
+            </div>
+
+            <!-- Scrolling Promo Banners -->
+            <div id="student-banner-container" class="banner-container"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; color: var(--text-main);">Dashboard</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-outline" style="border-color: #0ea5e9; color: #0ea5e9;" onclick="navigate('view-study')">📄 Study Materials</button>
+                    <button class="btn-outline" style="border-color: var(--review); color: var(--review);" onclick="navigate('view-attempts')">📊 My Results</button>
+                </div>
+            </div>
+
+            <!-- Group Filter for Tests -->
+            <div class="action-box glass-panel" style="padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; overflow-x: auto;">
+                <span style="font-weight: 800; color: var(--primary); white-space: nowrap;">📁 Filter Tests:</span>
+                <select id="student-group-filter" onchange="renderStudentTests()" style="padding: 10px; border: 2px solid var(--border-color); border-radius: 0px; background: rgba(255,255,255,0.8); font-weight: 700; color: var(--text-main); min-width: 200px;">
+                    <option value="all">All Available Tests</option>
+                </select>
+            </div>
+
+            <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Active Mock Tests</h3>
+            <div id="student-test-list" class="grid-list">
+                <p style="color: var(--text-muted); font-weight: 600; padding: 20px;">Loading tests...</p>
+            </div>
+        </div>
+
+        <!-- STUDY MATERIALS VIEW -->
+        <div id="view-study" class="view">
+            <div class="sec-header">
+                <button class="btn-outline" onclick="navigate('view-dash')">← Back</button>
+                <h2 style="color: #0ea5e9;">Study Materials</h2>
+            </div>
+            <div id="student-study-list" class="study-grid">
+                <p style="color: var(--text-muted); font-weight: 600;">Loading materials...</p>
+            </div>
+        </div>
+
+        <!-- PDF/VIDEO VIEWER -->
+        <div id="view-resource" class="view">
+            <div class="sec-header">
+                <button class="btn-outline" onclick="navigate('view-study')">← Back to Materials</button>
+                <h2 id="resource-viewer-title" style="color: #0ea5e9;">Viewing Material</h2>
+            </div>
+            <div id="resource-viewer-container" class="resource-container"></div>
+            <p id="resource-viewer-desc" style="margin-top: 15px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;"></p>
+        </div>
+
+        <!-- ATTEMPTS/RESULTS VIEW -->
+        <div id="view-attempts" class="view">
+            <div class="sec-header">
+                <button class="btn-outline" onclick="navigate('view-dash')">← Back</button>
+                <h2 style="color: var(--review);">My Results</h2>
+            </div>
+            <div id="student-attempts-list" class="grid-list">
+                <p style="color: var(--text-muted); font-weight: 600;">No attempts found.</p>
+            </div>
+        </div>
+
+        <!-- REVIEW SPECIFIC TEST VIEW -->
+        <div id="view-review" class="view">
+            <div class="sticky-review-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button class="btn-outline" style="border-color: var(--text-main); color: var(--text-main); padding: 8px 15px;" onclick="navigate('view-attempts')">← Back</button>
+                    <h3 id="review-test-title" style="margin: 0; font-weight: 900; color: var(--primary);">Test Review</h3>
+                </div>
+                <div class="review-filters">
+                    <button class="filter-btn active" onclick="filterReview('all', this)">All Qs</button>
+                    <button class="filter-btn correct" onclick="filterReview('correct', this)">Correct</button>
+                    <button class="filter-btn wrong" onclick="filterReview('wrong', this)">Incorrect</button>
+                    <button class="filter-btn" onclick="filterReview('unanswered', this)">Unanswered</button>
+                </div>
+            </div>
+            <div id="review-container"></div>
+        </div>
+
+        <!-- TEST ENGINE VIEW -->
+        <div id="view-test" class="view" style="padding-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 0px; border: var(--glass-border); box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 90;">
+                <button class="btn-outline" style="padding: 8px 15px;" onclick="toggleSidePanel()">☰ Palette</button>
+                <div class="test-header-timer">
+                    ⏳ <span id="timerDisplay">00:00:00</span>
+                </div>
+                <button class="btn-danger" style="width: auto; padding: 8px 15px;" onclick="showExitModal()">Pause</button>
+            </div>
+
+            <!-- Section Indicator for Test Parts -->
+            <div id="test-part-indicator" class="part-indicator" style="display: none;">Part A</div>
+
+            <!-- Main Question Area -->
+            <div id="question-container" class="question-card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+                    <span style="font-weight: 900; font-size: 1.2rem; color: var(--primary);" id="q-number">Q 1</span>
+                    <select id="student-lang-select" class="lang-dropdown-btn" onchange="changeQuestionLanguage()" style="padding: 6px 12px; border: 2px solid var(--border-color); background: rgba(241, 245, 249, 0.8); font-size: 0.85rem;">
+                        <option value="eng">English</option>
+                        <option value="hin">Hindi</option>
+                        <option value="pa">Punjabi</option>
+                    </select>
+                </div>
+                
+                <div id="q-text" style="font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; line-height: 1.6; color: var(--text-main);"></div>
+                <div id="q-image-container" style="display: none; margin-bottom: 20px; text-align: center;">
+                    <img id="q-image" src="" style="max-width: 100%; max-height: 300px; border: 1px solid var(--border-color); border-radius: 0px;">
+                </div>
+                
+                <div class="options" id="q-options"></div>
+            </div>
+
+            <!-- Action Buttons for Test Engine -->
+            <div class="test-nav-bar">
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-outline" style="flex: 1;" onclick="prevQuestion()">← Prev</button>
+                    <button class="btn-outline" style="flex: 1; border-color: var(--review); color: var(--review);" onclick="markForReview()">Mark Review</button>
+                </div>
+                <button class="btn-primary" style="width: auto; padding: 14px 30px; font-size: 1.05rem;" onclick="saveAndNext()">Save & Next →</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 35px;">
+                <button class="btn-success" style="width: 100%; max-width: 300px; padding: 15px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);" onclick="showSubmitSummary()">Submit Entire Test ✅</button>
+            </div>
+        </div>
+    </div>
+        <!-- SIDE PANEL: Question Palette -->
+        <div class="side-panel-overlay" id="side-panel-overlay" onclick="toggleSidePanel()"></div>
+        <div class="side-panel" id="side-panel">
+            <div class="side-panel-header">
+                <h3 style="margin: 0; font-size: 1.15rem; font-weight: 900;">Question Palette</h3>
+                <button class="btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; padding: 4px 10px; width: auto; background: transparent; box-shadow: none;" onclick="toggleSidePanel()">✕</button>
+            </div>
+            <div style="padding: 15px 20px; border-bottom: 1px solid var(--border-color); background: rgba(241, 245, 249, 0.8);">
+                <span id="palette-section-title" style="font-weight: 800; color: var(--primary); font-size: 0.95rem;">All Questions</span>
+            </div>
+            
+            <!-- Grid where question number buttons will generate -->
+            <div class="palette-grid" id="q-palette"></div>
+            
+            <div class="palette-legend">
+                <div class="legend-item"><div class="legend-dot" style="background: var(--success); border: 2px solid var(--success);"></div> Answered</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--review); border: 2px solid var(--review);"></div> Marked for Review</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--danger); border: 2px solid var(--danger);"></div> Not Answered / Visited</div>
+                <div class="legend-item"><div class="legend-dot" style="background: white; border: 2px solid var(--border-color);"></div> Not Visited</div>
+            </div>
+        </div>
+
+    <!-- ========================================== -->
+    <!-- MODALS                                     -->
+    <!-- ========================================== -->
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-pass-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 450px; padding: 0; overflow: hidden; border: none;">
+            <div class="modern-header" style="padding: 25px;">
+                <h2 style="font-size: 1.6rem; margin: 0; font-weight: 900; letter-spacing: -0.5px;">Reset Password</h2>
+            </div>
+            <div style="padding: 25px;">
+                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem; line-height: 1.6; font-weight: 500;">Enter your registered phone number. A reset link will be sent to the system associated with this number.</p>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="forgot-pass-phone" placeholder="Enter your 10-digit number">
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button onclick="closeForgotPassModal()" class="btn-outline" style="flex:1; padding: 12px; font-size: 1rem;">Cancel</button>
+                    <button onclick="requestPasswordReset()" class="btn-primary" style="flex:1; padding: 12px; font-size: 1rem;">Send Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Done Popup -->
+    <div id="done-popup-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 400px; padding: 0; overflow: hidden; border: none;">
+            <div class="modern-done-popup">
+                <div class="check-circle">✓</div>
+                <h2 style="color: var(--text-main); margin-bottom: 10px; font-weight: 900; font-size: 1.6rem; letter-spacing: -0.5px;">Request Sent!</h2>
+                <p id="done-popup-msg" style="color: var(--text-muted); margin-bottom: 25px; font-size: 1rem; font-weight: 500;">If this number is registered, you will receive password reset instructions.</p>
+                <button onclick="closeDonePopup()" class="btn-primary" style="width: 100%; border-radius: 0px; padding: 14px; font-size: 1.05rem;">Okay 👍</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pause/Exit Test Modal -->
+    <div id="exit-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 450px; text-align: center; border: none;">
+            <h2 style="margin-bottom: 15px; color: var(--text-main); font-weight: 900; font-size: 1.6rem; letter-spacing: -0.5px;">Pause Test?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6; font-weight: 500;">Are you sure you want to pause? Your time, selected answers, and current question will be saved safely. You can resume exactly where you left off later.</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="confirmPause()" class="btn-warning" style="font-size: 1.1rem; padding: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">⏸ Pause & Save</button>
+                <button onclick="hideExitModal()" class="btn-outline" style="margin-top: 8px; border: none; color: var(--text-muted); background: transparent; box-shadow: none;">Cancel, return to test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Submit Summary Modal -->
+    <div id="summary-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 500px; text-align: center; border: none;">
+            <h2 style="margin-bottom: 15px; color: var(--text-main); font-weight: 900; font-size: 1.6rem; letter-spacing: -0.5px;">Test Summary</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 1rem; font-weight: 500;">Please review your progress before making the final submission.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; text-align: left;">
+                <div style="background: rgba(248, 250, 252, 0.8); padding: 15px; border-radius: 0px; border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: var(--shadow-sm);">
+                    <span style="font-size: 2.2rem; display: block; color: var(--primary); font-weight: 900; line-height: 1;" id="sum-total">0</span>
+                    <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 700; margin-top: 5px; display: block;">Total Questions</span>
+                </div>
+                
+                <div style="background: rgba(236, 253, 245, 0.8); padding: 15px; border-radius: 0px; border: 1px solid #bbf7d0; box-shadow: var(--shadow-sm);">
+                    <span style="font-size: 2.2rem; display: block; color: var(--success); font-weight: 900; line-height: 1;" id="sum-answered">0</span>
+                    <span style="color: #065f46; font-size: 0.9rem; font-weight: 700; margin-top: 5px; display: block;">Answered</span>
+                </div>
+                
+                <div style="background: rgba(254, 242, 242, 0.8); padding: 15px; border-radius: 0px; border: 1px solid #fecaca; box-shadow: var(--shadow-sm);">
+                    <span style="font-size: 2.2rem; display: block; color: var(--danger); font-weight: 900; line-height: 1;" id="sum-unanswered">0</span>
+                    <span style="color: #991b1b; font-size: 0.9rem; font-weight: 700; margin-top: 5px; display: block;">Not Answered</span>
+                </div>
+                
+                <div style="background: rgba(245, 243, 255, 0.8); padding: 15px; border-radius: 0px; border: 1px solid #ddd6fe; box-shadow: var(--shadow-sm);">
+                    <span style="font-size: 2.2rem; display: block; color: var(--review); font-weight: 900; line-height: 1;" id="sum-marked">0</span>
+                    <span style="color: #5b21b6; font-size: 0.9rem; font-weight: 700; margin-top: 5px; display: block;">Marked for Review</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px;">
+                <button onclick="hideSubmitSummary()" class="btn-outline" style="flex: 1; padding: 14px; font-size: 1.05rem;">Return to Test</button>
+                <button onclick="finalSubmitTest()" class="btn-success" style="flex: 1; padding: 14px; font-size: 1.05rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">Confirm Submit ✅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC START                     -->
+    <!-- ========================================== -->
+    <script>
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDPdbSyP8WD70CCPwbMA9sPtOK9XLejbQ",
+            authDomain: "test2-672e5.firebaseapp.com",
+            databaseURL: "https://test2-672e5-default-rtdb.firebaseio.com",
+            projectId: "test2-672e5",
+            messagingSenderId: "250226237572", 
+            appId: "1:250226237572:web:d3f794d00f22a703faa2d1"
+        };
+        
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
+
+        // --- GLOBAL VARIABLES (Student Portal) ---
+        let currentUserId = null;
+        let currentUserData = null;
+        let currentBoard = 'college'; 
+        let portalLoginMode = 'secure'; 
+
+        // Dashboard Caches
+        let studentTestsCache = [];
+        let studentGroupsCache = [];
+        let studentStudyCache = [];
+
+        // Active Test Variables
+        let activeTestId = null;
+        let currentTestTitle = "";
+        let testQuestions = [];
+        let currentQIndex = 0;
+        let totalTimeSeconds = 0;
+        let timeRemaining = 0;
+        let testTimerInterval = null;
+        
+        // Active Part/Section Variables
+        let testSections = [];
+        let currentSectionIndex = 0;
+        
+        // State tracking for specific test attempt
+        let answers = {}; 
+        let statuses = {}; 
+        let currentLanguage = 'eng'; 
+
+        // Review mode variables
+        let isReviewMode = false;
+        let reviewFilterState = 'all';
+
+        // --- MODERN UI HELPERS ---
+        function togglePasswordVisibility(inputId, iconEl) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text"; iconEl.innerText = "👀"; 
+                iconEl.style.color = "var(--primary)"; iconEl.style.transform = "scale(1.2)";
+            } else {
+                input.type = "password"; iconEl.innerText = "👁️";
+                iconEl.style.color = "var(--text-muted)"; iconEl.style.transform = "scale(1)";
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('customToast');
+            toast.innerText = message;
+            toast.className = `custom-toast show ${type}`;
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 4000);
+        }
+
+        function navigate(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); 
+            const viewEl = document.getElementById(viewId);
+            if(viewEl) viewEl.classList.add('active');
+            
+            // Handle Navigation Bar elements
+            const logoutBtn = document.getElementById('logout-btn');
+            const nameDisplay = document.getElementById('student-name-display');
+            if (viewId === 'view-login' || viewId === 'view-test') {
+                if(logoutBtn) logoutBtn.style.display = 'none';
+                if(nameDisplay) nameDisplay.style.display = 'none';
+            } else {
+                if(logoutBtn) logoutBtn.style.display = 'block';
+                if(nameDisplay && currentUserData) {
+                    nameDisplay.style.display = 'block';
+                    nameDisplay.innerText = currentUserData.fullName ? `Hi, ${currentUserData.fullName.split(' ')[0]} 👋` : 'Hi, Student';
+                }
+            }
+
+            // Trigger specific renders based on view
+            if (viewId === 'view-dash') {
+                renderStudentTests();
+                renderStudyMaterials();
+            } else if (viewId === 'view-attempts') {
+                loadStudentAttempts();
+            }
+        }
+
+        // Render MathJax safely
+        function triggerMathJax() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err));
+            }
+        }
+        // ==========================================
+        // --- STUDENT LOGIN & INITIALIZATION ---
+        // ==========================================
+        
+        // Check portal login configuration on load
+        async function initStudentPortal() {
+            try {
+                const doc = await db.collection("adminSettings").doc("loginConfig").get();
+                if (doc.exists) portalLoginMode = doc.data().mode || 'secure';
+                
+                if (portalLoginMode === 'easy') {
+                    document.getElementById('password-group').style.display = 'none';
+                    document.getElementById('name-only-group').style.display = 'block';
+                    document.getElementById('login-id-label').innerText = "Optional ID / Phone";
+                }
+            } catch(e) { console.log("Login config check skipped."); }
+
+            // Auto-login check for Secure Mode
+            auth.onAuthStateChanged(async (user) => {
+                if (user && portalLoginMode === 'secure') {
+                    const uDoc = await db.collection("users").doc(user.uid).get();
+                    if(uDoc.exists && uDoc.data().role === 'student') {
+                        currentUserId = user.uid;
+                        currentUserData = uDoc.data();
+                        currentBoard = currentUserData.board || 'college';
+                        navigate('view-dash');
+                    }
+                }
+            });
+        }
+
+        window.onload = initStudentPortal;
+
+        async function login() {
+            const btn = document.getElementById('login-submit-btn');
+            btn.disabled = true; btn.innerText = "Entering...";
+
+            if (portalLoginMode === 'easy') {
+                // Easy Mode (Guest Access)
+                const name = document.getElementById('login-guest-name').value.trim();
+                const phone = document.getElementById('login-email').value.trim() || 'Guest';
+                if(!name) { btn.disabled = false; btn.innerText = "Enter Dashboard 🚀"; return showToast("Please enter your name", "error"); }
+                
+                currentUserId = 'guest_' + Date.now().toString().slice(-6);
+                currentUserData = { fullName: name, phone: phone, role: 'student', board: 'all' };
+                currentBoard = 'all';
+                navigate('view-dash');
+                btn.disabled = false; btn.innerText = "Enter Dashboard 🚀";
+                showToast(`Welcome, ${name}!`);
+            } else {
+                // Secure Mode (Firebase Auth)
+                const phone = document.getElementById('login-email').value.trim();
+                const pass = document.getElementById('login-password').value;
+                if(!phone || !pass) { btn.disabled = false; btn.innerText = "Enter Dashboard 🚀"; return showToast("Fill all fields", "error"); }
+                
+                try {
+                    const formatID = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
+                    await auth.signInWithEmailAndPassword(formatID(phone), pass);
+                    // Auth state listener will handle navigation
+                } catch(e) {
+                    showToast("Invalid credentials", "error");
+                    btn.disabled = false; btn.innerText = "Enter Dashboard 🚀";
+                }
+            }
+        }
+
+        function logout() {
+            if (portalLoginMode === 'secure') auth.signOut();
+            currentUserId = null; currentUserData = null;
+            navigate('view-login');
+        }
+
+        function openForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'flex'; }
+        function closeForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'none'; }
+        function requestPasswordReset() {
+            const phone = document.getElementById('forgot-pass-phone').value.trim();
+            if(phone.length < 10) return showToast("Enter a valid 10-digit number", "error");
+            closeForgotPassModal();
+            document.getElementById('done-popup-modal').style.display = 'flex';
+        }
+        function closeDonePopup() { document.getElementById('done-popup-modal').style.display = 'none'; }
+
+        // ==========================================
+        // --- DASHBOARD DATA LOADING ---
+        // ==========================================
+        function renderStudentTests() {
+            db.collection("tests").onSnapshot(s => {
+                studentTestsCache = [];
+                s.forEach(d => { 
+                    let t = d.data(); t.id = d.id; 
+                    if(t.groupId !== 'QUESTION_BANK') studentTestsCache.push(t); 
+                });
+                
+                const list = document.getElementById('student-test-list');
+                list.innerHTML = '';
+                
+                if(studentTestsCache.length === 0) {
+                    list.innerHTML = '<p style="color:var(--text-muted); font-weight:600; grid-column: 1/-1;">No tests active right now.</p>';
+                    return;
+                }
+
+                studentTestsCache.forEach(test => {
+                    const qCount = test.questions ? test.questions.length : 0;
+                    const timeStr = test.duration > 0 ? `${Math.floor(test.duration/60)} Mins` : "No Time Limit";
+                    const isMultiPart = test.sections && test.sections.length > 0;
+                    const partBadge = isMultiPart ? `<span style="background:var(--primary-light); color:var(--primary); padding:3px 8px; font-size:0.75rem; font-weight:800;">Multi-Part Test</span>` : '';
+
+                    list.innerHTML += `
+                        <div class="action-box glass-panel" style="padding: 20px; border-radius: 0px; border-top: 4px solid var(--primary); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h3 style="color: var(--primary); margin-bottom: 5px;">${test.title}</h3>
+                                ${partBadge}
+                                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px; font-weight: 600;">
+                                    📝 ${qCount} Questions <br>
+                                    ⏱️ ${timeStr} <br>
+                                    🎯 ${test.marksPerQuestion || 2} Marks/Q
+                                </p>
+                            </div>
+                            <button class="btn-primary" style="margin-top: 20px;" onclick="startTest('${test.id}')">Start Attempt 🚀</button>
+                        </div>
+                    `;
+                });
+            });
+
+            // Load Banners
+            db.collection("banners").onSnapshot(s => {
+                const c = document.getElementById('student-banner-container');
+                c.innerHTML = '';
+                s.forEach(d => {
+                    const b = d.data();
+                    if(b.audience === 'all' || b.audience === currentBoard) {
+                        c.innerHTML += `
+                            <div class="promo-banner" onclick="startTest('${b.testId}')">
+                                <h3 class="promo-banner-title" style="color: ${b.textColor || '#fff'}">${b.customTitle}</h3>
+                            </div>
+                        `;
+                    }
+                });
+            });
+        }
+
+        function renderStudyMaterials() {
+            db.collection("studyMaterials").onSnapshot(s => {
+                const list = document.getElementById('student-study-list');
+                list.innerHTML = '';
+                if(s.empty) list.innerHTML = '<p style="color:var(--text-muted); font-weight:600; grid-column: 1/-1;">No materials available.</p>';
+                
+                s.forEach(d => {
+                    const m = d.data();
+                    if(m.audience === 'all' || m.audience === currentBoard) {
+                        let icon = m.type === 'pdf' ? '📄' : (m.type === 'video' ? '▶️' : '🖼️');
+                        list.innerHTML += `
+                            <div class="study-card" onclick="viewResource('${m.type}', '${m.url}', '${m.title.replace(/'/g, "\\'")}')">
+                                <div class="study-icon">${icon}</div>
+                                <h4>${m.title}</h4>
+                                <p>${m.description || 'Click to view resource'}</p>
+                                <button class="btn-outline" style="width: 100%; font-size: 0.85rem;">Open Material</button>
+                            </div>
+                        `;
+                    }
+                });
+            });
+        }
+
+        function viewResource(type, url, title) {
+            document.getElementById('resource-viewer-title').innerText = title;
+            const container = document.getElementById('resource-viewer-container');
+            container.innerHTML = '';
+            container.className = 'resource-container'; 
+
+            if(type === 'pdf') {
+                container.innerHTML = `<iframe src="${url}#toolbar=0" style="width:100%; height:75vh;"></iframe>`;
+            } else if (type === 'image') {
+                container.innerHTML = `<img src="${url}" alt="${title}">`;
+            } else if (type === 'video') {
+                container.classList.add('video-mode');
+                // Auto convert standard YT link to embed
+                let embedUrl = url;
+                if(url.includes('watch?v=')) embedUrl = url.replace('watch?v=', 'embed/');
+                else if(url.includes('youtu.be/')) embedUrl = url.replace('youtu.be/', 'youtube.com/embed/');
+                container.innerHTML = `<iframe src="${embedUrl}?rel=0&modestbranding=1" allowfullscreen></iframe>`;
+            }
+            navigate('view-resource');
+        }
+
+        // ==========================================
+        // --- TEST ENGINE (LOGIC & PARTS) ---
+        // ==========================================
+        async function startTest(testId) {
+            try {
+                const doc = await db.collection("tests").doc(testId).get();
+                if (!doc.exists) return showToast("Test not found", "error");
+                
+                const testData = doc.data();
+                activeTestId = testId;
+                currentTestTitle = testData.title;
+                testQuestions = testData.questions || [];
+                testSections = testData.sections || [];
+                
+                if (testQuestions.length === 0) return showToast("No questions in this test.", "error");
+
+                // Initialize State
+                answers = {}; 
+                statuses = {}; 
+                testQuestions.forEach((_, i) => statuses[i] = 'not-visited');
+                
+                // Parts Logic
+                if (testSections.length > 0) {
+                    loadSection(0);
+                } else {
+                    currentSectionIndex = -1; // No sections
+                    currentQIndex = 0;
+                    totalTimeSeconds = testData.duration || 0;
+                    document.getElementById('test-part-indicator').style.display = 'none';
+                    startTimer(totalTimeSeconds);
+                }
+
+                // Render Setup
+                navigate('view-test');
+                renderQuestion();
+                renderPalette();
+
+            } catch(e) {
+                showToast("Error starting test: " + e.message, "error");
+            }
+        }
+
+        function loadSection(secIdx) {
+            if(secIdx >= testSections.length) {
+                // All sections complete, auto submit
+                showSubmitSummary();
+                return;
+            }
+            currentSectionIndex = secIdx;
+            const sec = testSections[secIdx];
+            currentQIndex = sec.start;
+            
+            // UI Updates
+            const ind = document.getElementById('test-part-indicator');
+            ind.style.display = 'inline-block';
+            ind.innerText = sec.name;
+            
+            // Reset Timer for this specific section
+            startTimer(sec.timer);
+            renderQuestion();
+            renderPalette();
+            showToast(`Started ${sec.name}`, 'success');
+        }
+
+        // --- TIMER LOGIC ---
+        function startTimer(seconds) {
+            clearInterval(testTimerInterval);
+            timeRemaining = seconds;
+            updateTimerDisplay();
+            
+            if(timeRemaining > 0) {
+                testTimerInterval = setInterval(() => {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    if(timeRemaining <= 0) {
+                        clearInterval(testTimerInterval);
+                        handleTimeUp();
+                    }
+                }, 1000);
+            }
+        }
+
+        function updateTimerDisplay() {
+            if(timeRemaining <= 0) {
+                document.getElementById('timerDisplay').innerText = "Unlimited";
+                return;
+            }
+            const h = Math.floor(timeRemaining / 3600).toString().padStart(2, '0');
+            const m = Math.floor((timeRemaining % 3600) / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = h === "00" ? `${m}:${s}` : `${h}:${m}:${s}`;
+        }
+
+        function handleTimeUp() {
+            showToast("Time's Up!", "error");
+            if (testSections.length > 0 && currentSectionIndex < testSections.length - 1) {
+                setTimeout(() => loadSection(currentSectionIndex + 1), 1500);
+            } else {
+                showSubmitSummary();
+            }
+        }
+
+        // --- RENDER QUESTION ---
+        function renderQuestion() {
+            if(currentQIndex < 0 || currentQIndex >= testQuestions.length) return;
+            const q = testQuestions[currentQIndex];
+            
+            if (statuses[currentQIndex] === 'not-visited') statuses[currentQIndex] = 'visited';
+            
+            document.getElementById('q-number').innerText = `Question ${currentQIndex + 1}`;
+            
+            // Language Selection
+            const lang = document.getElementById('student-lang-select').value;
+            let qText = q.questionEng; let opts = q.optionsEng;
+            if(lang === 'hin' && q.questionHin) { qText = q.questionHin; opts = q.optionsHin; }
+            if(lang === 'pa' && q.questionPa) { qText = q.questionPa; opts = q.optionsPa; }
+
+            document.getElementById('q-text').innerHTML = qText || "Question text not available in this language.";
+            
+            // Render Options
+            const optContainer = document.getElementById('q-options');
+            optContainer.innerHTML = '';
+            
+            if(opts && opts.length > 0) {
+                opts.forEach((optText, idx) => {
+                    const isChecked = answers[currentQIndex] === idx ? 'checked' : '';
+                    optContainer.innerHTML += `
+                        <label>
+                            <input type="radio" name="studentAnswer" value="${idx}" ${isChecked} onchange="markAnswered(${idx})">
+                            <span>${optText}</span>
+                        </label>
+                    `;
+                });
+            }
+
+            triggerMathJax();
+            renderPalette();
+        }
+
+        function changeQuestionLanguage() { renderQuestion(); }
+
+        function markAnswered(optIndex) {
+            answers[currentQIndex] = optIndex;
+            if (statuses[currentQIndex] !== 'marked') statuses[currentQIndex] = 'answered';
+            renderPalette();
+        }
+
+        // --- NAVIGATION ---
+        function saveAndNext() {
+            // Check section boundaries
+            if (testSections.length > 0) {
+                const sec = testSections[currentSectionIndex];
+                if (currentQIndex >= sec.end) {
+                    showCustomConfirm("Finish Section?", `You have reached the end of ${sec.name}. Move to next part?`, () => {
+                        loadSection(currentSectionIndex + 1);
+                    });
+                    return;
+                }
+            }
+
+            if(currentQIndex < testQuestions.length - 1) {
+                currentQIndex++;
+                renderQuestion();
+            } else {
+                showSubmitSummary();
+            }
+        }
+
+        function prevQuestion() {
+            if (testSections.length > 0) {
+                const sec = testSections[currentSectionIndex];
+                if (currentQIndex <= sec.start) return showToast("Cannot go back to previous section.", "warning");
+            }
+            if(currentQIndex > 0) {
+                currentQIndex--;
+                renderQuestion();
+            }
+        }
+
+        function markForReview() {
+            statuses[currentQIndex] = 'marked';
+            saveAndNext();
+        }
+
+        function jumpToQuestion(idx) {
+            if (testSections.length > 0) {
+                const sec = testSections[currentSectionIndex];
+                if (idx < sec.start || idx > sec.end) return showToast(`That question is outside of ${sec.name}.`, "warning");
+            }
+            currentQIndex = idx;
+            renderQuestion();
+            if(window.innerWidth < 768) toggleSidePanel();
+        }
+
+        // --- PALETTE LOGIC ---
+        function toggleSidePanel() {
+            document.getElementById('side-panel').classList.toggle('open');
+            const overlay = document.getElementById('side-panel-overlay');
+            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function renderPalette() {
+            const grid = document.getElementById('q-palette');
+            grid.innerHTML = '';
+            
+            let startIdx = 0; let endIdx = testQuestions.length - 1;
+            if (testSections.length > 0 && currentSectionIndex >= 0) {
+                startIdx = testSections[currentSectionIndex].start;
+                endIdx = testSections[currentSectionIndex].end;
+            }
+
+            for(let i = startIdx; i <= endIdx; i++) {
+                let statusClass = '';
+                if(i === currentQIndex) statusClass = 'active';
+                else if(statuses[i] === 'answered') statusClass = 'answered';
+                else if(statuses[i] === 'marked') statusClass = 'marked';
+
+                grid.innerHTML += `<button class="q-btn ${statusClass}" onclick="jumpToQuestion(${i})">${i + 1}</button>`;
+            }
+        }
+
+        // ==========================================
+        // --- SUBMISSION & REVIEW ---
+        // ==========================================
+        function showExitModal() { document.getElementById('exit-modal').style.display = 'flex'; }
+        function hideExitModal() { document.getElementById('exit-modal').style.display = 'none'; }
+        function confirmPause() {
+            clearInterval(testTimerInterval);
+            hideExitModal();
+            navigate('view-dash');
+            showToast("Test Paused. Progress saved locally.", "warning");
+        }
+
+        function showSubmitSummary() {
+            clearInterval(testTimerInterval);
+            let ans = 0; let unans = 0; let mark = 0;
+            
+            testQuestions.forEach((_, i) => {
+                if(statuses[i] === 'answered') ans++;
+                else if(statuses[i] === 'marked') { mark++; if(answers[i] !== undefined) ans++; }
+                else unans++;
+            });
+
+            document.getElementById('sum-total').innerText = testQuestions.length;
+            document.getElementById('sum-answered').innerText = ans;
+            document.getElementById('sum-unanswered').innerText = unans;
+            document.getElementById('sum-marked').innerText = mark;
+
+            document.getElementById('summary-modal').style.display = 'flex';
+        }
+
+        function hideSubmitSummary() {
+            document.getElementById('summary-modal').style.display = 'none';
+            if(timeRemaining > 0) startTimer(timeRemaining);
+        }
+
+        async function finalSubmitTest() {
+            document.getElementById('summary-modal').style.display = 'none';
+            showToast("Evaluating answers...", "success");
+
+            let correctCount = 0; let wrongCount = 0;
+            
+            // Calculate Score (Needs to fetch exact marks setup from test document)
+            const doc = await db.collection("tests").doc(activeTestId).get();
+            const marksPerQ = doc.data().marksPerQuestion || 2;
+            const negMarks = doc.data().negativeMarks || 0;
+
+            testQuestions.forEach((q, i) => {
+                if(answers[i] !== undefined) {
+                    if(answers[i] === q.correctIndex) correctCount++;
+                    else wrongCount++;
+                }
+            });
+
+            const finalScore = (correctCount * marksPerQ) - (wrongCount * negMarks);
+            const totalMaxMarks = testQuestions.length * marksPerQ;
+
+            // Save Attempt
+            try {
+                await db.collection("attempts").add({
+                    userId: currentUserId,
+                    userName: currentUserData.fullName,
+                    testId: activeTestId,
+                    testTitle: currentTestTitle,
+                    score: finalScore,
+                    totalMarks: totalMaxMarks,
+                    correct: correctCount,
+                    wrong: wrongCount,
+                    answers: answers,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast("Test Submitted Successfully!", "success");
+                navigate('view-attempts');
+                
+            } catch(e) {
+                showToast("Error saving attempt: " + e.message, "error");
+            }
+        }
+
+        function loadStudentAttempts() {
+            if(!currentUserId) return;
+            db.collection("attempts").where("userId", "==", currentUserId).orderBy("timestamp", "desc").onSnapshot(s => {
+                const list = document.getElementById('student-attempts-list');
+                list.innerHTML = '';
+                if(s.empty) { list.innerHTML = '<p style="color:var(--text-muted); font-weight:600;">No attempts yet. Take a test!</p>'; return; }
+                
+                s.forEach(d => {
+                    const a = d.data();
+                    const date = a.timestamp ? new Date(a.timestamp.toDate()).toLocaleDateString() : 'Recent';
+                    const percentage = Math.round((a.score / a.totalMarks) * 100) || 0;
+                    let color = percentage >= 70 ? 'var(--success)' : (percentage >= 40 ? 'var(--warning)' : 'var(--danger)');
+
+                    list.innerHTML += `
+                        <div class="action-box glass-panel" style="padding: 20px; border-left: 6px solid ${color};">
+                            <h3 style="font-size: 1.15rem;">${a.testTitle}</h3>
+                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Date: ${date}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(248, 250, 252, 0.8); padding: 10px; border: 1px solid var(--border-color);">
+                                <div>
+                                    <span style="font-size: 1.5rem; font-weight: 900; color: ${color};">${a.score}</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;"> / ${a.totalMarks} Marks</span>
+                                </div>
+                                <div style="text-align: right; font-size: 0.85rem; font-weight: 700;">
+                                    <span style="color: var(--success);">✓ ${a.correct}</span> | 
+                                    <span style="color: var(--danger);">✗ ${a.wrong}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
