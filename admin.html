@@ -874,12 +874,17 @@
                 </div>
             </div>
             
-            <div id="admin-sec-students" class="sub-sec">
-                <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Manage Students</h2>
+                        <div id="admin-sec-students" class="sub-sec">
+                <div class="sec-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                        <h2>Manage Students</h2>
+                    </div>
+                    <!-- The New Add Student Button -->
+                    <button class="btn-success" style="width: auto; padding: 10px 20px; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);" onclick="createNewStudentAccount()">+ Add Student 👨‍🎓</button>
                 </div>
                 <div class="action-box glass-panel" style="overflow-x: auto; padding: 15px;">
+
                     <table class="student-table" id="admin-students-table">
                         <thead>
                             <tr><th>Name</th><th>Phone Number</th><th>Board/Level</th><th>Joined Date</th><th style="text-align: right;">Actions</th></tr>
