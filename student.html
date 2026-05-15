@@ -27,7 +27,7 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <style>
-        /* Modern UI Variables */
+        /* Modern 2026 UI Design Tokens */
         :root {
             --primary: #4338ca; --primary-hover: #3730a3; --primary-light: #e0e7ff;
             --neon-glow: 0 0 15px rgba(67, 56, 202, 0.4);
@@ -44,9 +44,7 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Layout Resets */
         html { overflow-x: hidden !important; width: 100%; max-width: 100vw; }
-
         body { 
             background-color: var(--bg-color); 
             background-image: radial-gradient(circle at top right, rgba(67, 56, 202, 0.05), transparent 40%), radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent 40%);
@@ -65,7 +63,7 @@
         h3 { font-size: 1.15rem !important; }
         h4 { font-size: 1.05rem !important; }
 
-        /* Modern Navigation - Adapts based on Auth State */
+        /* Navigation Bar - Responsive Glassmorphism */
         nav { 
             background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(25px);
@@ -76,11 +74,9 @@
             position: relative; z-index: 100; flex-shrink: 0; gap: 15px;
         }
 
-        /* Branding shown only on Login Screen */
         #login-header-brand { display: flex; align-items: center; gap: 10px; }
         #login-header-brand h1 { font-weight: 900; margin: 0; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Student Search Bar in Header */
         #student-search-container {
             flex: 1; display: none; position: relative; max-width: 600px; margin: 0 auto;
         }
@@ -94,7 +90,36 @@
         #global-search-input:focus {
             outline: none; border-color: var(--primary); background: #ffffff; box-shadow: var(--neon-glow);
         }
-        
+        .btn-results-modern {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-results-modern:hover {
+    background: #e0f2fe;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: #7dd3fc;
+}
+
+.btn-results-modern .icon {
+    font-size: 1.1rem;
+}
+
         .search-icon {
             position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
             color: var(--text-muted); font-size: 1.1rem; pointer-events: none;
@@ -108,7 +133,7 @@
         }
         .nav-btn:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--neon-glow); }
 
-        /* Mobile App Download Banner */
+        /* App Download Banner Styles */
         #app-download-banner { 
             display: none; background: linear-gradient(135deg, #0f172a, var(--primary)); color: white; 
             padding: calc(15px + env(safe-area-inset-top)) 20px 15px; align-items: center; 
@@ -132,17 +157,6 @@
         }
         .container::-webkit-scrollbar { display: none; }
         
-        .hidden { display: none !important; }
-        .student-back-btn { display: none !important; }
-        
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-            border: var(--glass-border); 
-            box-shadow: var(--shadow-md);
-        }
-        
         .view, .sub-sec { display: none; animation: fadeUp 0.4s ease forwards; }
         .view.active, .sub-sec.active { display: block; }
         
@@ -150,7 +164,7 @@
             from { opacity: 0; transform: translateY(15px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
-        /* Action Boxes */
+        /* Action Boxes - The main containers for content */
         .action-box { 
             background: var(--card-bg); padding: 20px; border-radius: 16px; 
             box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); 
@@ -160,8 +174,8 @@
         .action-box h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 15px; color: var(--text-main); } 
 
         /* ====================================================
-           NEW GROUP / CATEGORY CARDS 
-           (Smaller, No Photos, Centered Text, Colorful Gradients)
+           MODERN CATEGORY CARDS 
+           (Smaller, No Photos, Centered Text, Vibrant Gradients)
            ==================================================== */
         .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; } 
 
@@ -171,7 +185,7 @@
             position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; 
         }
         
-        /* Dynamic Colorful Gradients assigned via JS */
+        /* Dynamic Colorful Gradients */
         .group-card.color-1 { background: linear-gradient(135deg, #0ea5e9, #3b82f6); }
         .group-card.color-2 { background: linear-gradient(135deg, #ec4899, #f43f5e); }
         .group-card.color-3 { background: linear-gradient(135deg, #10b981, #059669); }
@@ -183,7 +197,6 @@
         .group-card-content { width: 100%; text-align: center; padding: 10px; z-index: 2; }
         .group-card h3 { color: #ffffff; font-size: 1.1rem; margin: 0; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 1.3; } 
         
-        /* Sub-group/Folder badge */
         .sub-group-badge { 
             position: absolute; top: 8px; right: 8px; z-index: 3;
             background: rgba(255, 255, 255, 0.25); color: #ffffff;
@@ -211,7 +224,7 @@
         .promo-banner::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); border-radius: 16px; }
         .promo-banner-title { position: relative; z-index: 2; color: white; font-weight: 800; font-size: 1.1rem; }
 
-        /* Form Inputs & Containers */
+        /* Modern Form Elements */
         .input-group { margin-bottom: 15px; width: 100%; }
         .input-group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.85rem; color: var(--text-main); } 
         .input-group input, .input-group select { 
@@ -225,7 +238,7 @@
         .password-container input { padding-right: 45px; }
         .password-toggle { position: absolute; right: 15px; cursor: pointer; font-size: 1.1rem; color: var(--text-muted); } 
 
-        /* Buttons */
+        /* Universal Button System */
         .btn-primary { 
             background: linear-gradient(135deg, var(--primary), #6366f1); color: white; border: none; 
             padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; width: 100%; 
@@ -236,13 +249,7 @@
         .btn-success { background: linear-gradient(135deg, var(--success), #34d399); color: white; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; width: 100%; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
         .btn-danger { background: linear-gradient(135deg, var(--danger), #f87171); color: white; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; width: 100%; }
         .btn-warning { background: linear-gradient(135deg, var(--warning), #fbbf24); color: white; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; width: 100%; }
-        
-        .btn-outline { 
-            background: transparent; border: 2px solid var(--border-color); color: var(--text-main); 
-            padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s; 
-        } 
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: #f8fafc; }
-        /* Mobile Bottom Nav */
+        /* Mobile Bottom Nav - Optimized for iOS/Android */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; height: var(--bottom-nav-height); 
             background: #ffffff; border-top: 1px solid var(--border-color);
@@ -254,53 +261,69 @@
         .nav-icon { font-size: 1.3rem; transition: transform 0.3s; }
         .nav-item.active .nav-icon { transform: scale(1.15); filter: drop-shadow(0 2px 4px rgba(67, 56, 202, 0.4)); }
 
-        /* Modals & Toasts */
+        /* Modals & Modern Toasts */
         .custom-toast { visibility: hidden; min-width: 300px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); color: #fff; text-align: center; border-radius: 12px; padding: 15px 20px; position: fixed; z-index: 4000; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); font-size: 0.9rem; font-weight: 600; transition: all 0.4s ease; opacity: 0; }
         .custom-toast.show { visibility: visible; bottom: 85px; opacity: 1; transform: translateX(-50%) translateY(0); }
-        .custom-toast.error { border-left: 4px solid var(--danger); }
-        .custom-toast.success { border-left: 4px solid var(--success); }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal { background: #ffffff; padding: 25px; border-radius: 16px; width: 90%; max-width: 450px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeUp 0.3s ease; }
+        
+    .modal-overlay { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(15, 23, 42, 0.7); /* Darker background for better focus */
+    z-index: 4000; /* Higher than 3000 to stay on top of the test */
+    justify-content: center; 
+    align-items: center; 
+    backdrop-filter: blur(8px); /* Smoother blur */
+}
 
-        /* Test Interface */
+        .modal { background: #ffffff; padding: 25px; border-radius: 16px; width: 90%; max-width: 450px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: fadeUp 0.3s ease; position: relative; }
+
+        /* ==========================================
+           LIVE TEST INTERFACE 
+           ========================================== */
         #view-test.active { display: flex !important; flex-direction: column; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: var(--bg-color); z-index: 3000; overflow: hidden; }
+        
         .question-card { margin-bottom: 15px; padding: 20px; border-radius: 16px; background: #ffffff; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+        
         .options label { display: flex; align-items: center; margin: 10px 0; padding: 12px 15px; background: #f8fafc; border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.2s; font-weight: 500; }
         .options label:hover { background: #ffffff; border-color: var(--primary-light); }
         .options input[type="radio"] { margin-right: 12px; transform: scale(1.2); accent-color: var(--primary); }
-        .opt-correct { background: #ecfdf5 !important; border-color: #10b981 !important; color: #065f46; font-weight: 700; }
-        .opt-wrong { background: #fef2f2 !important; border-color: #ef4444 !important; color: #991b1b; font-weight: 700; }
-        .q-card-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: block; border: 1px solid var(--border-color); object-fit: contain;}
         
-        /* Live Test Side Panel (Question Palette) */
+        /* Modern Language Dropdown (Floating Style) */
+        .lang-dropdown-container { position: relative; display: inline-block; }
+        .lang-dropdown-btn { background: #fff; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .lang-dropdown-menu { display: none; position: absolute; right: 0; top: calc(100% + 5px); background: #fff; border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow-md); z-index: 3100; min-width: 120px; overflow: hidden; animation: fadeUp 0.2s ease; }
+        .lang-dropdown-menu.show { display: block; }
+        .lang-opt { padding: 10px 15px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .lang-opt:hover { background: var(--primary-light); color: var(--primary); }
+
+        /* Palette & Grid */
         .side-panel { position: fixed; top: 0; left: -360px; width: 320px; height: 100%; background: #ffffff; box-shadow: var(--shadow-lg); z-index: 3500; transition: left 0.3s ease; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
         .side-panel.open { left: 0; }
-        .side-panel-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3499; }
         .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 20px; overflow-y: auto; }
         .q-btn { width: 100%; aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--border-color); background: #ffffff; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         
-        /* Leaderboard & Results */
+        /* Rankings & Me Highlight */
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
         .rank-table th { background: var(--primary-light); color: var(--primary-hover); padding: 12px; text-align: left; font-weight: 700; }
         .rank-table td { padding: 12px; border-bottom: 1px solid var(--border-color); }
-        .rank-me { background: #f0fdf4; font-weight: 700; }
-        
-        /* Mobile Breakpoints */
+        .rank-me { background: #f0fdf4; font-weight: 700; border-left: 4px solid var(--success); }
+
         @media (max-width: 768px) {
             .bottom-nav { display: flex; }
             .container { padding-bottom: calc(var(--bottom-nav-height) + 15px); }
-            nav h1 { font-size: 1.2rem; }
-            .test-nav-bar { flex-direction: column; align-items: stretch; gap: 10px; }
-            .test-nav-bar > div { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 10px; }
         }
     </style>
 </head>
 <body>
     <div id="customToast" class="custom-toast"></div>
 
-    <div id="app-download-banner" style="display: none; background: linear-gradient(135deg, #0f172a, var(--primary)); color: white; padding: calc(15px + env(safe-area-inset-top)) 20px 15px; align-items: center; justify-content: space-between; font-weight: 600; font-size: 0.85rem; z-index: 1000; position: relative; box-shadow: var(--shadow-md);">
-        <span id="app-download-text">Download our official App for the best experience!</span>
-        <a href="#" id="app-download-link" style="background: rgba(255, 255, 255, 0.9); color: var(--primary); padding: 6px 14px; border-radius: 8px; text-decoration: none; font-weight: 800;" target="_blank">Download</a>
+    <div id="app-download-banner">
+        <span id="app-download-text">Practice better on our official Mobile App!</span>
+        <a href="#" id="app-download-link" class="download-btn" target="_blank">Install</a>
     </div>
 
     <nav id="main-nav">
@@ -314,11 +337,11 @@
 
         <div id="student-search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" id="global-search-input" placeholder="Search tests, study material..." oninput="handleGlobalSearch(this.value)">
+            <input type="text" id="global-search-input" placeholder="Find tests or notes..." oninput="handleGlobalSearch(this.value)">
             <button class="nav-btn" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%);" onclick="openFilterModal()">⚙️ Filters</button>
         </div>
 
-        <div id="nav-actions" style="display: flex; gap: 10px; align-items: center;">
+        <div id="nav-actions">
             <button id="logout-btn" class="nav-btn" style="display:none;" onclick="logout()">Logout</button>
         </div>
     </nav>
@@ -388,19 +411,19 @@
             <div id="login-form-easy" class="action-box glass-panel" style="max-width: 450px; margin: 40px auto; display: none;">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-size: 2rem; color: var(--success); font-weight: 900;">Quick Access</h2>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Enter your name to start practicing</p>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Enter your name to start practice</p>
                 </div>
 
                 <div class="input-group">
                     <label>Your Full Name</label>
-                    <input type="text" id="easy-login-name" placeholder="e.g. Rahul Kumar" oninput="document.getElementById('easy-name-error').style.display='none';">
-                    <span id="easy-name-error" style="color: var(--danger); font-size: 0.8rem; font-weight: 700; display: none; margin-top: 5px;">Name taken. Please use a different name.</span>
+                    <input type="text" id="easy-login-name" placeholder="e.g. Rahul Kumar">
+                    <span id="easy-name-error" style="color: var(--danger); font-size: 0.8rem; font-weight: 700; display: none; margin-top: 5px;">Name already taken.</span>
                 </div>
                 
                 <div class="input-group">
                     <label>Select Category/Board</label>
                     <select id="easy-login-board">
-                        <option value="college">College Student (All Tests)</option>
+                        <option value="college">College (All Tests)</option>
                         <option value="cbse">CBSE Board</option>
                         <option value="hbse">HBSE Board</option>
                         <option value="punjabi">Punjabi Board</option> 
@@ -413,13 +436,13 @@
             <div id="register-form" class="action-box glass-panel" style="max-width: 480px; margin: 40px auto; display: none;">
                 <h2 style="font-size: 2rem; margin-bottom: 25px; font-weight: 900; text-align: center;">Join Portal</h2>
                 
-                <div class="input-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Enter your full name"></div>
-                <div class="input-group"><label>Phone Number</label><input type="tel" id="reg-phone" placeholder="Enter your 10-digit phone number"></div>
+                <div class="input-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Enter full name"></div>
+                <div class="input-group"><label>Phone Number</label><input type="tel" id="reg-phone" placeholder="Enter 10-digit phone"></div>
                 
                 <div class="input-group">
                     <label>Education Board / Section</label>
                     <select id="reg-board">
-                        <option value="college">College Student (All Tests)</option>
+                        <option value="college">College (All Tests)</option>
                         <option value="cbse">CBSE Board</option>
                         <option value="hbse">HBSE Board</option>
                         <option value="punjabi">Punjabi Board</option> 
@@ -429,14 +452,14 @@
                 <div class="input-group">
                     <label>Create Password</label>
                     <div class="password-container">
-                        <input type="password" id="reg-password" placeholder="Minimum 6 characters">
+                        <input type="password" id="reg-password" placeholder="Min 6 characters">
                         <span class="password-toggle" onclick="togglePasswordVisibility('reg-password', this)">👁️</span>
                     </div>
                 </div>
                 
                 <button class="btn-primary" onclick="registerStudent()" style="margin-top: 20px;">Create Account ✨</button>
                 <div style="text-align: center; margin-top: 25px;">
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Already have an account? <a href="javascript:void(0);" onclick="toggleAuthForm('login')" style="color: var(--primary); font-weight: 800; text-decoration: none;">Login here</a></p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Already registered? <a href="javascript:void(0);" onclick="toggleAuthForm('login')" style="color: var(--primary); font-weight: 800; text-decoration: none;">Login here</a></p>
                 </div>
             </div>
         </div>
@@ -466,7 +489,7 @@
             <div id="student-sec-study" class="sub-sec">
                 <h2 style="margin-bottom: 20px; font-weight: 800; font-size: 1.3rem;">Study Materials</h2>
                 <div class="action-box glass-panel" style="padding: 15px; border-left: 4px solid var(--primary);">
-                    <p style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin: 0;">Access videos, notes, and diagrams to prepare for your tests!</p>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin: 0;">Access notes and videos for your preparation.</p>
                 </div>
                 <div class="study-grid" id="student-study-list"></div>
             </div>
@@ -503,11 +526,11 @@
                     <div class="input-group">
                         <label>New Password</label>
                         <div class="password-container">
-                            <input type="password" id="new-student-pass" placeholder="Minimum 6 characters">
+                            <input type="password" id="new-student-pass" placeholder="Min 6 characters">
                             <span class="password-toggle" onclick="togglePasswordVisibility('new-student-pass', this)">👁️</span>
                         </div>
                     </div>
-                    <button class="btn-primary" style="background: linear-gradient(135deg, #0f172a, #334155);" onclick="updateStudentPassword()">Update Password 🔐</button>
+                    <button class="btn-primary" style="background: #0f172a;" onclick="updateStudentPassword()">Update Password</button>
                 </div>
             </div>
         </div> 
@@ -521,7 +544,7 @@
                     ⏱ <span id="timer">00:00</span>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-outline" style="border-color: var(--text-muted); color: var(--text-muted); padding: 6px 12px;" onclick="showExitModal()">⏸ Pause</button>
+                    <button class="btn-outline" style="border-color: var(--warning); color: var(--warning); padding: 6px 12px;" onclick="showExitModal()">⏸ Pause</button>
                     <button class="btn-success" style="padding: 6px 12px;" onclick="showSubmitSummary()">✅ Submit</button>
                 </div>
             </div>
@@ -530,10 +553,15 @@
                 <div id="section-tabs" style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 10px; flex-shrink: 0; scrollbar-width: none;"></div>
                 
                 <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; flex-shrink: 0;">
-                    <span id="question-tracker" style="font-weight: 800; color: var(--primary); font-size: 1rem; background: var(--primary-light); padding: 4px 10px; border-radius: 8px;">Q 1 of 30</span>
-                    <select id="btn-switch-lang" style="border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; font-size: 0.85rem;" onchange="changeLanguageDirect(this.value)">
-                        <option value="Eng">English</option><option value="Hin">Hindi</option><option value="Pa">Punjabi</option>
-                    </select>
+                    <span id="question-tracker" style="font-weight: 800; color: var(--primary); font-size: 1rem; background: var(--primary-light); padding: 4px 10px; border-radius: 8px;">Q 1 of 0</span>
+                    
+                    <div class="lang-dropdown-container">
+                        <button class="lang-dropdown-btn" onclick="toggleLangMenu()">
+                            🌐 <span id="current-lang-label">English</span> ▾
+                        </button>
+                        <div id="lang-dropdown-menu" class="lang-dropdown-menu">
+                            </div>
+                    </div>
                 </div>
                 
                 <div id="question-container" style="flex: 1; overflow-y: auto; padding-bottom: 10px;"></div>
@@ -551,40 +579,33 @@
 
         <div id="view-results" class="view">
             <div class="action-box glass-panel" style="text-align: center; max-width: 500px; margin: 20px auto;">
-                <h2 style="font-weight: 900; color: var(--primary); margin-bottom: 20px;">Test Completed! 🎉</h2>
+                <h2 style="font-weight: 900; color: var(--primary); margin-bottom: 20px;">Analysis Report 📊</h2>
                 
                 <div style="display: flex; flex-direction: column; gap: 15px;">
                     <div style="background: #ecfdf5; border: 2px solid #a7f3d0; border-radius: 12px; padding: 20px;">
-                        <h3 style="color: #065f46; margin: 0 0 5px 0;">Total Score</h3>
-                        <p id="res-score" style="font-weight: 900; font-size: 2.5rem; margin: 0; color: var(--success);"></p>
+                        <h3 style="color: #065f46; margin: 0 0 5px 0;">Your Score</h3>
+                        <p id="res-score" style="font-weight: 900; font-size: 2.5rem; margin: 0; color: var(--success);">0</p>
                     </div>
                     
                     <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: left;">
-                        <h3 style="font-weight: 800; font-size: 1rem; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Accuracy Breakdown</h3>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span style="font-weight: 600;">✅ Correct:</span><strong id="res-correct" style="color: var(--success);">0</strong></div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span style="font-weight: 600;">❌ Wrong:</span><strong id="res-wrong" style="color: var(--danger);">0</strong></div>
                         <div style="display: flex; justify-content: space-between;"><span style="font-weight: 600;">⚪ Skipped:</span><strong id="res-left" style="color: var(--text-muted);">0</strong></div>
                     </div>
-
-                    <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: left;">
-                        <h3 style="font-weight: 900; font-size: 1rem; margin-bottom: 10px;">🏆 Live Leaderboard</h3>
-                        <div id="res-rank-container"><p style="text-align:center; color: var(--text-muted); font-weight: 600; margin: 0;">Calculating Rank...</p></div>
-                    </div>
                 </div>
                 
                 <div style="display: flex; gap: 10px; margin-top: 25px; flex-direction: column;">
+                    <button class="btn-primary" onclick="retakeCurrentTest()">🔄 Retake Test</button>
                     <button class="btn-outline" onclick="showReviewScreen()">📖 Review Solutions</button>
-                    <button class="btn-primary" onclick="navigate('view-student');">Dashboard 🏠</button>
+                    <button class="btn-outline" style="border: none; color: var(--text-muted);" onclick="navigate('view-student');">Back to Dashboard</button>
                 </div>
             </div>
         </div>
-
         <div id="view-review" class="view">
             <div id="review-container" style="padding: 0; max-width: 800px; margin: 0 auto;"></div>
         </div>
         
-    </div>
-        <div id="resource-viewer-modal" class="modal-overlay">
+    </div> <div id="resource-viewer-modal" class="modal-overlay">
         <div class="modal" style="max-width: 800px; padding: 20px; background: #0f172a;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3 id="resource-modal-title" style="color: #ffffff; margin: 0;">Resource Viewer</h3>
@@ -627,26 +648,18 @@
             </div>
             <div style="display: flex; gap: 10px;">
                 <button onclick="closeForgotPassModal()" class="btn-outline" style="flex:1;">Cancel</button>
-                <button onclick="requestPasswordReset()" class="btn-primary" style="flex:1;">Send</button>
+                <button onclick="requestPasswordReset()" class="btn-primary" style="flex:1;">Send Link</button>
             </div>
-        </div>
-    </div>
-        
-    <div id="done-popup-modal" class="modal-overlay">
-        <div class="modal" style="max-width: 350px; text-align: center;">
-            <h2 style="color: var(--success); margin-bottom: 10px;">Request Sent! ✅</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">If registered, you will receive reset instructions.</p>
-            <button onclick="closeDonePopup()" class="btn-primary">Okay</button>
         </div>
     </div>
 
     <div id="exit-modal" class="modal-overlay">
         <div class="modal" style="max-width: 350px; text-align: center;">
             <h2 style="margin-bottom: 15px;">Pause Test?</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Are you sure you want to pause? Your progress will be safely saved.</p>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Progress will be saved. You can resume later from the dashboard.</p>
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button onclick="confirmPause()" class="btn-warning">⏸ Pause & Save</button>
-                <button onclick="hideExitModal()" class="btn-outline" style="border: none;">Cancel</button>
+                <button onclick="confirmPause()" class="btn-warning">⏸ Save & Exit</button>
+                <button onclick="hideExitModal()" class="btn-outline" style="border: none;">Continue Test</button>
             </div>
         </div>
     </div>
@@ -657,24 +670,17 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
                 <div style="background: #f1f5f9; padding: 15px; border-radius: 12px;">
                     <span style="font-size: 1.8rem; color: var(--primary); font-weight: 900;" id="sum-total">0</span><br>
-                    <span style="font-size: 0.8rem; font-weight: 700;">Total Qs</span>
+                    <span style="font-size: 0.8rem; font-weight: 700;">Total Questions</span>
                 </div>
                 <div style="background: #ecfdf5; padding: 15px; border-radius: 12px;">
                     <span style="font-size: 1.8rem; color: var(--success); font-weight: 900;" id="sum-answered">0</span><br>
                     <span style="font-size: 0.8rem; font-weight: 700;">Answered</span>
                 </div>
-                <div style="background: #fef2f2; padding: 15px; border-radius: 12px;">
-                    <span style="font-size: 1.8rem; color: var(--danger); font-weight: 900;" id="sum-unanswered">0</span><br>
-                    <span style="font-size: 0.8rem; font-weight: 700;">Not Answered</span>
-                </div>
-                <div style="background: #f5f3ff; padding: 15px; border-radius: 12px;">
-                    <span style="font-size: 1.8rem; color: var(--review); font-weight: 900;" id="sum-marked">0</span><br>
-                    <span style="font-size: 0.8rem; font-weight: 700;">Marked</span>
-                </div>
             </div>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Ready to finalize your performance?</p>
             <div style="display: flex; gap: 10px;">
-                <button onclick="hideSubmitSummary()" class="btn-outline" style="flex: 1;">Back</button>
-                <button onclick="finalSubmitTest()" class="btn-success" style="flex: 1;">Submit ✅</button>
+                <button onclick="hideSubmitSummary()" class="btn-outline" style="flex: 1;">Cancel</button>
+                <button onclick="finalSubmitTest()" class="btn-success" style="flex: 1;">Yes, Submit ✅</button>
             </div>
         </div>
     </div>
@@ -691,128 +697,168 @@
             appId: "1:250226237572:web:d3f794d00f22a703faa2d1"                 
         };
         
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         
         const auth = firebase.auth();
         const db = firebase.firestore();
-        db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
-        let messaging;
-        
-        if (firebase.messaging.isSupported()) {
-            messaging = firebase.messaging();
-        }
+        db.settings({ experimentalForceLongPolling: true });
 
         // ==========================================
         // --- GLOBAL VARIABLES ---
         // ==========================================
-        let currentUserRole = null;
-        let currentUserBoard = null; 
-        let currentTest = null;
-        let testTimer = null;
-        let timeRemaining = 0;
-        let activeTestId = null; 
-        let isTestActive = false;
+        let currentUserRole = null, currentUserBoard = null;
+        let currentTest = null, activeTestId = null, isTestActive = false;
+        let testTimer = null, timeRemaining = 0;
         
-        let testQuestions = [];
-        let userAnswers = [];
-        let questionStates = [];
-        let currentQuestionIndex = 0;
-        let testMarks = 2;
-        let testNegativeMarks = 0;
+        let testQuestions = [], userAnswers = [], questionStates = [];
+        let currentQuestionIndex = 0, testMarks = 2, testNegativeMarks = 0;
         
-        let allTestsCache = []; 
-        let allGroupsCache = []; 
-        let studentAttemptedDB = {}; 
-        let currentLanguage = 'Eng'; 
-        let reviewLanguage = 'Eng'; 
-        let currentReviewFilter = 'all';
-        let currentSearchQuery = "";
-        let currentViewingGroupId = ""; 
+        let allGroupsCache = [], studentAttemptedDB = {}; 
+        let currentLanguage = 'Eng', currentSearchQuery = "", currentViewingGroupId = "";
 
         // ==========================================
-        // --- DEVICE LOCKOUT SECURITY ---
+        // --- ANTI-REFRESH & SECURITY SYSTEM ---
         // ==========================================
-        const MAX_FAILED_ATTEMPTS = 5; 
-        const LOCKOUT_DURATION_MS = 12 * 60 * 60 * 1000;
         
-        function checkDeviceLockout() {
-            const lockoutDataStr = localStorage.getItem('deviceLockoutData'); 
-            if (!lockoutDataStr) return false;
-            
-            const lockoutData = JSON.parse(lockoutDataStr); 
-            const now = new Date().getTime();
-            
-            if (now - lockoutData.firstAttempt > LOCKOUT_DURATION_MS) { 
-                localStorage.removeItem('deviceLockoutData'); 
-                return false; 
+        // Prevent accidental refresh during test
+        window.addEventListener('beforeunload', (e) => {
+            if (isTestActive) {
+                e.preventDefault();
+                e.returnValue = 'Test in progress! Refreshing may cause data loss.';
             }
-            if (lockoutData.attempts >= MAX_FAILED_ATTEMPTS) {
-                const hoursLeft = Math.ceil((LOCKOUT_DURATION_MS - (now - lockoutData.firstAttempt)) / (60 * 60 * 1000));
-                document.getElementById('lockout-warning').style.display = 'block'; 
-                document.getElementById('lockout-warning').innerText = `Device Locked. Try again in ${hoursLeft} hours.`;
-                document.getElementById('login-submit-btn').disabled = true; 
+        });
+
+        function saveTestProgress() {
+            if (!isTestActive || !activeTestId) return;
+            const progress = {
+                testId: activeTestId,
+                answers: userAnswers,
+                states: questionStates,
+                time: timeRemaining,
+                index: currentQuestionIndex,
+                lang: currentLanguage
+            };
+            localStorage.setItem('kd_test_progress', JSON.stringify(progress));
+        }
+
+        function clearTestProgress() {
+            localStorage.removeItem('kd_test_progress');
+        }
+
+        // --- DEVICE LOCKOUT LOGIC ---
+        const MAX_FAILED_ATTEMPTS = 5;
+        const LOCKOUT_DURATION = 12 * 60 * 60 * 1000;
+
+        function checkDeviceLockout() {
+            const data = JSON.parse(localStorage.getItem('deviceLockoutData') || '{}');
+            if (!data.attempts) return false;
+            const now = Date.now();
+            if (now - data.firstAttempt > LOCKOUT_DURATION) {
+                localStorage.removeItem('deviceLockoutData');
+                return false;
+            }
+            if (data.attempts >= MAX_FAILED_ATTEMPTS) {
+                const hours = Math.ceil((LOCKOUT_DURATION - (now - data.firstAttempt)) / (3600000));
+                const warn = document.getElementById('lockout-warning');
+                warn.style.display = 'block';
+                warn.innerText = `Device Locked. Try again in ${hours} hours.`;
+                document.getElementById('login-submit-btn').disabled = true;
                 return true;
             }
             return false;
         }
 
         function recordFailedAttempt() {
-            const lockoutDataStr = localStorage.getItem('deviceLockoutData'); 
-            const now = new Date().getTime(); 
-            let lockoutData = { attempts: 0, firstAttempt: now };
-            
-            if (lockoutDataStr) {
-                lockoutData = JSON.parse(lockoutDataStr);
-                if (now - lockoutData.firstAttempt > LOCKOUT_DURATION_MS) { 
-                    lockoutData = { attempts: 1, firstAttempt: now }; 
-                } else { 
-                    lockoutData.attempts += 1; 
-                }
-            } else { 
-                lockoutData.attempts = 1; 
+            let data = JSON.parse(localStorage.getItem('deviceLockoutData') || '{"attempts":0}');
+            const now = Date.now();
+            if (!data.firstAttempt || (now - data.firstAttempt > LOCKOUT_DURATION)) {
+                data = { attempts: 1, firstAttempt: now };
+            } else {
+                data.attempts++;
             }
-            localStorage.setItem('deviceLockoutData', JSON.stringify(lockoutData));
-            
-            if (lockoutData.attempts >= MAX_FAILED_ATTEMPTS) { 
-                checkDeviceLockout(); 
-            } else { 
-                showToast(`Invalid Credentials. ${MAX_FAILED_ATTEMPTS - lockoutData.attempts} attempts remaining.`, 'error'); 
-            }
+            localStorage.setItem('deviceLockoutData', JSON.stringify(data));
+            if (data.attempts >= MAX_FAILED_ATTEMPTS) checkDeviceLockout();
+            else showToast(`Invalid login. ${MAX_FAILED_ATTEMPTS - data.attempts} tries left.`, 'error');
         }
 
-        function clearLockoutOnSuccess() { 
-            localStorage.removeItem('deviceLockoutData'); 
-            document.getElementById('lockout-warning').style.display = 'none'; 
-            document.getElementById('login-submit-btn').disabled = false; 
-        }
-        
-        // Check on load
-        window.onload = checkDeviceLockout;
-
-        // ==========================================
-        // --- UI HELPERS & MODALS ---
-        // ==========================================
-        function togglePasswordVisibility(inputId, iconEl) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") { 
-                input.type = "text"; iconEl.innerText = "👀"; iconEl.style.color = "var(--primary)"; 
-            } else { 
-                input.type = "password"; iconEl.innerText = "👁️"; iconEl.style.color = "var(--text-muted)"; 
-            }
-        }
-
+        // --- UI HELPERS ---
         function showToast(message, type = 'success') {
             const toast = document.getElementById('customToast');
             toast.innerText = message; toast.className = `custom-toast show ${type}`;
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 4000);
+            setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        window.alert = function(msg, type = 'error') { showToast(msg, type); };
+        function togglePasswordVisibility(id, el) {
+            const input = document.getElementById(id);
+            input.type = input.type === "password" ? "text" : "password";
+            el.innerText = input.type === "password" ? "👁️" : "👀";
+        }
+                // ==========================================
+        // --- UI & NAVIGATION HELPERS ---
+        // ==========================================
+        function toggleAuthForm(type) {
+            const login = document.getElementById('login-form-secure');
+            const register = document.getElementById('register-form');
+            if(type === 'register') { 
+                login.style.display = 'none'; register.style.display = 'block'; 
+            } else { 
+                register.style.display = 'none'; login.style.display = 'block'; 
+            }
+        }
+
+        function openStudentSec(secId, pushState = true, stateData = {}) { 
+            document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); 
+            const target = document.getElementById(secId);
+            if(target) target.classList.add('active'); 
+            
+            if (pushState) {
+                const stateObj = { view: 'view-student', sec: secId, ...stateData };
+                window.history.pushState(stateObj, "", `#${secId}`); 
+            }
+        }
+
+        function switchBottomTab(secId, element) {
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
+            if(element) element.classList.add('active');
+            if(secId === 'student-sec-groups') {
+                currentViewingGroupId = ""; 
+                loadGroupsForStudents("", true); 
+            } else {
+                openStudentSec(secId, true);
+            }
+        }
 
         function openFilterModal() { 
-            showToast("Advanced filtering coming soon!", "success"); 
+            showToast("Filters will be available in the next update!", "success"); 
+        }
+
+        // ==========================================
+        // --- SEARCH & CONTENT HELPERS ---
+        // ==========================================
+        function filterTestsLocally() {
+            const testCards = document.querySelectorAll('#student-test-list .action-box');
+            let found = false;
+            testCards.forEach(card => {
+                const title = card.querySelector('h4').innerText.toLowerCase();
+                if(title.includes(currentSearchQuery)) {
+                    card.style.display = 'block'; found = true;
+                } else { card.style.display = 'none'; }
+            });
+        }
+
+        function getFallbackImage(text) {
+            const color = "#4338ca";
+            const initials = text ? text.substring(0,2).toUpperCase() : "KD";
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="120"><rect width="100%" height="100%" fill="${color}"/><text x="50%" y="50%" fill="white" font-size="40" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${initials}</text></svg>`;
+            return 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+
+        function requestPasswordReset() {
+            const phone = document.getElementById('forgot-pass-phone').value.trim(); 
+            if(phone.length < 10) return showToast("Enter 10-digit number", 'error');
+            auth.sendPasswordResetEmail(formatIDAsEmail(phone)).then(() => { 
+                closeForgotPassModal(); showToast("Reset link sent to your email!", "success");
+            }).catch(() => showToast("Account not found", 'error'));
         }
 
         let customConfirmCallback = null;
@@ -828,17 +874,83 @@
             if(customConfirmCallback && isConfirmed) customConfirmCallback();
             customConfirmCallback = null;
         }
-
-        function getFallbackImage(text) {
-            if(!text) text = "KD JAAT";
-            const initials = text.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-            const colors = ['#4338ca', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#0ea5e9'];
-            const color = colors[text.length % colors.length];
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="120" viewBox="0 0 300 120"><rect width="300" height="120" fill="${color}"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="40" font-weight="bold">${initials}</text></svg>`;
-            return 'data:image/svg+xml;base64,' + btoa(svg);
-        }
         // ==========================================
-        // --- NAVIGATION & NATIVE BACK BUTTON ---
+        // --- TEST LISTING ENGINE ---
+        // ==========================================
+                function viewGroupTests(gid, gn, isPushing = true) { 
+            const titleEl = document.getElementById('current-group-title');
+            if(titleEl) titleEl.innerText = gn; 
+
+            db.collection("tests").onSnapshot(s => { 
+                let c = document.getElementById('student-test-list'); 
+                if(!c) return;
+                c.innerHTML = ''; let count = 0;
+                
+                s.forEach(d => { 
+                    let t = d.data(); 
+                    if((t.groupIDs && t.groupIDs.includes(gid)) || t.groupId === gid) {
+                        count++;
+                        
+                        let actionButtons = "";
+if (studentAttemptedDB[d.id]) {
+    actionButtons = `
+        <button class="btn-results-modern" onclick="seePastResults('${studentAttemptedDB[d.id]}')">
+            <span class="icon">📊</span> View Performance
+        </button>
+        <button class="btn-primary" style="width:100%; background: var(--success); box-shadow: none;" onclick="retakeFromList('${d.id}')">
+            Retake Test 🔄
+        </button>
+    `;
+} else {
+    actionButtons = `<button class="btn-primary" style="width:100%;" onclick="startTest('${d.id}')">Start Test 🚀</button>`;
+}
+                        
+                        c.innerHTML += `
+                            <div class="action-box">
+                                <h4 style="margin-bottom:8px;">${t.title}</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:15px;">
+                                    ${t.questions ? t.questions.length : 0} Qs | ${Math.floor(t.duration/60)} Mins
+                                </p>
+                                ${actionButtons}
+                            </div>`; 
+                    }
+                }); 
+                if(count === 0) c.innerHTML = '<p style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600; grid-column: 1/-1;">No tests found here yet.</p>';
+            }); 
+
+            if(isPushing) openStudentSec('student-sec-tests-list', true, { groupId: gid, groupName: gn });
+            else openStudentSec('student-sec-tests-list', false);
+        }
+
+        // Helper function specifically for retaking from the dashboard list
+        function retakeFromList(testId) {
+            showCustomConfirm("Retake Test?", "This will start a fresh attempt. Your previous scores are safe in your history.", () => {
+                clearTestProgress(); // Ensures anti-refresh doesn't load old data
+                startTest(testId);
+            });
+        }
+
+
+        // ==========================================
+        // --- NOTIFICATION HELPER ---
+        // ==========================================
+        function requestNotificationPermission() {
+            if (!firebase.messaging.isSupported()) return;
+            const messaging = firebase.messaging();
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    // Replace 'YOUR_VAPID_KEY' with your actual key from Firebase Console
+                    messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY' }).then((token) => {
+                        if (token && auth.currentUser) {
+                            db.collection('users').doc(auth.currentUser.uid).update({ fcmToken: token });
+                        }
+                    });
+                }
+            });
+        }
+
+        // ==========================================
+        // --- NAVIGATION & RECOVERY ENGINE ---
         // ==========================================
         function updateUIVisibility() {
             const bottomNav = document.getElementById('bottom-nav-student');
@@ -857,6 +969,7 @@
                     if (bottomNav) bottomNav.style.display = 'flex';
                     if (searchCont) searchCont.style.display = 'block';
                     if (brandCont) brandCont.style.display = 'none';
+                    if (appBanner) loadAppBanner(); 
                 } else {
                     if (bottomNav) bottomNav.style.display = 'none';
                     if (searchCont) searchCont.style.display = 'none';
@@ -867,7 +980,9 @@
 
         function navigate(viewId, pushState = true) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); 
-            document.getElementById(viewId).classList.add('active');
+            const target = document.getElementById(viewId);
+            if (target) target.classList.add('active');
+            
             document.getElementById('logout-btn').style.display = (viewId === 'view-login') ? 'none' : 'block';
             updateUIVisibility();
             
@@ -877,27 +992,7 @@
             }
         }
 
-        function openStudentSec(secId, pushState = true, stateData = {}) { 
-            document.querySelectorAll('#view-student .sub-sec').forEach(s => s.classList.remove('active')); 
-            document.getElementById(secId).classList.add('active'); 
-            if (pushState) {
-                const stateObj = { view: 'view-student', sec: secId, ...stateData };
-                window.history.pushState(stateObj, "", `#${secId}`); 
-            }
-        }
-
-        function switchBottomTab(secId, element) {
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
-            if(element) element.classList.add('active');
-            if(secId === 'student-sec-groups') {
-                currentViewingGroupId = ""; 
-                loadGroupsForStudents("", true); 
-            } else {
-                openStudentSec(secId, true);
-            }
-        }
-
-        // PHYSICAL BACK BUTTON ROUTING
+        // PHYSICAL BACK BUTTON HANDLING
         window.onpopstate = function(event) {
             if (isTestActive) {
                 window.history.pushState({ view: 'view-test' }, "", `#view-test`);
@@ -907,24 +1002,18 @@
             if (event.state) { 
                 if (event.state.view === 'view-student') {
                     navigate('view-student', false);
-                    if (event.state.sec === 'student-sec-groups') {
-                        currentViewingGroupId = event.state.groupId || "";
-                        loadGroupsForStudents(currentViewingGroupId, false);
-                    } else if (event.state.sec === 'student-sec-tests-list') {
-                        viewGroupTests(event.state.groupId, event.state.groupName, false);
-                    } else {
-                        openStudentSec(event.state.sec, false);
-                    }
+                    if (event.state.sec) openStudentSec(event.state.sec, false);
                 } else {
                     navigate(event.state.view, false);
                 }
-            } else { 
-                navigate(currentUserRole ? `view-${currentUserRole}` : 'view-login', false); 
             }
         };
 
+        // ANTI-REFRESH: CHECK FOR RECOVERABLE SESSION
+        
+
         // ==========================================
-        // --- AUTH & AUTO-LOGIN ENGINE ---
+        // --- AUTH & AUTO-LOGIN STATE ---
         // ==========================================
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
 
@@ -936,426 +1025,249 @@
                     const data = userDoc.data(); 
                     currentUserBoard = data.board || 'college'; 
                     document.getElementById('acc-student-name').value = data.fullName || 'Student'; 
-                    document.getElementById('acc-student-phone').value = data.phone || user.email.split('@')[0];
+                    document.getElementById('acc-student-phone').value = data.phone || "";
                     document.getElementById('student-welcome-name').innerText = data.fullName || 'Student';
                     
-                    if(data.isEasyMode) {
-                        document.getElementById('acc-security-group').style.display = 'none';
-                        document.getElementById('acc-phone-group').style.display = 'none';
-                    } else {
-                        document.getElementById('acc-security-group').style.display = 'block';
-                        document.getElementById('acc-phone-group').style.display = 'block';
-                    }
+                    document.getElementById('acc-security-group').style.display = data.isEasyMode ? 'none' : 'block';
                 }
                 navigate('view-student', false); 
                 loadStudentData();
                 loadStudentPopup();
-                loadAppBanner();
-                setTimeout(() => { switchBottomTab('student-sec-groups', document.querySelector('.nav-item:first-child')); }, 100);
+                
             } else { 
                 currentUserRole = null; 
-                if(!window.history.state) { window.history.replaceState({ view: 'view-login' }, "", "#view-login"); } 
                 navigate('view-login', false); 
             }
         });
 
-        function requestNotificationPermission() {
-            if (!messaging) return;
-            Notification.requestPermission().then((permission) => {
-                if (permission === 'granted') {
-                    messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY' }).then((token) => {
-                        if (token && auth.currentUser) {
-                            db.collection('users').doc(auth.currentUser.uid).update({ fcmToken: token });
-                        }
-                    });
-                }
-            });
+        function logout() { 
+            if(isTestActive) {
+                showToast("Finish the test before logging out!", "error");
+                return;
+            }
+            auth.signOut(); 
         }
         // ==========================================
         // --- AUTHENTICATION METHODS ---
         // ==========================================
-        function toggleAuthForm(type) {
-            if(type === 'register') { 
-                document.getElementById('login-form-secure').style.display = 'none'; 
-                document.getElementById('register-form').style.display = 'block'; 
-            } else { 
-                document.getElementById('register-form').style.display = 'none'; 
-                document.getElementById('login-form-secure').style.display = 'block'; 
-            }
-        }
-
         function loginSecure() {
             if (checkDeviceLockout()) return;
             const idInput = document.getElementById('login-email').value.trim(); 
             const pass = document.getElementById('login-password').value;
             const btn = document.getElementById('login-submit-btn'); 
+            
+            if(!idInput || !pass) return showToast("Enter credentials", "error");
             btn.disabled = true; btn.innerText = "Authenticating...";
 
             auth.signInWithEmailAndPassword(formatIDAsEmail(idInput), pass)
-                .then(() => { clearLockoutOnSuccess(); requestNotificationPermission(); })
+                .then(() => { localStorage.removeItem('deviceLockoutData'); })
                 .catch(e => { recordFailedAttempt(); })
                 .finally(() => { btn.disabled = false; btn.innerText = "Sign In 🚀"; });
         }
 
         async function loginEasy() {
-            if (checkDeviceLockout()) return;
             const nameInput = document.getElementById('easy-login-name').value.trim();
             const board = document.getElementById('easy-login-board').value;
-            const errorMsg = document.getElementById('easy-name-error');
-            const btn = document.getElementById('easy-login-btn');
-
-            if(!nameInput) return showToast("Please enter your name.", "error");
-            btn.disabled = true; btn.innerText = "Checking...";
+            if(!nameInput) return showToast("Enter your name", "error");
 
             try {
-                const snapshot = await db.collection("users").where("fullName", "==", nameInput).where("role", "==", "student").get();
+                const snapshot = await db.collection("users").where("fullName", "==", nameInput).get();
                 if (!snapshot.empty) {
-                    errorMsg.style.display = 'block'; btn.disabled = false; return;
+                    document.getElementById('easy-name-error').style.display = 'block';
+                    return;
                 }
                 const userCred = await auth.signInAnonymously();
                 await db.collection("users").doc(userCred.user.uid).set({
-                    fullName: nameInput, phone: "Guest_" + Math.floor(Math.random()*10000),
+                    fullName: nameInput, phone: "Easy_" + Date.now().toString().slice(-4),
                     role: 'student', board: board, isEasyMode: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                clearLockoutOnSuccess();
-            } catch(e) { showToast("Error: " + e.message, "error"); } 
-            finally { btn.disabled = false; btn.innerText = "Enter Portal 🚪"; }
+            } catch(e) { showToast(e.message, "error"); }
         }
 
         function registerStudent() {
-            const fullName = document.getElementById('reg-name').value.trim(); 
-            const phoneId = document.getElementById('reg-phone').value.trim(); 
+            const name = document.getElementById('reg-name').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
             const pass = document.getElementById('reg-password').value;
-            const board = document.getElementById('reg-board').value; 
-            
-            if(!fullName) return showToast("Please enter your name.", 'error'); 
-            if(phoneId.length < 4 || pass.length < 6) return showToast("Check inputs. Pass min 6 chars.", 'error');
-            
-            const btn = document.querySelector('#register-form .btn-primary');
-            btn.disabled = true; btn.innerText = "Creating...";
+            const board = document.getElementById('reg-board').value;
 
-            auth.createUserWithEmailAndPassword(formatIDAsEmail(phoneId), pass)
-                .then((userCred) => { 
-                    db.collection("users").doc(userCred.user.uid).set({ 
-                        fullName: fullName, phone: phoneId, role: 'student', board: board, createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-                    }); 
-                    requestNotificationPermission();
-                })
-                .catch(e => { showToast("Error: " + e.message, 'error'); })
-                .finally(() => { btn.disabled = false; btn.innerText = "Register ✨"; });
-        }
+            if(phone.length < 10 || pass.length < 6) return showToast("Invalid inputs", "error");
 
-        function logout() { auth.signOut(); }
-
-        function requestPasswordReset() {
-            const phone = document.getElementById('forgot-pass-phone').value.trim(); 
-            if(phone.length < 4) return showToast("Enter a valid number.", 'error');
-            auth.sendPasswordResetEmail(formatIDAsEmail(phone)).then(() => { 
-                closeForgotPassModal(); document.getElementById('done-popup-modal').style.display = 'flex'; 
-            }).catch((e) => { showToast("No account found or error.", 'error'); });
-        }
-
-        function updateStudentPassword() {
-            const newPass = document.getElementById('new-student-pass').value; 
-            if(newPass.length < 6) return showToast("Min 6 chars.", 'error');
-            const user = firebase.auth().currentUser;
-            if(user) { 
-                user.updatePassword(newPass).then(() => { 
-                    showToast("Password updated!"); document.getElementById('new-student-pass').value = ''; 
-                }).catch(e => showToast(e.message, 'error')); 
-            }
+            auth.createUserWithEmailAndPassword(formatIDAsEmail(phone), pass)
+                .then(cred => {
+                    db.collection("users").doc(cred.user.uid).set({
+                        fullName: name, phone: phone, role: 'student', board: board, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }).catch(e => showToast(e.message, "error"));
         }
 
         // ==========================================
-        // --- DATA LOADERS & CATEGORIES ---
+        // --- DATA LOADERS & SEARCH ---
         // ==========================================
         function loadStudentData() {
-            db.collection("groups").onSnapshot((snap) => {
-                let rawGroups = []; 
-                snap.forEach(d => { let g = d.data(); g.id = d.id; rawGroups.push(g); });
-                rawGroups.sort((a, b) => (a.order || 0) - (b.order || 0)); 
-                allGroupsCache = rawGroups;
-                if(document.getElementById('student-sec-groups').classList.contains('active')) { 
-                    loadGroupsForStudents(currentViewingGroupId, false); 
+            // Load Groups/Categories
+            db.collection("groups").onSnapshot(snap => {
+                allGroupsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0)-(b.order||0));
+                if(document.getElementById('student-sec-groups').classList.contains('active')) {
+                    loadGroupsForStudents(currentViewingGroupId, false);
                 }
             });
 
-            // RESTORED: Promo Banners Listener
-            db.collection("banners").onSnapshot(s => {
-                let c = document.getElementById('student-banners'); if(!c) return; 
-                c.innerHTML = ''; let hasBanners = false;
-                s.forEach(d => {
-                    let b = d.data(); 
-                    let show = (!b.audience || b.audience === 'all' || b.audience === currentUserBoard);
-                    if(show) {
+            // Load Banners
+            db.collection("banners").onSnapshot(snap => {
+                const cont = document.getElementById('student-banners');
+                cont.innerHTML = ''; let hasBanners = false;
+                snap.forEach(doc => {
+                    const b = doc.data();
+                    if(!b.audience || b.audience === 'all' || b.audience === currentUserBoard) {
                         hasBanners = true;
-                        let title = b.customTitle || b.testName;
-                        let img = b.imageUrl ? b.imageUrl : getFallbackImage(title);
-                        c.innerHTML += `<div class="promo-banner" style="background-image: url('${img}');" onclick="startTest('${b.testId}')">
-                            <div class="promo-banner-title" style="${b.textColor ? `color: ${b.textColor};` : ''}">${title}</div>
+                        const img = b.imageUrl || getFallbackImage(b.testName);
+                        cont.innerHTML += `<div class="promo-banner" style="background-image: url('${img}')" onclick="startTest('${b.testId}')">
+                            <div class="promo-banner-title">${b.customTitle || b.testName}</div>
                         </div>`;
                     }
                 });
-                c.style.display = hasBanners ? 'flex' : 'none';
+                cont.style.display = hasBanners ? 'flex' : 'none';
             });
 
             loadStudentAttempts(); loadLeaderboardTests(); loadStudyMaterialsForStudent();
         }
 
-        function loadGroupsForStudents(parentId = "", isPushing = true) { 
+        function handleGlobalSearch(query) {
+            currentSearchQuery = query.toLowerCase();
+            const activeSec = document.querySelector('#view-student .sub-sec.active').id;
+            
+            if(activeSec === 'student-sec-groups') loadGroupsForStudents(currentViewingGroupId, false);
+            if(activeSec === 'student-sec-tests-list') filterTestsLocally();
+            if(activeSec === 'student-sec-study') loadStudyMaterialsForStudent();
+        }
+
+        function loadGroupsForStudents(parentId = "", isPushing = true) {
             currentViewingGroupId = parentId;
-            let c = document.getElementById('student-group-list'); c.innerHTML=''; 
-            let headerTitle = document.getElementById('groups-header-title');
+            const cont = document.getElementById('student-group-list'); cont.innerHTML = '';
+            const title = document.getElementById('groups-header-title');
             
             if(parentId) {
-                let parentGroup = allGroupsCache.find(g => g.id === parentId); 
-                headerTitle.innerText = parentGroup ? parentGroup.name : "Sub-Categories";
-            } else { headerTitle.innerText = "Test Categories"; }
+                const pg = allGroupsCache.find(g => g.id === parentId);
+                title.innerText = pg ? pg.name : "Sub-Categories";
+            } else title.innerText = "Test Categories";
 
-            allGroupsCache.forEach((g, index) => { 
-                let groupParent = g.parentId || "";
-                let show = (!g.board || g.board === 'college' || currentUserBoard === 'college' || g.board === currentUserBoard);
-                if (groupParent === parentId && show) {
-                    let hasChildren = allGroupsCache.some(child => child.parentId === g.id);
-                    let badge = hasChildren ? `<div class="sub-group-badge">📁 Folders</div>` : ``;
-                    let colorClass = `color-${(index % 5) + 1}`; 
-                    c.innerHTML += `<div class="group-card ${colorClass}" onclick="handleGroupClick('${g.id}','${g.name.replace(/'/g, "\\'")}', ${hasChildren})">
-                        ${badge}<div class="group-card-content"><h3>${g.name}</h3></div>
-                    </div>`;
-                }
-            }); 
+            allGroupsCache.filter(g => (g.parentId || "") === parentId).forEach((g, i) => {
+                const hasChildren = allGroupsCache.some(c => c.parentId === g.id);
+                const colorCls = `color-${(i % 5) + 1}`;
+                if(currentSearchQuery && !g.name.toLowerCase().includes(currentSearchQuery)) return;
+
+                cont.innerHTML += `<div class="group-card ${colorCls}" onclick="handleGroupClick('${g.id}','${g.name.replace(/'/g, "\\'")}', ${hasChildren})">
+                    ${hasChildren ? '<div class="sub-group-badge">📁 Folders</div>' : ''}
+                    <div class="group-card-content"><h3>${g.name}</h3></div>
+                </div>`;
+            });
             if(isPushing) openStudentSec('student-sec-groups', true, { groupId: parentId });
         }
 
-        function handleGroupClick(gid, gn, hasChildren) { 
-            if(hasChildren) loadGroupsForStudents(gid, true); 
-            else viewGroupTests(gid, gn, true); 
+        function handleGroupClick(gid, gn, hasChildren) {
+            if(hasChildren) loadGroupsForStudents(gid, true);
+            else viewGroupTests(gid, gn, true);
         }
 
-        function handleGlobalSearch(query) {
-            currentSearchQuery = query.toLowerCase();
-            // Filtering logic triggered here
-        }
-                // ==========================================
-        // --- TEST LISTING & STUDY MATERIALS ---
-        // ==========================================
-        function viewGroupTests(gid, gn, isPushing = true) { 
-            document.getElementById('current-group-title').innerText = gn; 
-            db.collection("tests").onSnapshot(s => { 
-                let c = document.getElementById('student-test-list'); 
-                c.innerHTML = ''; let count = 0;
-                s.forEach(d => { 
-                    let t = d.data(); 
-                    if((t.groupIDs && t.groupIDs.includes(gid)) || t.groupId === gid) {
-                        count++;
-                        let actionBtn = studentAttemptedDB[d.id] 
-                            ? `<button class="btn-outline" style="width:100%;" onclick="seePastResults('${studentAttemptedDB[d.id]}')">View Result 📊</button>` 
-                            : `<button class="btn-primary" onclick="startTest('${d.id}')">Start Test 🚀</button>`;
-                        
-                        c.innerHTML += `
-                            <div class="action-box">
-                                <h4 style="margin-bottom:8px;">${t.title}</h4>
-                                <p style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:15px;">
-                                    ${t.questions ? t.questions.length : 0} Qs | ${t.duration/60} Mins
-                                </p>
-                                ${actionBtn}
-                            </div>`; 
-                    }
-                }); 
-                if(count === 0) c.innerHTML = '<p style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600; grid-column: 1/-1;">No tests found in this folder.</p>';
-            }); 
-            if(isPushing) openStudentSec('student-sec-tests-list', true, { groupId: gid, groupName: gn });
-            else openStudentSec('student-sec-tests-list', false);
-        }
-
-        function loadStudyMaterialsForStudent() {
-            db.collection("studyMaterials").orderBy("createdAt", "desc").onSnapshot(s => {
-                let c = document.getElementById('student-study-list'); if(!c) return;
-                c.innerHTML = ''; let found = false;
-                s.forEach(d => {
-                    let m = d.data();
-                    let show = (!m.audience || m.audience === 'all' || m.audience === currentUserBoard);
-                    if(currentSearchQuery && !m.title.toLowerCase().includes(currentSearchQuery)) show = false;
-                    if(show) {
-                        found = true;
-                        let icon = m.type === 'video' ? '▶️' : (m.type === 'pdf' ? '📄' : '🖼️');
-                        c.innerHTML += `
-                            <div class="study-card">
-                                <div class="study-icon">${icon}</div>
-                                <h4>${m.title}</h4>
-                                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">${m.description || ''}</p>
-                                <a href="${m.url}" target="_blank" class="btn-primary" style="text-decoration:none; display:inline-block; margin-top: auto;">Open Material</a>
-                            </div>`;
-                    }
-                });
-                if(!found) c.innerHTML = '<p style="text-align:center; grid-column:1/-1; padding:20px; color:var(--danger); font-weight:700;">No materials match your search.</p>';
+        // RETAKE LOGIC: Clears progress and starts fresh
+        function retakeCurrentTest() {
+            showCustomConfirm("Retake Test?", "Your previous score for this attempt will remain in history, but you can practice again now.", () => {
+                clearTestProgress();
+                startTest(activeTestId);
             });
         }
-
         // ==========================================
-        // --- ATTEMPTS & LEADERBOARDS ---
+        // --- LIVE TEST ENGINE: CORE LOGIC ---
         // ==========================================
-        function loadStudentAttempts() {
-            if(!auth.currentUser) return;
-            db.collection("attempts").where("userId", "==", auth.currentUser.uid).onSnapshot(s => {
-                let c = document.getElementById('student-attempts-list'); studentAttemptedDB = {};
-                if(s.empty) { c.innerHTML = '<p style="text-align:center; padding:20px; grid-column: 1/-1;">No attempts yet.</p>'; return; }
-                
-                let attemptsArray = [];
-                s.forEach(d => { attemptsArray.push({ id: d.id, data: d.data() }); });
-                attemptsArray.sort((a, b) => b.data.timestamp?.toMillis() - a.data.timestamp?.toMillis());
-                
-                c.innerHTML = '';
-                attemptsArray.forEach(item => {
-                    let a = item.data; studentAttemptedDB[a.testId] = item.id;
-                    c.innerHTML += `
-                        <div class="action-box" style="border-left: 4px solid var(--success);">
-                            <h4 style="margin-bottom:8px;">${a.testTitle}</h4>
-                            <p style="font-weight:800; color:var(--success); font-size:1.1rem; margin-bottom: 12px;">Score: ${a.score}</p>
-                            <button class="btn-outline" style="width:100%;" onclick="seePastResults('${item.id}')">Review Solutions</button>
-                        </div>`;
-                });
-            });
-        }
-
-        function loadLeaderboardTests() {
-            db.collection("tests").onSnapshot(s => {
-                let sel = document.getElementById('leaderboard-test-select'); if(!sel) return;
-                sel.innerHTML = '<option value="">Select Test...</option>';
-                s.forEach(d => { sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`; });
-            });
-        }
-
-        async function fetchLeaderboard(testId) {
-            if(!testId) return;
-            const resDiv = document.getElementById('leaderboard-results');
-            resDiv.innerHTML = '<p style="text-align:center; padding:20px;">Loading Rankings...</p>';
-            try {
-                const snap = await db.collection("attempts").where("testId", "==", testId).orderBy("score", "desc").limit(20).get();
-                if(snap.empty) { resDiv.innerHTML = '<p style="text-align:center;">No attempts recorded.</p>'; return; }
-                
-                let html = '<table class="rank-table"><tr><th>Rank</th><th>Student</th><th>Score</th></tr>';
-                let rank = 1;
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    const isMe = d.userId === auth.currentUser.uid;
-                    html += `<tr class="${isMe ? 'rank-me' : ''}"><td>${rank++}</td><td>${d.userIdEmail.split('@')[0]}</td><td style="color:var(--success); font-weight:800;">${d.score}</td></tr>`;
-                });
-                resDiv.innerHTML = html + '</table>';
-            } catch(e) { resDiv.innerHTML = `<p style="color:var(--danger);">Error: ${e.message}</p>`; }
-        }
-
-        async function seePastResults(attemptId) {
-            const att = await db.collection("attempts").doc(attemptId).get();
-            if(!att.exists) return;
-            const data = att.data();
-            const test = await db.collection("tests").doc(data.testId).get();
-            if(!test.exists) return;
-            currentTest = test.data(); 
-            testQuestions = currentTest.questions || [];
-            userAnswers = data.userAnswers || [];
-            showReviewScreen();
-        }
-
-        // ==========================================
-        // --- GLOBAL SEARCH ENGINE (RESTORED) ---
-        // ==========================================
-        function handleGlobalSearch(query) {
-            currentSearchQuery = query.toLowerCase();
-            
-            // 1. Filter Folders/Groups
-            if(document.getElementById('student-sec-groups').classList.contains('active')) {
-                loadGroupsForStudents(currentViewingGroupId, false); 
-            } 
-            // 2. Filter Study Materials
-            else if(document.getElementById('student-sec-study').classList.contains('active')) {
-                loadStudyMaterialsForStudent();
-            } 
-            // 3. Filter Test List
-            else if(document.getElementById('student-sec-tests-list').classList.contains('active')) {
-                const testCards = document.querySelectorAll('#student-test-list .action-box');
-                let foundAny = false;
-                testCards.forEach(card => {
-                    const title = card.querySelector('h4').innerText.toLowerCase();
-                    if(title.includes(currentSearchQuery)) {
-                        card.style.display = 'block'; foundAny = true;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-                
-                let msgEl = document.getElementById('search-no-test-msg');
-                if(!foundAny) {
-                    if(!msgEl) {
-                        msgEl = document.createElement('p');
-                        msgEl.id = 'search-no-test-msg';
-                        msgEl.style = "padding: 20px; font-weight: 700; color: var(--danger); text-align: center; grid-column: 1/-1;";
-                        msgEl.innerText = "No tests match your search.";
-                        document.getElementById('student-test-list').appendChild(msgEl);
-                    }
-                } else if (msgEl) { msgEl.remove(); }
-            }
-        }
-
-        // ==========================================
-        // --- LIVE TEST ENGINE: INITIALIZATION ---
-        // ==========================================
-        async function startTest(testId) {
+        async function startTest(testId, isRecovery = false) {
             const doc = await db.collection("tests").doc(testId).get(); 
             if (!doc.exists) return;
-            currentTest = doc.data(); activeTestId = testId; 
+            
+            currentTest = doc.data(); 
+            activeTestId = testId; 
             testQuestions = currentTest.questions || []; 
             testMarks = currentTest.marksPerQuestion || 2; 
             testNegativeMarks = currentTest.negativeMarks || 0; 
             
-            userAnswers = new Array(testQuestions.length).fill(null); 
-            questionStates = new Array(testQuestions.length).fill('unanswered'); 
-            currentQuestionIndex = 0; 
-            timeRemaining = currentTest.duration || 1800;
+            if (!isRecovery) {
+                userAnswers = new Array(testQuestions.length).fill(null); 
+                questionStates = new Array(testQuestions.length).fill('unanswered'); 
+                currentQuestionIndex = 0; 
+                timeRemaining = currentTest.duration || 1800;
+                clearTestProgress();
+            }
             
             document.getElementById('test-title').innerText = currentTest.title;
             document.getElementById('test-title').style.display = 'block';
             
-            // Build Dynamic Subject Tabs (RESTORED)
+            // Render Subject Tabs
             const subjectSet = new Set(testQuestions.map(q => q.subject || 'General')); 
             let tabsHtml = '';
             Array.from(subjectSet).forEach(sub => { 
                 let firstIdx = testQuestions.findIndex(q => (q.subject || 'General') === sub); 
-                tabsHtml += `<button id="tab-${sub.replace(/[^a-zA-Z0-9]/g, '-')}" class="btn-outline section-tab-btn" style="padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; border-width: 1px; white-space: nowrap;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`; 
+                tabsHtml += `<button id="tab-${sub.replace(/\s+/g, '-')}" class="btn-outline" style="padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; white-space: nowrap;" onclick="jumpToQuestion(${firstIdx})">${sub}</button>`; 
             });
             document.getElementById('section-tabs').innerHTML = tabsHtml;
 
             isTestActive = true; 
-            navigate('view-test'); renderPalette(); renderCurrentQuestion(); startTimer();
+            navigate('view-test'); 
+            renderPalette(); 
+            renderCurrentQuestion(); 
+            startTimer();
         }
 
-        // ==========================================
-        // --- LIVE TEST ENGINE: RENDERING ---
-        // ==========================================
+        // --- MODERN LANGUAGE DROPDOWN LOGIC ---
+        function toggleLangMenu() {
+            document.getElementById('lang-dropdown-menu').classList.toggle('show');
+        }
+
+        function updateLangDropdown() {
+            const q = testQuestions[currentQuestionIndex];
+            const menu = document.getElementById('lang-dropdown-menu');
+            const label = document.getElementById('current-lang-label');
+            menu.innerHTML = '';
+            
+            // Check which languages have content
+            const available = [];
+            if (q.questionEng) available.push({code: 'Eng', name: 'English'});
+            if (q.questionHin) available.push({code: 'Hin', name: 'Hindi'});
+            if (q.questionPa)  available.push({code: 'Pa', name: 'Punjabi'});
+
+            available.forEach(lang => {
+                menu.innerHTML += `<div class="lang-opt" onclick="setTestLanguage('${lang.code}', '${lang.name}')">${lang.name}</div>`;
+            });
+
+            // If current selected lang is missing in this question, fallback to first available
+            if (!available.find(l => l.code === currentLanguage) && available.length > 0) {
+                setTestLanguage(available[0].code, available[0].name);
+            } else {
+                label.innerText = available.find(l => l.code === currentLanguage)?.name || "Language";
+            }
+        }
+
+        function setTestLanguage(code, name) {
+            currentLanguage = code;
+            document.getElementById('current-lang-label').innerText = name;
+            document.getElementById('lang-dropdown-menu').classList.remove('show');
+            renderCurrentQuestion();
+        }
+
+        // --- QUESTION RENDERING ---
         function renderCurrentQuestion() {
             const container = document.getElementById('question-container'); 
-            const q = testQuestions[currentQuestionIndex]; if(!q) return;
+            const q = testQuestions[currentQuestionIndex]; 
+            if(!q) return;
             
-            // Highlight current subject tab
-            document.querySelectorAll('.section-tab-btn').forEach(b => { 
-                b.style.background = 'transparent'; b.style.color = 'var(--primary)'; 
-            });
-            const activeTab = document.getElementById(`tab-${(q.subject || 'General').replace(/[^a-zA-Z0-9]/g, '-')}`); 
-            if(activeTab) { 
-                activeTab.style.background = 'var(--primary)'; activeTab.style.color = 'white'; 
-            }
+            updateLangDropdown();
 
-            document.getElementById('question-tracker').innerText = `Q ${currentQuestionIndex + 1} of ${testQuestions.length}`;
+            let qText = q[`question${currentLanguage}`] || q.questionEng;
+            let opts = q[`options${currentLanguage}`] || q.optionsEng;
             
-            // Language Selection Logic
-            let qText = currentLanguage === 'Eng' ? q.questionEng : (currentLanguage === 'Hin' ? q.questionHin : q.questionPa);
-            let opts = currentLanguage === 'Eng' ? q.optionsEng : (currentLanguage === 'Hin' ? q.optionsHin : q.optionsPa);
-            
-            const qImgHtml = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" style="margin-bottom: 20px;">` : '';
+            const qImg = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" style="margin-bottom: 20px;">` : '';
             
             let optionsHTML = ''; 
             opts.forEach((opt, i) => { 
-                const optImg = (q.optImgUrls && q.optImgUrls[i]) ? `<br><img src="${q.optImgUrls[i]}" class="q-card-img" style="max-height: 100px;">` : '';
+                const optImg = (q.optImgUrls && q.optImgUrls[i]) ? `<br><img src="${q.optImgUrls[i]}" class="q-card-img" style="max-height: 80px;">` : '';
                 optionsHTML += `
                     <label>
                         <input type="radio" name="active_q" onchange="setAnswer(${i})" ${userAnswers[currentQuestionIndex] === i ? 'checked' : ''}> 
@@ -1366,40 +1278,44 @@
             container.innerHTML = `
                 <div class="question-card">
                     <h4 style="margin-bottom: 15px;"><span style="color: var(--primary);">Q${currentQuestionIndex + 1}.</span> ${qText}</h4>
-                    ${qImgHtml}
+                    ${qImg}
                     <div class="options">${optionsHTML}</div>
                 </div>`;
             
+            document.getElementById('question-tracker').innerText = `Q ${currentQuestionIndex + 1} of ${testQuestions.length}`;
             updatePaletteButton(currentQuestionIndex);
-            
-            // MathJax Re-render for formulas (RESTORED)
             if (window.MathJax) MathJax.typesetPromise();
         }
 
-        // ==========================================
-        // --- LIVE TEST ENGINE: CONTROLS ---
-        // ==========================================
         function setAnswer(i) { 
             userAnswers[currentQuestionIndex] = i; 
             questionStates[currentQuestionIndex] = 'answered'; 
+            saveTestProgress(); // Save for Anti-Refresh
             updatePaletteButton(currentQuestionIndex); 
         }
 
-        function clearResponse() { 
-            userAnswers[currentQuestionIndex] = null; 
-            questionStates[currentQuestionIndex] = 'unanswered'; 
-            renderCurrentQuestion(); 
+        // --- TIMER ENGINE ---
+        function startTimer() {
+            clearInterval(testTimer);
+            testTimer = setInterval(() => {
+                timeRemaining--; 
+                saveTestProgress(); // Keep time synced in storage
+                let m = Math.floor(timeRemaining / 60);
+                let s = timeRemaining % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' + s : s}`;
+                if (timeRemaining <= 0) { 
+                    clearInterval(testTimer); 
+                    finalSubmitTest(); 
+                }
+            }, 1000);
         }
-
-        function markForReview() { 
-            questionStates[currentQuestionIndex] = 'marked'; 
-            updatePaletteButton(currentQuestionIndex); 
-            nextQuestion(); 
-        }
-
+        // ==========================================
+        // --- LIVE TEST ENGINE: NAVIGATION ---
+        // ==========================================
         function nextQuestion() { 
             if(currentQuestionIndex < testQuestions.length - 1) { 
                 currentQuestionIndex++; 
+                saveTestProgress(); 
                 renderCurrentQuestion(); 
             } else { 
                 showSubmitSummary(); 
@@ -1409,18 +1325,29 @@
         function prevQuestion() { 
             if(currentQuestionIndex > 0) { 
                 currentQuestionIndex--; 
+                saveTestProgress();
                 renderCurrentQuestion(); 
             } 
         }
 
         function jumpToQuestion(i) { 
             currentQuestionIndex = i; 
+            saveTestProgress();
             renderCurrentQuestion(); 
         }
 
-        function changeLanguageDirect(val) { 
-            currentLanguage = val; 
+        function clearResponse() { 
+            userAnswers[currentQuestionIndex] = null; 
+            questionStates[currentQuestionIndex] = 'unanswered'; 
+            saveTestProgress();
             renderCurrentQuestion(); 
+        }
+
+        function markForReview() { 
+            questionStates[currentQuestionIndex] = 'marked'; 
+            saveTestProgress();
+            updatePaletteButton(currentQuestionIndex); 
+            nextQuestion(); 
         }
 
         function togglePalette() { 
@@ -1442,50 +1369,19 @@
             if(questionStates[i] === 'answered') { b.style.background = 'var(--success)'; b.style.color = 'white'; b.style.borderColor = 'var(--success)'; }
             if(questionStates[i] === 'marked') { b.style.background = 'var(--review)'; b.style.color = 'white'; b.style.borderColor = 'var(--review)'; }
         }
-        // ==========================================
-        // --- LIVE TEST ENGINE: TIMER & SUBMIT ---
-        // ==========================================
-        function startTimer() {
-            clearInterval(testTimer);
-            testTimer = setInterval(() => {
-                timeRemaining--; 
-                let m = Math.floor(timeRemaining / 60);
-                let s = timeRemaining % 60;
-                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' + s : s}`;
-                if (timeRemaining <= 0) { 
-                    clearInterval(testTimer); 
-                    finalSubmitTest(); 
-                }
-            }, 1000);
-        }
 
+        // ==========================================
+        // --- SUBMISSION & SCORE CALCULATION ---
+        // ==========================================
         function showSubmitSummary() {
             let answered = userAnswers.filter(a => a !== null).length; 
-            let marked = questionStates.filter(s => s === 'marked').length;
             document.getElementById('sum-total').innerText = testQuestions.length; 
             document.getElementById('sum-answered').innerText = answered;
-            document.getElementById('sum-unanswered').innerText = testQuestions.length - answered; 
-            document.getElementById('sum-marked').innerText = marked;
             document.getElementById('summary-modal').style.display = 'flex';
         }
 
         function hideSubmitSummary() { 
             document.getElementById('summary-modal').style.display = 'none'; 
-        }
-
-        function showExitModal() { 
-            document.getElementById('exit-modal').style.display = 'flex'; 
-        }
-
-        function hideExitModal() { 
-            document.getElementById('exit-modal').style.display = 'none'; 
-        }
-
-        function confirmPause() { 
-            hideExitModal(); 
-            clearInterval(testTimer); 
-            isTestActive = false; 
-            window.history.back(); 
         }
 
         async function finalSubmitTest() {
@@ -1508,7 +1404,8 @@
             document.getElementById('res-left').innerText = left;
             
             navigate('view-results');
-            
+            clearTestProgress(); // Test completed, clear anti-refresh storage
+
             await db.collection("attempts").add({
                 userId: auth.currentUser.uid, 
                 userIdEmail: auth.currentUser.email || "EasyMode",
@@ -1520,34 +1417,43 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
-
         // ==========================================
-        // --- SOLUTION REVIEW RENDERING ---
+        // --- SOLUTION REVIEW & HISTORY ---
         // ==========================================
-        function showReviewScreen() { 
+                function showReviewScreen() { 
             const container = document.getElementById('review-container');
             container.innerHTML = `
-                <div style="background: rgba(255,255,255,0.9); padding: 15px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border-color); display:flex; justify-content: space-between; align-items: center;">
-                    <h2 style="font-weight:900; margin:0;">Review Solutions</h2>
-                    <button class="btn-outline" style="padding: 6px 12px; font-size: 0.85rem;" onclick="navigate('view-results')">Back to Results</button>
+                <div style="background: rgba(255,255,255,0.95); padding: 15px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border-color); display:flex; justify-content: space-between; align-items: center;">
+                    <h2 style="font-weight:900; margin:0; font-size:1.1rem;">Solution Review</h2>
+                    <button class="btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="navigate('view-results')">Back to Results</button>
                 </div>`;
             
             testQuestions.forEach((q, i) => {
-                const isCorrect = userAnswers[i] === q.correctIndex;
-                const statusColor = isCorrect ? 'var(--success)' : (userAnswers[i] === null ? '#94a3b8' : 'var(--danger)');
+                const userChoice = userAnswers[i];
+                const isCorrect = userChoice === q.correctIndex;
+                const statusColor = isCorrect ? 'var(--success)' : (userChoice === null ? '#94a3b8' : 'var(--danger)');
                 
+                let qText = q[`question${currentLanguage}`] || q.questionEng;
+                let opts = q[`options${currentLanguage}`] || q.optionsEng;
+                let expl = q[`explanation${currentLanguage}`] || q.explanationEng || "No explanation provided.";
+                
+                // RESTORED: Image support for Review
+                const qImg = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" style="margin-bottom: 15px;">` : '';
+
                 let optsHTML = '';
-                q.optionsEng.forEach((opt, idx) => {
-                    let cls = idx === q.correctIndex ? 'opt-correct' : (idx === userAnswers[i] ? 'opt-wrong' : '');
-                    optsHTML += `<div class="options"><label class="${cls}" style="pointer-events:none; margin: 6px 0; padding: 10px;">${opt}</label></div>`;
+                opts.forEach((opt, idx) => {
+                    let cls = idx === q.correctIndex ? 'opt-correct' : (idx === userChoice ? 'opt-wrong' : '');
+                    const optImg = (q.optImgUrls && q.optImgUrls[idx]) ? `<br><img src="${q.optImgUrls[idx]}" class="q-card-img" style="max-height: 60px;">` : '';
+                    optsHTML += `<div class="options"><label class="${cls}" style="pointer-events:none; margin: 6px 0; padding: 10px;"><span>${opt}</span>${optImg}</label></div>`;
                 });
 
                 container.innerHTML += `
                     <div class="question-card" style="border-top: 5px solid ${statusColor}; margin: 20px;">
-                        <h4><span style="color: var(--primary);">Q${i+1}.</span> ${q.questionEng}</h4>
+                        <h4 style="margin-bottom:12px;"><span style="color: var(--primary);">Q${i+1}.</span> ${qText}</h4>
+                        ${qImg}
                         ${optsHTML}
-                        <div style="margin-top:15px; padding:12px; background:var(--bg-color); border-radius:8px; font-size:0.95rem;">
-                            <strong style="color:var(--primary);">Explanation:</strong> ${q.explanationEng || "No explanation provided."}
+                        <div style="margin-top:15px; padding:12px; background:var(--bg-color); border-radius:8px; font-size:0.9rem; border-left: 3px solid var(--primary);">
+                            <strong style="color:var(--primary);">Explanation:</strong> ${expl}
                         </div>
                     </div>`;
             });
@@ -1556,14 +1462,126 @@
             if (window.MathJax) MathJax.typesetPromise();
         }
 
-        // ==========================================
-        // --- APP INITIALIZATION & BRANDING ---
-        // ==========================================
-        function closeResourceModal() { 
-            document.getElementById('resource-viewer-modal').style.display = 'none'; 
-            document.getElementById('resource-embed-container').innerHTML = ''; 
+
+        function loadStudentAttempts() {
+            if(!auth.currentUser) return;
+            db.collection("attempts").where("userId", "==", auth.currentUser.uid).onSnapshot(s => {
+                let c = document.getElementById('student-attempts-list'); 
+                studentAttemptedDB = {};
+                if(s.empty) { c.innerHTML = '<p style="text-align:center; padding:20px; grid-column: 1/-1;">No records found.</p>'; return; }
+                
+                let list = s.docs.map(d => ({ id: d.id, ...d.data() }))
+                            .sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
+                
+                c.innerHTML = '';
+                list.forEach(a => {
+                    studentAttemptedDB[a.testId] = a.id;
+                    c.innerHTML += `
+                        <div class="action-box" style="border-left: 4px solid var(--success);">
+                            <h4 style="margin-bottom:8px;">${a.testTitle}</h4>
+                            <p style="font-weight:800; color:var(--success); font-size:1.1rem; margin-bottom: 12px;">Score: ${a.score}</p>
+                            <button class="btn-outline" style="width:100%;" onclick="seePastResults('${a.id}')">View Solutions</button>
+                        </div>`;
+                });
+            });
         }
 
+        async function seePastResults(attemptId) {
+            const att = await db.collection("attempts").doc(attemptId).get();
+            if(!att.exists) return;
+            const data = att.data();
+            const test = await db.collection("tests").doc(data.testId).get();
+            if(!test.exists) return;
+            
+            currentTest = test.data(); 
+            testQuestions = currentTest.questions || [];
+            userAnswers = data.userAnswers || [];
+            showReviewScreen();
+        }
+
+        // ==========================================
+        // --- LEADERBOARD LOGIC ---
+        // ==========================================
+        function loadLeaderboardTests() {
+            db.collection("tests").onSnapshot(s => {
+                let sel = document.getElementById('leaderboard-test-select');
+                if(!sel) return;
+                sel.innerHTML = '<option value="">Select Test...</option>';
+                s.forEach(d => { sel.innerHTML += `<option value="${d.id}">${d.data().title}</option>`; });
+            });
+        }
+
+        async function fetchLeaderboard(testId) {
+            if(!testId) return;
+            const resDiv = document.getElementById('leaderboard-results');
+            resDiv.innerHTML = '<p style="text-align:center; padding:20px;">Ranking students...</p>';
+            try {
+                const snap = await db.collection("attempts").where("testId", "==", testId).orderBy("score", "desc").limit(20).get();
+                if(snap.empty) { resDiv.innerHTML = '<p style="text-align:center;">No one has attempted this yet.</p>'; return; }
+                
+                let html = '<table class="rank-table"><tr><th>Rank</th><th>Name</th><th>Score</th></tr>';
+                let rank = 1;
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    const isMe = d.userId === auth.currentUser.uid;
+                    html += `<tr class="${isMe ? 'rank-me' : ''}"><td>${rank++}</td><td>${d.userIdEmail.split('@')[0]}</td><td style="color:var(--success); font-weight:800;">${d.score}</td></tr>`;
+                });
+                resDiv.innerHTML = html + '</table>';
+            } catch(e) { 
+                resDiv.innerHTML = `<p style="color:var(--danger); font-size:0.8rem;">${e.message}</p>`; 
+            }
+        }
+        // ==========================================
+        // --- STUDY MATERIALS & RESOURCES ---
+        // ==========================================
+        function loadStudyMaterialsForStudent() {
+            db.collection("studyMaterials").orderBy("createdAt", "desc").onSnapshot(s => {
+                let c = document.getElementById('student-study-list'); 
+                if(!c) return;
+                c.innerHTML = ''; let found = false;
+                s.forEach(d => {
+                    let m = d.data();
+                    let show = (!m.audience || m.audience === 'all' || m.audience === currentUserBoard);
+                    if(currentSearchQuery && !m.title.toLowerCase().includes(currentSearchQuery)) show = false;
+                    if(show) {
+                        found = true;
+                        let icon = m.type === 'video' ? '▶️' : (m.type === 'pdf' ? '📄' : '🖼️');
+                        c.innerHTML += `
+                            <div class="study-card">
+                                <div class="study-icon">${icon}</div>
+                                <h4>${m.title}</h4>
+                                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">${m.description || ''}</p>
+                                <a href="${m.url}" target="_blank" class="btn-primary" style="text-decoration:none; padding:8px 12px; font-size:0.85rem;">Open Resource</a>
+                            </div>`;
+                    }
+                });
+                if(!found) c.innerHTML = '<p style="text-align:center; grid-column:1/-1; padding:20px; color:var(--text-muted);">No materials available.</p>';
+            });
+        }
+
+        // ==========================================
+        // --- PAUSE & EXIT LOGIC ---
+        // ==========================================
+        function showExitModal() { 
+            document.getElementById('exit-modal').style.display = 'flex'; 
+        }
+
+        function hideExitModal() { 
+            document.getElementById('exit-modal').style.display = 'none'; 
+        }
+
+        function confirmPause() { 
+            hideExitModal(); 
+            saveTestProgress(); // Save state before exiting
+            clearInterval(testTimer); 
+            isTestActive = false; 
+            navigate('view-student');
+            showToast("Test paused. You can resume later from the dashboard.", "warning");
+        }
+
+        // ==========================================
+        // --- BRANDING & POPUPS ---
+        // ==========================================
         function loadPortalBranding() { 
             db.collection("adminSettings").doc("branding").onSnapshot(doc => { 
                 if(doc.exists && doc.data().portalName) { 
@@ -1578,11 +1596,11 @@
             db.collection("adminSettings").doc("appBanner").onSnapshot((doc) => {
                 const bannerEl = document.getElementById('app-download-banner');
                 if(doc.exists && doc.data().status === 'visible' && currentUserRole === 'student' && !isTestActive) {
-                    document.getElementById('app-download-text').innerText = doc.data().text || 'Download our official App for the best experience!';
+                    document.getElementById('app-download-text').innerText = doc.data().text || 'Download our app for better performance!';
                     document.getElementById('app-download-link').href = doc.data().link || '#';
                     bannerEl.style.display = 'flex';
                 } else { 
-                    if(bannerEl) bannerEl.style.display = 'none'; 
+                    bannerEl.style.display = 'none'; 
                 }
             });
         }
@@ -1591,6 +1609,11 @@
             db.collection("adminSettings").doc("studentPopup").get().then((doc) => { 
                 if(doc.exists && doc.data().status === 'active') { 
                     document.getElementById('popup-display-msg').innerText = doc.data().message || ''; 
+                    const img = doc.data().imageUrl;
+                    if(img) {
+                        document.getElementById('popup-custom-img').src = img;
+                        document.getElementById('popup-custom-img').style.display = 'block';
+                    }
                     document.getElementById('student-popup-modal').style.display = 'flex'; 
                 } 
             }); 
@@ -1599,8 +1622,19 @@
         function closeStudentPopup() { 
             document.getElementById('student-popup-modal').style.display = 'none'; 
         }
-        
-        // Start initialization
+
+        function closeResourceModal() { 
+            document.getElementById('resource-viewer-modal').style.display = 'none'; 
+            document.getElementById('resource-embed-container').innerHTML = ''; 
+        }
+
+        function closeForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'none'; }
+        function openForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'flex'; }
+        function closeDonePopup() { document.getElementById('done-popup-modal').style.display = 'none'; }
+
+        // ==========================================
+        // --- FINAL INITIALIZATION ---
+        // ==========================================
         window.onload = () => { 
             loadPortalBranding(); 
             checkDeviceLockout();
