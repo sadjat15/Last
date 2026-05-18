@@ -508,11 +508,12 @@
                         </select>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                        <input type="text" id="qTextEn" placeholder="Question (English)" style="padding: 14px; border-radius: 0px; border: 2px solid var(--border-color); width: 100%; box-sizing: border-box; font-size: 0.95rem;">
-                        <input type="text" id="qTextHi" placeholder="Question (Hindi)" style="padding: 14px; border-radius: 0px; border: 2px solid var(--border-color); width: 100%; box-sizing: border-box; font-size: 0.95rem;">
-                        <input type="text" id="qTextPa" placeholder="Question (Punjabi)" style="padding: 14px; border-radius: 0px; border: 2px solid var(--border-color); width: 100%; box-sizing: border-box; font-size: 0.95rem;">
-                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px;">
+    <textarea id="qTextEn" placeholder="Question (English)" rows="3" style="padding: 14px; border-radius: 0px; border: 2px solid var(--border-color); width: 100%; box-sizing: border-box; font-size: 0.95rem; resize: vertical; font-family: inherit;"></textarea>
+    <textarea id="qTextHi" placeholder="Question (Hindi)" rows="3" style="padding: 14px; border-radius: 0px; border: 2px solid var(--border-color); width: 100%; box-sizing: border-box; font-size: 0.95rem; resize: vertical; font-family: inherit;"></textarea>
+    <textarea id="qTextPa" placeholder="Question (Punjabi)" rows="3" style="padding: 14px; border-radius: 0px; border: 2px solid var(--border-color); width: 100%; box-sizing: border-box; font-size: 0.95rem; resize: vertical; font-family: inherit;"></textarea>
+</div>
+
                     
                     <div class="input-group" style="margin-bottom: 20px; background: rgba(248, 250, 252, 0.6); padding: 15px; border-radius: 0px; border: 2px dashed rgba(100, 116, 139, 0.5);">
                         <label style="font-size: 0.95rem; color: var(--text-main);">Upload Diagram/Photo for Question (Optional, Max 500KB)</label>
@@ -520,40 +521,41 @@
                         <input type="hidden" id="qImageUrl">
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 1</label>
-                            <input type="text" id="opt0En" placeholder="Opt 1 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt0Hi" placeholder="Opt 1 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt0Pa" placeholder="Opt 1 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt0En" placeholder="Opt 1 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt0Hi" placeholder="Opt 1 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt0Pa" placeholder="Opt 1 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt0ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt0ImgUrl">
                         </div>
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 2</label>
-                            <input type="text" id="opt1En" placeholder="Opt 2 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt1Hi" placeholder="Opt 2 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt1Pa" placeholder="Opt 2 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt1En" placeholder="Opt 2 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt1Hi" placeholder="Opt 2 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt1Pa" placeholder="Opt 2 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt1ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt1ImgUrl">
                         </div>
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 3</label>
-                            <input type="text" id="opt2En" placeholder="Opt 3 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt2Hi" placeholder="Opt 3 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt2Pa" placeholder="Opt 3 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt2En" placeholder="Opt 3 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt2Hi" placeholder="Opt 3 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt2Pa" placeholder="Opt 3 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt2ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt2ImgUrl">
                         </div>
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 4</label>
-                            <input type="text" id="opt3En" placeholder="Opt 4 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt3Hi" placeholder="Opt 4 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt3Pa" placeholder="Opt 4 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt3En" placeholder="Opt 4 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt3Hi" placeholder="Opt 4 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt3Pa" placeholder="Opt 4 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt3ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt3ImgUrl">
                         </div>
                     </div>
+
                     <label style="display: block; margin-top: 20px; font-weight: 900; color: var(--text-main); font-size: 1.05rem;">Correct Answer:</label>
                     <select id="correctAnswer" style="padding: 14px; border-radius: 0px; border: 2px solid var(--success); width: 100%; margin-top: 10px; box-sizing: border-box; font-size: 1rem; font-weight: 800; background: rgba(209, 250, 229, 0.3);">
                         <option value="0">Option 1</option><option value="1">Option 2</option><option value="2">Option 3</option><option value="3">Option 4</option>
@@ -739,40 +741,41 @@
                         <input type="file" id="qImageUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 10px; background: white; border: none; border-radius: 0px;">
                         <input type="hidden" id="qImageUrl">
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 1</label>
-                            <input type="text" id="opt0En" placeholder="Opt 1 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt0Hi" placeholder="Opt 1 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt0Pa" placeholder="Opt 1 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt0En" placeholder="Opt 1 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt0Hi" placeholder="Opt 1 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt0Pa" placeholder="Opt 1 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt0ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt0ImgUrl">
                         </div>
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 2</label>
-                            <input type="text" id="opt1En" placeholder="Opt 2 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt1Hi" placeholder="Opt 2 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt1Pa" placeholder="Opt 2 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt1En" placeholder="Opt 2 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt1Hi" placeholder="Opt 2 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt1Pa" placeholder="Opt 2 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt1ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt1ImgUrl">
                         </div>
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 3</label>
-                            <input type="text" id="opt2En" placeholder="Opt 3 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt2Hi" placeholder="Opt 3 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt2Pa" placeholder="Opt 3 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt2En" placeholder="Opt 3 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt2Hi" placeholder="Opt 3 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt2Pa" placeholder="Opt 3 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt2ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt2ImgUrl">
                         </div>
                         <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 0px; background: rgba(255,255,255,0.8); box-shadow: var(--shadow-sm);">
                             <label style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Option 4</label>
-                            <input type="text" id="opt3En" placeholder="Opt 4 (Eng)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px;">
-                            <input type="text" id="opt3Hi" placeholder="Opt 4 (Hin)" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
-                            <input type="text" id="opt3Pa" placeholder="Opt 4 (Pun)" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                            <textarea id="opt3En" placeholder="Opt 4 (Eng)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; margin-top: 8px; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt3Hi" placeholder="Opt 4 (Hin)" rows="2" style="padding: 12px; margin-bottom: 6px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                            <textarea id="opt3Pa" placeholder="Opt 4 (Pun)" rows="2" style="padding: 12px; margin-bottom: 10px; border-radius: 0px; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
                             <input type="file" id="opt3ImgUpload" accept=".jpg,.jpeg,.png,.webp" style="padding: 8px; font-size: 0.8rem; width: 100%; border: 1px dashed #cbd5e1; background: #f8fafc; border-radius: 0px; color: var(--text-muted);">
                             <input type="hidden" id="opt3ImgUrl">
                         </div>
                     </div>
+
                     <label style="display: block; margin-top: 20px; font-weight: 900; color: var(--text-main); font-size: 1.05rem;">Correct Answer:</label>
                     <select id="correctAnswer" style="padding: 14px; border-radius: 0px; border: 2px solid var(--success); width: 100%; margin-top: 10px; box-sizing: border-box; font-size: 1rem; font-weight: 800; background: rgba(209, 250, 229, 0.3);">
                         <option value="0">Option 1</option><option value="1">Option 2</option><option value="2">Option 3</option><option value="3">Option 4</option>
@@ -1692,11 +1695,198 @@
         }
 
         async function generateBulkQuestionsWithAI() {
-            if(!storedGeminiKey) return showToast("Missing API Key", "error");
-            const topic = document.getElementById('aiTopicInput').value; const btn = document.getElementById('aiGenerateBtn');
-            btn.innerText = "Generating..."; showToast("AI is thinking... (API to be connected)");
-            setTimeout(() => { btn.innerText = "Bulk Generate"; }, 2000);
+    if(!storedGeminiKey) return showToast("Missing API Key. Please add it in Portal Branding & API.", "error");
+    
+    const topic = document.getElementById('aiTopicInput').value.trim();
+    if(!topic) return showToast("Please enter a topic first.", "error");
+
+    const btn = document.getElementById('aiGenerateBtn');
+    const modelVersion = document.getElementById('aiModelSelect').value;
+    const difficulty = document.getElementById('aiDifficultySelect').value;
+    const count = document.getElementById('aiQuestionCount').value;
+    const langChoice = document.getElementById('aiLanguageChoice').value;
+
+    btn.innerText = "Generating..."; 
+    btn.disabled = true;
+    showToast("AI is generating questions. Please wait...");
+
+    try {
+        // 1. Build the strict prompt for the AI to return JSON
+        const prompt = `You are an expert test generator. Create ${count} multiple-choice questions on the topic: "${topic}" at a ${difficulty} difficulty level.
+        Language requirement: ${langChoice === 'all' ? 'Provide translations for English, Hindi, and Punjabi.' : 'Provide the questions only in ' + langChoice + ' and leave other language strings completely empty.'}
+        
+        You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown block quotes like \`\`\`json. Use EXACTLY this format:
+        [
+          {
+            "questionEng": "Question in English text",
+            "questionHin": "Question in Hindi text",
+            "questionPa": "Question in Punjabi text",
+            "optionsEng": ["Option 1", "Option 2", "Option 3", "Option 4"],
+            "optionsHin": ["Option 1", "Option 2", "Option 3", "Option 4"],
+            "optionsPa": ["Option 1", "Option 2", "Option 3", "Option 4"],
+            "correctIndex": 0 
+          }
+        ]`;
+
+        // 2. Call the Gemini REST API
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelVersion}:generateContent?key=${storedGeminiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        if (!response.ok) throw new Error("API Request Failed. Ensure your API key is valid.");
+
+        const data = await response.json();
+        let aiText = data.candidates[0].content.parts[0].text;
+        
+        // 3. Clean up the response just in case the AI added markdown blocks
+        aiText = aiText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+        
+        const generatedQuestions = JSON.parse(aiText);
+
+        // 4. Add the formatted questions to the local buffer and update UI
+        generatedQuestions.forEach(q => {
+            q.displayLang = langChoice;
+            q.subject = topic;
+            localQuestionsBuffer.push(q);
+        });
+
+        // 5. Save to Firebase and refresh the question list
+        await updateTestQuestionsInDb();
+        renderAdminQuestionList();
+        showToast(`${generatedQuestions.length} questions successfully generated!`, "success");
+
+    } catch (error) {
+        console.error("AI Generation Error:", error);
+        showToast("Failed to generate questions. Please try a different prompt.", "error");
+    } finally {
+        btn.innerText = "Bulk Generate";
+        btn.disabled = false;
+    }
+}
+        // ==========================================
+        // --- MISSING FUNCTIONS FOR BANNERS & NOTIFS ---
+        // ==========================================
+
+        // 1. Broadcast Push Notification (Saves to Firestore)
+        async function sendPushNotification() {
+            const title = document.getElementById('notif-title').value.trim();
+            const body = document.getElementById('notif-body').value.trim();
+            const topic = document.getElementById('notif-topic').value;
+
+            if (!title || !body) return showToast("Please fill in both the title and message.", "error");
+
+            try {
+                await db.collection("notifications").add({
+                    title: title,
+                    body: body,
+                    topic: topic,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast("Notification broadcasted successfully! 🚀", "success");
+                document.getElementById('notif-title').value = '';
+                document.getElementById('notif-body').value = '';
+            } catch (error) {
+                showToast("Error sending notification: " + error.message, "error");
+            }
         }
+
+        // 2. Generate Notice with Gemini AI
+        async function generateNoticeWithAI() {
+            if(!storedGeminiKey) return showToast("Missing API Key. Please add it in Portal Branding & API.", "error");
+
+            const promptInput = document.getElementById('ai-notice-prompt').value.trim();
+            if(!promptInput) return showToast("Please enter a prompt first.", "error");
+
+            const btn = document.getElementById('btn-generate-notice');
+            const statusText = document.getElementById('ai-notice-status');
+            const modelVersion = document.getElementById('ai-notice-model').value;
+
+            btn.disabled = true;
+            statusText.style.display = "block";
+            statusText.innerText = "AI is writing...";
+
+            try {
+                const prompt = `Write a highly engaging, motivating, and beautifully formatted announcement for students based on this request: "${promptInput}". Keep it concise and use emojis. Output ONLY the announcement text.`;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelVersion}:generateContent?key=${storedGeminiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) throw new Error("API Request Failed.");
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text.trim();
+
+                // Paste the generated text into the popup message box automatically
+                document.getElementById('popup-message').value = aiText;
+                showToast("Notice generated! You can now edit and save it.", "success");
+
+            } catch (error) {
+                console.error(error);
+                showToast("Failed to generate notice. Try again.", "error");
+            } finally {
+                btn.disabled = false;
+                statusText.style.display = "none";
+            }
+        }
+
+        // 3. Save Student Dashboard Popup Settings
+        async function savePopupSettings() {
+            const status = document.getElementById('popup-status').value;
+            const audience = document.getElementById('popup-audience').value;
+            const message = document.getElementById('popup-message').value.trim();
+            const color = document.getElementById('popup-text-color').value;
+            const font = document.getElementById('popup-text-font').value;
+            const imageUrl = document.getElementById('popup-image-url').value;
+
+            if (status === 'active' && !message) return showToast("Please enter a message to show students.", "error");
+
+            const btn = document.getElementById('btn-save-popup');
+            btn.disabled = true; btn.innerText = "Saving...";
+
+            try {
+                await db.collection("adminSettings").doc("dashboardPopup").set({
+                    status, audience, message, color, font, imageUrl,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                showToast("Popup settings saved successfully!", "success");
+            } catch (error) {
+                showToast("Error saving popup: " + error.message, "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "Save Popup Settings";
+            }
+        }
+
+        // 4. Save Top App Download Banner Settings
+        async function saveAppBannerSettings() {
+            const status = document.getElementById('app-banner-status').value;
+            const text = document.getElementById('app-banner-text').value.trim();
+            const link = document.getElementById('app-banner-link').value.trim();
+
+            if (status === 'visible' && (!text || !link)) return showToast("Please provide both text and a link for the banner.", "error");
+
+            const btn = document.getElementById('btn-save-app-banner');
+            btn.disabled = true; btn.innerText = "Saving...";
+
+            try {
+                await db.collection("adminSettings").doc("appBanner").set({
+                    status, text, link,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                showToast("App Banner settings saved!", "success");
+            } catch (error) {
+                showToast("Error saving banner: " + error.message, "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "Save App Link Settings";
+            }
+        }
+
 
         // Initialize Admin Dashboard
         loadPortalBranding();
