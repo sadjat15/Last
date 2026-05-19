@@ -2215,7 +2215,7 @@
             }
         }
 
-        async function savePopupSettings() {
+                async function savePopupSettings() {
             const status = document.getElementById('popup-status').value;
             const message = document.getElementById('popup-message').value.trim();
             if (status === 'active' && !message) return showToast("Enter a message.", "error");
@@ -2224,23 +2224,41 @@
             btn.disabled = true; btn.innerText = "Saving...";
 
             try {
+                // 1. Handle the Image Upload to Cloudinary first
+                let finalImageUrl = document.getElementById('popup-image-url').value || "";
+                const fileInput = document.getElementById('popup-image-upload');
+                
+                if (fileInput && fileInput.files.length > 0) {
+                    showToast("Uploading popup image...", "success");
+                    const uploadedUrl = await uploadImageToFirebase('popup-image-upload', 'popups');
+                    if (uploadedUrl) {
+                        finalImageUrl = uploadedUrl;
+                    }
+                }
+
+                // 2. Save everything to Firebase
                 await db.collection("adminSettings").doc("dashboardPopup").set({
-                    status, 
+                    status: status, 
                     audience: document.getElementById('popup-audience').value, 
-                    message, 
+                    message: message, 
                     color: document.getElementById('popup-text-color').value, 
                     font: document.getElementById('popup-text-font').value, 
-                    imageUrl: document.getElementById('popup-image-url').value,
+                    imageUrl: finalImageUrl,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
-                showToast("Popup settings saved!", "success");
+                
+                // Update hidden input and clear file selection so it doesn't re-upload
+                document.getElementById('popup-image-url').value = finalImageUrl;
+                if(fileInput) fileInput.value = '';
+                
+                showToast("Popup settings saved successfully!", "success");
             } catch (error) {
                 showToast("Error saving popup.", "error");
             } finally {
                 btn.disabled = false; btn.innerText = "Save Popup Settings";
             }
         }
-        
+
         async function clearActivePopup() {
             try {
                 await db.collection("adminSettings").doc("dashboardPopup").set({
@@ -2273,10 +2291,24 @@
                 btn.disabled = false; btn.innerText = "Save App Link Settings";
             }
         }
-
-        // Initialize App UI
+                // Function to load the saved popup data when the Admin dashboard opens
+        function loadPopupSettings() {
+            db.collection("adminSettings").doc("dashboardPopup").onSnapshot((doc) => {
+                if(doc.exists) {
+                    const data = doc.data();
+                    if(document.getElementById('popup-status')) document.getElementById('popup-status').value = data.status || 'inactive';
+                    if(document.getElementById('popup-audience')) document.getElementById('popup-audience').value = data.audience || 'all';
+                    if(document.getElementById('popup-message')) document.getElementById('popup-message').value = data.message || '';
+                    if(document.getElementById('popup-text-color')) document.getElementById('popup-text-color').value = data.color || '#ffffff';
+                    if(document.getElementById('popup-text-font')) document.getElementById('popup-text-font').value = data.font || "'Inter', sans-serif";
+                    if(document.getElementById('popup-image-url')) document.getElementById('popup-image-url').value = data.imageUrl || '';
+                }
+            });
+        }
+// Initialize App UI
         loadPortalBranding();
         syncLoginModeUI();
+        loadPopupSettings();
     </script>
 </body>
 </html>
