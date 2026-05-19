@@ -1295,11 +1295,13 @@
                 <div class="input-group" style="margin: 0;"><label>Negative</label><input type="number" id="edit-negative" step="0.25" placeholder="e.g. 0.25"></div>
             </div>
             
-            <div class="action-box glass-panel" style="margin-top:15px; border-left: 4px solid var(--primary); padding: 15px;">
-                <h4 style="font-size:1rem; margin-bottom:10px; color: var(--primary);">🛠️ Define Test Parts (Sections)</h4>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 10px;">Format: Name, Start Question Number, End Question Number, Minutes<br><strong>Example:</strong> Part A, 1, 10, 20</p>
-                <textarea id="edit-sections-config" rows="3" placeholder="Part A, 1, 10, 20&#10;Part B, 11, 20, 15" style="width: 100%; border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius-sm);"></textarea>
+                        <div class="action-box glass-panel" style="margin-top:15px; border-left: 4px solid var(--primary);">
+                <h4 style="font-size:0.9rem; margin-bottom:10px;">🛠️ Define Test Parts (Sections)</h4>
+                <div id="dynamic-sections-container"></div>
+                <button onclick="addSectionRow()" class="btn-outline" style="margin-top: 10px; width: 100%; font-size: 0.9rem; padding: 8px;">+ Add New Section</button>
+                <p style="font-size:0.75rem; color:var(--danger); margin-top: 10px; font-weight: 600;">* Total section time should not exceed total test time.</p>
             </div>
+
 
             <div style="display: flex; gap: 15px; margin-top: 25px;">
                 <button onclick="closeEditModal()" class="btn-outline" style="flex:1; padding: 12px; font-size: 1rem;">Cancel</button>
@@ -1600,9 +1602,8 @@
             }
         }
 
-        async function openEditModal(testId) {
-            const doc = await db.collection("tests").doc(testId).get(); 
-            if(!doc.exists) return; 
+               async function openEditModal(testId) {
+            const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return; 
             const test = doc.data(); 
             document.getElementById('edit-test-id').value = testId; 
             document.getElementById('edit-title').value = test.title || '';
@@ -1610,14 +1611,18 @@
             document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
             document.getElementById('edit-negative').value = test.negativeMarks || 0; 
             
+            // Load sections into dynamic UI
+            const container = document.getElementById('dynamic-sections-container');
+            if(container) container.innerHTML = ''; // Clear previous rows
             if(test.sections && test.sections.length > 0) {
-                let secStr = test.sections.map(s => `${s.name}, ${s.start + 1}, ${s.end + 1}, ${s.timer / 60}`).join('\n');
-                document.getElementById('edit-sections-config').value = secStr;
-            } else {
-                document.getElementById('edit-sections-config').value = '';
+                test.sections.forEach(s => {
+                    // DB stores 0-based index, UI expects 1-based (e.g., Q1 to Q10)
+                    addSectionRow(s.name, s.start + 1, s.end + 1, s.timer / 60);
+                });
             }
             document.getElementById('edit-modal').style.display = 'flex';
         }
+
 
         function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
 
@@ -1679,30 +1684,55 @@
                 showToast("Merge failed: " + error.message, "error");
             }
         }
+        function addSectionRow(name = '', start = '', end = '', timer = '') {
+            const container = document.getElementById('dynamic-sections-container');
+            const row = document.createElement('div');
+            row.className = 'section-timer-row'; 
+            row.style.cssText = "display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; background: rgba(248, 250, 252, 0.8); padding: 10px; border: 1px solid var(--border-color); align-items: center;";
+            row.innerHTML = `
+                <input type="text" placeholder="Part Name" value="${name}" class="sec-name" style="flex: 2; min-width: 100px; padding: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
+                <input type="number" placeholder="Start Q" value="${start}" class="sec-start" style="flex: 1; min-width: 60px; padding: 8px; border: 1px solid #cbd5e1;">
+                <input type="number" placeholder="End Q" value="${end}" class="sec-end" style="flex: 1; min-width: 60px; padding: 8px; border: 1px solid #cbd5e1;">
+                <input type="number" placeholder="Mins" value="${timer}" class="sec-time" style="flex: 1; min-width: 60px; padding: 8px; border: 1px solid #cbd5e1; background: #ecfdf5;">
+                <button onclick="this.parentElement.remove()" class="btn-danger" style="padding: 8px; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">X</button>
+            `;
+            container.appendChild(row);
+        }
 
-        async function saveTestEdit() {
+                async function saveTestEdit() {
             const testId = document.getElementById('edit-test-id').value;
-            const sectionText = document.getElementById('edit-sections-config').value;
+            const totalTestTimeMins = parseInt(document.getElementById('edit-timer').value) || 0;
             
             let sectionsArray = [];
-            if (sectionText.trim()) {
-                const lines = sectionText.split('\n');
-                lines.forEach(line => {
-                    const p = line.split(',');
-                    if(p.length === 4) {
-                        sectionsArray.push({ 
-                            name: p[0].trim(), 
-                            start: parseInt(p[1]) - 1, 
-                            end: parseInt(p[2]) - 1, 
-                            timer: parseInt(p[3]) * 60 
-                        });
-                    }
-                });
+            let totalSectionTime = 0;
+            const rows = document.querySelectorAll('#dynamic-sections-container .section-timer-row');
+            
+            rows.forEach(row => {
+                const name = row.querySelector('.sec-name').value.trim();
+                const start = parseInt(row.querySelector('.sec-start').value);
+                const end = parseInt(row.querySelector('.sec-end').value);
+                const timeMins = parseInt(row.querySelector('.sec-time').value);
+                
+                if(name && !isNaN(start) && !isNaN(end) && !isNaN(timeMins)) {
+                    totalSectionTime += timeMins;
+                    sectionsArray.push({ 
+                        name: name, 
+                        start: start - 1, // Store as 0-based for DB
+                        end: end - 1, 
+                        timer: timeMins * 60 // Store in seconds
+                    });
+                }
+            });
+
+            // Validate that section times don't exceed the total test time
+            if (totalSectionTime > totalTestTimeMins && totalTestTimeMins > 0) {
+                showToast(`Total section time (${totalSectionTime} mins) exceeds total test time (${totalTestTimeMins} mins)!`, 'error');
+                return; // Stop saving
             }
 
             const updateData = {
                 title: document.getElementById('edit-title').value.trim(), 
-                duration: parseInt(document.getElementById('edit-timer').value) * 60,
+                duration: totalTestTimeMins * 60,
                 marksPerQuestion: parseFloat(document.getElementById('edit-marks').value), 
                 negativeMarks: parseFloat(document.getElementById('edit-negative').value),
                 sections: sectionsArray 
@@ -1715,6 +1745,7 @@
                 showToast("Update failed: " + e.message, "error"); 
             }
         }
+
 
         // ==========================================
         // --- ADMIN: DATA LOADING LOGIC ---
