@@ -1996,30 +1996,57 @@
         }
 
         function cancelQuestionEdit() { 
-            editingQuestionIndex = null; 
-            document.getElementById('saveQuestionBtn').innerText = "Save Question 💾"; 
-            document.getElementById('cancelEditBtn').classList.add('hidden'); 
-            document.getElementById('qTextEn').value = ''; 
-            document.getElementById('qTextHi').value = ''; 
-            document.getElementById('qTextPa').value = ''; 
-            for(let j=0; j<4; j++){ 
-                document.getElementById(`opt${j}En`).value = ''; 
-                document.getElementById(`opt${j}Hi`).value = ''; 
-                document.getElementById(`opt${j}Pa`).value = ''; 
-            } 
-            document.getElementById('correctAnswer').value = '0'; 
-        }
+    editingQuestionIndex = null; 
+    document.getElementById('saveQuestionBtn').innerText = "Save Question 💾"; 
+    document.getElementById('cancelEditBtn').classList.add('hidden'); 
+    document.getElementById('qTextEn').value = ''; 
+    document.getElementById('qTextHi').value = ''; 
+    document.getElementById('qTextPa').value = ''; 
+    for(let j=0; j<4; j++){ 
+        document.getElementById(`opt${j}En`).value = ''; 
+        document.getElementById(`opt${j}Hi`).value = ''; 
+        document.getElementById(`opt${j}Pa`).value = ''; 
+    } 
+    document.getElementById('correctAnswer').value = '0'; 
+    
+    // ADDED: Clear explanation textareas
+    if(document.getElementById('expTextEn')) document.getElementById('expTextEn').value = '';
+    if(document.getElementById('expTextHi')) document.getElementById('expTextHi').value = '';
+    if(document.getElementById('expTextPa')) document.getElementById('expTextPa').value = '';
+}
+
 
         function renderAdminQuestionList() { 
-            const div = document.getElementById('adminExistingQuestionsList'); if(!div) return; div.innerHTML=''; 
-            if(localQuestionsBuffer.length === 0) { 
-                div.innerHTML = '<p style="color:var(--text-muted); font-weight: 600; padding: 20px;">No questions added yet.</p>'; 
-                return; 
-            }
-            localQuestionsBuffer.forEach((q,i) => { 
-                div.innerHTML += `<div class="list-item"><div style="font-weight: 600;"><strong style="color: var(--primary);">Q${i+1}:</strong> ${(q.questionEng || q.questionHin || "Image Question").substring(0,60)}...</div><div style="display:flex; gap:8px;"><button class="btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="editQuestion(${i})">Edit</button><button class="btn-danger" style="padding: 6px 12px; font-size: 0.8rem; width:auto;" onclick="deleteQuestion(${i})">Del</button></div></div>`; 
-            }); 
-        }
+    const div = document.getElementById('adminExistingQuestionsList'); 
+    if(!div) return; 
+    div.innerHTML=''; 
+    
+    if(localQuestionsBuffer.length === 0) { 
+        div.innerHTML = '<p style="color:var(--text-muted); font-weight: 600; padding: 20px;">No questions added yet.</p>'; 
+        return; 
+    }
+    
+    localQuestionsBuffer.forEach((q,i) => { 
+        div.innerHTML += `
+        <div class="list-item">
+            <div style="font-weight: 600;">
+                <strong style="color: var(--primary);">Q${i+1}:</strong> 
+                ${(q.questionEng || q.questionHin || "Image Question").substring(0,60)}...
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="editQuestion(${i})">Edit</button>
+                <button class="btn-danger" style="padding: 6px 12px; font-size: 0.8rem; width:auto;" onclick="deleteQuestion(${i})">Del</button>
+            </div>
+        </div>`; 
+    }); 
+
+    // ADDED THIS BLOCK: Tell MathJax to render the math symbols after the list is built
+    if (window.MathJax) { 
+        MathJax.typesetClear(); 
+        MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); 
+    }
+}
+
 
         async function addQuestionToTest() { 
             const btn = document.getElementById('saveQuestionBtn'); 
@@ -2027,16 +2054,21 @@
             btn.innerText = "⏳ Saving...";
             try {
                 const obj = { 
-                    questionEng: document.getElementById('qTextEn').value, 
-                    questionHin: document.getElementById('qTextHi').value, 
-                    questionPa: document.getElementById('qTextPa').value,
-                    displayLang: document.getElementById('qDisplayLang').value,
-                    optionsEng: [document.getElementById('opt0En').value, document.getElementById('opt1En').value, document.getElementById('opt2En').value, document.getElementById('opt3En').value],
-                    optionsHin: [document.getElementById('opt0Hi').value, document.getElementById('opt1Hi').value, document.getElementById('opt2Hi').value, document.getElementById('opt3Hi').value],
-                    optionsPa: [document.getElementById('opt0Pa').value, document.getElementById('opt1Pa').value, document.getElementById('opt2Pa').value, document.getElementById('opt3Pa').value],
-                    correctIndex: parseInt(document.getElementById('correctAnswer').value), 
-                    subject: "General" 
-                };
+    questionEng: document.getElementById('qTextEn').value, 
+    questionHin: document.getElementById('qTextHi').value, 
+    questionPa: document.getElementById('qTextPa').value,
+    displayLang: document.getElementById('qDisplayLang').value,
+    optionsEng: [document.getElementById('opt0En').value, document.getElementById('opt1En').value, document.getElementById('opt2En').value, document.getElementById('opt3En').value],
+    optionsHin: [document.getElementById('opt0Hi').value, document.getElementById('opt1Hi').value, document.getElementById('opt2Hi').value, document.getElementById('opt3Hi').value],
+    optionsPa: [document.getElementById('opt0Pa').value, document.getElementById('opt1Pa').value, document.getElementById('opt2Pa').value, document.getElementById('opt3Pa').value],
+    correctIndex: parseInt(document.getElementById('correctAnswer').value), 
+    subject: "General",
+    // ADDED: Save explanations to Firebase
+    explanationEng: document.getElementById('expTextEn').value,
+    explanationHin: document.getElementById('expTextHi').value,
+    explanationPa: document.getElementById('expTextPa').value
+};
+
                 if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; 
                 else localQuestionsBuffer.push(obj); 
                 
@@ -2052,15 +2084,22 @@
         }
 
         function editQuestion(i) { 
-            const q = localQuestionsBuffer[i]; 
-            document.getElementById('qTextEn').value = q.questionEng || ''; 
-            document.getElementById('qTextHi').value = q.questionHin || ''; 
-            document.getElementById('qTextPa').value = q.questionPa || '';
-            document.getElementById('correctAnswer').value = q.correctIndex || 0; 
-            editingQuestionIndex = i; 
-            document.getElementById('saveQuestionBtn').innerText="Update Question 💾"; 
-            document.getElementById('cancelEditBtn').classList.remove('hidden');
-        }
+    const q = localQuestionsBuffer[i]; 
+    document.getElementById('qTextEn').value = q.questionEng || ''; 
+    document.getElementById('qTextHi').value = q.questionHin || ''; 
+    document.getElementById('qTextPa').value = q.questionPa || '';
+    document.getElementById('correctAnswer').value = q.correctIndex || 0; 
+    
+    // ADDED: Load explanations into textareas
+    document.getElementById('expTextEn').value = q.explanationEng || '';
+    document.getElementById('expTextHi').value = q.explanationHin || '';
+    document.getElementById('expTextPa').value = q.explanationPa || '';
+
+    editingQuestionIndex = i; 
+    document.getElementById('saveQuestionBtn').innerText="Update Question 💾"; 
+    document.getElementById('cancelEditBtn').classList.remove('hidden');
+}
+
 
         function deleteQuestion(i) { 
             showCustomConfirm("Delete Q?", "Permanently remove this question?", async () => { 
