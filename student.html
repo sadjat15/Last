@@ -1525,6 +1525,10 @@
 
                 // Trigger Live Ranking Calculation
                 calculateAndShowRank(activeTestId, finalScore);
+                
+                // 🔥 NEW: Trigger the background AI generator! (It won't freeze the screen)
+                generateAndSaveExplanationsInBackground(activeTestId, testQuestions);
+
             } catch(e) {
                 showToast("Error saving score: " + e.message, "error");
             }
@@ -1602,9 +1606,11 @@
             renderReviewQuestions();
         }
 
-        function renderReviewQuestions() {
+                function renderReviewQuestions() {
             const container = document.getElementById('review-questions-list');
             container.innerHTML = '';
+            
+            let aiQueue = []; // Queue to hold questions that need AI explanations
             
             testQuestions.forEach((q, i) => {
                 const userChoice = userAnswers[i];
@@ -1640,7 +1646,26 @@
                 });
 
                 let explBox = expl ? `<div style="margin-top:15px; padding:15px; background:#f1f5f9; border-radius:8px; font-size:0.95rem; border-left: 4px solid var(--primary);"><strong style="color:var(--primary);">Explanation:</strong><br>${expl}</div>` : '';
-                let aiBtn = `<button class="btn-outline" style="margin-top: 15px; font-size:0.85rem; padding: 8px 16px; border-color: #10b981; color: #10b981; font-weight:800; border-radius:20px;" onclick="getAIExplanation(${i}, this)">✨ AI Detail Explanation</button>`;
+                
+                // NEW: Automatic AI Loading Box instead of a button
+                                // NEW: Check if the explanation is permanently saved in the database
+                let aiAutoBox = '';
+                
+                if (q.aiSavedExplanation) {
+                    // Instantly show the saved explanation! No API call needed.
+                    aiAutoBox = `
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--text-main); font-weight: 600;">
+                            ${q.aiSavedExplanation}
+                        </div>`;
+                } else {
+                    // Show loading spinner and add to queue ONLY if not in database
+                    aiAutoBox = `
+                        <div class="ai-explanation" style="display: flex; align-items: center; gap: 10px; border-color: #10b981; background: #f0fdf4;" id="ai-box-${i}">
+                            <span class="ai-loading"></span>
+                            <strong style="color: #065f46;">✨ KD AI Tutor is analyzing this question...</strong>
+                        </div>`;
+                    aiQueue.push(i);
+                }
 
                 container.innerHTML += `
                     <div class="question-card" style="border-top: 5px solid ${statusColor}; margin-bottom: 25px; box-shadow:var(--shadow-md);">
@@ -1653,43 +1678,190 @@
                         ${optsHTML}
                         ${explBox}
                         <div id="ai-box-${i}">
-                            ${aiBtn}
+                            ${aiAutoBox}
                         </div>
                     </div>`;
+
+                    
+                aiQueue.push(i); // Add this question to the AI fetching queue
             });
 
             if(container.innerHTML === '') container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:700;">No questions match this filter.</div>`;
             if (window.MathJax) MathJax.typesetPromise();
-        }
-
-        async function getAIExplanation(qIndex, btnEl) {
-            if(!storedGeminiKey) return showToast("AI features are not configured by the Admin.", "error");
             
-            btnEl.innerHTML = '<span class="ai-loading"></span> Generating...';
-            btnEl.disabled = true;
+                 // NEW: Global variable to track active queues and stop overlapping API spam
+        let activeAiQueueId = 0; }
 
-            const q = testQuestions[qIndex];
-            const prompt = `Act as an expert tutor for a student. Explain the solution to this multiple-choice question step-by-step. 
-            Question: ${q.questionEng}
-            Correct Answer: ${q.optionsEng[q.correctIndex]}
-            Format the response nicely using HTML bold tags where necessary. Keep it encouraging and clear.`;
+        // NEW: Smarter queue that handles delays and cancels old requests
+        async function processAIQueue(queue) {
+            activeAiQueueId++; 
+            let myQueueId = activeAiQueueId; 
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${storedGeminiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
+            for (let qIndex of queue) {
+                // If user clicks a new filter, stop fetching the old filter's questions
+                if (myQueueId !== activeAiQueueId) break; 
                 
-                document.getElementById(`ai-box-${qIndex}`).innerHTML = `<div class="ai-explanation"><strong>✨ KD AI Tutor says:</strong><br><br>${aiText.replace(/\n/g, '<br>')}</div>`;
-                if (window.MathJax) MathJax.typesetPromise();
-            } catch(e) {
-                showToast("Failed to connect to AI.", "error");
-                btnEl.innerHTML = '✨ Ask AI for Detailed Explanation';
-                btnEl.disabled = false;
+                let success = await autoFetchAIExplanation(qIndex);
+                
+                // Base delay of 1.5s between requests. If we hit a limit, slow down to 3s.
+                let delay = success ? 1500 : 3000; 
+                await new Promise(r => setTimeout(r, delay)); 
             }
         }
+
+        // NEW: Fetches raw math steps with Timeouts and Auto-Retries
+        async function autoFetchAIExplanation(qIndex, retryCount = 0) {
+            const box = document.getElementById(`ai-box-${qIndex}`);
+            if (!box) return true; 
+
+            // 1. Cache Check
+            if (testQuestions[qIndex].cachedAIExplanation) {
+                box.innerHTML = testQuestions[qIndex].cachedAIExplanation;
+                if (window.MathJax) MathJax.typesetPromise();
+                return true;
+            }
+
+            if(!storedGeminiKey) {
+                box.innerHTML = `<div style="color: var(--danger); font-weight: 600; margin-top: 10px;">⚠️ AI API Key is missing.</div>`;
+                return false;
+            }
+
+            const q = testQuestions[qIndex];
+            
+            const prompt = `Solve this question using ONLY raw mathematical equations or the most minimal logical steps possible. 
+            CRITICAL INSTRUCTIONS: 
+            1. DO NOT write paragraphs or full sentences.
+            2. DO NOT use transitional words like "So", "Therefore", "Accounts for", or "This means".
+            3. ONLY output equations or brief steps.
+            Question: ${q.questionEng}
+            Correct Answer: ${q.optionsEng[q.correctIndex]}`;
+
+            // 2. Setup a 12-second Timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${storedGeminiKey}`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                    signal: controller.signal // Attaching the timeout controller
+                });
+                
+                clearTimeout(timeoutId);
+                const data = await response.json();
+                
+                // 3. Handle API Rate Limits (429) Gracefully
+                if (response.status === 429 || (data.error && data.error.code === 429)) {
+                    if (retryCount < 1) { // Retry exactly once
+                        box.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                            <span class="ai-loading" style="border-top-color: #f59e0b;"></span>
+                            <strong style="color: #b45309; font-size: 0.85rem;">API Limit Hit. Waiting to retry...</strong>
+                        </div>`;
+                        await new Promise(r => setTimeout(r, 4000)); // Wait 4 extra seconds
+                        return await autoFetchAIExplanation(qIndex, retryCount + 1);
+                    } else {
+                        throw new Error("API Limit reached. Please wait a minute.");
+                    }
+                }
+
+                if (data.error) throw new Error(data.error.message || "API Error");
+                if (!data.candidates || data.candidates.length === 0) throw new Error("No response generated.");
+
+                const aiText = data.candidates[0].content.parts[0].text;
+                
+                const finalHtml = `
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--text-main); font-weight: 600;">
+                    ${aiText.trim().replace(/\n/g, '<br>')}
+                </div>`;
+                
+                testQuestions[qIndex].cachedAIExplanation = finalHtml; 
+                
+                if(document.getElementById(`ai-box-${qIndex}`)) {
+                    document.getElementById(`ai-box-${qIndex}`).innerHTML = finalHtml;
+                    if (window.MathJax) MathJax.typesetPromise();
+                }
+                return true; // Success
+
+            } catch(e) {
+                clearTimeout(timeoutId);
+                
+                // Check if the error was caused by our 12-second timeout
+                let errMsg = e.message;
+                if (e.name === 'AbortError') {
+                    errMsg = "Connection timed out. AI took too long to respond.";
+                }
+                
+                if(document.getElementById(`ai-box-${qIndex}`)) {
+                    document.getElementById(`ai-box-${qIndex}`).innerHTML = `
+                    <div style="color: var(--danger); font-weight: 600; margin-top: 10px; font-size: 0.85rem;">
+                        ❌ ${errMsg}
+                    </div>`;
+                }
+                return false; // Failed
+            }
+        }
+        // NEW: Background engine that generates and permanently saves explanations to Firebase
+        async function generateAndSaveExplanationsInBackground(testId, questionsArray) {
+            if(!storedGeminiKey) return; // Requires API key
+            
+            let needsUpdate = false;
+            let updatedQuestions = [...questionsArray]; // Copy the array
+
+            console.log("Background AI Generator Started...");
+
+            for (let i = 0; i < updatedQuestions.length; i++) {
+                let q = updatedQuestions[i];
+                
+                // If it already has a saved explanation, skip it!
+                if (q.aiSavedExplanation) continue;
+
+                const prompt = `Solve this question using ONLY raw mathematical equations or the most minimal logical steps possible. 
+                CRITICAL INSTRUCTIONS: 
+                1. DO NOT write paragraphs or full sentences.
+                2. DO NOT use transitional words like "So", "Therefore".
+                3. ONLY output equations or brief steps.
+                Question: ${q.questionEng}
+                Correct Answer: ${q.optionsEng[q.correctIndex]}`;
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${storedGeminiKey}`, {
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.candidates && data.candidates.length > 0) {
+                        const aiText = data.candidates[0].content.parts[0].text;
+                        // Save the raw text to our local array object
+                        updatedQuestions[i].aiSavedExplanation = aiText.trim().replace(/\n/g, '<br>');
+                        needsUpdate = true;
+                    }
+                    
+                    // Wait 2 seconds between requests so we don't anger the API limit gods
+                    await new Promise(r => setTimeout(r, 2000)); 
+
+                } catch (e) {
+                    console.error(`Background AI failed for Q${i+1}:`, e);
+                }
+            }
+
+            // If we generated new explanations, save the updated array back to Firestore!
+            if (needsUpdate) {
+                try {
+                    await db.collection("tests").doc(testId).update({
+                        questions: updatedQuestions
+                    });
+                    console.log("✨ Success: AI Explanations permanently saved to Firebase!");
+                } catch (e) {
+                    console.error("Could not save AI to database. Check Firestore security rules.", e);
+                }
+            }
+        }
+
 
         // ==========================================
         // --- HISTORY & MISC LOADERS ---
