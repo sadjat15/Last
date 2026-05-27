@@ -829,7 +829,7 @@
                     <h2 id="editingTestTitle" style="color: var(--primary); font-weight: 900; letter-spacing: -0.5px;">Adding Questions to: </h2>
                 </div>
                 
-                <div class="ai-panel">
+                                <div class="ai-panel">
                     <p style="font-size: 1.1rem; font-weight: 900; color: #059669; margin: 0 0 10px 0;">✨ Bulk Generate Questions with AI</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                         <select id="aiModelSelect" style="margin: 0; width: auto; min-width: 150px; padding: 12px; border-radius: var(--radius-sm); border: 2px solid rgba(16, 185, 129, 0.3); font-size: 0.9rem; background: #fff;">
@@ -858,8 +858,15 @@
                         
                         <button id="aiGenerateBtn" class="btn-success" style="margin: 0; width: auto; padding: 12px 20px; font-size: 0.95rem;" onclick="generateBulkQuestionsWithAI()">Bulk Generate</button>
                     </div>
+                    
+                    <label style="display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; cursor: pointer; font-weight: 800; color: #065f46; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.3);">
+                        <input type="checkbox" id="aiForceImages" style="width: 18px; height: 18px; accent-color: #10b981;">
+                        🖼️ Force AI to generate Visual/Diagram Questions
+                    </label>
+
                     <p id="aiGenError" style="color: var(--danger); font-size: 0.9rem; margin-top: 10px; font-weight: 700; display: none;"></p>
                 </div>
+
                 
                 <div class="ai-panel" style="background: linear-gradient(135deg, rgba(254, 243, 199, 0.8), rgba(255, 255, 255, 0.9)); border-color: #f59e0b; margin-top: 20px;">
                     <p style="font-size: 1.1rem; font-weight: 900; color: #d97706; margin: 0 0 8px 0;">📚 Import from Question Bank</p>
@@ -2003,25 +2010,25 @@
         }
 
         function cancelQuestionEdit() { 
-    editingQuestionIndex = null; 
-    document.getElementById('saveQuestionBtn').innerText = "Save Question 💾"; 
-    document.getElementById('cancelEditBtn').classList.add('hidden'); 
-    document.getElementById('qTextEn').value = ''; 
-    document.getElementById('qTextHi').value = ''; 
-    document.getElementById('qTextPa').value = ''; 
-    for(let j=0; j<4; j++){ 
-        document.getElementById(`opt${j}En`).value = ''; 
-        document.getElementById(`opt${j}Hi`).value = ''; 
-        document.getElementById(`opt${j}Pa`).value = ''; 
-    } 
-    document.getElementById('correctAnswer').value = '0'; 
-    
-    // ADDED: Clear explanation textareas
-    if(document.getElementById('expTextEn')) document.getElementById('expTextEn').value = '';
-    if(document.getElementById('expTextHi')) document.getElementById('expTextHi').value = '';
-    if(document.getElementById('expTextPa')) document.getElementById('expTextPa').value = '';
-}
-
+            editingQuestionIndex = null; 
+            document.getElementById('saveQuestionBtn').innerText = "Save Question 💾"; 
+            document.getElementById('cancelEditBtn').classList.add('hidden'); 
+            document.getElementById('qTextEn').value = ''; 
+            document.getElementById('qTextHi').value = ''; 
+            document.getElementById('qTextPa').value = ''; 
+            document.getElementById('qImageUrl').value = ''; // Clear image
+            
+            for(let j=0; j<4; j++){ 
+                document.getElementById(`opt${j}En`).value = ''; 
+                document.getElementById(`opt${j}Hi`).value = ''; 
+                document.getElementById(`opt${j}Pa`).value = ''; 
+                document.getElementById(`opt${j}ImgUrl`).value = ''; // Clear option images
+            } 
+            document.getElementById('correctAnswer').value = '0'; 
+            if(document.getElementById('expTextEn')) document.getElementById('expTextEn').value = '';
+            if(document.getElementById('expTextHi')) document.getElementById('expTextHi').value = '';
+            if(document.getElementById('expTextPa')) document.getElementById('expTextPa').value = '';
+        }
 
         function renderAdminQuestionList() { 
     const div = document.getElementById('adminExistingQuestionsList'); 
@@ -2055,26 +2062,32 @@
 }
 
 
-        async function addQuestionToTest() { 
+                async function addQuestionToTest() { 
             const btn = document.getElementById('saveQuestionBtn'); 
             btn.disabled = true; 
             btn.innerText = "⏳ Saving...";
             try {
                 const obj = { 
-    questionEng: document.getElementById('qTextEn').value, 
-    questionHin: document.getElementById('qTextHi').value, 
-    questionPa: document.getElementById('qTextPa').value,
-    displayLang: document.getElementById('qDisplayLang').value,
-    optionsEng: [document.getElementById('opt0En').value, document.getElementById('opt1En').value, document.getElementById('opt2En').value, document.getElementById('opt3En').value],
-    optionsHin: [document.getElementById('opt0Hi').value, document.getElementById('opt1Hi').value, document.getElementById('opt2Hi').value, document.getElementById('opt3Hi').value],
-    optionsPa: [document.getElementById('opt0Pa').value, document.getElementById('opt1Pa').value, document.getElementById('opt2Pa').value, document.getElementById('opt3Pa').value],
-    correctIndex: parseInt(document.getElementById('correctAnswer').value), 
-    subject: "General",
-    // ADDED: Save explanations to Firebase
-    explanationEng: document.getElementById('expTextEn').value,
-    explanationHin: document.getElementById('expTextHi').value,
-    explanationPa: document.getElementById('expTextPa').value
-};
+                    questionEng: document.getElementById('qTextEn').value, 
+                    questionHin: document.getElementById('qTextHi').value, 
+                    questionPa: document.getElementById('qTextPa').value,
+                    questionImgUrl: document.getElementById('qImageUrl').value || "", // SAVES QUESTION DIAGRAM
+                    displayLang: document.getElementById('qDisplayLang').value,
+                    optionsEng: [document.getElementById('opt0En').value, document.getElementById('opt1En').value, document.getElementById('opt2En').value, document.getElementById('opt3En').value],
+                    optionsHin: [document.getElementById('opt0Hi').value, document.getElementById('opt1Hi').value, document.getElementById('opt2Hi').value, document.getElementById('opt3Hi').value],
+                    optionsPa: [document.getElementById('opt0Pa').value, document.getElementById('opt1Pa').value, document.getElementById('opt2Pa').value, document.getElementById('opt3Pa').value],
+                    optionsImgUrls: [ // SAVES OPTION DIAGRAMS
+                        document.getElementById('opt0ImgUrl').value || "",
+                        document.getElementById('opt1ImgUrl').value || "",
+                        document.getElementById('opt2ImgUrl').value || "",
+                        document.getElementById('opt3ImgUrl').value || ""
+                    ],
+                    correctIndex: parseInt(document.getElementById('correctAnswer').value), 
+                    subject: "General",
+                    explanationEng: document.getElementById('expTextEn').value,
+                    explanationHin: document.getElementById('expTextHi').value,
+                    explanationPa: document.getElementById('expTextPa').value
+                };
 
                 if(editingQuestionIndex !== null) localQuestionsBuffer[editingQuestionIndex] = obj; 
                 else localQuestionsBuffer.push(obj); 
@@ -2090,23 +2103,30 @@
             }
         }
 
+
         function editQuestion(i) { 
-    const q = localQuestionsBuffer[i]; 
-    document.getElementById('qTextEn').value = q.questionEng || ''; 
-    document.getElementById('qTextHi').value = q.questionHin || ''; 
-    document.getElementById('qTextPa').value = q.questionPa || '';
-    document.getElementById('correctAnswer').value = q.correctIndex || 0; 
-    
-    // ADDED: Load explanations into textareas
-    document.getElementById('expTextEn').value = q.explanationEng || '';
-    document.getElementById('expTextHi').value = q.explanationHin || '';
-    document.getElementById('expTextPa').value = q.explanationPa || '';
+            const q = localQuestionsBuffer[i]; 
+            document.getElementById('qTextEn').value = q.questionEng || ''; 
+            document.getElementById('qTextHi').value = q.questionHin || ''; 
+            document.getElementById('qTextPa').value = q.questionPa || '';
+            document.getElementById('qImageUrl').value = q.questionImgUrl || ''; // Load diagram
+            
+            if(q.optionsImgUrls) { // Load Option Diagrams
+                document.getElementById('opt0ImgUrl').value = q.optionsImgUrls[0] || '';
+                document.getElementById('opt1ImgUrl').value = q.optionsImgUrls[1] || '';
+                document.getElementById('opt2ImgUrl').value = q.optionsImgUrls[2] || '';
+                document.getElementById('opt3ImgUrl').value = q.optionsImgUrls[3] || '';
+            }
 
-    editingQuestionIndex = i; 
-    document.getElementById('saveQuestionBtn').innerText="Update Question 💾"; 
-    document.getElementById('cancelEditBtn').classList.remove('hidden');
-}
+            document.getElementById('correctAnswer').value = q.correctIndex || 0; 
+            document.getElementById('expTextEn').value = q.explanationEng || '';
+            document.getElementById('expTextHi').value = q.explanationHin || '';
+            document.getElementById('expTextPa').value = q.explanationPa || '';
 
+            editingQuestionIndex = i; 
+            document.getElementById('saveQuestionBtn').innerText="Update Question 💾"; 
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+        }
 
         function deleteQuestion(i) { 
             showCustomConfirm("Delete Q?", "Permanently remove this question?", async () => { 
@@ -2165,7 +2185,7 @@
             showToast("Material Upload Process Triggered.");
         }
 
-        async function generateBulkQuestionsWithAI() {
+                       async function generateBulkQuestionsWithAI() {
             if(!storedGeminiKey) return showToast("Missing API Key. Please add it in Portal Branding & API.", "error");
             
             const topic = document.getElementById('aiTopicInput').value.trim();
@@ -2176,13 +2196,42 @@
             const difficulty = document.getElementById('aiDifficultySelect').value;
             const count = document.getElementById('aiQuestionCount').value;
             const langChoice = document.getElementById('aiLanguageChoice').value;
+            
+            // CHECK IF THE USER WANTS FORCED IMAGES
+            const forceImages = document.getElementById('aiForceImages').checked;
 
             btn.innerText = "Generating..."; btn.disabled = true;
             showToast("AI is generating questions. Please wait...");
 
             try {
-                const prompt = `You are an expert test generator. Create ${count} multiple-choice questions on the topic: "${topic}" at a ${difficulty} difficulty level. Language requirement: ${langChoice === 'all' ? 'Provide translations for English, Hindi, and Punjabi.' : 'Provide the questions only in ' + langChoice + ' and leave other language strings completely empty.'} You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown block quotes like \`\`\`json. Use EXACTLY this format: [{ "questionEng": "Question in English text", "questionHin": "Question in Hindi text", "questionPa": "Question in Punjabi text", "optionsEng": ["Option 1", "Option 2", "Option 3", "Option 4"], "optionsHin": ["Option 1", "Option 2", "Option 3", "Option 4"], "optionsPa": ["Option 1", "Option 2", "Option 3", "Option 4"], "correctIndex": 0, "explanationEng": "Detailed step-by-step solution in English", "explanationHin": "Detailed step-by-step solution in Hindi", "explanationPa": "Detailed step-by-step solution in Punjabi" }]`;
+                // Dynamic instruction based on the checkbox
+                let imageInstruction = forceImages 
+                    ? `CRITICAL REQUIREMENT: You MUST generate visual reasoning or diagram-based questions. Every single question MUST contain an SVG diagram in the 'questionImgUrl' field. 
+                       Format the SVG exactly as a Data URI starting with: data:image/svg+xml;utf8,
+                       Example: data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' stroke='black' fill='none'/></svg>
+                       IMPORTANT: You MUST use ONLY single quotes (') inside the SVG string to avoid breaking the JSON format.`
+                    : `Generate standard text-based questions. Leave 'questionImgUrl' and 'optionsImgUrls' as empty strings ("").`;
 
+                const prompt = `You are an expert test generator. Create ${count} multiple-choice questions on the topic: "${topic}" at a ${difficulty} difficulty level.
+Language requirement: ${langChoice === 'all' ? 'Provide translations for English, Hindi, and Punjabi.' : 'Provide the questions only in ' + langChoice + ' and leave other language strings completely empty.'}
+
+${imageInstruction}
+
+You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown block quotes like \`\`\`json. Use EXACTLY this format:
+[{
+  "questionEng": "Question in English text",
+  "questionHin": "Question in Hindi text",
+  "questionPa": "Question in Punjabi text",
+  "questionImgUrl": "data:image/svg+xml;utf8,... (or empty string)",
+  "optionsEng": ["Option 1", "Option 2", "Option 3", "Option 4"],
+  "optionsHin": ["Option 1", "Option 2", "Option 3", "Option 4"],
+  "optionsPa": ["Option 1", "Option 2", "Option 3", "Option 4"],
+  "optionsImgUrls": ["", "", "", ""], 
+  "correctIndex": 0,
+  "explanationEng": "Detailed step-by-step solution in English",
+  "explanationHin": "Detailed solution in Hindi",
+  "explanationPa": "Detailed solution in Punjabi"
+}]`;
 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelVersion}:generateContent?key=${storedGeminiKey}`, {
                     method: 'POST',
@@ -2200,6 +2249,8 @@
                 generatedQuestions.forEach(q => {
                     q.displayLang = langChoice;
                     q.subject = topic;
+                    if(!q.questionImgUrl) q.questionImgUrl = "";
+                    if(!q.optionsImgUrls) q.optionsImgUrls = ["", "", "", ""];
                     localQuestionsBuffer.push(q);
                 });
 
@@ -2214,6 +2265,8 @@
                 btn.innerText = "Bulk Generate"; btn.disabled = false;
             }
         }
+
+
 
         async function sendPushNotification() {
             const title = document.getElementById('notif-title').value.trim();
@@ -2352,6 +2405,31 @@
                 }
             });
         }
+                // Setup automatic Cloudinary uploads for manual question diagram uploads
+        function setupQuestionImageUploads() {
+            const bindUpload = (fileId, hiddenId) => {
+                const fileInput = document.getElementById(fileId);
+                if(fileInput) {
+                    fileInput.addEventListener('change', async function() {
+                        if(this.files.length > 0) {
+                            showToast("Uploading diagram to cloud...");
+                            const url = await uploadImageToFirebase(fileId, 'questions');
+                            if(url) {
+                                document.getElementById(hiddenId).value = url;
+                                showToast("Diagram attached successfully!", "success");
+                            }
+                        }
+                    });
+                }
+            };
+            bindUpload('qImageUpload', 'qImageUrl');
+            bindUpload('opt0ImgUpload', 'opt0ImgUrl');
+            bindUpload('opt1ImgUpload', 'opt1ImgUrl');
+            bindUpload('opt2ImgUpload', 'opt2ImgUrl');
+            bindUpload('opt3ImgUpload', 'opt3ImgUrl');
+        }
+        setupQuestionImageUploads(); // Activate the upload bindings
+
 // Initialize App UI
         loadPortalBranding();
         syncLoginModeUI();
