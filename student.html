@@ -1603,71 +1603,82 @@
             renderReviewQuestions();
         }
 
-                function renderReviewQuestions() {
-    const container = document.getElementById('review-questions-list');
-    container.innerHTML = '';
-    
-    testQuestions.forEach((q, i) => {
-        const userChoice = userAnswers[i];
-        const isCorrect = userChoice === q.correctIndex;
-        const isSkipped = userChoice === null;
-        const isMarked = questionStates[i] === 'marked';
-        
-        // Filter Logic
-        if (currentReviewFilter === 'correct' && !isCorrect) return;
-        if (currentReviewFilter === 'wrong' && (isCorrect || isSkipped)) return;
-        if (currentReviewFilter === 'skipped' && !isSkipped) return;
-        if (currentReviewFilter === 'marked' && !isMarked) return;
-
-        const statusColor = isCorrect ? 'var(--success)' : (isSkipped ? 'var(--text-muted)' : 'var(--danger)');
-        const statusText = isCorrect ? '✅ Correct' : (isSkipped ? '⚪ Skipped' : '❌ Wrong');
-        
-        let qText = q[`question${reviewLanguage}`] || q.questionEng || "";
-        let opts = q[`options${reviewLanguage}`] || q.optionsEng || [];
-        
-        // Extract the manually written explanation with fallback to English
-        let expl = q[`explanation${reviewLanguage}`] || q.explanationEng || "";
-        
-        const qImg = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" style="margin-bottom: 15px; max-width:100%; border-radius:8px;">` : '';
-
-        let optsHTML = '';
-        opts.forEach((opt, idx) => {
-            let isCorrectOpt = idx === q.correctIndex;
-            let isSelectedOpt = idx === userChoice;
+                        function renderReviewQuestions() {
+            const container = document.getElementById('review-questions-list');
+            container.innerHTML = '';
             
-            let bgStyle = isCorrectOpt ? 'background:#ecfdf5; border-color:#10b981;' : (isSelectedOpt ? 'background:#fef2f2; border-color:#ef4444;' : 'background:#f8fafc; border-color:#e2e8f0;');
-            let badge = isCorrectOpt ? ' <span style="float:right; font-size:0.8rem; background:#10b981; color:white; padding:2px 8px; border-radius:10px;">Right Answer</span>' : (isSelectedOpt ? ' <span style="float:right; font-size:0.8rem; background:#ef4444; color:white; padding:2px 8px; border-radius:10px;">Your Choice</span>' : '');
-            
-            const optImg = (q.optImgUrls && q.optImgUrls[idx]) ? `<br><img src="${q.optImgUrls[idx]}" class="q-card-img" style="max-height: 60px;">` : '';
-            optsHTML += `<div style="padding: 12px 15px; border: 2px solid; border-radius: 12px; margin-bottom: 10px; font-weight:600; ${bgStyle}"><span>${opt}</span>${badge}${optImg}</div>`;
-        });
+            testQuestions.forEach((q, i) => {
+                const userChoice = userAnswers[i];
+                const isCorrect = userChoice === q.correctIndex;
+                const isSkipped = userChoice === null;
+                const isMarked = questionStates[i] === 'marked';
+                
+                // Filter Logic
+                if (currentReviewFilter === 'correct' && !isCorrect) return;
+                if (currentReviewFilter === 'wrong' && (isCorrect || isSkipped)) return;
+                if (currentReviewFilter === 'skipped' && !isSkipped) return;
+                if (currentReviewFilter === 'marked' && !isMarked) return;
 
-        // UI Box for Static Explanation
-        let explBox = expl.trim() !== '' 
-            ? `<div style="margin-top:15px; padding:15px; background: rgba(224, 231, 255, 0.4); border-left: 4px solid var(--primary); border-radius:8px; font-size:0.95rem;">
-                   <strong style="color:var(--primary); font-size: 1.05rem;">💡 Solution / Explanation:</strong><br>
-                   <span style="font-weight: 500;">${expl}</span>
-               </div>` 
-            : `<div style="margin-top:15px; padding:15px; background: #f8fafc; border-left: 4px solid var(--text-muted); border-radius:8px; font-size:0.95rem; color: var(--text-muted);">
-                   <em>No explanation provided for this question.</em>
-               </div>`;
+                const statusColor = isCorrect ? 'var(--success)' : (isSkipped ? 'var(--text-muted)' : 'var(--danger)');
+                const statusText = isCorrect ? '✅ Correct' : (isSkipped ? '⚪ Skipped' : '❌ Wrong');
+                
+                let qText = q[`question${reviewLanguage}`] || q.questionEng || "";
+                let opts = q[`options${reviewLanguage}`] || q.optionsEng || [];
+                
+                let expl = q[`explanation${reviewLanguage}`] || q.explanationEng || "";
+                const qImg = q.qImgUrl ? `<img src="${q.qImgUrl}" class="q-card-img" style="margin-bottom: 15px; max-width:100%; border-radius:8px;">` : '';
 
-        container.innerHTML += `
-            <div class="question-card" style="border-top: 5px solid ${statusColor}; margin-bottom: 25px; box-shadow:var(--shadow-md);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid var(--border-color);">
-                    <span style="font-weight:900; font-size:1.1rem; color: var(--primary);">Q${i+1}</span>
-                    <span style="font-weight:800; font-size:0.9rem; color:${statusColor}; background:${statusColor}15; padding:4px 12px; border-radius:12px;">${statusText}</span>
-                </div>
-                <h4 style="margin-bottom:15px; line-height:1.5;">${qText}</h4>
-                ${qImg}
-                ${optsHTML}
-                ${explBox}
-            </div>`;
-    });
+                let optsHTML = '';
+                opts.forEach((opt, idx) => {
+                    let isCorrectOpt = idx === q.correctIndex;
+                    let isSelectedOpt = idx === userChoice;
+                    
+                    let bgStyle = isCorrectOpt ? 'background:#ecfdf5; border-color:#10b981;' : (isSelectedOpt ? 'background:#fef2f2; border-color:#ef4444;' : 'background:#f8fafc; border-color:#e2e8f0;');
+                    let badge = isCorrectOpt ? ' <span style="float:right; font-size:0.8rem; background:#10b981; color:white; padding:2px 8px; border-radius:10px;">Right Answer</span>' : (isSelectedOpt ? ' <span style="float:right; font-size:0.8rem; background:#ef4444; color:white; padding:2px 8px; border-radius:10px;">Your Choice</span>' : '');
+                    
+                    const optImg = (q.optImgUrls && q.optImgUrls[idx]) ? `<br><img src="${q.optImgUrls[idx]}" class="q-card-img" style="max-height: 60px;">` : '';
+                    optsHTML += `<div style="padding: 12px 15px; border: 2px solid; border-radius: 12px; margin-bottom: 10px; font-weight:600; ${bgStyle}"><span>${opt}</span>${badge}${optImg}</div>`;
+                });
 
-    if(container.innerHTML === '') container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:700;">No questions match this filter.</div>`;
-    if (window.MathJax) MathJax.typesetPromise();
-}
+                let explBox = expl.trim() !== '' 
+                    ? `<div style="margin-top:15px; padding:15px; background: rgba(224, 231, 255, 0.4); border-left: 4px solid var(--primary); border-radius:8px; font-size:0.95rem;">
+                           <strong style="color:var(--primary); font-size: 1.05rem;">💡 Solution / Explanation:</strong><br>
+                           <span style="font-weight: 500;">${expl}</span>
+                       </div>` 
+                    : `<div style="margin-top:15px; padding:15px; background: #f8fafc; border-left: 4px solid var(--text-muted); border-radius:8px; font-size:0.95rem; color: var(--text-muted);">
+                           <em>No explanation provided by admin for this question.</em>
+                       </div>`;
+
+                // --- NEW: DYNAMIC AI BUTTON & CONTAINER ---
+                // Format strings so they don't break the HTML inline onclick handler
+                let safeQText = qText.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+                let correctOptText = opts[q.correctIndex] ? opts[q.correctIndex].replace(/'/g, "\\'").replace(/"/g, '&quot;') : "Diagram based option";
+
+                let aiButtonBox = `<div style="margin-top: 15px;">
+                    <button class="btn-outline" style="padding: 8px 16px; font-size: 0.85rem; border-color: var(--review); color: var(--review); border-radius: 8px; font-weight: 800; display: flex; align-items: center; gap: 5px; width: auto;" onclick="generateLiveAISolution('${safeQText}', '${correctOptText}', 'ai-solution-box-${i}')">
+                        ✨ Generate Simple AI Solution
+                    </button>
+                    <div id="ai-solution-box-${i}" style="display: none; margin-top: 10px;"></div>
+                </div>`;
+
+                container.innerHTML += `
+                    <div class="question-card" style="border-top: 5px solid ${statusColor}; margin-bottom: 25px; box-shadow:var(--shadow-md);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid var(--border-color);">
+                            <span style="font-weight:900; font-size:1.1rem; color: var(--primary);">Q${i+1}</span>
+                            <span style="font-weight:800; font-size:0.9rem; color:${statusColor}; background:${statusColor}15; padding:4px 12px; border-radius:12px;">${statusText}</span>
+                        </div>
+                        <h4 style="margin-bottom:15px; line-height:1.5;">${qText}</h4>
+                        ${qImg}
+                        ${optsHTML}
+                        ${explBox}
+                        ${aiButtonBox}
+                    </div>`;
+            });
+
+            if(container.innerHTML === '') container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:700;">No questions match this filter.</div>`;
+            if (window.MathJax) MathJax.typesetPromise();
+        }
+
         // ==========================================
         // --- HISTORY & MISC LOADERS ---
         // ==========================================
@@ -1848,6 +1859,55 @@
         function closeResourceModal() { document.getElementById('resource-viewer-modal').style.display = 'none'; document.getElementById('resource-embed-container').innerHTML = ''; }
         function closeForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'none'; }
         function openForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'flex'; }
+
+        // ==========================================
+        // --- DYNAMIC AI SOLUTION GENERATOR ---
+        // ==========================================
+        async function generateLiveAISolution(questionText, correctAnswerText, targetElementId) {
+            if(!storedGeminiKey) return showToast("API Key missing. Ask admin to configure AI.", "error");
+            
+            const container = document.getElementById(targetElementId);
+            
+            // Toggle visibility if they click the button again
+            if(container.style.display === "block") {
+                container.style.display = "none";
+                return;
+            }
+            
+            container.style.display = "block";
+            container.innerHTML = `<div style="background: rgba(243, 232, 255, 0.4); padding: 15px; border-radius: 12px; border: 1px dashed var(--review); text-align: center;">
+                <span style="color: var(--review); font-weight: 800; font-size: 0.95rem;">🧠 AI is generating a simple solution...</span>
+            </div>`;
+            
+            try {
+                const prompt = `You are a friendly and helpful tutor. Explain the solution to this specific question in a very simple, easy-to-understand way for a student. 
+                Question: ${questionText}
+                Correct Answer: ${correctAnswerText}
+                Keep it short, direct, and encouraging. Do not use complex formatting. Do not generate a new question.`;
+
+                // Using Gemini 3.5 Flash
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${storedGeminiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) throw new Error("API Request Failed");
+                const data = await response.json();
+                const solutionText = data.candidates[0].content.parts[0].text;
+                
+                container.innerHTML = `<div style="background: rgba(243, 232, 255, 0.2); border-left: 4px solid var(--review); padding: 15px; border-radius: 12px; margin-top: 10px; box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size: 1.2rem;">✨</span>
+                        <strong style="color: var(--review); font-size: 1.05rem;">AI Tutor Explanation</strong>
+                    </div>
+                    <p style="margin-top: 5px; font-size: 0.95rem; color: var(--text-main); line-height: 1.6;">${solutionText.replace(/\n/g, '<br>')}</p>
+                </div>`;
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<p style='color: var(--danger); font-weight: 700; padding: 10px; background: #fee2e2; border-radius: 8px; font-size: 0.9rem;'>⚠️ Failed to load AI solution. Please try again.</p>`;
+            }
+        }
 
         // ==========================================
         // --- FINAL INITIALIZATION ---
