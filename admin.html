@@ -2243,7 +2243,7 @@
             showToast("Material Upload Process Triggered.");
         }
 
-                               async function generateBulkQuestionsWithAI() {
+                                       async function generateBulkQuestionsWithAI() {
             if(!storedGeminiKey) return showToast("Missing API Key. Please add it in Portal Branding & API.", "error");
             
             const topic = document.getElementById('aiTopicInput').value.trim();
@@ -2268,22 +2268,22 @@
                        IMPORTANT: You MUST use ONLY single quotes (') inside the SVG string to avoid breaking the JSON format.`
                     : `Generate standard text-based questions. Leave 'questionImgUrl' and 'optionsImgUrls' as empty strings ("").`;
 
-                // --- NEW: DUPLICATE PREVENTION LOGIC ---
-                // Extract existing questions from the current test to tell AI to avoid them
                 const existingQs = localQuestionsBuffer.map(q => q.questionEng || q.questionHin).filter(Boolean);
                 let duplicateInstruction = "";
                 if (existingQs.length > 0) {
                     duplicateInstruction = `CRITICAL: I already have the following questions in my question bank. DO NOT generate ANY questions that are similar to these:\n- ${existingQs.slice(-30).join('\n- ')}\n`;
                 }
 
-                // --- NEW: UPDATED PROMPT (NO EXPLANATIONS) ---
+                // --- UPDATED PROMPT: STRICTLY FORBID EXPLANATIONS ---
                 const prompt = `You are an expert test generator. Create ${count} multiple-choice questions on the topic: "${topic}" at a ${difficulty} difficulty level.
 Language requirement: ${langChoice === 'all' ? 'Provide translations for English, Hindi, and Punjabi.' : 'Provide the questions only in ' + langChoice + ' and leave other language strings completely empty.'}
+
+CRITICAL INSTRUCTION: DO NOT generate any solutions, explanations, hints, or rationales. You must ONLY generate the question text, the options, and the correct answer index.
 
 ${duplicateInstruction}
 ${imageInstruction}
 
-You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown block quotes like \`\`\`json. Use EXACTLY this format:
+You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown block quotes like \`\`\`json. Use EXACTLY this format, and do not add any extra fields:
 [{
   "questionEng": "Question in English text",
   "questionHin": "Question in Hindi text",
@@ -2314,10 +2314,17 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
                     q.subject = topic;
                     if(!q.questionImgUrl) q.questionImgUrl = "";
                     if(!q.optionsImgUrls) q.optionsImgUrls = ["", "", "", ""];
-                    // Ensure explanations are empty as requested
+                    
+                    // Force explanations to be completely blank
                     q.explanationEng = ""; 
                     q.explanationHin = ""; 
                     q.explanationPa = "";
+                    
+                    // Safety check: Delete any rogue fields the AI might have hallucinated
+                    delete q.explanation;
+                    delete q.solution;
+                    delete q.reasoning;
+
                     localQuestionsBuffer.push(q);
                 });
 
