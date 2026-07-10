@@ -871,12 +871,17 @@
                     </div>
                     
                     <label style="display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; cursor: pointer; font-weight: 800; color: #065f46; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.3);">
-                        <input type="checkbox" id="aiForceImages" style="width: 18px; height: 18px; accent-color: #10b981;">
-                        🖼️ Force AI to generate Visual/Diagram Questions
-                    </label>
+    <input type="checkbox" id="aiForceImages" style="width: 18px; height: 18px; accent-color: #10b981;">
+    🖼️ General Image Questions
+</label>
 
-                    <p id="aiGenError" style="color: var(--danger); font-size: 0.9rem; margin-top: 10px; font-weight: 700; display: none;"></p>
-                </div>
+<label style="display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; margin-left: 10px; cursor: pointer; font-weight: 800; color: #4338ca; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(67,56,202,0.3);">
+    <input type="checkbox" id="aiReasoningImages" style="width: 18px; height: 18px; accent-color: #4338ca;">
+    🧠 Reasoning & Mirror Images (Grid SVGs in Options)
+</label>
+
+<p id="aiGenError" style="color: var(--danger); font-size: 0.9rem; margin-top: 10px; font-weight: 700; display: none;"></p>
+
 
                 <div class="ai-panel" style="background: linear-gradient(135deg, rgba(254, 243, 199, 0.8), rgba(255, 255, 255, 0.9)); border-color: #f59e0b; margin-top: 20px;">
                     <p style="font-size: 1.1rem; font-weight: 900; color: #d97706; margin: 0 0 8px 0;">📚 Import from Question Bank</p>
@@ -2257,7 +2262,7 @@
         // ==========================================
         // --- AI GENERATION LOGIC ---
         // ==========================================
-        async function generateBulkQuestionsWithAI() {
+                       async function generateBulkQuestionsWithAI() {
             if(!storedGeminiKey) return showToast("Missing API Key. Please add it in Portal Branding & API.", "error");
             
             const topic = document.getElementById('aiTopicInput').value.trim();
@@ -2269,17 +2274,29 @@
             const count = document.getElementById('aiQuestionCount').value;
             const langChoice = document.getElementById('aiLanguageChoice').value;
             const forceImages = document.getElementById('aiForceImages').checked;
+            const reasoningImages = document.getElementById('aiReasoningImages').checked;
 
             btn.innerText = "Generating..."; btn.disabled = true;
             showToast("AI is generating questions. Please wait...");
 
             try {
-                let imageInstruction = forceImages 
-                    ? `CRITICAL REQUIREMENT: You MUST generate visual reasoning or diagram-based questions. Every single question MUST contain an SVG diagram in the 'questionImgUrl' field. 
+                let imageInstruction = `Generate standard text-based questions. Leave 'questionImgUrl' and 'optionsImgUrls' as empty strings ("").`;
+                let optionsJsonFormat = `["", "", "", ""]`;
+
+                if (reasoningImages) {
+                    imageInstruction = `CRITICAL REQUIREMENT: The user wants spatial reasoning questions (e.g., Mirror Image, Water Image, Matrix completion, Figure Series).
+                       You MUST generate an SVG diagram for the main question AND SVG diagrams for ALL 4 options.
+                       Instead of simple text symbols, draw complex line diagrams, geometric patterns, and spatial puzzles using SVG tags like <path>, <polygon>, <circle>, <rect>, and <line> within a <svg viewBox='0 0 100 100'>.
+                       You can draw intersecting lines, shading using fill colors, grids, rotated geometric shapes, and abstract line art.
+                       Format ALL SVGs EXACTLY as a Data URI starting with: data:image/svg+xml;utf8,
+                       Example format (a box with intersecting diagonals, a circle, and a triangle): data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='none' stroke='black' stroke-width='2'/><path d='M10,10 L90,90 M90,10 L10,90' stroke='black' stroke-width='2'/><circle cx='50' cy='20' r='10' fill='black'/><polygon points='50,80 40,95 60,95' fill='black'/></svg>
+                       IMPORTANT: You MUST use ONLY single quotes (') inside the SVG string to avoid breaking the JSON format.`;
+                    optionsJsonFormat = `["data:image/svg+xml;utf8,...", "data:image/svg+xml;utf8,...", "data:image/svg+xml;utf8,...", "data:image/svg+xml;utf8,..."]`;
+                } else if (forceImages) {
+                    imageInstruction = `CRITICAL REQUIREMENT: You MUST generate visual reasoning or diagram-based questions. Every single question MUST contain an SVG diagram in the 'questionImgUrl' field. 
                        Format the SVG exactly as a Data URI starting with: data:image/svg+xml;utf8,
-                       Example: data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' stroke='black' fill='none'/></svg>
-                       IMPORTANT: You MUST use ONLY single quotes (') inside the SVG string to avoid breaking the JSON format.`
-                    : `Generate standard text-based questions. Leave 'questionImgUrl' and 'optionsImgUrls' as empty strings ("").`;
+                       IMPORTANT: You MUST use ONLY single quotes (') inside the SVG string to avoid breaking the JSON format.`;
+                }
 
                 const existingQs = localQuestionsBuffer.map(q => q.questionEng || q.questionHin).filter(Boolean);
                 let duplicateInstruction = "";
@@ -2287,11 +2304,10 @@
                     duplicateInstruction = `CRITICAL: I already have the following questions in my question bank. DO NOT generate ANY questions that are similar to these:\n- ${existingQs.slice(-30).join('\n- ')}\n`;
                 }
 
-                // AI Math Instruction fix for proper 2² formatting
                 const prompt = `You are an expert test generator. Create ${count} multiple-choice questions on the topic: "${topic}" at a ${difficulty} difficulty level.
 Language requirement: ${langChoice === 'all' ? 'Provide translations for English, Hindi, and Punjabi.' : 'Provide the questions only in ' + langChoice + ' and leave other language strings completely empty.'}
 
-CRITICAL MATH FORMATTING: Always format mathematical powers using standard LaTeX notation enclosed in dollar signs (e.g., use $2^2$ instead of 2^2 or 2 ki power 2). Do NOT use plain text for math formulas.
+CRITICAL MATH FORMATTING: Always format mathematical powers using standard unicode characters (e.g., use 2² or x² instead of 2^2). Do NOT use LaTeX or dollar signs for math formulas.
 
 CRITICAL INSTRUCTION: DO NOT generate any solutions, explanations, hints, or rationales. You must ONLY generate the question text, the options, and the correct answer index.
 
@@ -2304,10 +2320,10 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
   "questionHin": "Question in Hindi text",
   "questionPa": "Question in Punjabi text",
   "questionImgUrl": "data:image/svg+xml;utf8,... (or empty string)",
-  "optionsEng": ["Option 1", "Option 2", "Option 3", "Option 4"],
+  "optionsEng": ["Option A text", "Option B text", "Option C text", "Option D text"],
   "optionsHin": ["Option 1", "Option 2", "Option 3", "Option 4"],
   "optionsPa": ["Option 1", "Option 2", "Option 3", "Option 4"],
-  "optionsImgUrls": ["", "", "", ""], 
+  "optionsImgUrls": ${optionsJsonFormat}, 
   "correctIndex": 0
 }]`;
 
@@ -2324,28 +2340,41 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
                 aiText = aiText.replace(/```json/gi, '').replace(/```/gi, '').trim();
                 const generatedQuestions = JSON.parse(aiText);
 
-                if(forceImages) showToast("Processing & Uploading AI visuals sequentially...", "success");
+                if(forceImages || reasoningImages) showToast("Processing & Uploading AI visuals to Cloudinary...", "success");
                 
-                // Handling the sequential upload for heavy Cloudinary photos
+                // Helper to upload Data URIs to Cloudinary
+                const uploadToCloudinary = async (dataUri) => {
+                    const fd = new FormData();
+                    fd.append('upload_preset', 'Upload');
+                    fd.append('file', dataUri);
+                    const res = await fetch('https://api.cloudinary.com/v1_1/djvbvtcrh/auto/upload', { method: 'POST', body: fd });
+                    const uploadData = await res.json();
+                    return uploadData.secure_url;
+                };
+
+                // Sequential upload for heavy Cloudinary photos
                 for(let i=0; i<generatedQuestions.length; i++) {
                     let q = generatedQuestions[i];
                     
-                    if (q.questionImgUrl && q.questionImgUrl.startsWith('data:image')) {
-                        document.getElementById('aiGenError').style.display = 'block';
-                        document.getElementById('aiGenError').style.color = '#10b981';
-                        document.getElementById('aiGenError').innerText = `Uploading Image for Question ${i+1} of ${generatedQuestions.length} to Cloudinary...`;
-                        
-                        try {
-                            const fd = new FormData();
-                            fd.append('upload_preset', 'Upload');
-                            fd.append('file', q.questionImgUrl);
-                            
-                            const res = await fetch('https://api.cloudinary.com/v1_1/djvbvtcrh/auto/upload', { method: 'POST', body: fd });
-                            const uploadData = await res.json();
-                            if(uploadData.secure_url) q.questionImgUrl = uploadData.secure_url;
-                        } catch (err) {
-                            console.error("Cloudinary upload failed for AI image", err);
+                    document.getElementById('aiGenError').style.display = 'block';
+                    document.getElementById('aiGenError').style.color = '#10b981';
+                    document.getElementById('aiGenError').innerText = `Uploading Images for Question ${i+1} of ${generatedQuestions.length}...`;
+                    
+                    try {
+                        // 1. Upload Question Image
+                        if (q.questionImgUrl && q.questionImgUrl.startsWith('data:image')) {
+                            q.questionImgUrl = await uploadToCloudinary(q.questionImgUrl);
                         }
+                        // 2. Upload Option Images (if generated for reasoning questions)
+                        if (q.optionsImgUrls && q.optionsImgUrls.length === 4) {
+                            for(let j=0; j<4; j++) {
+                                if(q.optionsImgUrls[j] && q.optionsImgUrls[j].startsWith('data:image')) {
+                                    q.optionsImgUrls[j] = await uploadToCloudinary(q.optionsImgUrls[j]);
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Cloudinary upload failed for AI image", err);
                     }
 
                     q.displayLang = langChoice; q.subject = topic;
@@ -2362,12 +2391,12 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
 
             } catch (error) {
                 console.error("AI Error:", error);
-                showToast("Failed to generate questions. Please try a different prompt.", "error");
+                showToast("Failed to generate questions. Please try a different prompt or check the format.", "error");
             } finally {
                 btn.innerText = "Bulk Generate"; btn.disabled = false;
             }
         }
-        
+
         // ==========================================
         // --- PUSH NOTIFICATIONS ---
         // ==========================================
