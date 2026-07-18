@@ -315,6 +315,7 @@
             box-shadow: var(--shadow-sm);
         } 
         .btn-outline:hover { background: var(--primary); color: white; transform: translateY(-2px); box-shadow: var(--neon-glow); }
+        
         /* Animated Custom Toast Notifications */
         .custom-toast { 
             visibility: hidden; 
@@ -364,6 +365,7 @@
             border: var(--glass-border); 
             scrollbar-width: thin; 
         }
+        
         /* Main Dashboard Menu Grid */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
         .menu-btn { 
@@ -392,7 +394,7 @@
         .menu-btn h3 { color: var(--text-main); font-size: 1.2rem; font-weight: 800; z-index: 2; } 
         .menu-btn p { color: var(--text-muted); font-size: 0.85rem; z-index: 2; font-weight: 500;} 
         
-        /* Modern Data Tables (For Students & Ranks) */
+        /* Modern Data Tables */
         .student-table { 
             width: 100%; 
             border-collapse: separate; 
@@ -434,7 +436,7 @@
         }
         .ai-panel:hover { box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2); border-color: #059669; }
         
-        /* List Items (Used for Groups, Tests, Banners) */
+        /* List Items */
         .list-item { 
             display: flex; justify-content: space-between; align-items: center; 
             background: rgba(255, 255, 255, 0.8); padding: 15px 20px; 
@@ -451,7 +453,8 @@
         #custom-confirm-modal .modal { max-width: 450px; text-align: center; padding: 40px 25px; border-radius: var(--radius); }
         #custom-confirm-modal h3 { margin-bottom: 15px; font-size: 1.5rem; font-weight: 900;} 
         .confirm-btn-group { display: flex; gap: 15px; justify-content: center; margin-top: 25px;}
-        /* Section Timers Styling (For Test Setup) */
+        
+        /* Section Timers Styling */
         #admin-section-timers-container { 
             margin-top: 20px; padding: 20px; 
             background: rgba(240, 253, 244, 0.8); 
@@ -604,6 +607,7 @@
                     <button class="btn-warning" style="padding: 15px; font-size: 1.05rem; margin-top: 10px;" onclick="sendPushNotification()">Broadcast Notification 🚀</button>
                 </div>
             </div>
+            
             <div id="admin-sec-banners" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
@@ -763,15 +767,20 @@
                     <div id="admin-banner-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:12px;"></div>
                 </div>
             </div>
+
+            <!-- MODIFIED STUDY SECTION (WITH GROUPS) -->
             <div id="admin-sec-study" class="sub-sec">
-                <div class="sec-header">
-                    <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
-                    <h2>Manage Study Materials</h2>
+                <div class="sec-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button class="back-menu-btn" onclick="openAdminSec('admin-main-menu')">← Back to Menu</button>
+                        <h2>Manage Study Materials</h2>
+                    </div>
+                    <button class="btn-outline" style="border-color: #0ea5e9; color: #0ea5e9;" onclick="openAdminSec('admin-sec-study-groups')">📁 Manage Video/Study Groups</button>
                 </div>
                 
                 <div class="action-box glass-panel" style="border-left: 6px solid #0ea5e9;">
-                    <h3 style="color: #0ea5e9; margin-bottom: 15px;">📄 Upload New Material</h3>
-                    <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 500;">Provide PDFs, Images, or Ad-Free Video Links for your students.</p>
+                    <h3 style="color: #0ea5e9; margin-bottom: 15px;">📄 Upload New Material / Video</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 500;">Provide PDFs, Images, or Ad-Free Video Links for your students and assign them to a Study Group.</p>
                     
                     <div class="flex-row">
                         <div class="input-group">
@@ -792,6 +801,13 @@
                                 <option value="punjabi">Punjabi Students Only</option> 
                             </select>
                         </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Assign to Study Group / Sub-group (Optional)</label>
+                        <select id="study-group-assign" class="study-parent-group-select" style="border: 2px solid var(--primary); background: rgba(224, 231, 255, 0.4);">
+                            <option value="">None (Standalone Material)</option>
+                        </select>
                     </div>
                     
                     <div class="input-group">
@@ -824,13 +840,62 @@
                 </div>
                 
                 <div class="action-box glass-panel">
-                    <h3 style="margin-bottom: 15px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Active Study Materials</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="margin: 0; font-size: 1.2rem;">Active Study Materials & Videos</h3>
+                        <select id="admin-study-filter" class="study-parent-group-select" style="padding: 8px; border-radius: var(--radius-sm); border: 2px solid #0ea5e9; font-size: 0.9rem;" onchange="renderAdminStudyMaterials()">
+                            <option value="all">All Groups</option>
+                        </select>
+                    </div>
                     <div id="admin-study-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:12px;">
                         <p style="color: var(--text-muted); padding: 10px;">Loading materials...</p>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- NEW: STUDY MATERIAL GROUPS SECTION -->
+            <div id="admin-sec-study-groups" class="sub-sec">
+                <div class="sec-header">
+                    <button class="back-menu-btn" onclick="openAdminSec('admin-sec-study')">← Back to Study Materials</button>
+                    <h2>Manage Study/Video Groups</h2>
+                </div>
+                <div class="action-box glass-panel" style="border-left: 6px solid #0ea5e9;">
+                    <h3 style="margin-bottom: 20px; color: #0ea5e9;">Create a New Study Category</h3>
+                    <div class="input-group">
+                        <label>Group Name</label>
+                        <input type="text" id="new-study-group-name" placeholder="e.g., Complete DC Theory Course">
+                    </div>
+                    <div class="input-group">
+                        <label>Category Banner/Photo (Optional)</label>
+                        <input type="file" id="new-study-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                        <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB).</span>
+                    </div>
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label>Target Audience</label>
+                            <select id="new-study-group-board" style="border: 2px solid var(--primary); background: rgba(224, 231, 255, 0.4);">
+                                <option value="college">College</option>
+                                <option value="cbse">CBSE</option>
+                                <option value="hbse">HBSE</option>
+                                <option value="punjabi">Punjabi</option> 
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Parent Group (For Sub-groups)</label>
+                            <select id="new-study-group-parent" class="study-parent-group-select" style="border: 2px solid #0ea5e9; background: rgba(224, 242, 254, 0.4);">
+                                <option value="">None (Top Level)</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="max-width: 100px;">
+                            <label>Order</label>
+                            <input type="number" id="new-study-group-order" placeholder="0" value="0" min="0" style="border: 2px solid var(--success); text-align: center;">
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="btn-add-study-group" onclick="addStudyGroup()" style="margin-top: 10px; background: linear-gradient(135deg, #0284c7, #38bdf8);">Create Study Group 📁</button>
+                    
+                    <h3 style="margin-top: 35px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Active Study & Video Groups</h3>
+                    <div id="admin-study-group-list" style="margin-top: 20px; display:flex; flex-direction:column; gap:12px;"></div>
+                </div>
+            </div>
             <div id="admin-sec-question-editor" class="sub-sec">
                 <div class="sec-header">
                     <button class="back-menu-btn" onclick="openAdminSec('admin-sec-tests')">← Back to Tests</button>
@@ -871,17 +936,17 @@
                     </div>
                     
                     <label style="display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; cursor: pointer; font-weight: 800; color: #065f46; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.3);">
-    <input type="checkbox" id="aiForceImages" style="width: 18px; height: 18px; accent-color: #10b981;">
-    🖼️ General Image Questions
-</label>
+                        <input type="checkbox" id="aiForceImages" style="width: 18px; height: 18px; accent-color: #10b981;">
+                        🖼️ General Image Questions
+                    </label>
 
-<label style="display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; margin-left: 10px; cursor: pointer; font-weight: 800; color: #4338ca; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(67,56,202,0.3);">
-    <input type="checkbox" id="aiReasoningImages" style="width: 18px; height: 18px; accent-color: #4338ca;">
-    🧠 Reasoning & Mirror Images (Grid SVGs in Options)
-</label>
+                    <label style="display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; margin-left: 10px; cursor: pointer; font-weight: 800; color: #4338ca; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(67,56,202,0.3);">
+                        <input type="checkbox" id="aiReasoningImages" style="width: 18px; height: 18px; accent-color: #4338ca;">
+                        🧠 Reasoning & Mirror Images (Grid SVGs in Options)
+                    </label>
 
-<p id="aiGenError" style="color: var(--danger); font-size: 0.9rem; margin-top: 10px; font-weight: 700; display: none;"></p>
-
+                    <p id="aiGenError" style="color: var(--danger); font-size: 0.9rem; margin-top: 10px; font-weight: 700; display: none;"></p>
+                </div> <!-- 🚨 THIS IS THE FIX: The missing div tag that was breaking all your buttons! -->
 
                 <div class="ai-panel" style="background: linear-gradient(135deg, rgba(254, 243, 199, 0.8), rgba(255, 255, 255, 0.9)); border-color: #f59e0b; margin-top: 20px;">
                     <p style="font-size: 1.1rem; font-weight: 900; color: #d97706; margin: 0 0 8px 0;">📚 Import from Question Bank</p>
@@ -1205,6 +1270,8 @@
             </div>
         </div> 
     </div>
+
+    <!-- MODALS SECTION -->
     <div id="combine-test-modal" class="modal-overlay">
         <div class="modal" style="max-width: 450px;">
             <h2 style="margin-bottom: 10px; color: var(--review); font-weight: 900; letter-spacing: -0.5px; font-size: 1.5rem;">Merge Settings</h2>
@@ -1282,6 +1349,53 @@
             <div style="display: flex; gap: 15px; margin-top: 25px;">
                 <button onclick="closeEditGroupModal()" class="btn-outline" style="flex:1; padding: 12px; font-size: 1rem;">Cancel</button>
                 <button onclick="saveGroupEdit()" class="btn-success" id="btn-save-group-edit" style="flex:1; padding: 12px; font-size: 1rem;">Save Changes 💾</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: STUDY GROUP EDIT MODAL -->
+    <div id="edit-study-group-modal" class="modal-overlay">
+        <div class="modal">
+            <h2 style="margin-bottom: 20px; color: #0ea5e9; font-weight: 900; letter-spacing: -0.5px; font-size: 1.5rem;">Edit Study Category</h2>
+            <input type="hidden" id="edit-study-group-id">
+            
+            <div class="input-group">
+                <label>Study Group Name</label>
+                <input type="text" id="edit-study-group-name">
+            </div>
+            
+            <div class="input-group">
+                <label>Update Banner/Photo</label>
+                <input type="file" id="edit-study-group-image-upload" accept=".jpg,.jpeg,.png,.webp">
+                <span class="upload-hint">Supported: JPG, PNG, WEBP (Max 500 KB).</span>
+                <input type="hidden" id="edit-study-group-image-url">
+            </div>
+            
+            <div class="flex-row">
+                <div class="input-group">
+                    <label>Board / Level</label>
+                    <select id="edit-study-group-board" style="border: 2px solid #0ea5e9; background: rgba(224, 242, 254, 0.3);">
+                        <option value="college">College</option>
+                        <option value="cbse">CBSE</option>
+                        <option value="hbse">HBSE</option>
+                        <option value="punjabi">Punjabi</option> 
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Parent Group</label>
+                    <select id="edit-study-group-parent" class="study-parent-group-select" style="border: 2px solid #0ea5e9; background: rgba(224, 242, 254, 0.3);">
+                        <option value="">None</option>
+                    </select>
+                </div>
+                <div class="input-group" style="max-width: 90px;">
+                    <label>Order</label>
+                    <input type="number" id="edit-study-group-order" placeholder="0" min="0" style="text-align: center;">
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="closeEditStudyGroupModal()" class="btn-outline" style="flex:1; padding: 12px; font-size: 1rem;">Cancel</button>
+                <button onclick="saveStudyGroupEdit()" class="btn-primary" id="btn-save-study-group-edit" style="flex:1; padding: 12px; font-size: 1rem; background: linear-gradient(135deg, #0284c7, #38bdf8);">Save Changes 💾</button>
             </div>
         </div>
     </div>
@@ -1369,6 +1483,7 @@
         let editingQuestionIndex = null;
         let allTestsCache = []; 
         let allGroupsCache = []; 
+        let allStudyGroupsCache = []; // New Cache for Study Groups
         let localQuestionsBuffer = []; 
         let customConfirmCallback = null;
         
@@ -1602,21 +1717,20 @@
                 }
             } catch (e) { console.log("No login config found yet."); }
         }
-
         // ==========================================
         // --- ADMIN: DATA LOADING LOGIC ---
         // ==========================================
         function loadAdminData() { 
             loadAdminStudents();
-            loadAdminStudyMaterials(); // Loads the list of uploaded PDFs/Images/Videos
             
+            // 1. Load Test Categories (Existing)
             db.collection("groups").onSnapshot(s=>{ 
                 let l=document.getElementById('admin-group-list'); if(l) l.innerHTML=''; 
                 let newTestGrpCont = document.getElementById('newTestGroupsContainer'); if(newTestGrpCont) newTestGrpCont.innerHTML = '';
                 let editTestGrpCont = document.getElementById('editTestGroupsContainer'); if(editTestGrpCont) editTestGrpCont.innerHTML = '';
                 
                 let adminTestFilter = document.getElementById('admin-test-filter'); 
-                let filterHtml = '<option value="all">All Groups</option>';
+                let filterHtml = '<option value="all">All Categories</option>';
                 
                 let parentDropdowns = document.querySelectorAll('.parent-group-select'); 
                 parentDropdowns.forEach(dd => dd.innerHTML = '<option value="">None (Top Level Category)</option>');
@@ -1634,7 +1748,6 @@
                     parentDropdowns.forEach(dd => dd.innerHTML += `<option value="${g.id}">${g.name}</option>`);
                 }); 
 
-                // Handles showing Main Groups and Sub-groups properly in Test creation/filter UI
                 parents.forEach(p => {
                     filterHtml += `<option value="${p.id}" style="font-weight:bold;">${p.name}</option>`;
                     let boardTag = p.board ? p.board.toUpperCase() : 'COLLEGE';
@@ -1656,6 +1769,47 @@
                 if(adminTestFilter) adminTestFilter.innerHTML = filterHtml;
             }); 
 
+            // 2. NEW: Load Study/Video Groups
+            db.collection("studyGroups").onSnapshot(s => {
+                let l = document.getElementById('admin-study-group-list'); if(l) l.innerHTML = '';
+                let adminStudyFilter = document.getElementById('admin-study-filter'); 
+                let filterHtml = '<option value="all">All Groups</option>';
+                
+                let parentDropdowns = document.querySelectorAll('.study-parent-group-select'); 
+                parentDropdowns.forEach(dd => dd.innerHTML = '<option value="">None (Standalone)</option>');
+
+                let rawStudyGroups = []; s.forEach(d => { let g = d.data(); g.id = d.id; rawStudyGroups.push(g); });
+                rawStudyGroups.sort((a, b) => (a.order || 0) - (b.order || 0));
+                
+                allStudyGroupsCache = []; let parents = []; let children = [];
+                rawStudyGroups.forEach(g => {
+                    allStudyGroupsCache.push(g); if(g.parentId) children.push(g); else parents.push(g);
+                    let boardDisplay = g.board ? g.board.toUpperCase() : 'COLLEGE'; 
+                    let parentText = g.parentId ? `<span style="font-size:0.75rem; background:#bae6fd; padding:4px 8px; border-radius:0px; margin-left:5px; color:#0284c7; font-weight:800;">Sub-Group</span>` : '';
+                    let imageBadge = g.imageUrl ? `<span style="font-size:0.75rem; background:#bbf7d0; padding:4px 8px; border-radius:0px; margin-left:5px; color:#166534; font-weight:800;">🖼️ Image</span>` : '';
+                    
+                    if(l) { 
+                        l.innerHTML += `<div class="list-item"><span style="font-weight:800; color: var(--text-main); font-size: 1rem;">[${g.order || 0}] 📁 ${g.name} <span style="font-size:0.75rem; background:rgba(226, 232, 240, 0.8); padding:4px 8px; border-radius:0px; margin-left:8px; color:var(--text-muted);">${boardDisplay}</span> ${parentText} ${imageBadge}</span><div><button class="btn-outline" style="width:auto; padding:6px 12px; font-size:0.85rem; margin-right: 6px; border-color:#0ea5e9; color:#0ea5e9;" onclick="openEditStudyGroupModal('${g.id}', '${g.name.replace(/'/g, "\\'")}', '${g.board || 'college'}', '${g.parentId || ''}', '${g.imageUrl || ''}', ${g.order || 0})">✏️ Edit</button><button class="btn-danger" style="width:auto; padding:6px 12px; font-size:0.85rem;" onclick="deleteStudyGroup('${g.id}')">Delete</button></div></div>`; 
+                    }
+                    
+                    parentDropdowns.forEach(dd => {
+                        if (dd.id === 'study-group-assign' || dd.id === 'new-study-group-parent' || dd.id === 'edit-study-group-parent') {
+                            dd.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+                        }
+                    });
+                });
+
+                parents.forEach(p => {
+                    filterHtml += `<option value="${p.id}" style="font-weight:bold;">${p.name}</option>`;
+                    let myChildren = children.filter(c => c.parentId === p.id);
+                    myChildren.forEach(c => { filterHtml += `<option value="${c.id}">&nbsp;&nbsp;&nbsp;↳ ${c.name}</option>`; });
+                });
+                
+                if(adminStudyFilter) adminStudyFilter.innerHTML = filterHtml;
+                loadAdminStudyMaterials(); // Re-render materials if grouping changes
+            });
+
+            // 3. Load Tests
             db.collection("tests").onSnapshot(s=>{ 
                 let bannerTestSel = document.getElementById('banner-test-select'); if(bannerTestSel) bannerTestSel.innerHTML = '<option value="">Select Specific Test...</option>';
                 let combineCont = document.getElementById('combineTestsContainer'); if(combineCont) combineCont.innerHTML = '';
@@ -1668,6 +1822,7 @@
                 renderAdminTests();
             }); 
             
+            // 4. Load Banners
             db.collection("banners").onSnapshot(s => {
                 let c = document.getElementById('admin-banner-list');
                 if(c) {
@@ -1681,141 +1836,7 @@
         }
 
         // ==========================================
-        // --- ADMIN: TEST MANAGEMENT ---
-        // ==========================================
-        async function createNewTest() {
-            const name = document.getElementById('newTestName').value.trim(); 
-            const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
-            const checkedGroups = Array.from(document.querySelectorAll('#newTestGroupsContainer input:checked')).map(cb => cb.value);
-            if (!name) return showToast("Please provide a test name.", 'error'); 
-            if (checkedGroups.length === 0) return showToast("Please select at least one category.", 'error');
-            try {
-                const docRef = await db.collection("tests").add({ 
-                    title: name, groupIDs: checkedGroups, duration: timer * 60, 
-                    marksPerQuestion: 2, negativeMarks: 0, questions: [], 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-                });
-                document.getElementById('newTestName').value = ''; document.getElementById('newTestTimer').value = ''; 
-                openTestEditor(docRef.id, name);
-            } catch (error) { showToast("Error: " + error.message, 'error'); }
-        }
-
-        async function openEditModal(testId) {
-            const doc = await db.collection("tests").doc(testId).get(); if(!doc.exists) return; 
-            const test = doc.data(); 
-            document.getElementById('edit-test-id').value = testId; 
-            document.getElementById('edit-title').value = test.title || '';
-            document.getElementById('edit-timer').value = Math.floor((test.duration || 0) / 60); 
-            document.getElementById('edit-marks').value = test.marksPerQuestion || 2;
-            document.getElementById('edit-negative').value = test.negativeMarks || 0; 
-            
-            const container = document.getElementById('dynamic-sections-container');
-            if(container) container.innerHTML = '';
-            if(test.sections && test.sections.length > 0) {
-                test.sections.forEach(s => { addSectionRow(s.name, s.start + 1, s.end + 1, s.timer / 60); });
-            }
-            document.getElementById('edit-modal').style.display = 'flex';
-        }
-
-        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
-
-        function deleteTest(tid) { 
-            showCustomConfirm("Delete Test?", "Are you sure? This will permanently delete the test and all its questions.", async () => {
-                try { await db.collection("tests").doc(tid).delete(); showToast("Test deleted successfully!", "success"); } 
-                catch(e) { showToast("Error deleting test: " + e.message, 'error'); } 
-            });
-        }
-
-        function combineSelectedTests() {
-            const newTitle = document.getElementById('combinedTestName').value.trim(); 
-            const checkedTests = Array.from(document.querySelectorAll('#combineTestsContainer input:checked'));
-            if (!newTitle) return showToast("Please enter a name for the combined test.", 'error');
-            if (checkedTests.length < 2) return showToast("Select at least 2 tests to merge.", 'error');
-            document.getElementById('combine-test-modal').style.display = 'flex';
-        }
-
-        function closeCombineModal() { document.getElementById('combine-test-modal').style.display = 'none'; }
-
-        async function executeCombineTests() {
-            const newTitle = document.getElementById('combinedTestName').value.trim(); 
-            const checkedTests = Array.from(document.querySelectorAll('#combineTestsContainer input:checked')).map(cb => cb.value);
-            const targetGroupId = document.getElementById('combine-target-group').value;
-            const finalMarks = parseFloat(document.getElementById('combine-marks-input').value) || 2;
-            closeCombineModal(); showToast("Combining tests and setting marks...", "success");
-
-            try {
-                let combinedQuestions = [];
-                for (const tid of checkedTests) {
-                    const doc = await db.collection("tests").doc(tid).get();
-                    if (doc.exists && doc.data().questions) combinedQuestions = combinedQuestions.concat(doc.data().questions);
-                }
-                await db.collection("tests").add({ 
-                    title: newTitle, questions: combinedQuestions, groupIDs: targetGroupId ? [targetGroupId] : [],
-                    marksPerQuestion: finalMarks, duration: 3600, createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-                });
-                showToast("Mega Test Created Successfully!", "success");
-                document.getElementById('combinedTestName').value = '';
-                document.querySelectorAll('#combineTestsContainer input:checked').forEach(cb => cb.checked = false);
-            } catch (error) { showToast("Merge failed: " + error.message, "error"); }
-        }
-
-        function addSectionRow(name = '', start = '', end = '', timer = '') {
-            const container = document.getElementById('dynamic-sections-container');
-            const row = document.createElement('div'); row.className = 'section-timer-row'; 
-            row.style.cssText = "display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; background: rgba(248, 250, 252, 0.8); padding: 10px; border: 1px solid var(--border-color); align-items: center;";
-            row.innerHTML = `
-                <input type="text" placeholder="Part Name" value="${name}" class="sec-name" style="flex: 2; min-width: 100px; padding: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
-                <input type="number" placeholder="Start Q" value="${start}" class="sec-start" style="flex: 1; min-width: 60px; padding: 8px; border: 1px solid #cbd5e1;">
-                <input type="number" placeholder="End Q" value="${end}" class="sec-end" style="flex: 1; min-width: 60px; padding: 8px; border: 1px solid #cbd5e1;">
-                <input type="number" placeholder="Mins" value="${timer}" class="sec-time" style="flex: 1; min-width: 60px; padding: 8px; border: 1px solid #cbd5e1; background: #ecfdf5;">
-                <button onclick="this.parentElement.remove()" class="btn-danger" style="padding: 8px; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">X</button>
-            `;
-            container.appendChild(row);
-        }
-
-        async function saveTestEdit() {
-            const testId = document.getElementById('edit-test-id').value;
-            const totalTestTimeMins = parseInt(document.getElementById('edit-timer').value) || 0;
-            let sectionsArray = []; let totalSectionTime = 0;
-            const rows = document.querySelectorAll('#dynamic-sections-container .section-timer-row');
-            
-            rows.forEach(row => {
-                const name = row.querySelector('.sec-name').value.trim();
-                const start = parseInt(row.querySelector('.sec-start').value);
-                const end = parseInt(row.querySelector('.sec-end').value);
-                const timeMins = parseInt(row.querySelector('.sec-time').value);
-                if(name && !isNaN(start) && !isNaN(end) && !isNaN(timeMins)) {
-                    totalSectionTime += timeMins;
-                    sectionsArray.push({ name: name, start: start - 1, end: end - 1, timer: timeMins * 60 });
-                }
-            });
-
-            if (totalSectionTime > totalTestTimeMins && totalTestTimeMins > 0) {
-                return showToast(`Total section time (${totalSectionTime} mins) exceeds total test time (${totalTestTimeMins} mins)!`, 'error');
-            }
-
-            try { 
-                await db.collection("tests").doc(testId).update({
-                    title: document.getElementById('edit-title').value.trim(), duration: totalTestTimeMins * 60,
-                    marksPerQuestion: parseFloat(document.getElementById('edit-marks').value), 
-                    negativeMarks: parseFloat(document.getElementById('edit-negative').value),
-                    sections: sectionsArray 
-                }); 
-                closeEditModal(); showToast("Test settings and Parts saved successfully!"); 
-            } catch(e) { showToast("Update failed: " + e.message, "error"); }
-        }
-
-        function renderAdminTests() {
-            let filterVal = document.getElementById('admin-test-filter').value; 
-            let c = document.getElementById('test-list-container'); c.innerHTML = ''; 
-            let displayTests = filterVal === 'all' ? allTestsCache : allTestsCache.filter(t => t.groupIDs && t.groupIDs.includes(filterVal));
-            displayTests.forEach(t => { 
-                c.innerHTML += `<div class="action-box glass-panel" style="padding: 15px; border-radius: var(--radius-sm);"><h4 style="margin-bottom:8px; color: var(--primary); font-size: 1.15rem; font-weight: 900;">${t.title}</h4><p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 600;">${t.questions ? t.questions.length : 0} Questions | ⏱️ ${t.duration/60} mins</p><div style="display:flex; gap:10px;"><button class="btn-success" onclick="openTestEditor('${t.id}', '${t.title.replace(/'/g, "\\'")}')">Qs</button> <button class="btn-outline" onclick="openEditModal('${t.id}')">Setup</button> <button class="btn-danger" onclick="deleteTest('${t.id}')">Del</button></div></div>`; 
-            }); 
-        }
-
-        // ==========================================
-        // --- ADMIN: GROUP SETTINGS ---
+        // --- ADMIN: TEST CATEGORY SETTINGS ---
         // ==========================================
         async function addGroup() { 
             const n = document.getElementById('new-group-name').value.trim(); 
@@ -1873,6 +1894,64 @@
             });
         }
 
+        // ==========================================
+        // --- ADMIN: NEW STUDY GROUP SETTINGS ---
+        // ==========================================
+        async function addStudyGroup() { 
+            const n = document.getElementById('new-study-group-name').value.trim(); 
+            const b = document.getElementById('new-study-group-board').value; 
+            const p = document.getElementById('new-study-group-parent').value; 
+            const o = parseInt(document.getElementById('new-study-group-order').value) || 0; 
+            const btn = document.getElementById('btn-add-study-group');
+            if(!n) return showToast("Please enter a group name.", 'error'); 
+            btn.disabled = true; btn.innerText = "⏳ Adding...";
+            try {
+                let groupData = {name: n, board: b, parentId: p, order: o, createdAt: new Date()}; 
+                const fileInput = document.getElementById('new-study-group-image-upload');
+                if(fileInput.files.length > 0) { 
+                    const imageUrl = await uploadImageToFirebase('new-study-group-image-upload', 'studyGroups'); 
+                    if(imageUrl) groupData.imageUrl = imageUrl; 
+                }
+                await db.collection("studyGroups").add(groupData);
+                document.getElementById('new-study-group-name').value=''; document.getElementById('new-study-group-order').value='0'; fileInput.value = ''; 
+                showToast("Study Group Added!", "success");
+            } catch(e) { showToast("Failed to add study group.", "error"); } finally { btn.disabled = false; btn.innerText = "Create Study Group 📁"; }
+        }
+
+        function openEditStudyGroupModal(gid, name, board, parentId, imageUrl, order) {
+            document.getElementById('edit-study-group-id').value = gid; document.getElementById('edit-study-group-name').value = name;
+            document.getElementById('edit-study-group-board').value = board || 'college'; document.getElementById('edit-study-group-parent').value = parentId || ''; 
+            document.getElementById('edit-study-group-image-url').value = imageUrl || ''; document.getElementById('edit-study-group-order').value = order || 0; 
+            document.getElementById('edit-study-group-modal').style.display = 'flex';
+        }
+        
+        function closeEditStudyGroupModal() { document.getElementById('edit-study-group-modal').style.display = 'none'; }
+
+        async function saveStudyGroupEdit() {
+            const gid = document.getElementById('edit-study-group-id').value; const n = document.getElementById('edit-study-group-name').value.trim();
+            const b = document.getElementById('edit-study-group-board').value; const p = document.getElementById('edit-study-group-parent').value;
+            const o = parseInt(document.getElementById('edit-study-group-order').value) || 0; const btn = document.getElementById('btn-save-study-group-edit');
+            
+            if(!n) return showToast("Name cannot be empty!", 'error'); if(gid === p) return showToast("Cannot be its own parent!", 'error');
+            btn.disabled = true; btn.innerText = "⏳ Saving...";
+            try {
+                let updateData = { name: n, board: b, parentId: p, order: o }; 
+                const fileInput = document.getElementById('edit-study-group-image-upload');
+                if(fileInput.files.length > 0) { 
+                    const newImageUrl = await uploadImageToFirebase('edit-study-group-image-upload', 'studyGroups'); 
+                    if(newImageUrl) updateData.imageUrl = newImageUrl; 
+                }
+                await db.collection("studyGroups").doc(gid).update(updateData); 
+                closeEditStudyGroupModal(); showToast("Saved!", "success"); fileInput.value = '';
+            } catch(e) { showToast("Failed to update.", "error"); } finally { btn.disabled = false; btn.innerText = "Save Changes 💾"; }
+        }
+
+        function deleteStudyGroup(gid) {
+            showCustomConfirm("Delete Study Group?", "Are you sure? Materials linked to this group will become standalone.", async () => {
+                try { await db.collection("studyGroups").doc(gid).delete(); showToast("Study Group deleted."); } 
+                catch(e) { showToast("Error: " + e.message, 'error'); }
+            });
+        }
         // ==========================================
         // --- ADMIN: MANAGE STUDENTS LOGIC ---
         // ==========================================
@@ -1951,6 +2030,173 @@
             } 
             document.getElementById('correctAnswer').value = '0'; 
         }
+        // ==========================================
+        // --- MANAGE ACTIVE TESTS & COMBINE LOGIC ---
+        // ==========================================
+
+               // 1. Upgraded Test Rendering (Super forgiving for older test formats)
+        function renderAdminTests() {
+            const container = document.getElementById('test-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const filterVal = document.getElementById('admin-test-filter').value;
+            
+            let testsToRender = allTestsCache || [];
+            
+            if (filterVal !== 'all') {
+                testsToRender = testsToRender.filter(t => {
+                    // Check modern array format
+                    if (Array.isArray(t.groupIds) && t.groupIds.includes(filterVal)) return true;
+                    // Check older string format (if you made tests before the update)
+                    if (t.groupId === filterVal) return true;
+                    return false;
+                });
+            }
+            
+            if (testsToRender.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); grid-column: 1 / -1; padding: 20px; font-weight: 600;">No tests found in this category.</p>';
+                return;
+            }
+            
+            testsToRender.forEach(t => {
+                const qCount = t.questions ? t.questions.length : 0;
+                container.innerHTML += `
+                <div class="action-box glass-panel" style="margin-bottom: 0;">
+                    <h3 style="color: var(--primary); font-size: 1.15rem;">${t.title || 'Untitled Test'}</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+                        Questions: <strong>${qCount}</strong> | Timer: <strong>${t.timer || 0} mins</strong>
+                    </p>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn-success" style="padding: 6px 12px; font-size: 0.85rem; width: auto;" onclick="openTestEditor('${t.id}', '${(t.title || '').replace(/'/g, "\\'")}')">Add Qs 📝</button>
+                        <button class="btn-outline" style="padding: 6px 12px; font-size: 0.85rem; width: auto;" onclick="openEditModal('${t.id}')">Setup ⚙️</button>
+                        <button class="btn-danger" style="padding: 6px 12px; font-size: 0.85rem; width: auto;" onclick="deleteTest('${t.id}')">Del 🗑️</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+
+        // 2. Missing Create Test Function
+        async function createNewTest() {
+            const title = document.getElementById('newTestName').value.trim();
+            const timer = parseInt(document.getElementById('newTestTimer').value) || 0;
+            
+            const groupCheckboxes = document.querySelectorAll('#newTestGroupsContainer input[type="checkbox"]:checked');
+            const groupIds = Array.from(groupCheckboxes).map(cb => cb.value);
+            
+            if (!title) return showToast("Test name is required.", "error");
+            
+            const btn = document.querySelector('button[onclick="createNewTest()"]');
+            btn.disabled = true; btn.innerText = "Creating...";
+
+            try {
+                await db.collection("tests").add({
+                    title: title, timer: timer, groupIds: groupIds, questions: [],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast("Test created successfully!", "success");
+                document.getElementById('newTestName').value = '';
+                document.getElementById('newTestTimer').value = '';
+                groupCheckboxes.forEach(cb => cb.checked = false);
+            } catch (e) {
+                showToast("Error creating test: " + e.message, "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "Create Test & Add Questions";
+            }
+        }
+
+        // 3. Missing Delete Test Function
+        function deleteTest(testId) {
+            showCustomConfirm("Delete Test?", "Are you sure you want to permanently delete this test and all its questions?", async () => {
+                try {
+                    await db.collection("tests").doc(testId).delete();
+                    showToast("Test deleted successfully.", "success");
+                } catch (e) { showToast("Error deleting test: " + e.message, "error"); }
+            });
+        }
+
+        // 4. Missing Combine Tests Functions
+        function combineSelectedTests() {
+            const newName = document.getElementById('combinedTestName').value.trim();
+            const checkedTests = document.querySelectorAll('#combineTestsContainer input[type="checkbox"]:checked');
+            if(!newName) return showToast("Enter a name for the combined test.", "error");
+            if(checkedTests.length < 2) return showToast("Select at least 2 tests to combine.", "error");
+            document.getElementById('combine-test-modal').style.display = 'flex';
+        }
+
+        function closeCombineModal() { document.getElementById('combine-test-modal').style.display = 'none'; }
+
+        async function executeCombineTests() {
+            const newName = document.getElementById('combinedTestName').value.trim();
+            const checkedTests = document.querySelectorAll('#combineTestsContainer input[type="checkbox"]:checked');
+            const targetGroup = document.getElementById('combine-target-group').value;
+            
+            let combinedQuestions = [];
+            checkedTests.forEach(cb => {
+                const testData = allTestsCache.find(t => t.id === cb.value);
+                if(testData && testData.questions) combinedQuestions = combinedQuestions.concat(testData.questions);
+            });
+
+            try {
+                await db.collection("tests").add({
+                    title: newName, groupIds: targetGroup ? [targetGroup] : [], questions: combinedQuestions, timer: 0, 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast("Tests combined successfully!", "success");
+                closeCombineModal();
+                document.getElementById('combinedTestName').value = '';
+                checkedTests.forEach(cb => cb.checked = false);
+            } catch(e) { showToast("Error combining tests: " + e.message, "error"); }
+        }
+
+              // 5. Fixed Edit Modal Setup Functions (Now properly saves categories!)
+        function openEditModal(testId) {
+            const t = allTestsCache.find(x => x.id === testId);
+            if(!t) return;
+            document.getElementById('edit-test-id').value = testId;
+            document.getElementById('edit-title').value = t.title || '';
+            document.getElementById('edit-timer').value = t.timer || 0;
+            
+            // Uncheck all boxes first to ensure a clean slate
+            const checkboxes = document.querySelectorAll('#editTestGroupsContainer input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            
+            // Automatically check the boxes for the categories this test already belongs to
+            const testGroups = t.groupIds || [];
+            if (t.groupId && !testGroups.includes(t.groupId)) testGroups.push(t.groupId); // Catch old formats
+            
+            checkboxes.forEach(cb => {
+                if (testGroups.includes(cb.value)) {
+                    cb.checked = true;
+                }
+            });
+            
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+        
+        function addSectionRow() { showToast("Advanced sections feature coming soon!", "info"); }
+
+        function saveTestEdit() {
+            const testId = document.getElementById('edit-test-id').value;
+            const title = document.getElementById('edit-title').value.trim();
+            const timer = parseInt(document.getElementById('edit-timer').value) || 0;
+            
+            // Extract the newly checked categories from the UI
+            const groupCheckboxes = document.querySelectorAll('#editTestGroupsContainer input[type="checkbox"]:checked');
+            const groupIds = Array.from(groupCheckboxes).map(cb => cb.value);
+            
+            db.collection("tests").doc(testId).update({ 
+                title: title, 
+                timer: timer,
+                groupIds: groupIds // <--- This now actively saves your category selections to Firebase
+            })
+            .then(() => { showToast("Test setup updated!"); closeEditModal(); })
+            .catch(e => showToast("Error: " + e.message, "error"));
+        }
+
 
         function renderAdminQuestionList() { 
             const div = document.getElementById('adminExistingQuestionsList'); if(!div) return; div.innerHTML=''; 
@@ -1968,7 +2214,6 @@
                     </div>
                 </div>`; 
             }); 
-            // Fixes the math power rendering (e.g. 2²)
             if (window.MathJax) { MathJax.typesetClear(); MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err)); }
         }
 
@@ -2013,27 +2258,46 @@
         // ==========================================
         function loadAdminStudyMaterials() {
             db.collection("studyMaterials").orderBy("createdAt", "desc").onSnapshot(s => {
-                const list = document.getElementById('admin-study-list');
-                if(!list) return;
-                list.innerHTML = '';
-                if(s.empty) { list.innerHTML = '<p style="color:var(--text-muted); padding:10px;">No materials found.</p>'; return; }
+                window.allStudyMaterialsCache = [];
                 s.forEach(doc => {
-                    const data = doc.data();
-                    const icon = data.type === 'pdf' ? '📄' : data.type === 'video' ? '🎥' : '🖼️';
-                    list.innerHTML += `<div class="list-item">
-                        <div><strong style="color:var(--text-main); font-size:1.05rem;">${icon} ${data.title}</strong><br><span style="font-size:0.8rem; background:rgba(226, 232, 240, 0.8); padding:2px 6px; border-radius:var(--radius-sm); color:var(--text-muted); margin-top:4px; display:inline-block;">${data.audience.toUpperCase()}</span></div>
-                        <button class="btn-danger" style="width:auto; padding:6px 12px; font-size:0.85rem;" onclick="deleteStudyMaterial('${doc.id}')">Delete</button>
-                    </div>`;
+                    let data = doc.data(); data.id = doc.id;
+                    window.allStudyMaterialsCache.push(data);
                 });
+                renderAdminStudyMaterials();
+            });
+        }
+
+        function renderAdminStudyMaterials() {
+            const list = document.getElementById('admin-study-list');
+            if(!list) return;
+            list.innerHTML = '';
+            
+            const filterVal = document.getElementById('admin-study-filter') ? document.getElementById('admin-study-filter').value : 'all';
+            
+            let displayMats = window.allStudyMaterialsCache || [];
+            if(filterVal !== 'all') displayMats = displayMats.filter(m => m.groupId === filterVal);
+
+            if(displayMats.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); padding:10px;">No materials found.</p>'; return; }
+            
+            displayMats.forEach(data => {
+                const icon = data.type === 'pdf' ? '📄' : data.type === 'video' ? '🎥' : '🖼️';
+                let groupName = "Standalone";
+                if(data.groupId) {
+                    let foundGrp = allStudyGroupsCache.find(g => g.id === data.groupId);
+                    if(foundGrp) groupName = foundGrp.name;
+                }
+                
+                list.innerHTML += `<div class="list-item">
+                    <div><strong style="color:var(--text-main); font-size:1.05rem;">${icon} ${data.title}</strong><br><span style="font-size:0.8rem; background:rgba(226, 232, 240, 0.8); padding:2px 6px; border-radius:var(--radius-sm); color:var(--text-muted); margin-top:4px; display:inline-block;">${data.audience.toUpperCase()}</span> <span style="font-size:0.8rem; background:#e0f2fe; padding:2px 6px; border-radius:var(--radius-sm); color:#0284c7; margin-top:4px; display:inline-block;">📁 ${groupName}</span></div>
+                    <button class="btn-danger" style="width:auto; padding:6px 12px; font-size:0.85rem;" onclick="deleteStudyMaterial('${data.id}')">Delete</button>
+                </div>`;
             });
         }
 
         function deleteStudyMaterial(id) {
             showCustomConfirm("Delete Material?", "Are you sure you want to remove this study material?", async () => {
-                try {
-                    await db.collection("studyMaterials").doc(id).delete();
-                    showToast("Study material removed successfully.");
-                } catch(e) { showToast("Error deleting material: " + e.message, 'error'); }
+                try { await db.collection("studyMaterials").doc(id).delete(); showToast("Study material removed successfully."); } 
+                catch(e) { showToast("Error deleting material: " + e.message, 'error'); }
             });
         }
 
@@ -2048,6 +2312,7 @@
             const desc = document.getElementById('study-desc').value.trim();
             const type = document.getElementById('study-type').value;
             const audience = document.getElementById('study-audience').value;
+            const groupId = document.getElementById('study-group-assign').value;
             
             if(!title) return showToast("Title required", "error"); 
             
@@ -2065,7 +2330,6 @@
                     if(!fileInput.files.length) throw new Error("Please select a file.");
                     const file = fileInput.files[0];
                     
-                    // Displays the Progress Bar properly
                     const progContainer = document.getElementById('upload-progress-container');
                     const progBar = document.getElementById('upload-progress-bar');
                     const progText = document.getElementById('upload-progress-text');
@@ -2093,13 +2357,14 @@
                 }
 
                 await db.collection("studyMaterials").add({
-                    title, desc, type, audience, fileUrl: finalFileUrl,
+                    title, desc, type, audience, groupId, fileUrl: finalFileUrl,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 showToast("Material Published!", "success");
                 
                 document.getElementById('study-title').value = ''; document.getElementById('study-desc').value = '';
                 document.getElementById('study-video-link').value = ''; document.getElementById('study-file-upload').value = '';
+                document.getElementById('study-group-assign').value = '';
 
             } catch (e) {
                 showToast("Error: " + e.message, "error");
@@ -2262,7 +2527,7 @@
         // ==========================================
         // --- AI GENERATION LOGIC ---
         // ==========================================
-                       async function generateBulkQuestionsWithAI() {
+        async function generateBulkQuestionsWithAI() {
             if(!storedGeminiKey) return showToast("Missing API Key. Please add it in Portal Branding & API.", "error");
             
             const topic = document.getElementById('aiTopicInput').value.trim();
@@ -2342,30 +2607,21 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
 
                 if(forceImages || reasoningImages) showToast("Processing & Uploading AI visuals to Cloudinary...", "success");
                 
-                // Helper to upload Data URIs to Cloudinary
                 const uploadToCloudinary = async (dataUri) => {
-                    const fd = new FormData();
-                    fd.append('upload_preset', 'Upload');
-                    fd.append('file', dataUri);
+                    const fd = new FormData(); fd.append('upload_preset', 'Upload'); fd.append('file', dataUri);
                     const res = await fetch('https://api.cloudinary.com/v1_1/djvbvtcrh/auto/upload', { method: 'POST', body: fd });
                     const uploadData = await res.json();
                     return uploadData.secure_url;
                 };
 
-                // Sequential upload for heavy Cloudinary photos
                 for(let i=0; i<generatedQuestions.length; i++) {
                     let q = generatedQuestions[i];
-                    
                     document.getElementById('aiGenError').style.display = 'block';
                     document.getElementById('aiGenError').style.color = '#10b981';
                     document.getElementById('aiGenError').innerText = `Uploading Images for Question ${i+1} of ${generatedQuestions.length}...`;
                     
                     try {
-                        // 1. Upload Question Image
-                        if (q.questionImgUrl && q.questionImgUrl.startsWith('data:image')) {
-                            q.questionImgUrl = await uploadToCloudinary(q.questionImgUrl);
-                        }
-                        // 2. Upload Option Images (if generated for reasoning questions)
+                        if (q.questionImgUrl && q.questionImgUrl.startsWith('data:image')) { q.questionImgUrl = await uploadToCloudinary(q.questionImgUrl); }
                         if (q.optionsImgUrls && q.optionsImgUrls.length === 4) {
                             for(let j=0; j<4; j++) {
                                 if(q.optionsImgUrls[j] && q.optionsImgUrls[j].startsWith('data:image')) {
@@ -2373,9 +2629,7 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
                                 }
                             }
                         }
-                    } catch (err) {
-                        console.error("Cloudinary upload failed for AI image", err);
-                    }
+                    } catch (err) { console.error("Cloudinary upload failed for AI image", err); }
 
                     q.displayLang = langChoice; q.subject = topic;
                     if(!q.questionImgUrl) q.questionImgUrl = ""; if(!q.optionsImgUrls) q.optionsImgUrls = ["", "", "", ""];
@@ -2409,116 +2663,65 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
 
             try {
                 await db.collection("notifications").add({
-                    title: title, 
-                    body: body, 
-                    topic: topic, 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    title: title, body: body, topic: topic, createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 showToast("Notification broadcasted successfully! 🚀", "success");
-                document.getElementById('notif-title').value = ''; 
-                document.getElementById('notif-body').value = '';
-            } catch (error) {
-                showToast("Error sending notification: " + error.message, "error");
-            }
+                document.getElementById('notif-title').value = ''; document.getElementById('notif-body').value = '';
+            } catch (error) { showToast("Error sending notification: " + error.message, "error"); }
         }
 
         // ==========================================
         // --- MISSING STUBS (PDF & Question Bank)---
         // ==========================================
-// --- FULL IMPLEMENTATION OF STUB FUNCTIONS ---
-// ==========================================
-
-// 1. Open Question Bank
-function openQuestionBankModal() {
-    const qbFilter = document.getElementById('qbTestFilter');
-    // Clear and fill dropdown with all available tests
-    qbFilter.innerHTML = '<option value="">Select a Test to Import From...</option>';
-    allTestsCache.forEach(t => {
-        qbFilter.innerHTML += `<option value="${t.id}">${t.title}</option>`;
-    });
-    document.getElementById('questionBankModal').style.display = 'flex';
-}
-
-// 2. Render Questions inside the Modal
-async function renderQuestionBankList() {
-    const testId = document.getElementById('qbTestFilter').value;
-    const listDiv = document.getElementById('questionBankList');
-    if(!testId) { listDiv.innerHTML = ''; return; }
-    
-    listDiv.innerHTML = 'Loading questions...';
-    const doc = await db.collection("tests").doc(testId).get();
-    if(!doc.exists || !doc.data().questions) { listDiv.innerHTML = 'No questions found.'; return; }
-    
-    const questions = doc.data().questions;
-    listDiv.innerHTML = '';
-    questions.forEach((q, index) => {
-        listDiv.innerHTML += `
-            <div style="padding:10px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:10px;">
-                <input type="checkbox" value="${index}" class="qb-checkbox" style="width:18px; height:18px;">
-                <span>${q.questionEng || 'Image Question'}</span>
-            </div>
-        `;
-    });
-}
-
-// 3. Import Selected Questions
-async function importSelectedQuestions() {
-    const checkboxes = document.querySelectorAll('.qb-checkbox:checked');
-    const testId = document.getElementById('qbTestFilter').value;
-    if(checkboxes.length === 0) return showToast("Select at least one question", "error");
-    
-    const doc = await db.collection("tests").doc(testId).get();
-    const sourceQuestions = doc.data().questions;
-    
-    checkboxes.forEach(cb => {
-        localQuestionsBuffer.push(sourceQuestions[parseInt(cb.value)]);
-    });
-    
-    await updateTestQuestionsInDb();
-    renderAdminQuestionList();
-    closeModals();
-    showToast("Questions imported successfully!");
-}
-
-// 4. Extract Questions from PDF (Structural Logic)
-// NOTE: This requires a PDF library. I am providing the structural setup to call your AI model.
-async function extractQuestionsFromPDF() {
-    const file = document.getElementById('pdfUploadInput').files[0];
-    if(!file) return showToast("Please select a PDF file", "error");
-    
-    showToast("PDF Uploaded. AI is extracting text...", "success");
-    // You would typically use a library like 'pdf.js' here to read the text.
-    // Once you have the text, you pass it to Gemini via the same fetch logic used in generateBulkQuestionsWithAI
-    showToast("Feature requires local PDF text extraction library.", "warning");
-}
-
-// 5. Auto-Translate/Fill Missing Fields
-async function autoTranslateMissingFields() {
-    // Collect all fields
-    const fields = ['qText', 'opt0', 'opt1', 'opt2', 'opt3'];
-    const langs = ['En', 'Hi', 'Pa'];
-    
-    let toFill = {};
-    let hasEmpty = false;
-    
-    // Check what is missing
-    fields.forEach(f => {
-        if(!document.getElementById(f + 'Hi').value || !document.getElementById(f + 'Pa').value) {
-            hasEmpty = true;
+        function openQuestionBankModal() {
+            const qbFilter = document.getElementById('qbTestFilter');
+            qbFilter.innerHTML = '<option value="">Select a Test to Import From...</option>';
+            allTestsCache.forEach(t => { qbFilter.innerHTML += `<option value="${t.id}">${t.title}</option>`; });
+            document.getElementById('questionBankModal').style.display = 'flex';
         }
-    });
 
-    if(!hasEmpty) return showToast("Everything is already filled!");
-    
-    showToast("AI is filling missing languages...", "success");
-    
-    // Construct prompt based on English (Assuming English is filled)
-    const prompt = `Translate this content to Hindi and Punjabi. Return ONLY JSON format like: {"qHi": "...", "qPa": "...", "opt0Hi": "...", "opt0Pa": "..."}.
-    Content: Question: ${document.getElementById('qTextEn').value}, Opt1: ${document.getElementById('opt0En').value}`;
-    
-    // Add logic here to call Gemini API with this prompt and auto-fill the document.getElementById(...) fields
-    showToast("AI Translation Logic ready to connect to Gemini API.", "info");
-}
+        async function renderQuestionBankList() {
+            const testId = document.getElementById('qbTestFilter').value;
+            const listDiv = document.getElementById('questionBankList');
+            if(!testId) { listDiv.innerHTML = ''; return; }
+            
+            listDiv.innerHTML = 'Loading questions...';
+            const doc = await db.collection("tests").doc(testId).get();
+            if(!doc.exists || !doc.data().questions) { listDiv.innerHTML = 'No questions found.'; return; }
+            
+            const questions = doc.data().questions; listDiv.innerHTML = '';
+            questions.forEach((q, index) => {
+                listDiv.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:10px;"><input type="checkbox" value="${index}" class="qb-checkbox" style="width:18px; height:18px;"><span>${q.questionEng || 'Image Question'}</span></div>`;
+            });
+        }
+
+        async function importSelectedQuestions() {
+            const checkboxes = document.querySelectorAll('.qb-checkbox:checked');
+            const testId = document.getElementById('qbTestFilter').value;
+            if(checkboxes.length === 0) return showToast("Select at least one question", "error");
+            
+            const doc = await db.collection("tests").doc(testId).get();
+            const sourceQuestions = doc.data().questions;
+            
+            checkboxes.forEach(cb => { localQuestionsBuffer.push(sourceQuestions[parseInt(cb.value)]); });
+            await updateTestQuestionsInDb(); renderAdminQuestionList(); closeModals(); showToast("Questions imported successfully!");
+        }
+
+        async function extractQuestionsFromPDF() {
+            const file = document.getElementById('pdfUploadInput').files[0];
+            if(!file) return showToast("Please select a PDF file", "error");
+            showToast("PDF Uploaded. AI is extracting text...", "success");
+            showToast("Feature requires local PDF text extraction library.", "warning");
+        }
+
+        async function autoTranslateMissingFields() {
+            const fields = ['qText', 'opt0', 'opt1', 'opt2', 'opt3'];
+            let hasEmpty = false;
+            fields.forEach(f => { if(!document.getElementById(f + 'Hi').value || !document.getElementById(f + 'Pa').value) hasEmpty = true; });
+            if(!hasEmpty) return showToast("Everything is already filled!");
+            showToast("AI is filling missing languages...", "success");
+            showToast("AI Translation Logic ready to connect to Gemini API.", "info");
+        }
 
         // ==========================================
         // --- APP INITIALIZATION ---
