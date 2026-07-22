@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -318,11 +317,53 @@
         .kd-anim-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.5rem; font-weight: 800; background: rgba(0,0,0,0.7); padding: 12px 24px; border-radius: 30px; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 20; text-shadow: 0 2px 4px rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
 
         /* Pop-up Menus for Speed & Quality */
-        .kd-pop-menu { position: absolute; bottom: 60px; right: 10px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 2px; z-index: 50; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1); min-width: 110px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transform: translateY(0); pointer-events: auto; }
-        .kd-pop-menu.hidden { opacity: 0; pointer-events: none; transform: translateY(10px); }
-        .kd-menu-item { background: transparent; color: white; border: none; padding: 10px 15px; text-align: left; font-size: 0.85rem; font-weight: 700; border-radius: 8px; cursor: pointer; transition: background 0.2s; display: flex; justify-content: space-between; align-items: center; }
-        .kd-menu-item:hover { background: rgba(255,255,255,0.1); }
-        .kd-menu-item.active { background: var(--primary); color: white; }
+.kd-pop-menu { 
+    position: absolute; 
+    bottom: 50px; /* Lowered slightly to save space */
+    right: 10px; 
+    background: rgba(15, 23, 42, 0.95); 
+    backdrop-filter: blur(10px); 
+    border-radius: 12px; 
+    padding: 5px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 2px; 
+    z-index: 50; 
+    transition: all 0.2s; 
+    border: 1px solid rgba(255,255,255,0.1); 
+    min-width: 100px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+    transform: translateY(0); 
+    pointer-events: auto;
+    
+    /* NEW: Prevent overflow and allow smooth scrolling on small screens */
+    max-height: calc(100% - 65px); 
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+}
+.kd-pop-menu::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+.kd-pop-menu.hidden { opacity: 0; pointer-events: none; transform: translateY(10px); }
+
+.kd-menu-item { 
+    background: transparent; 
+    color: white; 
+    border: none; 
+    /* NEW: Tighter padding and smaller text for mobile perfection */
+    padding: 8px 12px; 
+    text-align: left; 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: background 0.2s; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    white-space: nowrap; /* Forces text to stay on one line */
+}
+.kd-menu-item:hover { background: rgba(255,255,255,0.1); }
+.kd-menu-item.active { background: var(--primary); color: white; }
 
 
         @media (max-width: 768px) {
@@ -468,26 +509,35 @@
                 <div class="grid-list" id="student-test-list"></div>
             </div>
 
-            <div id="student-sec-study-hub" class="sub-sec">
-                <div style="margin-bottom: 15px;">
-                    <h2 style="font-weight: 900; font-size: 1.5rem; color: var(--text-main); margin-bottom: 0;">💡 Smart Knowledge Hub</h2>
+                        <div id="student-sec-study-hub" class="sub-sec">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 id="study-hub-title" style="font-weight: 900; font-size: 1.5rem; color: var(--text-main); margin-bottom: 0;">💡 Smart Knowledge Hub</h2>
+                    <button id="study-hub-back-btn" class="nav-btn" style="display: none; padding: 5px 12px; font-size: 0.75rem;" onclick="goBackStudyHub()">⬅ Back</button>
                 </div>
-                <div class="lib-search-bar">
-                    <div class="lib-search-input-wrapper">
-                        <span>🔍</span>
-                        <input type="text" id="lib-search-input" placeholder="Search by topic..." onkeyup="if(event.key==='Enter') filterStudyHubSearch(this.value); else filterStudyHubSearch(this.value)">
+
+                <!-- New Folder Grid UI (Matches your screenshot) -->
+                <div class="grid-list" id="study-group-list"></div>
+
+                <!-- Content Container (Hidden until a folder is selected) -->
+                <div id="study-materials-container" style="display: none;">
+                    <div class="lib-search-bar">
+                        <div class="lib-search-input-wrapper">
+                            <span>🔍</span>
+                            <input type="text" id="lib-search-input" placeholder="Search by topic..." onkeyup="if(event.key==='Enter') filterStudyHubSearch(this.value); else filterStudyHubSearch(this.value)">
+                        </div>
+                        <button class="lib-search-btn" onclick="filterStudyHubSearch(document.getElementById('lib-search-input').value)">Enter ↵</button>
                     </div>
-                    <button class="lib-search-btn" onclick="filterStudyHubSearch(document.getElementById('lib-search-input').value)">Enter ↵</button>
+                    <div class="lib-filters" id="lib-category-filters">
+                        <button id="filter-all" class="lib-filter-pill active" onclick="filterStudyCategory('all', this)">✨ All Resources</button>
+                        <button class="lib-filter-pill" onclick="filterStudyCategory('video', this)">🎬 Video Lectures</button>
+                        <button class="lib-filter-pill" onclick="filterStudyCategory('pdf', this)">📄 Study Notes</button>
+                        <button class="lib-filter-pill" onclick="filterStudyCategory('sheet', this)">🖼️ Cheat Sheets</button>
+                        <button id="filter-offline" class="lib-filter-pill" style="border-color: #10b981; color: #059669;" onclick="filterStudyCategory('offline', this)">📲 Saved Offline</button>
+                    </div>
+                    <div class="lib-grid" id="new-study-hub-grid"></div>
                 </div>
-                <div class="lib-filters" id="lib-category-filters">
-                    <button id="filter-all" class="lib-filter-pill active" onclick="filterStudyCategory('all', this)">✨ All Resources</button>
-                    <button class="lib-filter-pill" onclick="filterStudyCategory('video', this)">🎬 Video Lectures</button>
-                    <button class="lib-filter-pill" onclick="filterStudyCategory('pdf', this)">📄 Study Notes</button>
-                    <button class="lib-filter-pill" onclick="filterStudyCategory('sheet', this)">🖼️ Cheat Sheets</button>
-                    <button id="filter-offline" class="lib-filter-pill" style="border-color: #10b981; color: #059669;" onclick="filterStudyCategory('offline', this)">📲 Saved Offline</button>
-                </div>
-                <div class="lib-grid" id="new-study-hub-grid"></div>
             </div>
+
 
             <div id="student-sec-attempts" class="sub-sec">
                 <h2 style="margin-bottom: 20px; font-weight: 800; font-size: 1.3rem;">My Attempt History</h2>
@@ -627,7 +677,8 @@
     <div id="smart-resource-modal" class="modal-overlay" style="z-index: 4500; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);">
         <div class="modal" style="width: 100%; max-width: 900px; height: 100%; max-height: 100%; border-radius: 0; padding: 0; background: #0f172a; display: flex; flex-direction: column; overflow: hidden; margin: 0 auto;">
             
-            <div style="background: #ffffff; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; gap: 10px;">
+                        <div style="background: #ffffff; display: flex; justify-content: space-between; align-items: center; padding: calc(15px + env(safe-area-inset-top)) 20px 12px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; gap: 10px;">
+
                 <h3 id="smart-modal-title" style="margin: 0; font-weight: 900; font-size: 1.1rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">Resource</h3>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <button id="btn-offline-action" style="background: var(--primary-light); color: var(--primary); border: none; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; cursor: pointer; display: none; align-items: center; gap: 5px; transition: 0.2s; white-space: nowrap;">
@@ -886,12 +937,87 @@
         });
 
         if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').then((registration) => {
-                console.log('ServiceWorker registration successful');
-              }).catch((error) => console.log('ServiceWorker registration failed: ', error));
-          });
+  window.addEventListener('load', () => {
+    // Register the specific firebase service worker
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then((registration) => {
+        console.log('ServiceWorker registration successful');
+        // Tell Firebase to use this registration for background pushes
+        if (typeof firebase !== 'undefined' && firebase.messaging.isSupported()) {
+            firebase.messaging().useServiceWorker(registration);
         }
+      }).catch((error) => console.log('ServiceWorker registration failed: ', error));
+  });
+}
+
+// Safely initialize messaging
+let messaging = null;
+try {
+    if (firebase.messaging.isSupported()) {
+        messaging = firebase.messaging();
+        
+        // Listen for messages while the app is open
+        messaging.onMessage((payload) => {
+            // Keep the in-app toast
+            showToast(`🔔 ${payload.notification.title}: ${payload.notification.body}`, "success");
+            
+            // NEW: Trigger the native Android pop-up notification!
+            if (window.ApkNotifications) {
+                window.ApkNotifications.show(payload.notification.title, payload.notification.body);
+            }
+        });
+    }
+} catch (error) {
+    console.warn("Firebase Messaging is not supported on this device/browser.", error);
+}
+
+async function initPushNotifications(uid) {
+    if (window.ApkNotifications) {
+        window.ApkNotifications.requestPermission();
+    }
+
+    if (!messaging) {
+        showToast("⚠️ FCM Messaging not supported on this browser/connection.", "warning");
+        return;
+    } 
+    
+    try {
+        // 1. Request Browser Permission
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            showToast("⚠️ Notification permission was denied.", "warning");
+            return;
+        }
+
+        // 2. Register Service Worker explicitly before requesting token
+        const registration = await navigator.serviceWorker.ready;
+
+        // 3. Generate FCM Token using VAPID Key
+        const token = await messaging.getToken({ 
+            vapidKey: 'BOttTLZ30om19jkjoDJyIUD7qgW-KOyicI2oBS_98rXKwx2iHxXJAelUn_vtjxGiJ-uA0_4BYFNqSbtHtObciNk',
+            serviceWorkerRegistration: registration 
+        });
+
+        if (token) {
+            console.log("FCM Token Generated:", token);
+            // Use set with merge:true so it creates or updates safely
+            await db.collection("users").doc(uid).set({ 
+                fcmToken: token,
+                fcmTokenUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            showToast("🔔 Push Notifications activated!", "success");
+        } else {
+            showToast("⚠️ Failed to generate FCM Token. No token returned.", "error");
+        }
+
+    } catch (error) {
+        console.error('Push Notification Error:', error);
+        showToast("FCM Error: " + error.message, "error");
+    }
+}
+
+
 
         // ==========================================
         // --- GLOBAL VARIABLES ---
@@ -905,6 +1031,8 @@
         let testSections = [], currentSectionIdx = 0;
 
         let allGroupsCache = [], studentAttemptedDB = {}; 
+let allStudyGroupsCache = []; // New variable for video folders
+
         let currentLanguage = 'Eng', currentSearchQuery = "", currentViewingGroupId = "";
         let storedGeminiKey = ""; 
         
@@ -917,6 +1045,9 @@
         let hubMaterialsCache = [];
         let currentHubFilter = 'all';
         let currentHubSearchQuery = '';
+                let currentStudyParentId = "";
+        let studyGroupHistory = [];
+
 
         // ==========================================
         // --- ANTI-REFRESH & SECURITY SYSTEM ---
@@ -1007,9 +1138,18 @@
             
             if(secId === 'student-sec-groups') {
                 currentViewingGroupId = ""; loadGroupsForStudents("", true);
-            } else if (secId === 'student-sec-study-hub') {
+                        } else if (secId === 'student-sec-study-hub') {
                 openStudentSec('student-sec-study-hub', true);
+                
+                // Initialize folders first
+                studyGroupHistory = []; 
+                loadStudyGroups(""); 
+                
                 if (!navigator.onLine) {
+                    // Bypass folders if offline to show downloaded content directly
+                    document.getElementById('study-group-list').style.display = 'none';
+                    document.getElementById('study-materials-container').style.display = 'block';
+
                     currentHubFilter = 'offline';
                     document.querySelectorAll('#lib-category-filters .lib-filter-pill').forEach(btn => btn.classList.remove('active'));
                     const offlineBtn = document.getElementById('filter-offline');
@@ -1098,7 +1238,7 @@
             }
         }
 
-        // ==========================================
+                // ==========================================
         // --- AUTH & AUTO-LOGIN STATE ---
         // ==========================================
         const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
@@ -1117,11 +1257,17 @@
                 navigate('view-student', false); 
                 loadStudentData();
                 loadStudentPopup();
+                
+                // ADD THIS NEW LINE HERE:
+                // Ask for permission and generate token on successful login
+                initPushNotifications(user.uid); 
+                
             } else { 
                 currentUserRole = null; 
                 navigate('view-login', false); 
             }
         });
+
 
         function logout() { 
             if(isTestActive) { showToast("Finish the test before logging out!", "error"); return; }
@@ -1143,6 +1289,41 @@
                 }
             });
         }
+    
+let isInitialAlertLoad = true;
+
+function listenForLiveNotifications() {
+    db.collection("live_alerts")
+      .orderBy("timestamp", "desc")
+      .limit(1)
+      .onSnapshot((snapshot) => {
+          
+          // Ignore the old alerts sitting in the database when the app first opens
+          if (isInitialAlertLoad) {
+              isInitialAlertLoad = false;
+              return; 
+          }
+
+          snapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                  const alertData = change.doc.data();
+                  
+                  // 1. Show the on-screen toast just to prove it received the data
+                  showToast(`🔔 ${alertData.title}`, "success");
+                  
+                  // 2. Trigger the Native Android Pop-up!
+                  if (window.ApkNotifications) {
+                      window.ApkNotifications.show(alertData.title || "Alert", alertData.message || "New update!");
+                  } else {
+                      console.log("Native notification bridge not found.");
+                  }
+              }
+          });
+      }, (error) => {
+          // If Firestore blocks it, this will show a red toast on the screen telling you why!
+          showToast("Alert Error: " + error.message, "error");
+      });
+}
 
         function loginSecure() {
             if (checkDeviceLockout()) return;
@@ -1203,6 +1384,10 @@
                     loadGroupsForStudents(currentViewingGroupId, false);
                 }
             });
+           
+            db.collection("studyGroups").onSnapshot(snap => {
+                allStudyGroupsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0)-(b.order||0));
+            });
 
             db.collection("banners").onSnapshot(snap => {
                 const cont = document.getElementById('student-banners');
@@ -1224,6 +1409,37 @@
             loadLeaderboardTests(); 
             initKnowledgeHub();
         }
+// Start listening for live notifications from Firestore
+function listenForLiveNotifications() {
+    // We listen to a collection named 'live_alerts'
+    db.collection("live_alerts")
+      .orderBy("timestamp", "desc")
+      .limit(1) // Only look at the newest one
+      .onSnapshot((snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+              // When a new document is added
+              if (change.type === "added") {
+                  const alertData = change.doc.data();
+                  
+                  // Make sure it's actually a new alert (sent within the last 5 minutes)
+                  const now = Date.now();
+                  const alertTime = alertData.timestamp ? alertData.timestamp.toMillis() : 0;
+                  
+                  if (now - alertTime < 300000) { // 300000 ms = 5 minutes
+                      // Trigger the native Android pop-up!
+                      if (window.ApkNotifications) {
+                          window.ApkNotifications.show(alertData.title, alertData.message);
+                      }
+                      // Also show the in-app toast
+                      showToast(`🔔 ${alertData.title}`, "success");
+                  }
+              }
+          });
+      });
+}
+
+// Don't forget to call this function when the user logs in!
+// Add listenForLiveNotifications(); inside your onAuthStateChanged block.
 
         function handleGlobalSearch(query) {
             currentSearchQuery = query.toLowerCase();
@@ -1858,6 +2074,80 @@
         }
 
         function filterStudyHubSearch(query) { currentHubSearchQuery = query.toLowerCase(); renderKnowledgeHub(); }
+                function loadStudyGroups(parentId = "") {
+            currentStudyParentId = parentId;
+            const cont = document.getElementById('study-group-list');
+            const matCont = document.getElementById('study-materials-container');
+            const backBtn = document.getElementById('study-hub-back-btn');
+            const title = document.getElementById('study-hub-title');
+            
+            cont.innerHTML = '';
+            cont.style.display = 'grid'; 
+            matCont.style.display = 'none'; 
+            
+            if(parentId) {
+                backBtn.style.display = 'block';
+                const pg = allStudyGroupsCache.find(g => g.id === parentId);
+                title.innerText = pg ? pg.name : "Sub-Categories";
+            } else {
+                backBtn.style.display = 'none';
+                title.innerText = "💡 Smart Knowledge Hub";
+            }
+
+            let hasFolders = false;
+            // Changed from allGroupsCache to allStudyGroupsCache
+            allStudyGroupsCache.filter(g => (g.parentId || "") === parentId).forEach((g, i) => {
+                hasFolders = true;
+                const hasChildren = allStudyGroupsCache.some(c => c.parentId === g.id);
+                const colorCls = `color-${(i % 5) + 1}`;
+                if(currentHubSearchQuery && !g.name.toLowerCase().includes(currentHubSearchQuery)) return;
+
+                cont.innerHTML += `<div class="group-card ${colorCls}" onclick="handleStudyGroupClick('${g.id}','${g.name.replace(/'/g, "\\'")}', ${hasChildren})">
+                    ${hasChildren ? '<div class="sub-group-badge">📁 Folders</div>' : ''}
+                    <div class="group-card-content"><h3>${g.name}</h3></div>
+                </div>`;
+            });
+            
+                        // Fallback: If no folders exist to display
+            if (!hasFolders) {
+                // If we clicked into an empty folder, OR if the database has zero folders created yet
+                if (parentId !== "" || allStudyGroupsCache.length === 0) {
+                    cont.style.display = 'none';
+                    matCont.style.display = 'block';
+                    renderKnowledgeHub(); 
+                } else {
+                    cont.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 20px; font-weight: 600;">No folders found.</p>`;
+                }
+            }
+
+        }
+
+
+        function handleStudyGroupClick(gid, gn, hasChildren) {
+    studyGroupHistory.push(currentStudyParentId);
+    
+    // --- NEW ADDITION: Tell the phone's hardware history we opened a folder ---
+    window.history.pushState({ view: 'view-student', sec: 'student-sec-study-hub' }, "", `#folder`);
+    
+    if(hasChildren) {
+        loadStudyGroups(gid);
+    } else {
+        currentStudyParentId = gid; 
+        document.getElementById('study-group-list').style.display = 'none';
+        document.getElementById('study-materials-container').style.display = 'block';
+        document.getElementById('study-hub-title').innerText = gn;
+        document.getElementById('study-hub-back-btn').style.display = 'block';
+        renderKnowledgeHub();
+    }
+}
+
+
+        function goBackStudyHub() {
+    // --- NEW LOGIC: Trigger the browser/phone's native back action ---
+    // The popstate listener at the bottom will catch this and render the folder automatically.
+    window.history.back();
+}
+
 
         async function renderKnowledgeHub() {
             const grid = document.getElementById('new-study-hub-grid');
@@ -1888,11 +2178,15 @@
                 return;
             }
 
-            let filtered = hubMaterialsCache.filter(item => {
+                        let filtered = hubMaterialsCache.filter(item => {
                 const matchCategory = (currentHubFilter === 'all') || (item.type === currentHubFilter);
                 const matchSearch = !currentHubSearchQuery || (item.title.toLowerCase().includes(currentHubSearchQuery) || (item.description && item.description.toLowerCase().includes(currentHubSearchQuery)));
-                return matchCategory && matchSearch;
+                // Filters material to only show items belonging to the clicked group
+                const matchGroup = !currentStudyParentId || (item.groupId === currentStudyParentId) || (item.groupIDs && item.groupIDs.includes(currentStudyParentId));
+                
+                return matchCategory && matchSearch && matchGroup;
             });
+
 
             if (filtered.length === 0) {
                 grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 700; background: #ffffff; border-radius: 16px; border: 1px dashed var(--border-color);">📭 No study materials found matching your filter.</div>`;
@@ -1945,9 +2239,10 @@
                 if (savedVideo && savedVideo.blob) { isOfflineAvailable = true; finalMediaUrl = URL.createObjectURL(savedVideo.blob); }
             } catch(e) {}
 
-            if (type === 'video') {
-                downloadBtn.style.display = 'flex';
+                        if (type === 'video') {
+                downloadBtn.style.display = 'none'; // Changed from 'flex' to remove download button
                 if (isOfflineAvailable) {
+
                     downloadBtn.innerHTML = '<span>✅ Saved Offline</span>';
                     downloadBtn.style.background = '#d1fae5'; downloadBtn.style.color = '#059669';
                     downloadBtn.onclick = () => showToast("This video is already saved securely in your app!", "success");
@@ -2141,31 +2436,78 @@
                 // Quality Item Selection
                 document.querySelectorAll('#kd-quality-menu .kd-menu-item').forEach(btn => {
                     const selectQuality = (e) => {
-                        e.preventDefault(); e.stopPropagation();
-                        document.querySelectorAll('#kd-quality-menu .kd-menu-item').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        let val = e.target.getAttribute('data-val');
-                        let label = e.target.innerText;
-                        kdVideoApi.setQuality(val);
-                        qualityMenu.classList.add('hidden');
-                        showAnim(label);
-                        resetUI();
-                    };
+    e.preventDefault(); e.stopPropagation();
+    document.querySelectorAll('#kd-quality-menu .kd-menu-item').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    
+    let val = e.target.getAttribute('data-val');
+    let label = e.target.innerText;
+    
+    kdVideoApi.setQuality(val);
+    
+    // Nudge the player to force immediate buffer wipe and quality apply
+    if(isPlaying && finalMediaUrl.includes('youtu')) {
+        kdVideoApi.pause();
+        setTimeout(() => kdVideoApi.play(), 100);
+    }
+    
+    qualityMenu.classList.add('hidden');
+    showAnim(label);
+    resetUI();
+};
+
                     btn.addEventListener('touchstart', selectQuality);
                     btn.addEventListener('click', selectQuality);
                 });
                 
-                // Fullscreen
-                const handleFS = (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    const p = document.getElementById('kd-custom-player');
-                    if (!document.fullscreenElement) {
-                        if (p.requestFullscreen) p.requestFullscreen(); else if (p.webkitRequestFullscreen) p.webkitRequestFullscreen();
-                    } else {
-                        if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                    }
-                    resetUI();
-                };
+              // Fullscreen with Strict Orientation Locking
+const handleFS = (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const p = document.getElementById('kd-custom-player');
+    
+    // Check both standard and webkit prefixes
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        
+        // 1. Trigger Fullscreen and capture the Promise
+        let fsPromise;
+        if (p.requestFullscreen) {
+            fsPromise = p.requestFullscreen();
+        } else if (p.webkitRequestFullscreen) {
+            fsPromise = p.webkitRequestFullscreen(); // Safari/Older iOS fallback
+        }
+        
+        // 2. Wait for Fullscreen to be approved BEFORE locking orientation
+        if (fsPromise !== undefined) {
+            fsPromise.then(() => {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(err => console.log("Orientation lock denied by browser:", err));
+                }
+            }).catch(err => console.error("Fullscreen failed:", err));
+        } else {
+            // Fallback for older browsers that don't return a Promise
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(err => console.log("Orientation lock denied:", err));
+            }
+        }
+
+    } else {
+        // Exit Fullscreen
+        if (document.exitFullscreen) document.exitFullscreen(); 
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        
+        // Unlock Orientation back to user's device preference
+        try {
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            } else if (screen.unlockOrientation) {
+                screen.unlockOrientation();
+            }
+        } catch(err) {}
+    }
+    resetUI();
+};
+
+
                 document.getElementById('kd-fs-btn').addEventListener('touchstart', handleFS);
                 document.getElementById('kd-fs-btn').addEventListener('click', handleFS);
 
@@ -2346,28 +2688,76 @@
         }
 
         function closeSmartResource(fromPopState = false) {
-            const modal = document.getElementById('smart-resource-modal');
-            if (modal.style.display !== 'none') {
-                modal.style.display = 'none';
-                clearInterval(kdProgressInterval);
-                clearTimeout(kdUIHideTimeout);
-                if (activeVideoPlayer) { activeVideoPlayer.dispose(); activeVideoPlayer = null; }
-                document.getElementById('smart-embed-container').innerHTML = ''; 
-                if (!fromPopState && window.location.hash === "#smart-resource") window.history.back();
-            }
+    const modal = document.getElementById('smart-resource-modal');
+    if (modal.style.display !== 'none') {
+        
+        if (!fromPopState) {
+            // If the user tapped the visual 'X' button, trigger the phone's native 
+            // back button. This keeps the history perfectly synced!
+            window.history.back();
+            return;
         }
+        
+        // Actually hide and clean up the video player
+        modal.style.display = 'none';
+        clearInterval(kdProgressInterval);
+        clearTimeout(kdUIHideTimeout);
+        if (activeVideoPlayer) { activeVideoPlayer.dispose(); activeVideoPlayer = null; }
+        document.getElementById('smart-embed-container').innerHTML = ''; 
+    }
+}
+
 
         window.addEventListener('popstate', function(event) {
-            const smartModal = document.getElementById('smart-resource-modal');
-            if (smartModal && smartModal.style.display === 'flex') return closeSmartResource(true);
-            if (isTestActive) { window.history.pushState({ view: 'view-test' }, "", `#view-test`); return showExitModal(); }
-            if (event.state && event.state.view) {
-                navigate(event.state.view, false);
-                if (event.state.sec) openStudentSec(event.state.sec, false);
+    // 1. Close Smart Resource Modal if open
+    const smartModal = document.getElementById('smart-resource-modal');
+    if (smartModal && smartModal.style.display === 'flex') {
+        closeSmartResource(true);
+        // FIX: Removed the buggy pushState here so it remembers you are inside a folder!
+        return;
+    }
+
+    // 2. Prevent exiting during an active test
+    if (isTestActive) { 
+        window.history.pushState({ view: 'view-test' }, "", `#view-test`); 
+        return showExitModal(); 
+    }
+
+    // 3. Handle backing out of Study Hub Folders
+    if (document.getElementById('student-sec-study-hub').classList.contains('active') && studyGroupHistory.length > 0) {
+        // Pop the previous folder ID and load it
+        const prevId = studyGroupHistory.pop();
+        loadStudyGroups(prevId);
+        return;
+    }
+
+    // 4. If at the main dashboard, trap the back button and show Exit Confirm
+    if (!event.state || event.state.view === 'view-student' || event.state.view === 'view-login') {
+        // Push state immediately so the app doesn't close natively
+        window.history.pushState({ view: event.state ? event.state.view : 'view-student' }, "", "");
+        
+        showCustomConfirm("Exit Application", "Are you sure you want to close the app?", () => {
+            // Mobile Native Bridge Exit
+            if (window.Android && window.Android.exitApp) {
+                window.Android.exitApp();
+            } else if (window.Capacitor && window.Capacitor.Plugins.App) {
+                window.Capacitor.Plugins.App.exitApp();
             } else {
-                if (currentUserRole === 'student') navigate('view-student', false);
+                window.close();
             }
         });
+        return;
+    }
+
+    // 5. Default Navigation handling
+    if (event.state && event.state.view) {
+        navigate(event.state.view, false);
+        if (event.state.sec) openStudentSec(event.state.sec, false);
+    } else {
+        if (currentUserRole === 'student') navigate('view-student', false);
+    }
+});
+
 
         window.onload = () => { 
             loadPortalBranding(); 
