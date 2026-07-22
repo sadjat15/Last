@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1238,35 +1239,92 @@ let allStudyGroupsCache = []; // New variable for video folders
             }
         }
 
-                // ==========================================
-        // --- AUTH & AUTO-LOGIN STATE ---
-        // ==========================================
-        const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
+            // ==========================================
+// --- AUTH & AUTO-LOGIN STATE ---
+// ==========================================
+const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
 
-        firebase.auth().onAuthStateChanged(async (user) => {
-            if (user) { 
-                currentUserRole = 'student'; 
-                const userDoc = await db.collection("users").doc(user.uid).get();
-                if(userDoc.exists) {
-                    const data = userDoc.data(); 
-                    currentUserBoard = data.board || 'college'; 
-                    document.getElementById('acc-student-name').value = data.fullName || 'Student'; 
-                    document.getElementById('acc-student-phone').value = data.phone || "";
-                    document.getElementById('acc-security-group').style.display = data.isEasyMode ? 'none' : 'block';
-                }
-                navigate('view-student', false); 
-                loadStudentData();
-                loadStudentPopup();
-                
-                // ADD THIS NEW LINE HERE:
-                // Ask for permission and generate token on successful login
-                initPushNotifications(user.uid); 
-                
-            } else { 
-                currentUserRole = null; 
-                navigate('view-login', false); 
-            }
+firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) { 
+        currentUserRole = 'student'; 
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        if(userDoc.exists) {
+            const data = userDoc.data(); 
+            currentUserBoard = data.board || 'college'; 
+            document.getElementById('acc-student-name').value = data.fullName || 'Student'; 
+            document.getElementById('acc-student-phone').value = data.phone || "";
+            document.getElementById('acc-security-group').style.display = data.isEasyMode ? 'none' : 'block';
+        }
+        navigate('view-student', false); 
+        loadStudentData();
+        loadStudentPopup();
+        
+        // Trigger Push Notification Setup immediately upon Login/Registration
+        setTimeout(() => {
+            initPushNotifications(user.uid);
+        }, 1500); // Slight delay ensures UI is loaded before asking for permission
+        
+    } else { 
+        currentUserRole = null; 
+        navigate('view-login', false); 
+    }
+});
+
+// ==========================================
+// --- PUSH NOTIFICATION ENGINE ---
+// ==========================================
+async function initPushNotifications(uid) {
+    // 1. Check if running as a local file (file:///)
+    if (window.location.protocol === 'file:') {
+        showToast("⚠️ Push Notifications disabled. You cannot use file:/// paths. Please use a local server or HTTPS.", "error");
+        return;
+    }
+
+    if (window.ApkNotifications) {
+        window.ApkNotifications.requestPermission();
+    }
+
+    if (!messaging) {
+        showToast("⚠️ FCM Messaging not supported on this browser/connection.", "warning");
+        return;
+    } 
+    
+    try {
+        // 2. Request Browser Permission (Browsers require this to happen in a secure context)
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            console.warn("Notification permission was denied.");
+            return;
+        }
+
+        // 3. Register Service Worker explicitly before requesting token
+        const registration = await navigator.serviceWorker.ready;
+
+        // 4. Generate FCM Token using VAPID Key
+        const token = await messaging.getToken({ 
+            vapidKey: 'BOttTLZ30om19jkjoDJyIUD7qgW-KOyicI2oBS_98rXKwx2iHxXJAelUn_vtjxGiJ-uA0_4BYFNqSbtHtObciNk',
+            serviceWorkerRegistration: registration 
         });
+
+        if (token) {
+            console.log("FCM Token Generated:", token);
+            // 5. Use set with merge:true so it creates or updates the user profile safely
+            await db.collection("users").doc(uid).set({ 
+                fcmToken: token,
+                fcmTokenUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            console.log("Push Notifications activated!");
+        } else {
+            showToast("⚠️ Failed to generate FCM Token.", "error");
+        }
+
+    } catch (error) {
+        console.error('Push Notification Error:', error);
+        // Do not show a toast for standard background errors to avoid annoying the student
+    }
+}
+
 
 
         function logout() { 
