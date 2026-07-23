@@ -835,7 +835,13 @@
                         <input type="url" id="study-video-link" placeholder="e.g., https://www.youtube.com/watch?v=...">
                         <span class="upload-hint" style="color: #0ea5e9;">We will convert this to an ad-free/nocookie embed automatically!</span>
                     </div>
-                    
+                                        <!-- NEW: Download Link for Offline Manager -->
+                    <div class="input-group" id="study-download-container" style="display: none;">
+                        <label>Direct Download Link (For Offline Mode)</label>
+                        <input type="url" id="study-download-link" placeholder="e.g., https://firebasestorage.googleapis.com/.../video.mp4">
+                        <span class="upload-hint" style="color: #10b981;">Paste the raw .mp4 link here so students can download it for offline use.</span>
+                    </div>
+
                     <button class="btn-primary" id="btn-upload-study" style="background: linear-gradient(135deg, #0284c7, #38bdf8); box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); margin-top: 10px;" onclick="uploadStudyMaterial()">Publish Material 🚀</button>
                 </div>
                 
@@ -1272,6 +1278,56 @@
     </div>
 
     <!-- MODALS SECTION -->
+        <!-- NEW: EDIT STUDY MATERIAL / VIDEO MODAL -->
+    <div id="edit-study-material-modal" class="modal-overlay">
+        <div class="modal">
+            <h2 style="margin-bottom: 20px; color: #0ea5e9; font-weight: 900; font-size: 1.5rem;">Edit Material & Links</h2>
+            <input type="hidden" id="edit-sm-id">
+            
+            <div class="input-group">
+                <label>Title</label>
+                <input type="text" id="edit-sm-title">
+            </div>
+            
+            <div class="input-group">
+                <label>Description</label>
+                <textarea id="edit-sm-desc" rows="2"></textarea>
+            </div>
+            
+            <div class="flex-row">
+                <div class="input-group">
+                    <label>Target Audience</label>
+                    <select id="edit-sm-audience" style="background: rgba(224, 242, 254, 0.3);">
+                        <option value="all">All Students</option>
+                        <option value="college">College</option>
+                        <option value="cbse">CBSE</option>
+                        <option value="hbse">HBSE</option>
+                        <option value="punjabi">Punjabi</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Study Group / Sub-group</label>
+                    <select id="edit-sm-group" class="study-parent-group-select" style="background: rgba(224, 242, 254, 0.3);"></select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Main Video/Streaming Link</label>
+                <input type="url" id="edit-sm-fileUrl">
+            </div>
+
+            <div class="input-group" id="edit-sm-download-container">
+                <label>Direct Download Link (For Offline Mode)</label>
+                <input type="url" id="edit-sm-downloadUrl">
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="closeEditStudyMaterialModal()" class="btn-outline" style="flex:1; padding: 12px; font-size: 1rem;">Cancel</button>
+                <button onclick="saveStudyMaterialEdit()" class="btn-primary" id="btn-save-sm-edit" style="flex:1; padding: 12px; font-size: 1rem; background: linear-gradient(135deg, #0284c7, #38bdf8);">Save Changes 💾</button>
+            </div>
+        </div>
+    </div>
+
     <div id="combine-test-modal" class="modal-overlay">
         <div class="modal" style="max-width: 450px;">
             <h2 style="margin-bottom: 10px; color: var(--review); font-weight: 900; letter-spacing: -0.5px; font-size: 1.5rem;">Merge Settings</h2>
@@ -2256,6 +2312,9 @@
         // ==========================================
         // --- STUDY MATERIAL UPLOAD LOGIC ---
         // ==========================================
+              // ==========================================
+        // --- STUDY MATERIAL UPLOAD & EDIT LOGIC ---
+        // ==========================================
         function loadAdminStudyMaterials() {
             db.collection("studyMaterials").orderBy("createdAt", "desc").onSnapshot(s => {
                 window.allStudyMaterialsCache = [];
@@ -2275,9 +2334,13 @@
             const filterVal = document.getElementById('admin-study-filter') ? document.getElementById('admin-study-filter').value : 'all';
             
             let displayMats = window.allStudyMaterialsCache || [];
-            if(filterVal !== 'all') displayMats = displayMats.filter(m => m.groupId === filterVal);
+            
+            // Filter by exact group or sub-group selected in the dropdown
+            if(filterVal !== 'all') {
+                displayMats = displayMats.filter(m => m.groupId === filterVal);
+            }
 
-            if(displayMats.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); padding:10px;">No materials found.</p>'; return; }
+            if(displayMats.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); padding:10px;">No materials found in this category.</p>'; return; }
             
             displayMats.forEach(data => {
                 const icon = data.type === 'pdf' ? '📄' : data.type === 'video' ? '🎥' : '🖼️';
@@ -2288,10 +2351,75 @@
                 }
                 
                 list.innerHTML += `<div class="list-item">
-                    <div><strong style="color:var(--text-main); font-size:1.05rem;">${icon} ${data.title}</strong><br><span style="font-size:0.8rem; background:rgba(226, 232, 240, 0.8); padding:2px 6px; border-radius:var(--radius-sm); color:var(--text-muted); margin-top:4px; display:inline-block;">${data.audience.toUpperCase()}</span> <span style="font-size:0.8rem; background:#e0f2fe; padding:2px 6px; border-radius:var(--radius-sm); color:#0284c7; margin-top:4px; display:inline-block;">📁 ${groupName}</span></div>
-                    <button class="btn-danger" style="width:auto; padding:6px 12px; font-size:0.85rem;" onclick="deleteStudyMaterial('${data.id}')">Delete</button>
+                    <div>
+                        <strong style="color:var(--text-main); font-size:1.05rem;">${icon} ${data.title}</strong><br>
+                        <span style="font-size:0.8rem; background:rgba(226, 232, 240, 0.8); padding:2px 6px; border-radius:var(--radius-sm); color:var(--text-muted); margin-top:4px; display:inline-block;">${data.audience.toUpperCase()}</span> 
+                        <span style="font-size:0.8rem; background:#e0f2fe; padding:2px 6px; border-radius:var(--radius-sm); color:#0284c7; margin-top:4px; display:inline-block;">📁 ${groupName}</span>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-outline" style="width:auto; padding:6px 12px; font-size:0.85rem; border-color:#0ea5e9; color:#0ea5e9;" onclick="openEditStudyMaterialModal('${data.id}')">✏️ Edit</button>
+                        <button class="btn-danger" style="width:auto; padding:6px 12px; font-size:0.85rem;" onclick="deleteStudyMaterial('${data.id}')">Delete</button>
+                    </div>
                 </div>`;
             });
+        }
+
+        // --- NEW EDIT FUNCTIONS ---
+        function openEditStudyMaterialModal(id) {
+            const data = window.allStudyMaterialsCache.find(m => m.id === id);
+            if(!data) return;
+            
+            document.getElementById('edit-sm-id').value = data.id;
+            document.getElementById('edit-sm-title').value = data.title || '';
+            document.getElementById('edit-sm-desc').value = data.desc || '';
+            document.getElementById('edit-sm-audience').value = data.audience || 'all';
+            document.getElementById('edit-sm-group').value = data.groupId || '';
+            document.getElementById('edit-sm-fileUrl').value = data.fileUrl || '';
+            
+            if (data.type === 'video') {
+                document.getElementById('edit-sm-download-container').style.display = 'block';
+                document.getElementById('edit-sm-downloadUrl').value = data.downloadUrl || '';
+            } else {
+                document.getElementById('edit-sm-download-container').style.display = 'none';
+            }
+            
+            document.getElementById('edit-study-material-modal').style.display = 'flex';
+        }
+
+        function closeEditStudyMaterialModal() {
+            document.getElementById('edit-study-material-modal').style.display = 'none';
+        }
+
+        async function saveStudyMaterialEdit() {
+            const id = document.getElementById('edit-sm-id').value;
+            const title = document.getElementById('edit-sm-title').value.trim();
+            const desc = document.getElementById('edit-sm-desc').value.trim();
+            const audience = document.getElementById('edit-sm-audience').value;
+            const groupId = document.getElementById('edit-sm-group').value;
+            const fileUrl = document.getElementById('edit-sm-fileUrl').value.trim();
+            const downloadUrl = document.getElementById('edit-sm-downloadUrl').value.trim();
+            
+            if(!title) return showToast("Title is required", "error");
+            
+            const btn = document.getElementById('btn-save-sm-edit');
+            btn.disabled = true; btn.innerText = "⏳ Saving...";
+            
+            try {
+                let updateData = { title, desc, audience, groupId, fileUrl };
+                
+                // Only save the download URL if it's a video
+                if (document.getElementById('edit-sm-download-container').style.display !== 'none') {
+                    updateData.downloadUrl = downloadUrl;
+                }
+                
+                await db.collection("studyMaterials").doc(id).update(updateData);
+                closeEditStudyMaterialModal();
+                showToast("Material and links updated successfully!", "success");
+            } catch(e) {
+                showToast("Error updating: " + e.message, "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "Save Changes 💾";
+            }
         }
 
         function deleteStudyMaterial(id) {
@@ -2305,6 +2433,8 @@
             const type = document.getElementById('study-type').value;
             document.getElementById('study-file-container').style.display = (type === 'video') ? 'none' : 'block';
             document.getElementById('study-video-container').style.display = (type === 'video') ? 'block' : 'none';
+            // Show the new download link field only for videos
+            document.getElementById('study-download-container').style.display = (type === 'video') ? 'block' : 'none';
         }
 
         async function uploadStudyMaterial() {
@@ -2317,13 +2447,16 @@
             if(!title) return showToast("Title required", "error"); 
             
             let finalFileUrl = "";
+            let downloadLinkUrl = ""; // Capture download URL
             const btn = document.getElementById('btn-upload-study');
             btn.disabled = true; btn.innerText = "Processing...";
 
             try {
                 if(type === 'video') {
                     const vidLink = document.getElementById('study-video-link').value.trim();
-                    if(!vidLink) throw new Error("Video link is required.");
+                    downloadLinkUrl = document.getElementById('study-download-link').value.trim();
+                    
+                    if(!vidLink) throw new Error("Main Video link is required.");
                     finalFileUrl = vidLink; 
                 } else {
                     const fileInput = document.getElementById('study-file-upload');
@@ -2356,14 +2489,18 @@
                     setTimeout(() => { progContainer.style.display = 'none'; progText.style.display = 'none'; }, 2000);
                 }
 
+                // Save to database, including the new download URL
                 await db.collection("studyMaterials").add({
-                    title, desc, type, audience, groupId, fileUrl: finalFileUrl,
+                    title, desc, type, audience, groupId, 
+                    fileUrl: finalFileUrl, 
+                    downloadUrl: downloadLinkUrl, 
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 showToast("Material Published!", "success");
                 
                 document.getElementById('study-title').value = ''; document.getElementById('study-desc').value = '';
-                document.getElementById('study-video-link').value = ''; document.getElementById('study-file-upload').value = '';
+                document.getElementById('study-video-link').value = ''; document.getElementById('study-download-link').value = ''; 
+                document.getElementById('study-file-upload').value = '';
                 document.getElementById('study-group-assign').value = '';
 
             } catch (e) {
@@ -2372,6 +2509,7 @@
                 document.getElementById('upload-progress-text').style.display = 'none';
             } finally { btn.disabled = false; btn.innerText = "Publish Material 🚀"; }
         }
+
 
         // ==========================================
         // --- EXTERNAL API & BANNER LOGIC ---
