@@ -2792,7 +2792,7 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
         // ==========================================
         // --- PUSH NOTIFICATIONS ---
         // ==========================================
-        async function sendPushNotification() {
+                async function sendPushNotification() {
             const title = document.getElementById('notif-title').value.trim();
             const body = document.getElementById('notif-body').value.trim();
             const topic = document.getElementById('notif-topic').value;
@@ -2800,13 +2800,31 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
             if (!title || !body) return showToast("Please fill in both the title and message.", "error");
 
             try {
-                await db.collection("notifications").add({
-                    title: title, body: body, topic: topic, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                // FIXED: We now write to 'live_alerts' because that is exactly what the Student app is listening to!
+                // We also changed 'body' to 'message' and 'createdAt' to 'timestamp' to match the student script.
+                await db.collection("live_alerts").add({
+                    title: title, 
+                    message: body, 
+                    topic: topic, 
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
+                
+                // We also keep saving it to notifications for your admin history records
+                await db.collection("notifications").add({
+                    title: title, 
+                    body: body, 
+                    topic: topic, 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
                 showToast("Notification broadcasted successfully! 🚀", "success");
-                document.getElementById('notif-title').value = ''; document.getElementById('notif-body').value = '';
-            } catch (error) { showToast("Error sending notification: " + error.message, "error"); }
+                document.getElementById('notif-title').value = ''; 
+                document.getElementById('notif-body').value = '';
+            } catch (error) { 
+                showToast("Error sending notification: " + error.message, "error"); 
+            }
         }
+
 
         // ==========================================
         // --- MISSING STUBS (PDF & Question Bank)---
