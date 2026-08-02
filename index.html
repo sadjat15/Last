@@ -549,14 +549,6 @@
                         </div>
                         <button class="lib-search-btn" onclick="filterStudyHubSearch(document.getElementById('lib-search-input').value)">Enter ↵</button>
                     </div>
-                    <!-- ACTIVE DOWNLOADS MANAGER UI -->
-<div id="active-downloads-container" style="display: none; margin-bottom: 20px;">
-    <h3 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 10px; font-weight: 800;">⬇️ Active Downloads</h3>
-    <div id="active-downloads-list" style="display: flex; flex-direction: column; gap: 10px;">
-        <!-- Download items will be injected here via JS -->
-    </div>
-</div>
-                
 
                     <div class="lib-filters" id="lib-category-filters">
                         <button id="filter-all" class="lib-filter-pill active" onclick="filterStudyCategory('all', this)">✨ All Resources</button>
@@ -670,7 +662,7 @@
                     <button class="btn-primary" onclick="showReviewScreen()">📖 Review Solutions & AI Explanations</button>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn-outline" style="flex: 1;" onclick="retakeCurrentTest()">🔄 Retake</button>
-                        <button class="btn-outline" style="flex: 1; background: var(--text-main); color: white; border-color: var(--text-main);" onclick="navigate('view-student');">🏠 Dashboard</button>
+                        <button class="btn-outline" style="flex: 1; background: var(--text-main); color: white; border-color: var(--text-main);" onclick="returnToDashboard();">🏠 Dashboard</button>
                     </div>
                 </div>
             </div>
@@ -742,7 +734,31 @@
             </div>
         </div>
     </div>
+     <!-- DIRECT MP4 DOWNLOAD MODAL -->
+    <div id="native-download-modal" class="modal-overlay" style="z-index: 5500; display: none;">
+        <div class="modal" style="width: 90%; max-width: 400px; padding: 25px; background: #ffffff; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <h3 id="dl-title" style="margin: 0 0 15px 0; color: #0f172a; font-weight: 900; font-size: 1.15rem; word-break: break-word;">Downloading Video</h3>
+            
+            <div id="dl-progress-section" style="margin-top: 10px;">
+                <p id="dl-progress-text" style="font-weight: 800; color: var(--primary); margin-bottom: 12px; font-size: 1rem;">Starting Download...</p>
+                <div style="width: 100%; height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                    <div id="dl-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: width 0.2s;"></div>
+                </div>
+            </div>
 
+            <button onclick="closeNativeDownloadModal()" id="dl-cancel-btn" style="margin-top: 20px; background: #f1f5f9; color: #64748b; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; cursor: pointer; width: 100%;">Close</button>
+        </div>
+    </div>
+
+
+            <style>
+                @keyframes spin { 100% { transform: rotate(360deg); } }
+                .vd6s-btn { background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+                .vd6s-btn:active { background: #059669; }
+                #dl-table-body tr { border-bottom: 1px solid #e2e8f0; }
+            </style>
+        </div>
+    </div>
     <!-- UTILITY MODALS -->
     <div id="custom-confirm-modal" class="modal-overlay">
         <div class="modal" style="text-align: center;">
@@ -813,6 +829,8 @@
             </div>
         </div>
     </div>
+         
+
     <script>
         // ==========================================
         // --- SAFE STRING ENCODERS TO PREVENT HTML BREAKS
@@ -967,170 +985,137 @@
         }
 
         KDOfflineStorage.init();
-                // ==========================================
-        // --- ADVANCED DOWNLOAD MANAGER (PAUSE/RESUME) ---
+                               // ==========================================
+        // --- RAPID-API YOUTUBE EXTRACTOR ---
         // ==========================================
-        const KDDownloadManager = {
-            activeTasks: {},
+        
+        // This MUST be outside the function so the app remembers what video you clicked
+        let activeDownloadParams = null; 
 
-            async startOrResume(id, title, url, groupId, groupName) {
-                // Switch to "Saved Offline" tab automatically so user sees the progress
-                const offlineBtn = document.getElementById('filter-offline');
-                if (offlineBtn) filterStudyCategory('offline', offlineBtn);
-                
-                if (this.activeTasks[id] && this.activeTasks[id].status === 'downloading') return;
+        async function showDownloadQualityMenu(id, title, url, groupId, groupName) {
+            activeDownloadParams = { id, title, originalUrl: url, groupId, groupName };
+            
+            const modal = document.getElementById('native-download-modal');
+            const progressText = document.getElementById('dl-progress-text');
+            const progressFill = document.getElementById('dl-progress-fill');
+            
+            // Show the UI immediately
+            document.getElementById('dl-title').innerText = title;
+            modal.style.display = 'flex';
+            progressFill.style.width = '20%';
+            progressText.innerText = 'Connecting to Secure Server...';
+            progressText.style.color = 'var(--primary)';
 
-                document.getElementById('active-downloads-container').style.display = 'block';
+            const rapidApiKey = "c96401e1c5msh6ac62241d0bec5fp185cbfjsn9aa45d4a55f8"; 
+            const rapidApiHost = "youtube-media-downloader.p.rapidapi.com";
+            const apiUrl = `https://${rapidApiHost}/v2/video/details?videoId=${id}`; 
 
-                let task = this.activeTasks[id] || {
-                    id, title, url, groupId: groupId || 'misc', groupName: groupName || 'Downloads',
-                    downloadedBytes: 0, totalBytes: 0, chunks: [], status: 'starting', controller: null
-                };
-                
-                this.activeTasks[id] = task;
-                this.renderUI();
-
-                task.status = 'downloading';
-                task.controller = new AbortController();
-
-                try {
-                    // Setup Resume Headers
-                    let headers = {};
-                    if (task.downloadedBytes > 0) {
-                        headers['Range'] = `bytes=${task.downloadedBytes}-`;
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': rapidApiKey,
+                        'x-rapidapi-host': rapidApiHost
                     }
-
-                    const response = await fetch(url, { headers: headers, signal: task.controller.signal });
-                    if (!response.ok) throw new Error("Network response was not ok");
-
-                    // Check if server allowed Resume (206) or Forced a Restart (200)
-                    if (response.status === 206) {
-                        let totalSizeHeader = response.headers.get('content-range');
-                        if (totalSizeHeader) task.totalBytes = parseInt(totalSizeHeader.split('/')[1]);
-                    } else if (response.status === 200) {
-                        task.downloadedBytes = 0; // Server blocked resume, restart fresh!
-                        task.chunks = [];
-                        task.totalBytes = parseInt(response.headers.get('content-length')) || 0;
-                    } else {
-                        throw new Error("Server rejected download.");
-                    }
-
-                    const reader = response.body.getReader();
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) {
-                            task.status = 'completed';
-                            this.renderUI();
-                            await this.finalizeDownload(task);
-                            break;
-                        }
-                        task.chunks.push(value);
-                        task.downloadedBytes += value.length;
-                        this.updateProgressUI(id);
-                    }
-                } catch (error) {
-                    if (error.name === 'AbortError') {
-                        task.status = 'paused'; // User clicked Pause
-                    } else {
-                        console.error("Download Error:", error);
-                        task.status = 'error';
-                        // Wipe corrupt data so next click starts a fresh download
-                        task.downloadedBytes = 0; 
-                        task.chunks = []; 
-                        showToast(`Network error. Try downloading ${title} again.`, "error");
-                    }
-                    this.renderUI();
-                }
-            },
-
-            pause(id) {
-                const task = this.activeTasks[id];
-                if (task && task.controller) task.controller.abort();
-            },
-
-            cancel(id) {
-                const task = this.activeTasks[id];
-                if (task && task.controller) task.controller.abort();
-                delete this.activeTasks[id];
-                this.renderUI();
-                if(Object.keys(this.activeTasks).length === 0) {
-                    document.getElementById('active-downloads-container').style.display = 'none';
-                }
-            },
-
-            async finalizeDownload(task) {
-                showToast(`Saving ${task.title} securely...`, "success");
-                const finalBlob = new Blob(task.chunks, { type: 'video/mp4' });
-                await KDOfflineStorage.saveVideo(task.id, task.title, finalBlob, task.url, task.groupId, task.groupName);
-
-                delete this.activeTasks[task.id];
-                this.renderUI();
-                if(Object.keys(this.activeTasks).length === 0) {
-                    document.getElementById('active-downloads-container').style.display = 'none';
-                }
-                                if (document.getElementById('student-sec-offline').classList.contains('active')) {
-                    renderOfflineHub();
-                }
-
-            },
-
-            renderUI() {
-                const list = document.getElementById('active-downloads-list');
-                if(!list) return;
-                list.innerHTML = '';
-
-                Object.values(this.activeTasks).forEach(task => {
-                    let percent = task.totalBytes ? Math.floor((task.downloadedBytes / task.totalBytes) * 100) : 0;
-                    let actionBtn = '';
-                    
-                    if (task.status === 'downloading') {
-                        actionBtn = `<button onclick="KDDownloadManager.pause('${task.id}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 12px; border-radius:8px; font-weight:bold; cursor:pointer;">⏸ Pause</button>`;
-                    } else if (task.status === 'paused' || task.status === 'error') {
-                        actionBtn = `<button onclick="KDDownloadManager.startOrResume('${task.id}', '${task.title}', '${task.url}', '${task.groupId}', '${task.groupName}')" style="background:#10b981; color:#fff; border:none; padding:6px 12px; border-radius:8px; font-weight:bold; cursor:pointer;">▶ Resume</button>`;
-                    }
-
-                    list.innerHTML += `
-                        <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                                <span style="font-weight:800; font-size:0.9rem; color:var(--text-main);">${task.title}</span>
-                                <div style="display:flex; gap:5px;">
-                                    ${actionBtn}
-                                    <button onclick="KDDownloadManager.cancel('${task.id}')" style="background:transparent; border:2px solid #ef4444; color:#ef4444; padding:4px 10px; border-radius:8px; font-weight:bold; cursor:pointer;">✖</button>
-                                </div>
-                            </div>
-                            <div style="width:100%; background:#e2e8f0; height:8px; border-radius:4px; overflow:hidden; margin-bottom: 5px;">
-                                <div id="prog-fill-${task.id}" style="width:${percent}%; height:100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition:width 0.2s;"></div>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); font-weight:700;">
-                                <span id="prog-text-${task.id}">${this.formatBytes(task.downloadedBytes)} / ${this.formatBytes(task.totalBytes)}</span>
-                                <span id="prog-pct-${task.id}">${percent}%</span>
-                            </div>
-                        </div>`;
                 });
-            },
 
-            updateProgressUI(id) {
-                const task = this.activeTasks[id];
-                if (!task) return;
-                let percent = task.totalBytes ? Math.floor((task.downloadedBytes / task.totalBytes) * 100) : 0;
+                const data = await response.json();
+                let directUrl = null;
                 
-                const fill = document.getElementById(`prog-fill-${id}`);
-                const text = document.getElementById(`prog-text-${id}`);
-                const pct = document.getElementById(`prog-pct-${id}`);
+                if (data && data.videos && data.videos.items) {
+                    let stream = data.videos.items.find(v => v.extension === 'mp4' && v.hasAudio === true);
+                    if (stream) directUrl = stream.url;
+                }
                 
-                if(fill) fill.style.width = percent + '%';
-                if(text) text.innerText = `${this.formatBytes(task.downloadedBytes)} / ${this.formatBytes(task.totalBytes)}`;
-                if(pct) pct.innerText = percent + '%';
-            },
+                if (!directUrl) {
+                    directUrl = data.link || data.url || (data.urls && data.urls[0]?.url);
+                }
 
-            formatBytes(bytes) {
-                if (bytes === 0) return '0 MB';
-                const mb = bytes / (1024 * 1024);
-                return mb.toFixed(1) + ' MB';
+                if (directUrl) {
+                    progressText.innerText = `Link Found! Starting Download...`;
+                    progressFill.style.width = '40%';
+                    startNativeDownload(directUrl);
+                } else {
+                    throw new Error("No MP4 link found in API response.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                progressText.innerText = "❌ Extraction Failed. Try again.";
+                progressText.style.color = 'var(--danger)';
             }
-        };
+        }
+
+        // --- THE ACTUAL DOWNLOADER ENGINE ---
+        function startNativeDownload(directDownloadUrl) {
+            if (!activeDownloadParams) return;
+            const { id, title, originalUrl, groupId, groupName } = activeDownloadParams;
+            
+            const progressText = document.getElementById('dl-progress-text');
+            const progressFill = document.getElementById('dl-progress-fill');
+            
+            progressText.innerText = `Starting Download...`;
+            
+            if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', directDownloadUrl, true);
+            xhr.responseType = 'blob'; 
+
+            xhr.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percent = Math.floor((event.loaded / event.total) * 100);
+                    // Squeeze 0-100% download progress into the remaining 40-100% of the visual bar
+                    let visualPercent = 40 + Math.floor(percent * 0.6); 
+                    progressFill.style.width = visualPercent + '%';
+                    progressText.innerText = `Downloading: ${percent}%`;
+                } else {
+                    progressText.innerText = `Downloading stream...`;
+                }
+            };
+
+            xhr.onload = async function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    progressText.innerText = `Encrypting & Saving securely...`;
+                    try {
+                        await KDOfflineStorage.saveVideo(id, title, xhr.response, originalUrl, groupId, groupName);
+                        
+                        progressFill.style.width = '100%';
+                        progressText.style.color = 'var(--success)';
+                        progressText.innerText = `✅ Saved Successfully!`;
+                        showToast("Download Complete! Check Offline Hub.", "success");
+                        
+                        setTimeout(() => {
+                            closeNativeDownloadModal();
+                            if (document.getElementById('student-sec-study-hub').classList.contains('active')) {
+                                renderKnowledgeHub();
+                            }
+                        }, 1200);
+
+                    } catch (e) { 
+                        progressText.style.color = 'var(--danger)';
+                        progressText.innerText = `❌ Phone Storage Full`;
+                    }
+                } else { 
+                    progressText.style.color = 'var(--danger)';
+                    progressText.innerText = `❌ Network Error`;
+                }
+            };
+            
+            xhr.onerror = function() { 
+                progressText.style.color = 'var(--danger)';
+                progressText.innerText = `❌ Connection interrupted`;
+            };
+            
+            xhr.send();
+        }
+
+        function closeNativeDownloadModal() {
+            document.getElementById('native-download-modal').style.display = 'none';
+        }
 
 
+   
         // ==========================================
         // --- UNIVERSAL CLOUD STORAGE URL CLEANER ---
         // ==========================================
@@ -1203,88 +1188,33 @@
             else if (err.code == 'unimplemented') console.warn("Browser doesn't support offline caching.");
         });
 
-        if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    // Register the specific firebase service worker
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then((registration) => {
-        console.log('ServiceWorker registration successful');
-        // Tell Firebase to use this registration for background pushes
-        if (typeof firebase !== 'undefined' && firebase.messaging.isSupported()) {
-            firebase.messaging().useServiceWorker(registration);
-        }
-      }).catch((error) => console.log('ServiceWorker registration failed: ', error));
-  });
-}
+// ==========================================
+// --- NATIVE FCM TOKEN BRIDGE ---
+// ==========================================
+window.nativeFcmToken = null; // Holds the token if it arrives before login
 
-// Safely initialize messaging
-let messaging = null;
-try {
-    if (firebase.messaging.isSupported()) {
-        messaging = firebase.messaging();
-        
-        // Listen for messages while the app is open
-        messaging.onMessage((payload) => {
-            // Keep the in-app toast
-            showToast(`🔔 ${payload.notification.title}: ${payload.notification.body}`, "success");
-            
-            // NEW: Trigger the native Android pop-up notification!
-            if (window.ApkNotifications) {
-                window.ApkNotifications.show(payload.notification.title, payload.notification.body);
-            }
-        });
-    }
-} catch (error) {
-    console.warn("Firebase Messaging is not supported on this device/browser.", error);
-}
-
-async function initPushNotifications(uid) {
-    if (window.ApkNotifications) {
-        window.ApkNotifications.requestPermission();
-    }
-
-    if (!messaging) {
-        // We changed showToast to console.warn so it hides the popup from the screen
-        console.warn("⚠️ FCM Messaging not supported on this browser/connection.");
-        return;
-    } 
- 
+window.saveNativeFcmToken = async function(token) {
+    if (!token) return;
+    console.log("Native FCM Token received from Android:", token);
     
-    try {
-        // 1. Request Browser Permission
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-            showToast("⚠️ Notification permission was denied.", "warning");
-            return;
-        }
-
-        // 2. Register Service Worker explicitly before requesting token
-        const registration = await navigator.serviceWorker.ready;
-
-        // 3. Generate FCM Token using VAPID Key
-        const token = await messaging.getToken({ 
-            vapidKey: 'BOttTLZ30om19jkjoDJyIUD7qgW-KOyicI2oBS_98rXKwx2iHxXJAelUn_vtjxGiJ-uA0_4BYFNqSbtHtObciNk',
-            serviceWorkerRegistration: registration 
-        });
-
-        if (token) {
-            console.log("FCM Token Generated:", token);
-            // Use set with merge:true so it creates or updates safely
-            await db.collection("users").doc(uid).set({ 
+    // Store it globally
+    window.nativeFcmToken = token;
+    
+    // If the student is already logged in, sync it immediately
+    const currentUser = firebase.auth().currentUser;
+    if (currentUser) {
+        try {
+            await db.collection("users").doc(currentUser.uid).set({ 
                 fcmToken: token,
                 fcmTokenUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
-
-            showToast("🔔 Push Notifications activated!", "success");
-        } else {
-            showToast("⚠️ Failed to generate FCM Token. No token returned.", "error");
+            console.log("Native FCM Token successfully synced to Firestore!");
+        } catch (error) {
+            console.error("Failed to sync FCM token:", error);
         }
-
-    } catch (error) {
-        console.error('Push Notification Error:', error);
-        showToast("FCM Error: " + error.message, "error");
     }
-}
+};
+
 
 
 
@@ -1300,6 +1230,7 @@ async function initPushNotifications(uid) {
         let testSections = [], currentSectionIdx = 0;
 
         let allGroupsCache = [], studentAttemptedDB = {}; 
+        let testGroupHistory = []; // Tracks Test Category navigation
 let allStudyGroupsCache = []; // New variable for video folders
 
         let currentLanguage = 'Eng', currentSearchQuery = "", currentViewingGroupId = "";
@@ -1398,16 +1329,23 @@ let allStudyGroupsCache = []; // New variable for video folders
             }
         }
 
-        function switchBottomTab(secId, element) {
+                function switchBottomTab(secId, element) {
+            // 1. Ensure we are in the student view
             if (!document.getElementById('view-student').classList.contains('active')) {
                 navigate('view-student', true);
             }
+            
+            // 2. Update the active state on the bottom navigation icons
             document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
             
-            if(secId === 'student-sec-groups') {
-                currentViewingGroupId = ""; loadGroupsForStudents("", true);
-                        } else if (secId === 'student-sec-study-hub') {
+            // 3. Handle specific tab routing
+            if (secId === 'student-sec-groups') {
+                testGroupHistory = []; // Reset test folder history so back button works perfectly
+                currentViewingGroupId = ""; 
+                loadGroupsForStudents("", true);
+            } 
+            else if (secId === 'student-sec-study-hub') {
                 openStudentSec('student-sec-study-hub', true);
                 
                 // Initialize folders first
@@ -1426,10 +1364,16 @@ let allStudyGroupsCache = []; // New variable for video folders
                     showToast("📶 You are offline. Showing saved videos.", "warning");
                 }
                 renderKnowledgeHub();
-            } else {
+            } 
+            else if (secId === 'student-sec-offline') {
+                openStudentSec('student-sec-offline', true);
+                renderOfflineHub(); // Instantly load downloaded videos
+            } 
+            else {
                 openStudentSec(secId, true);
             }
         }
+
 
         function openFilterModal() { showToast("Filters will be available in the next update!", "success"); }
 
@@ -1507,7 +1451,7 @@ let allStudyGroupsCache = []; // New variable for video folders
             }
         }
 
-            // ==========================================
+          // ==========================================
 // --- AUTH & AUTO-LOGIN STATE ---
 // ==========================================
 const formatIDAsEmail = (id) => `${id.replace(/\s+/g, '')}@student.kdjaat.com`;
@@ -1527,10 +1471,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
         loadStudentData();
         loadStudentPopup();
         
-        // Trigger Push Notification Setup immediately upon Login/Registration
-        setTimeout(() => {
-            initPushNotifications(user.uid);
-        }, 1500); // Slight delay ensures UI is loaded before asking for permission
+        // --- NATIVE TOKEN SYNC ---
+        // If Android fetched the token in the background, save it now!
+        if (window.nativeFcmToken) {
+            window.saveNativeFcmToken(window.nativeFcmToken);
+        }
         
     } else { 
         currentUserRole = null; 
@@ -1538,16 +1483,13 @@ firebase.auth().onAuthStateChanged(async (user) => {
     }
 });
 
+
+
 // ==========================================
 // --- PUSH NOTIFICATION ENGINE ---
 // ==========================================
 async function initPushNotifications(uid) {
-    // 1. Check if running as a local file (file:///)
-    if (window.location.protocol === 'file:') {
-        showToast("⚠️ Push Notifications disabled. You cannot use file:/// paths. Please use a local server or HTTPS.", "error");
-        return;
-    }
-
+ 
     if (window.ApkNotifications) {
         window.ApkNotifications.requestPermission();
     }
@@ -1802,12 +1744,22 @@ function listenForLiveNotifications() {
             if(isPushing) openStudentSec('student-sec-groups', true, { groupId: parentId });
         }
 
+                        // When clicking a group/sub-group card
         function handleGroupClick(gid, gn, hasChildren) {
-            if(hasChildren) loadGroupsForStudents(gid, true);
-            else viewGroupTests(gid, gn, true);
+            testGroupHistory.push(currentViewingGroupId); // Save current position
+            currentViewingGroupId = gid;
+            
+            window.history.pushState({ view: 'view-student', sec: 'student-sec-groups' }, "", "#test-folder");
+            
+            if(hasChildren) {
+                loadGroupsForStudents(gid, false);
+            } else {
+                viewGroupTests(gid, gn, true);
+            }
         }
 
-        function viewGroupTests(gid, gn, isPushing = true) { 
+
+                        function viewGroupTests(gid, gn, isPushing = true) { 
             const titleEl = document.getElementById('current-group-title');
             if(titleEl) titleEl.innerText = gn; 
 
@@ -1818,7 +1770,8 @@ function listenForLiveNotifications() {
                 
                 s.forEach(d => { 
                     let t = d.data(); 
-                    if((t.groupIDs && t.groupIDs.includes(gid)) || t.groupId === gid) {
+                    
+                    if((t.groupIds && t.groupIds.includes(gid)) || (t.groupIDs && t.groupIDs.includes(gid)) || t.groupId === gid) {
                         count++;
                         let actionButtons = "";
                         
@@ -1835,11 +1788,14 @@ function listenForLiveNotifications() {
                             actionButtons = `<button class="btn-primary" style="width:100%;" onclick="startTest('${d.id}')">Start Test 🚀</button>`;
                         }
                         
+                        // FIXED: Uses t.timer and handles "0" as No Limit
+                        let timeText = (t.timer && t.timer > 0) ? `${t.timer} Mins` : `No Limit`;
+                        
                         c.innerHTML += `
                             <div class="action-box">
                                 <h4 style="margin-bottom:8px;">${t.title}</h4>
                                 <p style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:15px;">
-                                    ${t.questions ? t.questions.length : 0} Qs | ${Math.floor(t.duration/60)} Mins
+                                    ${t.questions ? t.questions.length : 0} Qs | ${timeText}
                                 </p>
                                 ${actionButtons}
                             </div>`; 
@@ -1851,6 +1807,8 @@ function listenForLiveNotifications() {
             if(isPushing) openStudentSec('student-sec-tests-list', true, { groupId: gid, groupName: gn });
             else openStudentSec('student-sec-tests-list', false);
         }
+
+
 
         function retakeFromList(testId) {
             showCustomConfirm("Retake Test?", "This will start a fresh attempt. Your previous scores are safe in your history.", () => {
@@ -1867,7 +1825,7 @@ function listenForLiveNotifications() {
         // ==========================================
         // --- LIVE TEST ENGINE: CORE LOGIC ---
         // ==========================================
-        async function startTest(testId, isRecovery = false) {
+                async function startTest(testId, isRecovery = false) {
             const doc = await db.collection("tests").doc(testId).get(); 
             if (!doc.exists) return;
             
@@ -1885,11 +1843,13 @@ function listenForLiveNotifications() {
                 
                 if(testSections.length > 0) {
                     currentQuestionIndex = testSections[0].start;
-                    timeRemaining = testSections[0].timer;
+                    timeRemaining = testSections[0].timer * 60; 
                     showToast(`Starting Part: ${testSections[0].name}`, "success");
                 } else {
                     currentQuestionIndex = 0; 
-                    timeRemaining = currentTest.duration || 1800;
+                    // FIXED: Properly reads admin's timer setting and converts minutes to seconds.
+                    // If timer is 0 (No Limit), we set it to a massive number to bypass countdown.
+                    timeRemaining = (currentTest.timer && currentTest.timer > 0) ? (currentTest.timer * 60) : 999999;
                 }
                 clearTestProgress();
             }
@@ -1915,6 +1875,7 @@ function listenForLiveNotifications() {
             renderCurrentQuestion(); 
             startTimer();
         }
+
 
         function toggleLangMenu() { document.getElementById('lang-dropdown-menu').classList.toggle('show'); }
 
@@ -2002,8 +1963,15 @@ function listenForLiveNotifications() {
             renderPalette(); renderCurrentQuestion();
         }
 
-        function startTimer() {
+                function startTimer() {
             clearInterval(testTimer);
+            
+            // FIXED: If the admin set the timer to 0 (No Limit), display Unlimited and don't count down.
+            if (timeRemaining >= 999999) {
+                document.getElementById('timer').innerText = `Unlimited`;
+                return; 
+            }
+            
             testTimer = setInterval(() => {
                 timeRemaining--; saveTestProgress(); 
                 let m = Math.floor(timeRemaining / 60);
@@ -2020,6 +1988,7 @@ function listenForLiveNotifications() {
                 }
             }, 1000);
         }
+
 
         function nextQuestion() { 
             let maxIdx = testSections.length > 0 ? testSections[currentSectionIdx].end : testQuestions.length - 1;
@@ -2145,7 +2114,16 @@ function listenForLiveNotifications() {
                     <div class="lang-opt" onclick="setReviewLanguage('Pa', 'Punjabi')">Punjabi</div>`;
             }
         }
-
+        function returnToDashboard() {
+            // 1. Safely switch to the student view without triggering the blank screen
+            navigate('view-student', false);
+            
+            // 2. Find the "Tests" tab in the bottom navigation
+            const testsTab = document.querySelector('.bottom-nav .nav-item[onclick*="student-sec-groups"]');
+            
+            // 3. Trigger the exact same routing as if the student tapped the "Tests" tab
+            switchBottomTab('student-sec-groups', testsTab);
+        }
         function setReviewLanguage(code, name) {
             reviewLanguage = code;
             document.getElementById('review-lang-label').innerText = name;
@@ -2296,8 +2274,26 @@ function listenForLiveNotifications() {
 
         function showExitModal() { document.getElementById('exit-modal').style.display = 'flex'; }
         function hideExitModal() { document.getElementById('exit-modal').style.display = 'none'; }
-        function confirmPause() { hideExitModal(); saveTestProgress(); clearInterval(testTimer); isTestActive = false; navigate('view-student'); showToast("Test paused. You can resume later from the dashboard.", "warning"); }
-        function loadPortalBranding() { 
+                function confirmPause() { 
+            hideExitModal(); 
+            saveTestProgress(); 
+            clearInterval(testTimer); 
+            isTestActive = false; 
+            
+            // 1. Switch back to the Student Dashboard without forcing the blank main menu
+            navigate('view-student', false); 
+            
+            // 2. Route the student back to the exact Test Folder they came from
+            if (currentViewingGroupId) {
+                openStudentSec('student-sec-tests-list', true, { groupId: currentViewingGroupId });
+            } else {
+                // Fallback to category list if they didn't come from a specific folder
+                openStudentSec('student-sec-groups', true);
+            }
+
+            showToast("Test paused. You can resume later.", "warning"); 
+        }
+   function loadPortalBranding() { 
             db.collection("adminSettings").doc("branding").onSnapshot(doc => { 
                 if(doc.exists) { 
                     const data = doc.data();
@@ -2335,7 +2331,7 @@ function listenForLiveNotifications() {
         function closeForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'none'; }
         function openForgotPassModal() { document.getElementById('forgot-pass-modal').style.display = 'flex'; }
 
-        async function generateLiveAISolution(questionText, correctAnswerText, targetElementId, qIndex) {
+                async function generateLiveAISolution(questionText, correctAnswerText, targetElementId, qIndex) {
             if(!storedGeminiKey) return showToast("API Key missing. Ask admin to configure AI.", "error");
             const container = document.getElementById(targetElementId);
             if(container.style.display === "block") { container.style.display = "none"; return; }
@@ -2345,10 +2341,13 @@ function listenForLiveNotifications() {
             
             try {
                 const prompt = `You are a friendly and helpful tutor. Explain the solution to this specific question in a very simple, easy-to-understand way for a student. Question: ${questionText} Correct Answer: ${correctAnswerText} Keep it short, direct, and encouraging. Do not use complex formatting. Do not generate a new question.`;
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${storedGeminiKey}`, {
+                
+                // FIXED: API Endpoint upgraded to gemini-3.6-flash
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${storedGeminiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
+                
                 if (!response.ok) throw new Error("API Request Failed");
                 const data = await response.json();
                 const solutionText = data.candidates[0].content.parts[0].text;
@@ -2365,6 +2364,7 @@ function listenForLiveNotifications() {
                 container.innerHTML = `<p style='color: var(--danger); font-weight: 700; padding: 10px; background: #fee2e2; border-radius: 8px; font-size: 0.9rem;'>⚠️ Failed to load solution. Please try again.</p>`;
             }
         }
+
 
         // ========================================================
         // --- KNOWLEDGE HUB ENGINE ---
@@ -2475,13 +2475,16 @@ function listenForLiveNotifications() {
 }
 
 
-        async function renderKnowledgeHub() {
+                async function renderKnowledgeHub() {
             const grid = document.getElementById('new-study-hub-grid');
             if (!grid) return;
             grid.innerHTML = '';
 
+            // Pre-fetch offline videos to check against duplicates
+            let offlineVideos = [];
+            try { offlineVideos = await KDOfflineStorage.getAllVideos(); } catch(e) {}
+
             if (currentHubFilter === 'offline') {
-                const offlineVideos = await KDOfflineStorage.getAllVideos();
                 if (offlineVideos.length === 0) {
                     grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 700; background: #ffffff; border-radius: 16px; border: 1px dashed var(--border-color);">📲 No offline videos saved yet. Click "Download Offline" when playing any video!</div>`;
                     return;
@@ -2504,22 +2507,19 @@ function listenForLiveNotifications() {
                 return;
             }
 
-                        let filtered = hubMaterialsCache.filter(item => {
+            let filtered = hubMaterialsCache.filter(item => {
                 const matchCategory = (currentHubFilter === 'all') || (item.type === currentHubFilter);
                 const matchSearch = !currentHubSearchQuery || (item.title.toLowerCase().includes(currentHubSearchQuery) || (item.description && item.description.toLowerCase().includes(currentHubSearchQuery)));
-                // Filters material to only show items belonging to the clicked group
                 const matchGroup = !currentStudyParentId || (item.groupId === currentStudyParentId) || (item.groupIDs && item.groupIDs.includes(currentStudyParentId));
-                
                 return matchCategory && matchSearch && matchGroup;
             });
-
 
             if (filtered.length === 0) {
                 grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 700; background: #ffffff; border-radius: 16px; border: 1px dashed var(--border-color);">📭 No study materials found matching your filter.</div>`;
                 return;
             }
 
-                        filtered.forEach(item => {
+            filtered.forEach(item => {
                 let badgeType = item.type === 'video' ? 'video' : (item.type === 'pdf' ? 'pdf' : 'sheet');
                 let badgeLabel = item.type === 'video' ? '🎬 VIDEO' : (item.type === 'pdf' ? '📄 PDF' : '🖼️ SHEET');
                 let rawUrl = item.fileUrl || item.url || '#'; 
@@ -2527,14 +2527,24 @@ function listenForLiveNotifications() {
                 let b64Title = encodeSafeString(item.title || 'Resource');
                 let currentGroupName = document.getElementById('study-hub-title').innerText;
 
-                // Create side-by-side buttons for videos
                 let actionButtons = `<button onclick="openSmartResource('${item.id}', '${item.type}', '${b64Url}', '${b64Title}', true)" class="btn-lib-action"><span>Play</span> ⏯️</button>`;
                 
                 if (item.type === 'video') {
+                    let downloadLinkForBtn = item.downloadUrl ? item.downloadUrl : rawUrl; 
+                    let isDownloaded = offlineVideos.some(v => v.id === item.id);
+                    
+                    let downloadBtnHtml = '';
+                    if (isDownloaded) {
+                        downloadBtnHtml = `<button disabled class="btn-lib-action" style="flex: 1; background: #d1fae5; color: #059669; border-color: #a7f3d0; cursor: not-allowed;"><span>Saved</span> ✅</button>`;
+                    } else {
+                        // Triggers the new vd6s native modal!
+                        downloadBtnHtml = `<button onclick="showDownloadQualityMenu('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${downloadLinkForBtn}', currentStudyParentId, '${currentGroupName}')" class="btn-lib-action" style="flex: 1; background: #e0e7ff; color: var(--primary); border-color: var(--primary-light);"><span>Download</span> 📥</button>`;
+                    }
+
                     actionButtons = `
                     <div style="display: flex; gap: 10px;">
                         <button onclick="openSmartResource('${item.id}', '${item.type}', '${b64Url}', '${b64Title}', true)" class="btn-lib-action" style="flex: 1;"><span>Play</span> ⏯️</button>
-                        <button onclick="KDDownloadManager.startOrResume('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${rawUrl}', currentStudyParentId, '${currentGroupName}')" class="btn-lib-action" style="flex: 1; background: #e0e7ff; color: var(--primary); border-color: var(--primary-light);"><span>Download</span> 📥</button>
+                        ${downloadBtnHtml}
                     </div>`;
                 }
 
@@ -2552,8 +2562,8 @@ function listenForLiveNotifications() {
                         </div>
                     </div>`;
             });
-
         }
+
 
                      // ========================================================
         // --- UPGRADED UNIVERSAL CUSTOM VIDEO OVERLAY ENGINE ---
@@ -2578,29 +2588,22 @@ function listenForLiveNotifications() {
                 if (savedVideo && savedVideo.blob) { isOfflineAvailable = true; finalMediaUrl = URL.createObjectURL(savedVideo.blob); }
             } catch(e) {}
 
-                        if (type === 'video') {
-                downloadBtn.style.display = 'none'; // Changed from 'flex' to remove download button
-                             if (isOfflineAvailable) {
-                    downloadBtn.innerHTML = '<span>✅ Saved Offline</span>';
+                                    if (type === 'video') {
+                downloadBtn.style.display = 'flex'; // Turn the button back on!
+                
+                if (isOfflineAvailable) {
+                    downloadBtn.innerHTML = '<span>✅ Saved</span>';
                     downloadBtn.style.background = '#d1fae5'; downloadBtn.style.color = '#059669';
                     downloadBtn.onclick = () => showToast("This video is already saved securely in your app!", "success");
                 } else {
                     downloadBtn.innerHTML = '<span>📥 Download Offline</span>';
                     downloadBtn.style.background = 'var(--primary-light)'; downloadBtn.style.color = 'var(--primary)';
                     
-                    // NEW: We trigger the Advanced Manager and pass the Folder/Group info!
                     let currentGroupTitle = document.getElementById('study-hub-title').innerText;
                     
+                    // Trigger the new vd6s native modal!
                     downloadBtn.onclick = () => {
-                        showToast("Download added to queue! Check the Offline section.", "success");
-                        closeSmartResource(); // Close the video player
-                        navigate('view-student'); // Go to dashboard
-                        
-                        // Ensure we are on the Study Hub tab to see the progress
-                        switchBottomTab('student-sec-study-hub', document.querySelectorAll('.nav-item')[1]);
-                        
-                        // Start the advanced download
-                        KDDownloadManager.startOrResume(id, title, url, currentStudyParentId, currentGroupTitle);
+                        showDownloadQualityMenu(id, title, url, currentStudyParentId, currentGroupTitle);
                     };
                 }
 
@@ -3093,58 +3096,113 @@ const handleFS = (e) => {
         document.getElementById('smart-embed-container').innerHTML = ''; 
     }
 }
-
-
+// --- NATIVE BACK BUTTON INTERCEPTOR ---
+window.triggerAppExit = function() {
+    showCustomConfirm("Exit Application", "Are you sure you want to close the app?", () => {
+        // Notice we use 'AndroidApp' here, which matches your Java JavascriptInterface name!
+        if (window.AndroidApp && window.AndroidApp.exitApp) {
+            window.AndroidApp.exitApp();
+        }
+    });
+};
         window.addEventListener('popstate', function(event) {
-    // 1. Close Smart Resource Modal if open
-    const smartModal = document.getElementById('smart-resource-modal');
-    if (smartModal && smartModal.style.display === 'flex') {
-        closeSmartResource(true);
-        // FIX: Removed the buggy pushState here so it remembers you are inside a folder!
-        return;
-    }
+            // 1. Close Smart Resource Modal if open
+            const smartModal = document.getElementById('smart-resource-modal');
+            if (smartModal && smartModal.style.display === 'flex') {
+                closeSmartResource(true);
+                return;
+            }
 
-    // 2. Prevent exiting during an active test
-    if (isTestActive) { 
-        window.history.pushState({ view: 'view-test' }, "", `#view-test`); 
-        return showExitModal(); 
-    }
+            // 2. Prevent exiting during an active test
+            if (isTestActive) { 
+                window.history.pushState({ view: 'view-test' }, "", `#view-test`); 
+                return showExitModal(); 
+            }
+            
+            // --- NEW: TRAP BACK BUTTON ON RESULTS SCREEN ---
+            // Disables the physical back button on the Analysis Report screen
+            if (document.getElementById('view-results').classList.contains('active')) {
+                window.history.pushState({ view: 'view-results' }, "", `#view-results`);
+                showToast("Please use the buttons on the screen to navigate.", "warning");
+                return;
+            }
 
-    // 3. Handle backing out of Study Hub Folders
-    if (document.getElementById('student-sec-study-hub').classList.contains('active') && studyGroupHistory.length > 0) {
-        // Pop the previous folder ID and load it
-        const prevId = studyGroupHistory.pop();
-        loadStudyGroups(prevId);
-        return;
-    }
+            // --- NEW: PREVENT RETURNING TO A FINISHED TEST / RESULTS ---
+            // If they are on the Dashboard and try to press back into a finished test, trigger App Exit instead
+            if (event.state && (event.state.view === 'view-results' || event.state.view === 'view-test') && !isTestActive) {
+                window.history.pushState({ view: 'view-student' }, "", `#view-student`);
+                showCustomConfirm("Exit Application", "Are you sure you want to close the app?", () => {
+                    if (window.AndroidApp && window.AndroidApp.exitApp) {
+                        window.AndroidApp.exitApp();
+                    } else {
+                        window.close();
+                    }
+                });
+                return;
+            }
+            
+            // 3. Handle backing out of Test List Folders 
+            if (document.getElementById('student-sec-tests-list').classList.contains('active')) {
+                const prevId = testGroupHistory.length > 0 ? testGroupHistory.pop() : "";
+                currentViewingGroupId = prevId;
+                loadGroupsForStudents(prevId, false);
+                openStudentSec('student-sec-groups', false);
+                return;
+            }
 
-    // 4. If at the main dashboard, trap the back button and show Exit Confirm
-    if (!event.state || event.state.view === 'view-student' || event.state.view === 'view-login') {
-        // Push state immediately so the app doesn't close natively
-        window.history.pushState({ view: event.state ? event.state.view : 'view-student' }, "", "");
-        
-        showCustomConfirm("Exit Application", "Are you sure you want to close the app?", () => {
-            // Mobile Native Bridge Exit
-            if (window.Android && window.Android.exitApp) {
-                window.Android.exitApp();
-            } else if (window.Capacitor && window.Capacitor.Plugins.App) {
-                window.Capacitor.Plugins.App.exitApp();
-            } else {
-                window.close();
+            // 4. Handle backing out of Test Group Sub-folders
+            if (document.getElementById('student-sec-groups').classList.contains('active') && testGroupHistory.length > 0) {
+                const prevId = testGroupHistory.pop();
+                currentViewingGroupId = prevId;
+                loadGroupsForStudents(prevId, false);
+                return;
+            }
+
+            // 5. Handle backing out of Study Hub Folders
+            if (document.getElementById('student-sec-study-hub').classList.contains('active') && studyGroupHistory.length > 0) {
+                const prevId = studyGroupHistory.pop();
+                loadStudyGroups(prevId);
+                return;
+            }
+
+            // 6. TRAP EXIT ONLY AT ROOT DASHBOARD
+            const isRoot = !event.state || 
+                          (event.state.view === 'view-student' && testGroupHistory.length === 0 && studyGroupHistory.length === 0) || 
+                          event.state.view === 'view-login';
+
+            if (isRoot) {
+                window.history.pushState({ view: event.state ? event.state.view : 'view-student' }, "", "");
+                showCustomConfirm("Exit Application", "Are you sure you want to close the app?", () => {
+                    if (window.AndroidApp && window.AndroidApp.exitApp) {
+                        window.AndroidApp.exitApp();
+                    } else {
+                        window.close();
+                    }
+                });
+                return;
+            }
+
+            // 7. Default Navigation fallback for other tabs
+            if (event.state && event.state.view) {
+                navigate(event.state.view, false);
+                if (event.state.sec) openStudentSec(event.state.sec, false);
             }
         });
-        return;
-    }
 
-    // 5. Default Navigation handling
-    if (event.state && event.state.view) {
-        navigate(event.state.view, false);
-        if (event.state.sec) openStudentSec(event.state.sec, false);
-    } else {
-        if (currentUserRole === 'student') navigate('view-student', false);
-    }
-});
 
+// Global function called by Java when the native token is ready
+window.saveNativeFcmToken = async function(token) {
+    if (!token || !auth.currentUser) return;
+    
+    console.log("Native FCM Token received:", token);
+    
+    // Save FCM Token directly into Firestore under user doc
+    await db.collection("users").doc(auth.currentUser.uid).set({ 
+        fcmToken: token,
+        fcmTokenUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+};
+        
 
         window.onload = () => { 
             loadPortalBranding(); 
