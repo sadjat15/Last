@@ -2652,8 +2652,8 @@
             }
         }
 
-        async function uploadStudyMaterial() {
-                        const title = document.getElementById('study-title').value.trim();
+                async function uploadStudyMaterial() {
+            const title = document.getElementById('study-title').value.trim();
             const desc = document.getElementById('study-desc').value.trim();
             const type = document.getElementById('study-type').value;
             const audience = document.getElementById('study-audience').value;
@@ -2663,9 +2663,10 @@
             if(!title) return showToast("Title required", "error"); 
             
             let finalFileUrl = "";
-            let downloadLinkUrl = ""; // Capture download URL
+            let downloadLinkUrl = "";
             const btn = document.getElementById('btn-upload-study');
-            btn.disabled = true; btn.innerText = "Processing...";
+            btn.disabled = true; 
+            btn.innerText = "Processing...";
 
             try {
                 if(type === 'video') {
@@ -2682,49 +2683,80 @@
                     const progContainer = document.getElementById('upload-progress-container');
                     const progBar = document.getElementById('upload-progress-bar');
                     const progText = document.getElementById('upload-progress-text');
-                    progContainer.style.display = 'block'; progText.style.display = 'block';
-                    progBar.style.width = '0%'; progText.innerText = 'Uploading: 0%';
+                    progContainer.style.display = 'block'; 
+                    progText.style.display = 'block';
+                    progBar.style.width = '0%'; 
+                    progText.innerText = 'Uploading: 0%';
 
                     finalFileUrl = await new Promise((resolve, reject) => {
                         const xhr = new XMLHttpRequest();
                         xhr.open('POST', 'https://api.cloudinary.com/v1_1/djvbvtcrh/auto/upload', true);
-                        const fd = new FormData(); fd.append('upload_preset', 'Upload'); fd.append('file', file);
+                        const fd = new FormData(); 
+                        fd.append('upload_preset', 'Upload'); 
+                        fd.append('file', file);
 
                         xhr.upload.onprogress = (e) => {
                             if (e.lengthComputable) {
                                 const percent = Math.round((e.loaded / e.total) * 100);
-                                progBar.style.width = percent + '%'; progText.innerText = `Uploading: ${percent}%`;
+                                progBar.style.width = percent + '%'; 
+                                progText.innerText = `Uploading: ${percent}%`;
                             }
                         };
-                        xhr.onload = () => { if(xhr.status === 200) resolve(JSON.parse(xhr.responseText).secure_url); else reject(new Error("Upload failed")); };
+                        xhr.onload = () => { 
+                            if(xhr.status === 200) resolve(JSON.parse(xhr.responseText).secure_url); 
+                            else reject(new Error("Upload failed")); 
+                        };
                         xhr.onerror = () => reject(new Error("Network error during upload"));
                         xhr.send(fd);
                     });
 
                     progText.innerText = 'Upload Complete! Saving to Database...';
-                    setTimeout(() => { progContainer.style.display = 'none'; progText.style.display = 'none'; }, 2000);
+                    setTimeout(() => { 
+                        progContainer.style.display = 'none'; 
+                        progText.style.display = 'none'; 
+                    }, 2000);
                 }
 
-                // Save to database, including the new download URL
+                // Save to Firestore Database
                 await db.collection("studyMaterials").add({
-                    title, desc, type, audience, groupId, 
+                    title, 
+                    desc, 
+                    type, 
+                    audience, 
+                    groupId, 
+                    order,
                     fileUrl: finalFileUrl, 
                     downloadUrl: downloadLinkUrl, 
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
+                
                 showToast("Material Published!", "success");
                 
-                document.getElementById('study-title').value = ''; document.getElementById('study-desc').value = '';
-                document.getElementById('study-video-link').value = ''; document.getElementById('study-download-link').value = ''; 
-                document.getElementById('study-file-upload').value = '';
-                document.getElementById('study-group-assign').value = '';
+                // Clear inputs cleanly
+                document.getElementById('study-title').value = ''; 
+                document.getElementById('study-desc').value = '';
+                document.getElementById('study-video-link').value = ''; 
+                document.getElementById('study-download-link').value = ''; 
+                document.getElementById('study-order').value = '0';
+                
+                const fileInp = document.getElementById('study-file-upload');
+                if (fileInp) fileInp.value = '';
+                
+                // Reset dynamic group dropdowns
+                buildDynamicGroupSelector('study-dynamic-container', allStudyGroupsCache);
 
             } catch (e) {
                 showToast("Error: " + e.message, "error");
-                document.getElementById('upload-progress-container').style.display = 'none';
-                document.getElementById('upload-progress-text').style.display = 'none';
-            } finally { btn.disabled = false; btn.innerText = "Publish Material 🚀"; }
+                const progContainer = document.getElementById('upload-progress-container');
+                const progText = document.getElementById('upload-progress-text');
+                if(progContainer) progContainer.style.display = 'none';
+                if(progText) progText.style.display = 'none';
+            } finally { 
+                btn.disabled = false; 
+                btn.innerText = "Publish Material 🚀"; 
+            }
         }
+
 
 
         // ==========================================
