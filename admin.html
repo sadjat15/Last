@@ -2627,13 +2627,14 @@
                 
                 statusEl.innerText = `Found ${data.items.length} videos. Adding to database...`;
                 
-                for(let i = 0; i < data.items.length; i++) {
+                                for(let i = 0; i < data.items.length; i++) {
                     let item = data.items[i].snippet;
                     let videoId = item.resourceId.videoId;
                     await db.collection("studyMaterials").add({
-                        title: `Class ${i + 1}`,
-                        desc: `Original Title: ${item.title}`,
+                        title: item.title,
+                        desc: `Video ${i + 1} from Playlist`, 
                         type: "video",
+
                         audience: audience,
                         groupId: groupId,
                         order: i + 1,
