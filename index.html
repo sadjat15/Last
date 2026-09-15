@@ -1828,9 +1828,18 @@ function listenForLiveNotifications() {
         }
 
 
-                        function viewGroupTests(gid, gn, isPushing = true) { 
+                                function viewGroupTests(gid, gn, isPushing = true) { 
             const titleEl = document.getElementById('current-group-title');
             if(titleEl) titleEl.innerText = gn; 
+
+            // NEW: Check if there is a paused test in the device storage
+            let pausedTestId = null;
+            try {
+                const savedProgress = JSON.parse(localStorage.getItem('kd_test_progress'));
+                if (savedProgress && savedProgress.testId) {
+                    pausedTestId = savedProgress.testId;
+                }
+            } catch(e) {}
 
             db.collection("tests").onSnapshot(s => { 
                 let c = document.getElementById('student-test-list'); 
@@ -1844,7 +1853,19 @@ function listenForLiveNotifications() {
                         count++;
                         let actionButtons = "";
                         
-                        if (studentAttemptedDB[d.id]) {
+                        // 1. Check if THIS specific test is paused
+                        if (pausedTestId === d.id) {
+                            actionButtons = `
+                                <button class="btn-warning" style="width:100%; margin-bottom: 10px;" onclick="resumeTest('${d.id}')">
+                                    Resume Test ▶️
+                                </button>
+                                <button class="btn-outline" style="width:100%; border-color: var(--danger); color: var(--danger);" onclick="retakeFromList('${d.id}')">
+                                    Restart Fresh 🔄
+                                </button>
+                            `;
+                        } 
+                        // 2. Check if the user has already submitted this test before
+                        else if (studentAttemptedDB[d.id]) {
                             actionButtons = `
                                 <button class="btn-results-modern" onclick="seePastResults('${studentAttemptedDB[d.id]}')">
                                     <span class="icon">📊</span> View Performance
@@ -1853,11 +1874,12 @@ function listenForLiveNotifications() {
                                     Retake Test 🔄
                                 </button>
                             `;
-                        } else {
+                        } 
+                        // 3. Otherwise, it's a completely new test
+                        else {
                             actionButtons = `<button class="btn-primary" style="width:100%;" onclick="startTest('${d.id}')">Start Test 🚀</button>`;
                         }
                         
-                        // FIXED: Uses t.timer and handles "0" as No Limit
                         let timeText = (t.timer && t.timer > 0) ? `${t.timer} Mins` : `No Limit`;
                         
                         c.innerHTML += `
@@ -1879,10 +1901,38 @@ function listenForLiveNotifications() {
 
 
 
+
         function retakeFromList(testId) {
             showCustomConfirm("Retake Test?", "This will start a fresh attempt. Your previous scores are safe in your history.", () => {
                 clearTestProgress(); startTest(testId);
             });
+        }
+                // NEW: Dedicated Engine for Resuming paused tests
+        async function resumeTest(testId) {
+            try {
+                const savedProgress = JSON.parse(localStorage.getItem('kd_test_progress'));
+                if (savedProgress && savedProgress.testId === testId) {
+                    
+                    // 1. Inject saved data into the global variables
+                    userAnswers = savedProgress.answers || [];
+                    questionStates = savedProgress.states || [];
+                    timeRemaining = savedProgress.time || 0;
+                    currentQuestionIndex = savedProgress.index || 0;
+                    currentLanguage = savedProgress.lang || 'Eng';
+                    currentSectionIdx = savedProgress.sectionIdx || 0;
+
+                    // 2. Start the test with the 'isRecovery' flag set to true
+                    await startTest(testId, true);
+                    showToast("Test resumed successfully!", "success");
+                    
+                } else {
+                    showToast("No saved progress found. Starting fresh.", "warning");
+                    startTest(testId);
+                }
+            } catch(e) {
+                console.error("Failed to resume test:", e);
+                startTest(testId);
+            }
         }
 
         function retakeCurrentTest() {
