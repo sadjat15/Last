@@ -3721,6 +3721,130 @@ You MUST return ONLY a raw JSON array of objects. Do NOT wrap it in markdown blo
         syncLoginModeUI();
         loadPopupSettings();
         loadAppBannerSettings();
+                // =========================================================
+        // --- ANDROID / OS SYSTEM NOTIFICATION ENGINE (FIREBASE) ---
+        // =========================================================
+        let swRegistration = null;
+
+        // 1. Register Service Worker for Android Status Bar Notifications
+        async function initSystemNotifications() {
+            if (!('Notification' in window)) return;
+
+            if ('serviceWorker' in navigator) {
+                try {
+                    // Registers sw.js so Android allows system tray notifications
+                    swRegistration = await navigator.serviceWorker.register('sw.js');
+                } catch (err) {
+                    console.log("SW registration fallback:", err);
+                }
+            }
+
+            // Show floating permission button if Android permission is not granted yet
+            if (Notification.permission !== 'granted') {
+                createPermissionBanner();
+            }
+        }
+
+        function createPermissionBanner() {
+            if (document.getElementById('enable-os-notif-btn')) return;
+            const btn = document.createElement('button');
+            btn.id = 'enable-os-notif-btn';
+            btn.innerHTML = '🔔 Tap to Enable Phone Notifications';
+            btn.style.cssText = 'position:fixed; bottom:20px; right:20px; z-index:9999; background:linear-gradient(135deg, #f59e0b, #ea580c); color:#fff; border:none; padding:12px 20px; border-radius:30px; font-weight:800; font-size:0.9rem; box-shadow:0 8px 25px rgba(234,88,12,0.5); cursor:pointer;';
+            btn.onclick = async () => {
+                const perm = await Notification.requestPermission();
+                if (perm === 'granted') {
+                    btn.remove();
+                    triggerPhoneNotification("✅ Notifications Enabled!", "You will now receive live exam and study alerts in your notification bar.");
+                } else {
+                    alert("Please allow notifications in your browser settings (Site Settings -> Notifications -> Allow).");
+                }
+            };
+            document.body.appendChild(btn);
+        }
+
+        // 2. Function that pushes the alert into the Android Top Notification Tray
+        async function triggerPhoneNotification(title, message, imageUrl = '') {
+            if (!('Notification' in window)) return;
+
+            if (Notification.permission !== 'granted') {
+                const perm = await Notification.requestPermission();
+                if (perm !== 'granted') return;
+            }
+
+            const options = {
+                body: message,
+                icon: imageUrl || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+                badge: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+                vibrate: [200, 100, 200, 100, 200],
+                requireInteraction: true,
+                tag: 'kd-jaat-alert-' + Date.now()
+            };
+            if (imageUrl) options.image = imageUrl;
+
+            try {
+                // Android Chrome requires ServiceWorker showNotification
+                if (swRegistration && swRegistration.showNotification) {
+                    await swRegistration.showNotification(title, options);
+                } else if ('serviceWorker' in navigator) {
+                    const reg = await navigator.serviceWorker.ready;
+                    await reg.showNotification(title, options);
+                } else {
+                    new Notification(title, options);
+                }
+            } catch (e) {
+                // Desktop / fallback
+                try { new Notification(title, options); } catch (err) { console.error(err); }
+            }
+        }
+
+        // 3. Real-Time Firebase Listener for Push Alerts & Popups
+        let listenerStartTime = Date.now();
+
+        function listenForFirebaseSystemAlerts() {
+            const studentBoard = (localStorage.getItem('studentBoard') || 'all').toLowerCase();
+
+            // Listen to Push Notifications ("Broadcast Notification 🚀")
+            db.collection("live_alerts").orderBy("timestamp", "desc").limit(1).onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        const data = change.doc.data();
+                        const alertTime = data.sentAtMs || (data.timestamp ? data.timestamp.toMillis() : Date.now());
+                        const alertId = change.doc.id;
+
+                        // Only trigger for newly broadcasted alerts not yet shown on this phone
+                        if (alertTime >= (listenerStartTime - 10000) && localStorage.getItem('lastOsAlertId') !== alertId) {
+                            const target = (data.topic || data.audience || 'all').toLowerCase();
+                            if (target === 'all' || target === studentBoard || currentUserRole === 'admin') {
+                                localStorage.setItem('lastOsAlertId', alertId);
+                                triggerPhoneNotification(data.title || "🔔 New Portal Alert!", data.message || data.body || "");
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Also trigger phone notification bar when Dashboard Popup is updated
+            db.collection("adminSettings").doc("dashboardPopup").onSnapshot(doc => {
+                if (!doc.exists) return;
+                const d = doc.data();
+                const popId = d.popupId || String(d.timestamp || '');
+
+                if (d.status === 'active' && d.message && d.timestamp >= (listenerStartTime - 10000)) {
+                    if (localStorage.getItem('lastOsPopupId') !== popId) {
+                        const target = (d.audience || 'all').toLowerCase();
+                        if (target === 'all' || target === studentBoard || currentUserRole === 'admin') {
+                            localStorage.setItem('lastOsPopupId', popId);
+                            triggerPhoneNotification(d.title || "📢 Official Notice", d.message, d.imageUrl || "");
+                        }
+                    }
+                }
+            });
+        }
+
+        initSystemNotifications();
+        listenForFirebaseSystemAlerts();
+
     </script>
 </body>
 </html>
